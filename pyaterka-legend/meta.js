@@ -93,9 +93,11 @@ function sellOne(G, id) {
 
 /* ---------- Контракт: 10 обычных карточек одной редкости -> одна карточка (вероятности предложены, не утверждены) ---------- */
 function tuInfo(G, ids) {
-  if (!ids.length) return { ok: false, why: 'Выберите 10 обычных карточек одной редкости.' };
-  const cs = ids.map(id => CARDS[id]), rar = cs[0].rar, cnt = {};
-  for (const c of cs) { if (!c || c.sp) return { ok: false, why: 'Особые версии в контракт не идут.' }; if (c.rar !== rar) return { ok: false, why: 'Все карточки должны быть одной редкости.' }; cnt[c.id] = (cnt[c.id] || 0) + 1; if (!G.cards[c.id] || G.cards[c.id].n < cnt[c.id]) return { ok: false, why: 'Не хватает копий.' }; }
+  if (!Array.isArray(ids) || !ids.length) return { ok: false, why: 'Выберите 10 обычных карточек одной редкости.' };
+  const cs = ids.map(id => CARDS[id]);
+  if (cs.some(c => !c)) return { ok: false, why: 'В контракте есть неизвестная карточка.' };
+  const rar = cs[0].rar, cnt = {};
+  for (const c of cs) { if (c.sp) return { ok: false, why: 'Особые версии в контракт не идут.' }; if (c.rar !== rar) return { ok: false, why: 'Все карточки должны быть одной редкости.' }; cnt[c.id] = (cnt[c.id] || 0) + 1; if (!G.cards[c.id] || G.cards[c.id].n < cnt[c.id]) return { ok: false, why: 'Не хватает копий.' }; }
   const avg = cs.reduce((s, c) => s + c.ovr, 0) / cs.length, pool = POOL[rar], mn = Math.min(...pool.map(x => x.ovr)), mx = Math.max(...pool.map(x => x.ovr));
   const p = clamp(.2 + .3 * (mx > mn ? (avg - mn) / (mx - mn) : 0), .2, .5), band = p < .3 ? '20–30%' : p < .4 ? '30–40%' : '40–50%';
   if (rar === 4) return { ok: false, rar, avg, why: 'Для редкости «Тайное» контракт пока закрыт: правило ещё не утверждено.' };

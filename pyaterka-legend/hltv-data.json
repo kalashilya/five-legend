@@ -211,6 +211,104 @@
         "rating3": 1.15,
         "roundSwing": 0.92
       }
+    },
+    "Magnojez": {
+      "profileId": 21667,
+      "last12m": {
+        "maps": 243,
+        "rating3": 1.21,
+        "roundSwing": 1.6,
+        "firepower": 84,
+        "opening": 89,
+        "trading": 36,
+        "closing": 34,
+        "utility": 71,
+        "clutchesPer24": 0.24
+      },
+      "last3m": {
+        "maps": 63,
+        "rating3": 1.12,
+        "roundSwing": 0.74
+      }
+    },
+    "junior": {
+      "profileId": 14494,
+      "last12m": {
+        "maps": 188,
+        "rating3": 1.2,
+        "roundSwing": 2.22,
+        "firepower": 75,
+        "opening": 64,
+        "trading": 49,
+        "closing": 51,
+        "utility": 43,
+        "clutchesPer24": 0.26,
+        "sniping": 92
+      },
+      "last3m": {
+        "maps": 39,
+        "rating3": 1.16,
+        "roundSwing": 1.72
+      }
+    },
+    "leakz": {
+      "profileId": 21571,
+      "last12m": {
+        "maps": 243,
+        "rating3": 1.2,
+        "roundSwing": 1.49,
+        "firepower": 76,
+        "opening": 51,
+        "trading": 80,
+        "closing": 64,
+        "utility": 29,
+        "clutchesPer24": 0.35
+      },
+      "last3m": {
+        "maps": 70,
+        "rating3": 1.19,
+        "roundSwing": 1.3
+      }
+    },
+    "s1nside": {
+      "profileId": 25911,
+      "last12m": {
+        "maps": 129,
+        "rating3": 1.19,
+        "roundSwing": 1.53,
+        "firepower": 61,
+        "opening": 12,
+        "trading": 51,
+        "closing": 75,
+        "utility": 65,
+        "clutchesPer24": 0.53,
+        "sniping": 3
+      },
+      "last3m": {
+        "maps": 105,
+        "rating3": 1.21,
+        "roundSwing": 1.6
+      }
+    },
+    "lattykk": {
+      "profileId": 20700,
+      "last12m": {
+        "maps": 260,
+        "rating3": 1.19,
+        "roundSwing": 2.18,
+        "firepower": 75,
+        "opening": 41,
+        "trading": 61,
+        "closing": 76,
+        "utility": 52,
+        "clutchesPer24": 0.35,
+        "sniping": 93
+      },
+      "last3m": {
+        "maps": 78,
+        "rating3": 1.16,
+        "roundSwing": 1.63
+      }
     }
   }
 }

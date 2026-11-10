@@ -15,7 +15,7 @@ pyaterka-legend/  — «Пятёрка Легенд», коллекционна�
   gen.js      генератор data.js из teams.txt (node gen.js)
   teams.txt   топ-101 команд из рейтинга Valve от 2 ноября 2026
   test.js     проверка игровой логики и баланса (bash build.sh && node test.js)
-  build.sh    сборка одного HTML-файла из head.html, data.js, core.js, ui.js (bash build.sh)
+  build.sh    сборка одного HTML-файла из head.html, data.js, core.js, meta.js, ui.js (bash build.sh)
 
   После правок в head.html, data.js, core.js, meta.js или ui.js нужно запустить build.sh,
   иначе pyaterka-legend-offline.html останется прежним.

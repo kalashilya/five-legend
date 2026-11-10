@@ -360,7 +360,7 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 .operator svg{display:block;width:100%;height:auto;overflow:visible}
 .actor-body{transform-origin:50% 90%;animation:operator-idle 2.8s ease-in-out infinite}
 .op-rifle .actor-body{animation:rifle-check 2.8s ease-in-out infinite}
-.op-awp .prop{transform-origin:55% 50%;animation:awp-recoil 2.5s 1.2s ease-out 1}
+.op-awp .prop{transform-origin:55% 50%;animation:awp-recoil 2.5s 1.2s ease-out 1}.op-awp .muzzle-flash{opacity:0;transform-origin:220px 163px;animation:muzzle-flash .18s 1.2s ease-out 1}
 .op-igl .prop{transform-origin:70% 55%;animation:notebook-check 2.8s ease-in-out infinite}
 .walk-caption{position:absolute;z-index:3;left:2%;right:2%;bottom:1%;text-align:center;font:600 10px var(--f-m);letter-spacing:.2em;color:var(--gl,#f2c14e);text-shadow:0 2px 10px #000;opacity:.85}
 @keyframes card-arrive{from{opacity:0;transform:perspective(900px) translateX(70px) rotateY(-28deg) scale(.72);filter:blur(8px)}to{opacity:1;transform:perspective(900px) rotateY(-13deg) scale(.94);filter:drop-shadow(0 18px 26px #000b)}}
@@ -368,6 +368,7 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 @keyframes operator-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes rifle-check{0%,100%{transform:translateY(0) rotate(0)}22%{transform:translateY(-2px) rotate(-2deg)}48%{transform:translateY(0) rotate(2.5deg)}72%{transform:translateY(-1px) rotate(-1deg)}}
 @keyframes awp-recoil{0%{transform:translateX(0)}12%{transform:translateX(-7px)}24%{transform:translateX(3px)}40%,100%{transform:translateX(0)}}
+@keyframes muzzle-flash{0%{opacity:0;transform:scale(.2)}25%{opacity:1;transform:scale(1.25)}100%{opacity:0;transform:scale(1.8)}}
 @keyframes notebook-check{0%,100%{transform:rotate(0)}35%{transform:rotate(-4deg)}65%{transform:rotate(2deg)}}
 .all-reveal{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
 .all-reveal .walk-scene{min-height:220px;max-height:260px;transform:scale(.82);transform-origin:center bottom;margin-block:-18px}

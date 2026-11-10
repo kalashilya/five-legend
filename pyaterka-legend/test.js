@@ -30,12 +30,15 @@ function sim(o, tro, pol, n = N) { let w = 0, r = 0; for (let i = 0; i < n; i++)
 
 ok('HLTV-данные подключены к первой десятке карточек', () => {
   const verified = E.ALL.filter(c => c.hltv && !c.sp && !c.hist);
-  assert.strictEqual(verified.length, 10);
+  assert.strictEqual(verified.length, 15);
   const donk = verified.find(c => c.nick === 'donk'), zywoo = verified.find(c => c.nick === 'ZywOo');
   assert(donk && zywoo); assert.strictEqual(donk.ovr, 98); assert.strictEqual(donk.st.aim, 97); assert.strictEqual(donk.st.ent, 88);
   assert.strictEqual(donk.hltv.last12m.maps, 177); assert.strictEqual(donk.hltv.last3m.rating3, 1.34);
   assert.strictEqual(E.indOf(donk).n, 'Дуэлянт'); assert(E.indPow(donk, 1) > E.abPow(donk, 1));
   assert.strictEqual(E.indOf(zywoo).n, 'Снайпер');
+  const junior = verified.find(c => c.nick === 'junior'), leakz = verified.find(c => c.nick === 'leakz'), lattykk = verified.find(c => c.nick === 'lattykk');
+  assert(junior && leakz && lattykk); assert.strictEqual(junior.role, 0); assert.strictEqual(lattykk.role, 0);
+  assert.strictEqual(E.indOf(junior).n, 'Снайпер'); assert.strictEqual(E.indOf(leakz).n, 'Трейдер');
 });
 console.log('1. Карточки и база');
 ok('551 карточка, номера уникальны, особые версии на месте', () => { assert.strictEqual(E.ALL.length, 551); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 551); assert.strictEqual(E.MVPP.length, 8); assert.strictEqual(E.IFP.flat().length, 43); });

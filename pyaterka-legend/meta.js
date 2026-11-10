@@ -30,8 +30,17 @@ function normalize(G, now) {
   G.capts = [0, 1, 2].map(i => { const id = G.capts[i]; return id != null && G.squads[i].includes(id) && CARDS[id].role === 4 ? id : null; });
   Object.defineProperty(G, 'squad', { get() { return this.squads[this.sqi]; }, set(v) { this.squads[this.sqi] = v; }, enumerable: false, configurable: true });
   G.inbox = Array.isArray(G.inbox) ? G.inbox : []; G.picks = Array.isArray(G.picks) ? G.picks.filter(p => Array.isArray(p) && p.every(id => CARDS[id])) : [];
-  G.season = G.season && typeof G.season === 'object' ? G.season : { m: -1, goals: [], hist: [] };
-  G.tasks = G.tasks && typeof G.tasks === 'object' ? G.tasks : { day: -1, d: [], week: -1, w: [], s: null, sStart: -99 };
+  G.season = G.season && typeof G.season === 'object' && !Array.isArray(G.season) ? G.season : {};
+  if (!Number.isInteger(G.season.m)) G.season.m = -1;
+  if (!Array.isArray(G.season.goals)) G.season.goals = [];
+  if (!Array.isArray(G.season.hist)) G.season.hist = [];
+  G.tasks = G.tasks && typeof G.tasks === 'object' && !Array.isArray(G.tasks) ? G.tasks : {};
+  if (!Number.isInteger(G.tasks.day)) G.tasks.day = -1;
+  if (!Array.isArray(G.tasks.d)) G.tasks.d = [];
+  if (!Number.isInteger(G.tasks.week)) G.tasks.week = -1;
+  if (!Array.isArray(G.tasks.w)) G.tasks.w = [];
+  if (!('s' in G.tasks)) G.tasks.s = null;
+  if (!Number.isInteger(G.tasks.sStart)) G.tasks.sStart = -99;
   if (now != null) refresh(G, now);
   return G;
 }

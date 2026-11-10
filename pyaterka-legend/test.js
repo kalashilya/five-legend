@@ -133,7 +133,7 @@ ok('награды: 40 и 10 монет; кубки +25, +30, −25, −30; ни
 console.log('7. Задания, бесплатный кейс, сезон');
 ok('4 ежедневных, 5 недельных, 1 особое; прогресс, ручная награда, обновление в 00:00 по Москве', () => {
   const g = E.newProfile(NOW); assert.strictEqual(g.tasks.d.length, 0); g.tut = 3; E.refresh(g, NOW);
-  assert.strictEqual(g.tasks.d.length, 4); assert.strictEqual(g.tasks.w.length, 5); assert(g.tasks.s); assert(g.tasks.w[0].main && g.tasks.w[0].r.pick != null); assert.strictEqual(g.season.goals.length, 3);
+  assert.strictEqual(g.tasks.d.length, 4); assert(g.tasks.d.every(t => ['match', 'rounds', 'kills', 'cards'].includes(t.k)), 'ежедневные задания должны быть только на участие и действия'); assert.strictEqual(g.tasks.w.length, 5); assert(g.tasks.s); assert(g.tasks.w[0].main && g.tasks.w[0].r.pick != null); assert.strictEqual(g.season.goals.length, 3);
   const t = g.tasks.d[0], c0 = g.coins; assert.strictEqual(E.claimTask(g, t), false); E.taskAdd(g, { [t.k]: t.n + 5 }); assert.strictEqual(t.p, t.n); assert(E.claimTask(g, t)); assert.strictEqual(g.coins, c0 + t.r.coins); assert.strictEqual(E.claimTask(g, t), false);
   const t2 = g.tasks.d[1]; E.taskAdd(g, { [t2.k]: t2.n }); const t3 = g.tasks.d[2], p3 = t3.p;
   const midnight = Date.UTC(2026, 10, 10, 21, 0, 1); E.refresh(g, midnight - 2000); assert.strictEqual(g.tasks.d[1], t2); E.refresh(g, midnight);

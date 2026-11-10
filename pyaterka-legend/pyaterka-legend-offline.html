@@ -1341,7 +1341,8 @@ async function showCase3D(x, showAll = false) {
   if(!stage)return false;
   const elite=c.ovr>=91,accent=elite?'#e6bd75':'#8bc8ec';
   const duration=noMotion()?0:(showAll?3600:(elite?6500:5200));
-  const cards=showAll?OV.cards.map((v,i)=>'<div class="reveal-card" style="--delay:'+i*170+'ms">'+cardH(v.c,{cls:'xs'})+'<span class="reveal-nick">'+esc(v.c.nick)+'</span></div>').join(''):'<div class="reveal-single" style="--accent:'+accent+'">'+cardH(c,{stats:true})+'</div>';
+  const lightning='<svg class="reveal-bolts" viewBox="0 0 600 520" preserveAspectRatio="none" aria-hidden="true"><path class="bolt bolt-a" d="M80 30 L190 130 L150 180 L270 260 L220 315 L345 430"/><path class="bolt bolt-b" d="M520 12 L405 110 L445 170 L330 245 L385 310 L260 470"/><path class="bolt bolt-c" d="M15 250 L115 270 L80 330 L190 375"/><path class="bolt bolt-d" d="M585 210 L485 245 L520 300 L410 360"/></svg>';
+  const cards=showAll?OV.cards.map((v,i)=>'<div class="reveal-card" style="--delay:'+i*170+'ms">'+cardH(v.c,{cls:'xs'})+'<span class="reveal-nick">'+esc(v.c.nick)+'</span></div>').join(''):'<div class="reveal-single" style="--accent:'+accent+'"><div class="card-suspension"><div class="card-halo"></div><div class="card-electric">'+lightning+'</div><div class="card-face">'+cardH(c,{stats:true})+'</div><div class="card-electric front">'+lightning+'</div></div></div>';
   stage.innerHTML='<div class="cinematic-reveal '+(showAll?'multi':'single')+(elite?' legendary':'')+'" style="--accent:'+accent+'"><div class="reveal-bg"></div><div class="reveal-vignette"></div><div class="reveal-flash"></div><div class="reveal-lines"></div><div class="reveal-topline"><span>FIVE LEGENDS</span><span>'+(elite?'LEGENDARY PLAYER':'PLAYER REVEAL')+'</span></div><div class="reveal-caption">'+(showAll?'ПЯТЬ НОВЫХ КАРТОЧЕК':'ОБНАРУЖЕН ИГРОК')+'</div><div class="reveal-content">'+cards+'</div><div class="reveal-footer">'+(showAll?'СОСТАВ ОТКРЫТ':' '+esc(RNAME[c.role])+' · '+esc(c.team)+' · OVERALL '+c.ovr)+'</div></div>';
   if(duration) await new Promise(resolve=>setTimeout(resolve,duration));
   return token===CASE3D_RUN;
@@ -1391,9 +1392,20 @@ if(!document.getElementById(revealStyleId)){
   .reveal-topline{position:absolute;top:20px;left:22px;right:22px;display:flex;justify-content:space-between;gap:12px;font:700 9px var(--f-m);letter-spacing:.22em;color:#c5d0dc;opacity:0;animation:reveal-text .6s .3s ease-out forwards}
   .reveal-topline span:last-child{color:var(--accent)}
   .reveal-caption{position:absolute;top:16%;font:800 clamp(11px,2vw,15px) var(--f-m);letter-spacing:.34em;color:var(--accent);opacity:0;transform:translateY(12px);animation:reveal-text .7s .65s ease-out forwards}
-  .reveal-content{width:min(100%,760px);display:flex;align-items:center;justify-content:center;gap:clamp(6px,2vw,18px);opacity:0;transform:translateY(32px) scale(.92);animation:reveal-card-in 1.25s 1.55s cubic-bezier(.16,1,.3,1) forwards}
-  .reveal-single{width:min(62vw,300px);max-width:300px;filter:drop-shadow(0 0 24px color-mix(in srgb,var(--accent) 48%,transparent)) drop-shadow(0 20px 34px #000)}
-  .reveal-single .card,.reveal-single .pcard{animation:reveal-card-glow 3s 2.5s ease-in-out infinite alternate}
+  .reveal-content{width:min(100%,760px);display:flex;align-items:center;justify-content:center;gap:clamp(6px,2vw,18px);opacity:1;transform:none;animation:none;perspective:1100px}
+  .reveal-single{width:min(44vw,226px);max-width:226px;filter:drop-shadow(0 0 26px color-mix(in srgb,var(--accent) 42%,transparent)) drop-shadow(0 22px 34px #000)}
+  .card-suspension{position:relative;width:100%;isolation:isolate;transform-style:preserve-3d;animation:card-hover 4.2s ease-in-out infinite}
+  .card-halo{position:absolute;z-index:-2;inset:8% -23%;border-radius:50%;background:radial-gradient(ellipse, color-mix(in srgb,var(--accent) 30%,transparent),transparent 68%);filter:blur(18px);animation:halo-pulse 2.6s ease-in-out infinite alternate}
+  .card-face{position:relative;z-index:1;opacity:0;transform:translateY(46px) rotateX(14deg) scale(.78);clip-path:inset(48% 0 48% 0 round 12px);filter:brightness(.45) blur(5px);animation:card-materialize 2.25s .9s cubic-bezier(.16,1,.3,1) forwards}
+  .card-face .pc{width:100%;max-width:none;box-shadow:0 0 0 1px #ffffff22,0 18px 42px #000c}
+  .card-electric{position:absolute;z-index:2;inset:-12% -40%;pointer-events:none;opacity:0;filter:drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 11px var(--accent));animation:electric-strike 3.8s .35s ease-out infinite}
+  .card-electric.front{z-index:3;inset:-10% -35%;animation-delay:1.25s;mix-blend-mode:screen}
+  .reveal-bolts{width:100%;height:100%;overflow:visible}
+  .bolt{fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:520;stroke-dashoffset:520;opacity:0}
+  .bolt-a{animation:bolt-draw 3.8s .25s ease-out infinite}
+  .bolt-b{stroke:var(--accent);stroke-width:3.4;animation:bolt-draw 3.8s .48s ease-out infinite}
+  .bolt-c{stroke:#fff;stroke-width:1.8;animation:bolt-draw 3.8s .78s ease-out infinite}
+  .bolt-d{stroke:var(--accent);stroke-width:2;animation:bolt-draw 3.8s 1.05s ease-out infinite}
   .reveal-card{width:19%;max-width:132px;min-width:0;opacity:0;transform:translateY(38px) rotateY(18deg) scale(.88);animation:reveal-multi .8s calc(1.1s + var(--delay)) cubic-bezier(.16,1,.3,1) forwards;filter:drop-shadow(0 8px 18px #000)}
   .reveal-nick{display:block;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:700 10px var(--f-m);margin-top:7px;color:#f4f7fb}
   .reveal-footer{position:absolute;bottom:22px;text-align:center;font:700 9px var(--f-m);letter-spacing:.2em;color:#aab8c6;opacity:0;animation:reveal-text .7s 2.15s ease-out forwards}
@@ -1403,11 +1415,15 @@ if(!document.getElementById(revealStyleId)){
   @keyframes reveal-flash{0%,20%,100%{opacity:0}8%{opacity:.85}13%{opacity:.08}16%{opacity:.5}}
   @keyframes reveal-line{0%,22%,100%{opacity:0;transform:scaleX(.1)}29%{opacity:.9;transform:scaleX(1)}42%{opacity:.2;transform:scaleX(1)}}
   @keyframes reveal-text{to{opacity:1;transform:translateY(0)}}
-  @keyframes reveal-card-in{0%{opacity:0;transform:translateY(45px) scale(.86);filter:blur(8px)}70%{opacity:1;filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+  @keyframes card-hover{0%,100%{transform:translateY(0) rotateZ(-1.2deg) rotateY(-3deg)}50%{transform:translateY(-13px) rotateZ(1.2deg) rotateY(3deg)}}
+  @keyframes halo-pulse{from{opacity:.48;transform:scale(.88)}to{opacity:1;transform:scale(1.12)}}
+  @keyframes card-materialize{0%{opacity:0;clip-path:inset(48% 0 48% 0 round 12px);transform:translateY(46px) rotateX(14deg) scale(.78);filter:brightness(.35) blur(7px)}32%{opacity:1;clip-path:inset(35% 0 35% 0 round 12px);filter:brightness(.6) blur(3px)}68%{clip-path:inset(8% 0 8% 0 round 12px);filter:brightness(1.2) blur(0)}100%{opacity:1;clip-path:inset(0 0 0 0 round 12px);transform:translateY(0) rotateX(0) scale(1);filter:brightness(1) blur(0)}}
+  @keyframes bolt-draw{0%,100%{opacity:0;stroke-dashoffset:520}12%{opacity:1;stroke-dashoffset:0}22%{opacity:.85;stroke-dashoffset:-60}38%{opacity:0;stroke-dashoffset:-520}50%{opacity:0;stroke-dashoffset:520}}
+  @keyframes electric-strike{0%,8%,100%{opacity:0}12%,18%{opacity:.95}25%{opacity:.15}32%{opacity:.8}42%{opacity:0}}
   @keyframes reveal-multi{to{opacity:1;transform:translateY(0) rotateY(0) scale(1)}}
   @keyframes reveal-card-glow{from{filter:brightness(1)}to{filter:brightness(1.12)}}
   @media(prefers-reduced-motion:reduce){.cinematic-reveal *{animation-duration:.01ms!important;animation-delay:0ms!important}}
-  @media(max-width:520px){.cinematic-reveal{min-height:370px;height:58vh}.reveal-topline{left:12px;right:12px;font-size:8px}.reveal-caption{top:14%;letter-spacing:.2em}.reveal-single{width:min(72vw,270px)}.reveal-card{width:19%}.reveal-nick{font-size:8px}.reveal-footer{font-size:8px;letter-spacing:.1em}}
+  @media(max-width:520px){.cinematic-reveal{min-height:370px;height:58vh}.reveal-topline{left:12px;right:12px;font-size:8px}.reveal-caption{top:14%;letter-spacing:.2em}.reveal-single{width:min(58vw,196px)}.card-electric{inset:-12% -34%}.card-electric.front{inset:-10% -30%}.reveal-card{width:19%}.reveal-nick{font-size:8px}.reveal-footer{font-size:8px;letter-spacing:.1em}}
   `;document.head.appendChild(st);
 }
 /* Выбор карточки в награду: одна из трёх, пропустить нельзя */

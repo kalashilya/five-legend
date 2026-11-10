@@ -153,6 +153,18 @@ ok('награды: 40 и 10 монет; кубки +25, +30, −25, −30; ни
   g.tro = 10; assert.strictEqual(E.applyResult(g, false, 5, 13).tro, -10); assert.strictEqual(g.tro, 0);
 });
 
+ok('серия входов: награды по календарным дням, сброс после пропуска и цикл 28 дней', () => {
+  const DAY = 86400000, g = E.newProfile(NOW);
+  assert.strictEqual(g.streak.day, 1); assert.strictEqual(g.streak.reward.coins, 40);
+  const c1 = g.coins; E.refresh(g, NOW); assert.strictEqual(g.coins, c1);
+  E.refresh(g, NOW + DAY); assert.strictEqual(g.streak.day, 2); assert.strictEqual(g.streak.reward.coins, 50);
+  E.refresh(g, NOW + 3 * DAY); assert.strictEqual(g.streak.day, 1, 'пропуск календарного дня сбрасывает серию');
+  const full = E.newProfile(NOW), basic = full.packs.basic, pro = full.packs.pro;
+  for (let d = 1; d < 28; d++) E.refresh(full, NOW + d * DAY);
+  assert.strictEqual(full.streak.day, 28); assert.strictEqual(full.packs.basic, basic + 1);
+  assert.strictEqual(full.packs.pro, pro + 2); assert.strictEqual(full.packs.elite, 1);
+  E.refresh(full, NOW + 28 * DAY); assert.strictEqual(full.streak.day, 1, 'после 28-го дня цикл начинается заново');
+});
 console.log('7. Задания, бесплатный кейс, сезон');
 ok('4 ежедневных, 5 недельных, 1 особое; прогресс, ручная награда, обновление в 00:00 по Москве', () => {
   const g = E.newProfile(NOW); assert.strictEqual(g.tasks.d.length, 0); g.tut = 3; E.refresh(g, NOW);

@@ -38,9 +38,10 @@ const AB_IND = {
   sniper: { n: 'Снайпер', d: 'Высокий HLTV Sniping: сильнее влияет на индивидуальный вклад в раунде.', mult: 1.1 },
   entry: { n: 'Первый контакт', d: 'Высокий HLTV Opening: усиливает вклад при поиске первых дуэлей.', mult: 1.1 },
   support: { n: 'Поддержка', d: 'Высокий HLTV Utility: усиливает вклад гранат и командного взаимодействия.', mult: 1.08 },
+  trader: { n: 'Трейдер', d: 'Высокий HLTV Trading: усиливает вклад в размены и поддержку тиммейтов.', mult: 1.08 },
   anchor: { n: 'Опорник', d: 'Высокий HLTV Closing: сильнее влияет на поздние стадии раунда.', mult: 1.08 }
 };
-const IND = { donk: 'duelist', ZywOo: 'sniper', m0NESY: 'sniper', Vexite: 'entry', jks: 'support', insani: 'entry', blameF: 'anchor', asap: 'duelist', JamYoung: 'support', Senzu: 'entry' };
+const IND = { donk: 'duelist', ZywOo: 'sniper', m0NESY: 'sniper', Vexite: 'entry', jks: 'support', insani: 'entry', blameF: 'anchor', asap: 'duelist', JamYoung: 'support', Senzu: 'entry', Magnojez: 'entry', junior: 'sniper', leakz: 'trader', s1nside: 'anchor', lattykk: 'sniper' };
 const indOf = c => AB_IND[IND[c.nick] || 'team'];
 const abPow = (c, lv) => (1 + .1 * (lv - 1)) * (c.sp ? 1.3 : 1);
 const indPow = (c, lv) => abPow(c, lv) * (indOf(c).mult || 1);

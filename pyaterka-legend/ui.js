@@ -290,51 +290,104 @@ function startPack(type) {
 }
 function packBuild() {
   const o = $('#over');
-  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div id="arena"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Нажмите на кейс, чтобы открыть</span></div><div class="tray" id="tray">${OV.cards.map(() => '<div></div>').join('')}</div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать сразу</button></div></div>`;
+  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div id="arena"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Выберите способ открытия</span></div><div class="tray" id="tray">${OV.cards.map(() => '<div></div>').join('')}</div><div class="rowb" id="po-btn" style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn pri" data-act="poAll">Открыть все</button><button class="btn" data-act="poTap">По одной</button></div></div>`;
   o.hidden = false; o.scrollTop = 0; OV.built = true;
 }
-function poTap() {
-  if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
-  OV.phase = 'scan'; const p = $('.po-pk .pk'); sfx('open');
-  if (p) { p.classList.add('shake'); setTimeout(() => p.classList.add('open'), noMotion() ? 0 : 380); }
-  later(850, () => { flashNow(); scanStep(0); });
+function poStart(mode) {
+  if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return false;
+  OV.mode = mode; OV.phase = 'scan'; OV.index = 0;
+  const p = $('.po-pk .pk'); sfx('open');
+  if (p) { p.classList.add('shake'); setTimeout(() => p.classList.add('open'), noMotion() ? 0 : 420); }
+  $('#po-name').innerHTML = '<span class="mut">Кейс открывается…</span>';
+  $('#po-btn').innerHTML = '<button class="btn s" data-act="poSkip" style="width:100%">Пропустить анимацию</button>';
+  if (mode === 'all') later(700, poRevealAll);
+  else later(720, () => scanStep(0));
+  return false;
+}
+function poTap() { return poStart('single'); }
+function poAll() { return poStart('all'); }
+function poNext() {
+  if (!OV || OV.t !== 'pack' || OV.phase !== 'next') return false;
+  OV.phase = 'scan'; scanStep(OV.index); return false;
 }
 function scanStep(i) {
-  if (OV.phase !== 'scan') return; if (i >= OV.cards.length) { later(500, poDone); return; }
-  const c = OV.cards[i].c, lines = ['Роль: ' + RNAME[c.role], 'Команда: ' + c.team, 'Рейтинг: ' + c.ovr], rare = i === OV.cards.length - 1 && isRare(OV.type, c);
+  if (!OV || OV.phase !== 'scan') return;
+  if (i >= OV.cards.length) { poDone(); return; }
+  const c = OV.cards[i].c, lines = ['РОЛЬ / ' + RNAME[c.role], 'КОМАНДА / ' + c.team, 'РЕЙТИНГ / ' + c.ovr];
   $('#po-bg').style.setProperty('--gl', '#8fa3b8');
   $('#po-stage').innerHTML = `<div class="scan" id="scan" style="--gl:#8fd8ff"><div class="scan-fr"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg><i class="scan-ln"></i><div class="scan-tx" id="scan-tx"></div></div></div>`;
   $('#po-name').innerHTML = `<span class="mut">Сканирование ${i + 1} из ${OV.cards.length}</span>`;
-  lines.forEach((t, k) => later(110 + k * 120, () => { if (OV.phase !== 'scan') return; const x = $('#scan-tx'); if (x) { x.insertAdjacentHTML('beforeend', `<span>${esc(t)}</span>`); sfx('scan'); } }));
-  later(520, () => rare ? rareSeq(i) : reveal(i));
+  lines.forEach((t, k) => later(180 + k * 190, () => { if (OV.phase !== 'scan') return; const x = $('#scan-tx'); if (x) { x.insertAdjacentHTML('beforeend', `<span>${esc(t)}</span>`); sfx('scan'); } }));
+  const rare = i === OV.cards.length - 1 && isRare(OV.type, c);
+  later(950, () => rare ? rareSeq(i) : reveal(i));
 }
 function trayPut(i) { const t = $('#tray'); if (t && t.children[i]) { t.children[i].className = 'on'; t.children[i].innerHTML = cardH(OV.cards[i].c, { cls: 'xs' }); } }
 const nameH = x => `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${rarName(x.c)} · ${esc(x.c.team)} · <span class="bdg ${x.isNew ? 'new' : 'dup'}">${x.isNew ? 'новая' : 'дубль'}</span></span>`;
+function afterOne(i) {
+  trayPut(i); OV.index = i + 1;
+  if (OV.index >= OV.cards.length) { later(420, poDone); return; }
+  OV.phase = 'next';
+  $('#po-btn').innerHTML = `<button class="btn pri" data-act="poNext" style="width:100%">Следующая карточка · ${OV.index + 1} из 5</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`;
+  $('#po-name').innerHTML += '<span class="sm mut">Нажмите, когда будете готовы</span>';
+}
 function reveal(i) {
   if (OV.phase !== 'scan') return;
   const x = OV.cards[i], r = x.c.sp ? Math.max(3, x.c.rar) : x.c.rar;
   $('#po-stage').innerHTML = `<div class="scan out" id="scan" style="--gl:${glow(x.c)}">${cardH(x.c, { stats: true })}</div>`;
   $('#po-bg').style.setProperty('--gl', glow(x.c)); $('#po-name').innerHTML = nameH(x);
   sfx('stop', r); burst(glow(x.c), [8, 14, 30, 70, 120][r], $('#scan')); if (r >= 3) flashNow();
-  later(520, () => { trayPut(i); scanStep(i + 1); });
+  later(1050, () => { if (OV && OV.phase === 'scan') afterOne(i); });
 }
-function rareSeq(i) {
-  const x = OV.cards[i], c = x.c, k = hsh(c.nick) % 4, sc = $('#scan'); if (sc) sc.classList.add('glitch');
-  later(600, () => { if (OV.phase !== 'scan') return; $('#po-stage').innerHTML = ''; $('#po-name').innerHTML = ''; $('#po-bg').style.setProperty('--gl', '#000000');
-    later(900, () => { if (OV.phase !== 'scan') return; sfx('rare'); $('#po-stage').innerHTML = `<p class="rare-t" style="--gl:${glow(c)}">${c.sp === 2 ? 'Обнаружен MVP' : c.sp === 1 ? 'Обнаружен игрок недели' : 'Обнаружен редкий игрок'}</p>`;
-      later(1500, () => { if (OV.phase !== 'scan') return; $('#arena').innerHTML = `<div class="arena a${k}" style="--tc:${teamCol(c)}"><i></i><i></i><i></i><b></b></div>`; $('#po-top').textContent = ARENAS[k];
-        $('#po-stage').innerHTML = `<div class="walk" id="scan">${cardH(c, { stats: true })}</div>`;
-        later(1100, () => { if (OV.phase !== 'scan') return; flashNow(); burst(glow(c), 160, $('#scan')); sfx('stop', 4); $('#po-name').innerHTML = nameH(x); later(1900, () => { trayPut(i); scanStep(i + 1); }); });
+function actorH(c) {
+  const kind = c.role === 4 ? 'igl' : c.role === 0 ? 'awp' : 'rifle';
+  const weapon = kind === 'igl'
+    ? '<g class="prop"><path d="M126 174l44-8 8 66-44 8z" fill="#c9a66b" stroke="#33271c" stroke-width="5"/><path d="M134 185l32-6M137 198l30-6M140 211l30-6" stroke="#55422e" stroke-width="3"/><path d="M130 174l-8-12 44-8 7 12" fill="#e6d3a7" stroke="#33271c" stroke-width="4"/></g>'
+    : kind === 'awp'
+      ? '<g class="prop"><path d="M104 164l100-7 4 9-103 10z" fill="#252b30" stroke="#090b0d" stroke-width="4"/><path d="M160 160l4-17 25 0 3 17" fill="#3d4548" stroke="#090b0d" stroke-width="4"/><path d="M108 171l-7 24 22 2 9-25" fill="#6c5032" stroke="#090b0d" stroke-width="4"/><path d="M194 163l25-2" stroke="#aab3b8" stroke-width="3"/></g>'
+      : '<g class="prop"><path d="M103 164l84-5 4 9-86 10z" fill="#283238" stroke="#090b0d" stroke-width="4"/><path d="M150 168l-3 27 13 3 8-27" fill="#795532" stroke="#090b0d" stroke-width="4"/><path d="M182 164l22-1 8 6-25 3" fill="#795532" stroke="#090b0d" stroke-width="4"/><path d="M120 164l-3-12 27-2 6 13" fill="#4b5558" stroke="#090b0d" stroke-width="3"/></g>';
+  return `<svg viewBox="0 0 240 340" role="img" aria-label="${kind === 'igl' ? 'Тактический капитан с блокнотом' : kind === 'awp' ? 'Снайпер с AWP' : 'Штурмовик с автоматом'}">
+    <defs><linearGradient id="suit" x2="1" y2="1"><stop stop-color="#68716d"/><stop offset=".5" stop-color="#303b39"/><stop offset="1" stop-color="#151c1c"/></linearGradient><linearGradient id="vest" x2="0" y2="1"><stop stop-color="#8b7956"/><stop offset="1" stop-color="#35372d"/></linearGradient></defs>
+    <ellipse cx="120" cy="326" rx="76" ry="10" fill="#000" opacity=".55"/>
+    <g class="actor-body"><path d="M88 224l-8 93 28 0 16-75 12 75 30 0-8-98" fill="#202729" stroke="#111719" stroke-width="7"/><path d="M81 309l-2 20 38 0 5-11-21-9M151 309l-1 20 40 0-1-12-24-9" fill="#101619" stroke="#07090a" stroke-width="5"/>
+    <path d="M82 116q38-28 77 0l24 106q-55 31-113 0z" fill="url(#suit)" stroke="#111719" stroke-width="7"/><path d="M91 132l28 10 28-10 20 86q-42 20-84 0z" fill="url(#vest)" stroke="#252a25" stroke-width="5"/><path d="M101 153h43v17h-43zM98 181h50v18H98z" fill="#252d2b" stroke="#9c8a60" stroke-width="3"/><path d="M115 111l2-20h25l4 21" fill="#9a775d" stroke="#1a1d1c" stroke-width="5"/>
+    <path d="M105 44q14-21 34 0l12 43-12 29h-34l-12-29z" fill="#c4a187" stroke="#111719" stroke-width="6"/><path d="M92 77q24-24 56 0l-5 28q-23 17-46 0z" fill="#1a2223"/><path d="M98 84h44l-4 12h-36z" fill="#77817c"/><path d="M91 54q-4-34 27-39 35 1 35 38l-12-12-40 2z" fill="#303a38" stroke="#111719" stroke-width="6"/><path d="M104 45h37" stroke="#a9b09d" stroke-width="4"/>
+    <path d="M83 128q-20 17-25 54l18 11 31-51M158 126q25 11 31 37l-19 15-28-34" fill="none" stroke="#303b39" stroke-width="20" stroke-linecap="round"/><path d="M59 180l-12 18 18 13 17-20M183 164l20 13-8 19-19-10" fill="#b28c6f" stroke="#111719" stroke-width="5"/>
+    ${weapon}
+    <path d="M83 229q39 19 88-1" fill="none" stroke="#c0a06b" stroke-width="5"/><path d="M105 218l-4 20 17 4 5-22M137 219l2 21 18-3-4-20" fill="#202a29" stroke="#111" stroke-width="3"/></g>
+  </svg>`;
+}
+function walkSceneH(x) {
+  const c=x.c, kind=c.role===4?'igl':c.role===0?'awp':'rifle';
+  return `<div class="walk-scene"><div class="walk-card">${cardH(c,{stats:true})}</div><div class="operator op-${kind}">${actorH(c)}</div><div class="walk-caption">${kind==='igl'?'КАПИТАН · ТАКТИЧЕСКИЙ РАЗБОР':kind==='awp'?'СНАЙПЕР · КОНТРОЛЬ ДИСТАНЦИИ':'БОЕЦ · ПРОВЕРКА ПОЗИЦИЙ'}</div></div>`;
+}
+function rareSeq(i, done) {
+  const x=OV.cards[i], c=x.c, k=hsh(c.nick)%4;
+  const sc=$('#scan'); if(sc) sc.classList.add('glitch');
+  later(650,()=>{if(!OV||OV.phase!=='scan')return;$('#po-stage').innerHTML='';$('#po-name').innerHTML='';$('#po-bg').style.setProperty('--gl','#000000');
+    later(650,()=>{if(!OV||OV.phase!=='scan')return;sfx('rare');$('#po-stage').innerHTML=`<p class="rare-t" style="--gl:${glow(c)}">${c.sp===2?'ОБНАРУЖЕН MVP':c.sp===1?'ИГРОК НЕДЕЛИ':'РЕДКИЙ ИГРОК'}</p>`;
+      later(1050,()=>{if(!OV||OV.phase!=='scan')return;$('#arena').innerHTML=`<div class="arena a${k}" style="--tc:${teamCol(c)}"><i></i><i></i><i></i><b></b></div>`;$('#po-top').textContent=ARENAS[k];
+        $('#po-stage').innerHTML=walkSceneH(x);
+        later(2200,()=>{if(!OV||OV.phase!=='scan')return;flashNow();burst(glow(c),100,$('.walk-card'));sfx('stop',4);$('#po-name').innerHTML=nameH(x);if(done)later(900,done);else later(900,()=>afterOne(i));});
       });
     });
   });
+}
+function poRevealAll() {
+  if(!OV||OV.phase!=='scan')return;
+  const rareIndex=OV.cards.length-1, rare=isRare(OV.type,OV.cards[rareIndex].c);
+  $('#po-top').textContent='ПЯТЬ КАРТОЧЕК · ПОЛНОЕ ОТКРЫТИЕ';
+  $('#po-stage').innerHTML=`<div class="all-reveal">${rare?walkSceneH(OV.cards[rareIndex]):''}<div class="all-cards">${OV.cards.map((x,i)=>`<div class="all-card" style="--delay:${i*130}ms">${cardH(x.c,{cls:'xs'})}<span>${esc(x.c.nick)}</span></div>`).join('')}</div></div>`;
+  $('#po-bg').style.setProperty('--gl',glow(OV.cards[rareIndex].c));
+  $('#po-name').innerHTML='<b>Все пять карточек открыты</b><span class="sm mut">Нажмите «Забрать», чтобы продолжить</span>';
+  OV.phase='done';sfx(rare?'rare':'stop',rare?null:2);if(rare)flashNow();
+  $('#po-btn').innerHTML='<button class="btn pri" data-act="ovClose" style="width:100%">Забрать карточки</button>';
 }
 function poDone() {
   if (!OV || OV.t !== 'pack') return; OV.phase = 'done';
   const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0];
   $('#arena').innerHTML = ''; $('#tray').innerHTML = ''; $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · 5 карточек`;
   $('#po-bg').style.setProperty('--gl', glow(top.c));
-  $('#po-stage').innerHTML = `<div class="grid" style="width:100%">${l.map((x, i) => `<div class="plain big" style="gap:4px;animation-delay:${i * 70}ms"><button data-act="card" data-id="${x.c.id}" aria-label="${esc(x.c.nick)}">${cardH(x.c, { lv: own(x.c.id).lv, pips: true })}</button><span class="bdg ${x.isNew ? 'new' : 'dup'}" style="align-self:flex-start">${x.isNew ? 'новая' : 'дубль'}</span></div>`).join('')}</div>`;
+  $('#po-stage').innerHTML = `<div class="grid" style="width:100%">${l.map((x, i) => `<div class="plain big" style="gap:4px;animation-delay:${i * 90}ms"><button data-act="card" data-id="${x.c.id}" aria-label="${esc(x.c.nick)}">${cardH(x.c, { lv: own(x.c.id).lv, pips: true })}</button><span class="bdg ${x.isNew ? 'new' : 'dup'}" style="align-self:flex-start">${x.isNew ? 'новая' : 'дубль'}</span></div>`).join('')}</div>`;
   $('#po-name').innerHTML = `<b style="color:${glow(top.c)}">Лучшая: ${esc(top.c.nick)}</b><span class="sm mut">Новых карточек: ${l.filter(x => x.isNew).length} из 5</span>`;
   $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose">Забрать</button>';
 }
@@ -560,7 +613,7 @@ const ACT = {
   daily() { if (dailyReady(G, now())) { G.daily = mskDay(now()); G.packs.basic++; tab = 'packs'; } },
   open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
   buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
-  poTap() { poTap(); return false; },
+  poTap() { return poTap(); }, poAll() { return poAll(); }, poNext() { return poNext(); },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
   fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1 }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },

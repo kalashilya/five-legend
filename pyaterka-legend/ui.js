@@ -384,7 +384,7 @@ async function showCase3D(x, showAll = false) {
   const box=new THREE.BoxGeometry(1,1,1),sphere=new THREE.SphereGeometry(1,24,18);
   const add=(parent,geo,ma,pos,scale,rot)=>{const o=new THREE.Mesh(geo,ma);o.position.set(...pos);if(scale)o.scale.set(...scale);if(rot)o.rotation.set(...rot);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;};
   try{
-    const {GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/loaders/GLTFLoader.js/+esm');
+    const {GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/loaders/GLTFLoader.js');
     const gltf=await new GLTFLoader().loadAsync('https://raw.githubusercontent.com/cktang88/3d-fps/main/public/assets/models/characters/soldier.glb');
     if(token!==CASE3D_RUN||!canvas.isConnected)return false;
     model=gltf.scene;const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3());

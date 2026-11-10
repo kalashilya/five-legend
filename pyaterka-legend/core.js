@@ -64,6 +64,12 @@ function pickIn(rar) {
 function openPack(type) {
   const P = PACKS[type], out = []; let best = 0;
   for (let i = 0; i < 5; i++) { let r = rollRar(P.odds); if (i === 4 && best < P.min) r = Math.max(r, P.min); best = Math.max(best, r); out.push(pickIn(r)); }
+  // ВРЕМЕННЫЙ ТЕСТ: кейс «Про» гарантирует хотя бы одного игрока с рейтингом 87+.
+  // Остальные четыре карточки и все остальные кейсы используют обычные вероятности.
+  if (type === 'pro' && !out.some(c => c.ovr >= 87)) {
+    const highRated = ALL.filter(c => c.ovr >= 87);
+    if (highRated.length) out[ri(0, out.length - 1)] = pick(highRated);
+  }
   return shuffle(out);
 }
 

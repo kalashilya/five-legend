@@ -198,8 +198,9 @@ function vProf() {
 
 /* ---------- Нижний лист: карточка, выбор в слот, сравнение ---------- */
 function abH(c, lv) {
-  const pw = Math.round(abPow(c, lv) * 100), i = indOf(c);
-  return `<div class="ab" style="--rc:${glow(c)}"><b>${AB_BASE[c.role].n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${AB_BASE[c.role].d} Работает только на роли «${RNAME[c.role]}».</div><div class="ab"><b>${i.n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${i.d}${IND[c.nick] ? '' : ' Индивидуальная способность появится после загрузки статистики HLTV.'}</div>`;
+  const pw = Math.round(abPow(c, lv) * 100), ipw = Math.round(indPow(c, lv) * 100), i = indOf(c);
+  const source = c.hltv ? `HLTV · ${c.hltv.last12m.maps} карт за 12 мес. · обновлено ${c.hltv.snapshotDate}` : 'Предварительные характеристики: статистика HLTV ещё не подключена.';
+  return `<p class="sm mut" style="margin:0 0 8px">${source}</p><div class="ab" style="--rc:${glow(c)}"><b>${AB_BASE[c.role].n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${AB_BASE[c.role].d} Работает только на роли «${RNAME[c.role]}».</div><div class="ab"><b>${i.n} <span class="num mut" style="font-size:12px">${ipw}%</span></b>${i.d}${IND[c.nick] ? '' : ' Индивидуальная способность появится после загрузки статистики HLTV.'}</div>`;
 }
 function vSheet() {
   if (!sheet) return '';

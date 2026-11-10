@@ -319,7 +319,7 @@ function scanStep(i) {
   $('#po-stage').innerHTML = `<div class="scan" id="scan" style="--gl:#8fd8ff"><div class="scan-fr"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg><i class="scan-ln"></i><div class="scan-tx" id="scan-tx"></div></div></div>`;
   $('#po-name').innerHTML = `<span class="mut">Сканирование ${i + 1} из ${OV.cards.length}</span>`;
   lines.forEach((t, k) => later(180 + k * 190, () => { if (OV.phase !== 'scan') return; const x = $('#scan-tx'); if (x) { x.insertAdjacentHTML('beforeend', `<span>${esc(t)}</span>`); sfx('scan'); } }));
-  const rare = i === OV.cards.length - 1 && isRare(OV.type, c);
+  const rare = c.ovr >= 87 || (i === OV.cards.length - 1 && isRare(OV.type, c));
   later(950, () => rare ? rareSeq(i) : reveal(i));
 }
 function trayPut(i) { const t = $('#tray'); if (t && t.children[i]) { t.children[i].className = 'on'; t.children[i].innerHTML = cardH(OV.cards[i].c, { cls: 'xs' }); } }
@@ -477,9 +477,10 @@ function rareSeq(i, done) {
 function poRevealAll() {
   if(!OV||OV.phase!=='scan')return;
   const rareIndex=OV.cards.length-1, rare=isRare(OV.type,OV.cards[rareIndex].c);
+  const showcaseIndex=OV.cards.reduce((best,x,i)=>x.c.ovr>OV.cards[best].c.ovr?i:best,0);
   $('#po-top').textContent='ПЯТЬ КАРТОЧЕК · ПОЛНОЕ ОТКРЫТИЕ';
-  if(rare && OV.cards[rareIndex].c.ovr>=87) showCase3D(OV.cards[rareIndex],true);
-  else $('#po-stage').innerHTML=`<div class="all-reveal">${rare?walkSceneH(OV.cards[rareIndex]):''}<div class="all-cards">${OV.cards.map((x,i)=>`<div class="all-card" style="--delay:${i*130}ms">${cardH(x.c,{cls:'xs'})}<span>${esc(x.c.nick)}</span></div>`).join('')}</div></div>`;
+  if(OV.cards[showcaseIndex].c.ovr>=87) showCase3D(OV.cards[showcaseIndex],true);
+  else $('#po-stage').innerHTML=`<div class="all-reveal"><div class="all-cards">${OV.cards.map((x,i)=>`<div class="all-card" style="--delay:${i*130}ms">${cardH(x.c,{cls:'xs'})}<span>${esc(x.c.nick)}</span></div>`).join('')}</div></div>`;
   $('#po-bg').style.setProperty('--gl',glow(OV.cards[rareIndex].c));
   $('#po-name').innerHTML='<b>Все пять карточек открыты</b><span class="sm mut">Нажмите «Забрать», чтобы продолжить</span>';
   OV.phase='done';sfx(rare?'rare':'stop',rare?null:2);if(rare)flashNow();

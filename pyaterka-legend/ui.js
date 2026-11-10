@@ -63,12 +63,13 @@ function probe(s, i) {
 }
 function faceH(c) {
   const s = slug(c.nick);
-  let u = IMG[c.base];
+  // Используем только точный URL фотографии, сохранённый из профиля HLTV.
+  // Не конструируем адрес по profileId: у HLTV CDN URL содержит уникальный токен.
+  let u = c.hltv && typeof c.hltv.photo === 'string' && /^https:\/\/img-cdn\.hltv\.org\//.test(c.hltv.photo)
+    ? c.hltv.photo : IMG[c.base];
   if (!u && s && typeof PH[s] === 'string') u = PH[s];
   if (!u && s && PH[s] === undefined) { PH[s] = 0; probe(s, 0); }
-  if (u) return `<img class="ph" src="${u}" alt="" loading="lazy">`;
-  const hltvId = c.hltv && Number(c.hltv.profileId);
-  if (hltvId > 0) return `<img class="ph hltv-photo" src="https://static.hltv.org/images/playerprofile/bodyshot/compressed/${hltvId}.png" alt="${esc(c.nick)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://static.hltv.org/images/playerprofile/bodyshot/unknown.png'">`;
+  if (u) return `<img class="ph" src="${u}" alt="${esc(c.nick)}" loading="lazy" referrerpolicy="no-referrer">`;
   return `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
 }
 function cardH(c, o = {}) {

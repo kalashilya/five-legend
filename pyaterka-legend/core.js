@@ -11,9 +11,10 @@ const CARDS = {}, POOL = [[], [], [], [], []], IFP = [[], [], [], [], []], MVPP 
 (function build() {
   const rows = {};
   const mk = (id, row, add, sp, rar) => {
-    const [nick, t, role, o, pid, , hist] = row, ovr = Math.min(99, o + add), st = {};
-    for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
-    return CARDS[id] = { id, base: pid, nick, team: TM[t], t: Math.min(t, 100), role, ovr, rar, sp, hist: !!hist, st };
+    const [nick, t, role, o, pid, , hist, rawStats, hltv] = row, ovr = Math.min(99, o + add), st = {};
+    if (Array.isArray(rawStats) && rawStats.length === SK.length) SK.forEach((k, i) => st[k] = clamp(Math.round(rawStats[i] + add), 40, 99));
+    else for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
+    return CARDS[id] = { id, base: pid, nick, team: TM[t], t: Math.min(t, 100), role, ovr, rar, sp, hist: !!hist, st, hltv: hltv || null };
   };
   PL.forEach(row => { rows[row[4]] = row; POOL[row[5]].push(mk(row[4], row, 0, 0, row[5])); });
   SPM.forEach(pid => { if (rows[pid]) MVPP.push(mk(M_ID + pid, rows[pid], 3, 2, 4)); });
@@ -31,10 +32,18 @@ const AB_BASE = [
   { n: 'Тайминг', d: 'Усиливает команду, когда она отстаёт по счёту, и в решающем раунде.' },
   { n: 'Чтение игры', d: 'Смягчает неудачный выбор направления.' }
 ];
-const AB_IND = { team: { n: 'Командная игра', d: 'Небольшой бонус команде, пока игрок на своей роли.' } };
-const IND = {};                            // ник -> ключ AB_IND; заполняется по данным HLTV
+const AB_IND = {
+  team: { n: 'Командная игра', d: 'Небольшой универсальный вклад в командное исполнение.', mult: 1 },
+  duelist: { n: 'Дуэлянт', d: 'Высокий HLTV Firepower: усиливает индивидуальный вклад в ключевых дуэлях.', mult: 1.08 },
+  sniper: { n: 'Снайпер', d: 'Высокий HLTV Sniping: сильнее влияет на индивидуальный вклад в раунде.', mult: 1.1 },
+  entry: { n: 'Первый контакт', d: 'Высокий HLTV Opening: усиливает вклад при поиске первых дуэлей.', mult: 1.1 },
+  support: { n: 'Поддержка', d: 'Высокий HLTV Utility: усиливает вклад гранат и командного взаимодействия.', mult: 1.08 },
+  anchor: { n: 'Опорник', d: 'Высокий HLTV Closing: сильнее влияет на поздние стадии раунда.', mult: 1.08 }
+};
+const IND = { donk: 'duelist', ZywOo: 'sniper', m0NESY: 'sniper', Vexite: 'entry', jks: 'support', insani: 'entry', blameF: 'anchor', asap: 'duelist', JamYoung: 'support', Senzu: 'entry' };
 const indOf = c => AB_IND[IND[c.nick] || 'team'];
 const abPow = (c, lv) => (1 + .1 * (lv - 1)) * (c.sp ? 1.3 : 1);
+const indPow = (c, lv) => abPow(c, lv) * (indOf(c).mult || 1);
 
 /* ---------- Паки ---------- */
 const PACKS = {
@@ -75,7 +84,7 @@ function addXp(G, x) { G.xp += x; let up = 0; while (G.xp >= 100 * G.lvl) { G.xp
 
 /* ---------- Состав ---------- */
 /* squad: массив из 5 { c: карточка, lv } по слотам ролей */
-function effOf(e, slot) { const pen = e.c.role === slot ? 0 : 5, add = e.lv - 1 - pen, st = {}; for (const k of SK) st[k] = e.c.st[k] + add; return { c: e.c, lv: e.lv, ovr: e.c.ovr + add, st, off: pen > 0, pw: pen ? 0 : abPow(e.c, e.lv) }; }
+function effOf(e, slot) { const pen = e.c.role === slot ? 0 : 5, add = e.lv - 1 - pen, st = {}; for (const k of SK) st[k] = e.c.st[k] + add; return { c: e.c, lv: e.lv, ovr: e.c.ovr + add, st, off: pen > 0, pw: pen ? 0 : abPow(e.c, e.lv), ipw: pen ? 0 : indPow(e.c, e.lv) }; }
 function squadOf(G) { return G.squad.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id] ? G.cards[id].lv : 1 }); }
 function squadInfo(sq) {
   if (sq.some(x => !x)) return null;
@@ -243,7 +252,7 @@ class Match {
     const mapV = s => (s === 'D' ? 1 : -1) * this.map.ct / 2, hot = s => s.ws >= 2 ? 1.5 : 0;
     /* вклад ролей и способностей */
     const role = (s, pl, behind) => {
-      const e = s.info.e, util = (e[2].st.utl - 70) / 6 * T_UTIL[pl.tempo] * (1 + .25 * e[2].pw), lurk = behind || this.decider ? .8 * e[3].pw : 0, ind = e.reduce((x, y) => x + .3 * y.pw, 0);
+      const e = s.info.e, util = (e[2].st.utl - 70) / 6 * T_UTIL[pl.tempo] * (1 + .25 * e[2].pw), lurk = behind || this.decider ? .8 * e[3].pw : 0, ind = e.reduce((x, y) => x + .3 * y.ipw, 0);
       return util + lurk + ind;
     };
     const avg = a.info.e.reduce((x, y) => x + y.ovr, 0) / 5, fN = plan.focus >= 0 ? this.hist.slice(-4).filter(x => x.focus === plan.focus).length : 0;

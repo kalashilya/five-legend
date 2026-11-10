@@ -16,30 +16,48 @@ function migrate(d, now) {
   }
   return d.v === SAVE_V ? normalize(d, now) : null;
 }
+function cleanReward(r) {
+  if (!r || typeof r !== 'object' || Array.isArray(r)) return null;
+  const out = {};
+  if (Number.isFinite(r.coins) && r.coins > 0) out.coins = Math.floor(r.coins);
+  if (r.pack && typeof r.pack === 'object' && !Array.isArray(r.pack)) {
+    const pack = {};
+    for (const k of ['basic', 'pro', 'elite']) if (Number.isFinite(r.pack[k]) && r.pack[k] > 0) pack[k] = Math.floor(r.pack[k]);
+    if (Object.keys(pack).length) out.pack = pack;
+  }
+  if (Number.isInteger(r.pick) && r.pick >= 0 && r.pick < POOL.length) out.pick = r.pick;
+  return Object.keys(out).length ? out : null;
+}
+function cleanTask(t) {
+  if (!t || typeof t !== 'object' || Array.isArray(t) || typeof t.k !== 'string' || typeof t.t !== 'string' || !Number.isFinite(t.n) || t.n <= 0) return null;
+  const r = cleanReward(t.r);
+  if (!r) return null;
+  return Object.assign({}, t, { n: Math.max(1, Math.floor(t.n)), p: Number.isFinite(t.p) ? clamp(Math.floor(t.p), 0, Math.floor(t.n)) : 0, r, claimed: t.claimed === true });
+}
 function normalize(G, now) {
   const num = (k, v) => { if (typeof G[k] !== 'number' || !isFinite(G[k])) G[k] = v; };
   num('coins', 0); num('tro', 0); num('best', G.tro); num('xp', 0); num('lvl', 1); num('daily', -1); num('w', 0); num('l', 0); num('tut', 3); num('frame', -1); num('sqi', 0);
   G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.lvl = Math.max(1, G.lvl); G.sqi = clamp(G.sqi | 0, 0, 2);
-  G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs);
+  G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});\n  for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
-  for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !(o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
+  for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !Number.isFinite(+o.n) || !(+o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
   delete G.squad;
-  G.squads = [0, 1, 2].map(i => [0, 1, 2, 3, 4].map(k => { const id = G.squads[i] && G.squads[i][k]; return id != null && G.cards[id] ? +id : null; }));
+  G.squads = [0, 1, 2].map(i => { const seen = new Set(); return [0, 1, 2, 3, 4].map(k => { const id = G.squads[i] && G.squads[i][k], c = id != null && G.cards[id] ? CARDS[id] : null; if (!c || seen.has(c.nick)) return null; seen.add(c.nick); return +id; }); });
   if (!Array.isArray(G.capts)) G.capts = G.squads.map(s => { const id = s[4]; return id != null && G.cards[id] && CARDS[id] && CARDS[id].role === 4 ? +id : null; });
   G.capts = [0, 1, 2].map(i => { const id = G.capts[i]; return id != null && G.squads[i].includes(id) && CARDS[id].role === 4 ? id : null; });
   Object.defineProperty(G, 'squad', { get() { return this.squads[this.sqi]; }, set(v) { this.squads[this.sqi] = v; }, enumerable: false, configurable: true });
-  G.inbox = Array.isArray(G.inbox) ? G.inbox : []; G.picks = Array.isArray(G.picks) ? G.picks.filter(p => Array.isArray(p) && p.every(id => CARDS[id])) : [];
+  G.inbox = Array.isArray(G.inbox) ? G.inbox.map(x => { const r = x && cleanReward(x.r); return x && typeof x.t === 'string' && r ? { t: x.t, r } : null; }).filter(Boolean) : [];\n  G.picks = Array.isArray(G.picks) ? G.picks.filter(p => Array.isArray(p) && p.length === 3 && p.every(id => CARDS[id]) && p.every(id => CARDS[id].rar === CARDS[p[0]].rar)) : [];
   G.season = G.season && typeof G.season === 'object' && !Array.isArray(G.season) ? G.season : {};
   if (!Number.isInteger(G.season.m)) G.season.m = -1;
-  if (!Array.isArray(G.season.goals)) G.season.goals = [];
+  G.season.goals = Array.isArray(G.season.goals) ? G.season.goals.map(cleanTask).filter(Boolean) : [];
   if (!Array.isArray(G.season.hist)) G.season.hist = [];
   G.tasks = G.tasks && typeof G.tasks === 'object' && !Array.isArray(G.tasks) ? G.tasks : {};
   if (!Number.isInteger(G.tasks.day)) G.tasks.day = -1;
-  if (!Array.isArray(G.tasks.d)) G.tasks.d = [];
+  G.tasks.d = Array.isArray(G.tasks.d) ? G.tasks.d.map(cleanTask).filter(Boolean) : [];
   if (!Number.isInteger(G.tasks.week)) G.tasks.week = -1;
-  if (!Array.isArray(G.tasks.w)) G.tasks.w = [];
-  if (!('s' in G.tasks)) G.tasks.s = null;
+  G.tasks.w = Array.isArray(G.tasks.w) ? G.tasks.w.map(cleanTask).filter(Boolean) : [];
+  G.tasks.s = cleanTask(G.tasks.s);
   if (!Number.isInteger(G.tasks.sStart)) G.tasks.sStart = -99;
   if (now != null) refresh(G, now);
   return G;

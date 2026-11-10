@@ -1,4 +1,5 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Пятёрка Легенд</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Пятёрка Легенд</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0c0e11">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Oswald:wght@500;600;700&display=swap">
@@ -370,6 +371,7 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 <nav id="tabs" aria-label="Разделы"><div class="wrap"></div></nav>
 <div id="sheet" hidden></div>
 <div id="over" hidden></div>
+
 <script>
 window.__cmErr = function (m) { var a = document.getElementById('app'); if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Скопируйте этот текст и отправьте в чат:</p><p class="num sm" style="overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</p></div>'; };
 window.addEventListener('error', function (e) { window.__cmErr((e.message || 'ошибка') + ' · строка ' + (e.lineno || '?')); });
@@ -1491,4 +1493,6 @@ function start() {
   save(); buildScene(); render();
 }
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
-})();</script></body></html>
+})();
+</script>
+</body></html>

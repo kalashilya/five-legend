@@ -361,7 +361,7 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 .operator svg{display:block;width:100%;height:auto;overflow:visible}
 .actor-body{transform-origin:50% 90%;animation:operator-idle 2.8s ease-in-out infinite}
 .op-rifle .actor-body{animation:rifle-check 2.8s ease-in-out infinite}
-.op-awp .prop{transform-origin:55% 50%;animation:awp-recoil 2.5s 1.2s ease-out 1}
+.op-awp .prop{transform-origin:55% 50%;animation:awp-recoil 2.5s 1.2s ease-out 1}.op-awp .muzzle-flash{opacity:0;transform-origin:220px 163px;animation:muzzle-flash .18s 1.2s ease-out 1}
 .op-igl .prop{transform-origin:70% 55%;animation:notebook-check 2.8s ease-in-out infinite}
 .walk-caption{position:absolute;z-index:3;left:2%;right:2%;bottom:1%;text-align:center;font:600 10px var(--f-m);letter-spacing:.2em;color:var(--gl,#f2c14e);text-shadow:0 2px 10px #000;opacity:.85}
 @keyframes card-arrive{from{opacity:0;transform:perspective(900px) translateX(70px) rotateY(-28deg) scale(.72);filter:blur(8px)}to{opacity:1;transform:perspective(900px) rotateY(-13deg) scale(.94);filter:drop-shadow(0 18px 26px #000b)}}
@@ -369,6 +369,7 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 @keyframes operator-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes rifle-check{0%,100%{transform:translateY(0) rotate(0)}22%{transform:translateY(-2px) rotate(-2deg)}48%{transform:translateY(0) rotate(2.5deg)}72%{transform:translateY(-1px) rotate(-1deg)}}
 @keyframes awp-recoil{0%{transform:translateX(0)}12%{transform:translateX(-7px)}24%{transform:translateX(3px)}40%,100%{transform:translateX(0)}}
+@keyframes muzzle-flash{0%{opacity:0;transform:scale(.2)}25%{opacity:1;transform:scale(1.25)}100%{opacity:0;transform:scale(1.8)}}
 @keyframes notebook-check{0%,100%{transform:rotate(0)}35%{transform:rotate(-4deg)}65%{transform:rotate(2deg)}}
 .all-reveal{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
 .all-reveal .walk-scene{min-height:220px;max-height:260px;transform:scale(.82);transform-origin:center bottom;margin-block:-18px}
@@ -1305,7 +1306,7 @@ function actorH(c) {
   const weapon = kind === 'igl'
     ? '<g class="prop"><path d="M126 174l44-8 8 66-44 8z" fill="#c9a66b" stroke="#33271c" stroke-width="5"/><path d="M134 185l32-6M137 198l30-6M140 211l30-6" stroke="#55422e" stroke-width="3"/><path d="M130 174l-8-12 44-8 7 12" fill="#e6d3a7" stroke="#33271c" stroke-width="4"/></g>'
     : kind === 'awp'
-      ? '<g class="prop"><path d="M104 164l100-7 4 9-103 10z" fill="#252b30" stroke="#090b0d" stroke-width="4"/><path d="M160 160l4-17 25 0 3 17" fill="#3d4548" stroke="#090b0d" stroke-width="4"/><path d="M108 171l-7 24 22 2 9-25" fill="#6c5032" stroke="#090b0d" stroke-width="4"/><path d="M194 163l25-2" stroke="#aab3b8" stroke-width="3"/></g>'
+      ? '<g class="prop"><path d="M104 164l100-7 4 9-103 10z" fill="#252b30" stroke="#090b0d" stroke-width="4"/><path d="M160 160l4-17 25 0 3 17" fill="#3d4548" stroke="#090b0d" stroke-width="4"/><path d="M108 171l-7 24 22 2 9-25" fill="#6c5032" stroke="#090b0d" stroke-width="4"/><path d="M194 163l25-2" stroke="#aab3b8" stroke-width="3"/><path class="muzzle-flash" d="M219 159l12-8-4 10 9 5-14 0-6 7 1-9-8-3z" fill="#fff3b0"/></g>'
       : '<g class="prop"><path d="M103 164l84-5 4 9-86 10z" fill="#283238" stroke="#090b0d" stroke-width="4"/><path d="M150 168l-3 27 13 3 8-27" fill="#795532" stroke="#090b0d" stroke-width="4"/><path d="M182 164l22-1 8 6-25 3" fill="#795532" stroke="#090b0d" stroke-width="4"/><path d="M120 164l-3-12 27-2 6 13" fill="#4b5558" stroke="#090b0d" stroke-width="3"/></g>';
   return `<svg viewBox="0 0 240 340" role="img" aria-label="${kind === 'igl' ? 'Тактический капитан с блокнотом' : kind === 'awp' ? 'Снайпер с AWP' : 'Штурмовик с автоматом'}">
     <defs><linearGradient id="suit" x2="1" y2="1"><stop stop-color="#68716d"/><stop offset=".5" stop-color="#303b39"/><stop offset="1" stop-color="#151c1c"/></linearGradient><linearGradient id="vest" x2="0" y2="1"><stop stop-color="#8b7956"/><stop offset="1" stop-color="#35372d"/></linearGradient></defs>

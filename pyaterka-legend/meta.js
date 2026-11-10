@@ -37,7 +37,7 @@ function cleanTask(t) {
 function normalize(G, now) {
   const num = (k, v) => { if (typeof G[k] !== 'number' || !isFinite(G[k])) G[k] = v; };
   num('coins', 0); num('tro', 0); num('best', G.tro); num('xp', 0); num('lvl', 1); num('daily', -1); num('w', 0); num('l', 0); num('tut', 3); num('frame', -1); num('sqi', 0);
-  G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.lvl = Math.max(1, G.lvl); G.sqi = clamp(G.sqi | 0, 0, 2);
+  G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.best = Math.max(G.tro, Math.round(G.best)); G.xp = Math.max(0, Math.floor(G.xp)); G.w = Math.max(0, Math.floor(G.w)); G.l = Math.max(0, Math.floor(G.l)); G.lvl = Math.max(1, Math.floor(G.lvl)); G.tut = clamp(G.tut | 0, 0, 3); G.frame = clamp(G.frame | 0, -1, 6); G.sqi = clamp(G.sqi | 0, 0, 2);
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
@@ -53,7 +53,7 @@ function normalize(G, now) {
   G.season = G.season && typeof G.season === 'object' && !Array.isArray(G.season) ? G.season : {};
   if (!Number.isInteger(G.season.m)) G.season.m = -1;
   G.season.goals = Array.isArray(G.season.goals) ? G.season.goals.map(cleanTask).filter(Boolean) : [];
-  if (!Array.isArray(G.season.hist)) G.season.hist = [];
+  G.season.hist = Array.isArray(G.season.hist) ? G.season.hist.filter(x => x && Number.isInteger(x.m) && Number.isInteger(x.lg) && x.lg >= 0 && x.lg < LEAGUES.length && Number.isFinite(x.tro) && Number.isFinite(x.place) && x.place >= 1).map(x => ({ m: x.m, lg: x.lg, tro: Math.max(0, Math.round(x.tro)), place: Math.max(1, Math.floor(x.place)) })).slice(0, 24) : [];
   G.tasks = G.tasks && typeof G.tasks === 'object' && !Array.isArray(G.tasks) ? G.tasks : {};
   if (!Number.isInteger(G.tasks.day)) G.tasks.day = -1;
   G.tasks.d = Array.isArray(G.tasks.d) ? G.tasks.d.map(cleanTask).filter(Boolean) : [];

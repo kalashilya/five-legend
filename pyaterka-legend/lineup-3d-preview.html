@@ -145,7 +145,7 @@ function createStandardCard(p,index){
 }
 
 const positions=[[-4.2,0,0],[-2.1,0,-.2],[0,0,-.35],[2.1,0,-.2],[4.2,0,0]];
-let current=-1,finished=false,started=false,elapsed=0,mode='intro',cameraTarget=new THREE.Vector3(0,1.5,0);
+let current=-1,finished=false,started=false,elapsed=0,mode='intro',runSerial=0,cameraTarget=new THREE.Vector3(0,1.5,0);
 const slots=[...document.querySelectorAll('.slot')];
 const $=id=>document.getElementById(id);
 function setInfo(p,i){$('role').textContent=p.role;$('name').textContent=p.name;$('rating').textContent=p.rating;$('team').textContent=p.team+' · '+(p.rating>=91?'ELITE':p.rating>=87?'CINEMATIC':'STANDARD');$('counter').textContent='ИГРОК '+String(i+1).padStart(2,'0')+' / 05';}
@@ -161,7 +161,7 @@ function enterNext(){
  elapsed=0;mode='enter';
 }
 function finishLineup(){finished=true;mode='final';hideInfo();$('title').textContent='Единая команда';$('tierNote').textContent='FIVE LEGENDS · READY';slots.forEach(s=>s.className='slot done');$('skip').textContent='К составу';}
-function reset(){current=-1;finished=false;mode='intro';$('title').textContent='Выход состава';$('subtitle').textContent='Тёмная арена · представление игроков';$('skip').textContent='Пропустить';$('tierNote').innerHTML='87–90 · CINEMATIC<br>91–99 · ELITE INTRO';actors.forEach(a=>{a.visible=false;a.position.set(0,0,-8);a.rotation.set(0,0,0);a.userData.phase=0});standardCards.forEach(c=>{if(c){c.visible=false;c.position.z=-8;c.rotation.y=0;c.scale.setScalar(.82)}});slots.forEach(s=>s.className='slot');camera.position.set(0,3.1,13.5);cameraTarget.set(0,1.5,0);enterNext();}
+function reset(){runSerial++;current=-1;finished=false;mode='intro';$('title').textContent='Выход состава';$('subtitle').textContent='Тёмная арена · представление игроков';$('skip').textContent='Пропустить';$('tierNote').innerHTML='87–90 · CINEMATIC<br>91–99 · ELITE INTRO';actors.forEach(a=>{a.visible=false;a.position.set(0,0,-8);a.rotation.set(0,0,0);a.userData.phase=0});standardCards.forEach(c=>{if(c){c.visible=false;c.position.z=-8;c.rotation.y=0;c.scale.setScalar(.82)}});slots.forEach(s=>s.className='slot');camera.position.set(0,3.1,13.5);cameraTarget.set(0,1.5,0);enterNext();}
 function skipAll(){if(finished){reset();return}actors.forEach((a,i)=>{const p=players[i];a.visible=p.rating>=87;if(a.visible){a.position.set(positions[i][0],0,0);a.rotation.y=0;a.userData.phase=2}});standardCards.forEach((c,i)=>{if(c){c.visible=true;c.position.set(positions[i][0],1.35,0);c.rotation.y=0;c.scale.setScalar(1)}});current=4;finishLineup();}
 $('skip').addEventListener('click',()=>{if(finished){reset();return}skipAll()});
 $('replay').addEventListener('click',()=>reset());
@@ -171,10 +171,10 @@ const clockStart=performance.now();
 function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
  const pos=smoke.geometry.attributes.position;for(let i=0;i<smokeN;i++){pos.array[i*3+1]+=.12*dt;pos.array[i*3]+=(Math.sin(t*.3+i)*.0009);if(pos.array[i*3+1]>4.5)pos.array[i*3+1]=0;}pos.needsUpdate=true;
- standardCards.forEach((card,i)=>{if(!card||!card.visible)return;if(mode==='enter'&&i===current&&card.userData.phase<1){card.userData.phase+=dt;const q=Math.min(1,card.userData.phase/card.userData.duration),ease=1-Math.pow(1-q,3);card.position.z=THREE.MathUtils.lerp(-5.2,0,ease);card.rotation.y=THREE.MathUtils.lerp(Math.PI,0,ease);card.scale.setScalar(.82+.18*ease);if(q>=1){card.userData.phase=1;setTimeout(()=>{if(mode==='enter'&&current===i)enterNext()},550)}}});
+ standardCards.forEach((card,i)=>{if(!card||!card.visible)return;if(mode==='enter'&&i===current&&card.userData.phase<1){card.userData.phase+=dt;const q=Math.min(1,card.userData.phase/card.userData.duration),ease=1-Math.pow(1-q,3);card.position.z=THREE.MathUtils.lerp(-5.2,0,ease);card.rotation.y=THREE.MathUtils.lerp(Math.PI,0,ease);card.scale.setScalar(.82+.18*ease);if(q>=1){card.userData.phase=1;const run=runSerial;setTimeout(()=>{if(run===runSerial&&mode==='enter'&&current===i)enterNext()},550)}}});
  actors.forEach((a,i)=>{if(!a.visible)return;const p=players[i],phase=a.userData.phase;
   if(mode==='enter'&&i===current&&phase<2){a.userData.phase+=dt;const q=Math.min(1,a.userData.phase/a.userData.duration);const ease=1-Math.pow(1-q,3);a.position.x=THREE.MathUtils.lerp(positions[i][0]-.6,positions[i][0],ease);a.position.z=THREE.MathUtils.lerp(-5.2,positions[i][1]===0?0:positions[i][1],ease);a.rotation.y=THREE.MathUtils.lerp(Math.PI,0,Math.min(1,q*1.35));a.userData.body.position.y=Math.sin(t*2.3+i)*.018;
-   if(q>=1){a.userData.phase=2;a.rotation.y=0;a.position.set(positions[i][0],0,0);a.userData.body.rotation.y=0;setTimeout(()=>{if(mode==='enter'&&current===i)enterNext()},p.rating>=91?850:620)}
+   if(q>=1){a.userData.phase=2;a.rotation.y=0;a.position.set(positions[i][0],0,0);a.userData.body.rotation.y=0;const run=runSerial;setTimeout(()=>{if(run===runSerial&&mode==='enter'&&current===i)enterNext()},p.rating>=91?850:620)}
   }else{a.userData.body.position.y=Math.sin(t*1.6+i*.7)*.018;a.userData.body.rotation.y=Math.sin(t*.6+i)*.012;}
   if(a.userData.eliteLight){a.userData.eliteLight.intensity=1.2+Math.sin(t*2+i)*.35;}
  });

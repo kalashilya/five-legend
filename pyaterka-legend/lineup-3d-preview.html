@@ -129,6 +129,21 @@ function createOperator(p,index){
  root.visible=false;return root;
 }
 const actors=players.map(createOperator);
+const standardCards=players.map((p,i)=>p.rating<=86?createStandardCard(p,i):null);
+function createStandardCard(p,index){
+ const c=document.createElement('canvas');c.width=512;c.height=700;const x=c.getContext('2d');
+ const grad=x.createLinearGradient(0,0,512,700);grad.addColorStop(0,'#293542');grad.addColorStop(.55,'#111a24');grad.addColorStop(1,'#080c12');x.fillStyle=grad;x.fillRect(0,0,512,700);
+ x.strokeStyle='#b58b4c';x.lineWidth=5;x.strokeRect(12,12,488,676);
+ x.fillStyle='#d7b16e';x.font='700 22px Arial';x.fillText('FIVE LEGENDS',34,58);
+ x.fillStyle='#8393a4';x.font='700 18px Arial';x.fillText(p.role,34,102);
+ x.fillStyle='#eaf0f6';x.font='900 56px Arial';x.fillText(p.name,34,490);
+ x.fillStyle='#dcb76e';x.font='900 104px Arial';x.fillText(String(p.rating),34,610);
+ x.fillStyle='#9eabb9';x.font='700 17px Arial';x.fillText('STANDARD PLAYER',34,652);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+ const group=new THREE.Group();const panel=new THREE.Mesh(new THREE.PlaneGeometry(1.22,1.68),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));
+ group.add(panel);group.position.set(positions[index][0],1.35,0);group.rotation.y=0;group.visible=false;scene.add(group);return group;
+}
+
 const positions=[[-4.2,0,0],[-2.1,0,-.2],[0,0,-.35],[2.1,0,-.2],[4.2,0,0]];
 let current=-1,finished=false,started=false,elapsed=0,mode='intro',cameraTarget=new THREE.Vector3(0,1.5,0);
 const slots=[...document.querySelectorAll('.slot')];
@@ -140,14 +155,14 @@ function enterNext(){
  if(finished)return;
  current++;
  if(current>=players.length){finishLineup();return}
- const p=players[current],a=actors[current];a.visible=true;a.position.set(positions[current][0],0, -5.2);a.rotation.y=Math.PI; a.userData.targetX=positions[current][0];a.userData.phase=0;a.userData.duration=p.rating>=91?3.2:p.rating>=87?2.45:1.2;
+ const p=players[current],a=actors[current],card=standardCards[current];if(p.rating>=87){a.visible=true;a.position.set(positions[current][0],0,-5.2);a.rotation.y=Math.PI;a.userData.targetX=positions[current][0];a.userData.phase=0;a.userData.duration=p.rating>=91?3.2:2.45;}else if(card){card.visible=true;card.position.set(positions[current][0],1.35,-5.2);card.rotation.y=Math.PI;card.scale.setScalar(.82);card.userData={phase:0,duration:1.35};}
  setInfo(p,current);$('tierNote').innerHTML=p.rating>=91?'91–99 · ELITE INTRO<br>УНИКАЛЬНЫЙ ВЫХОД':p.rating>=87?'87–90 · CINEMATIC 3D<br>ПРЕМИАЛЬНЫЙ ВЫХОД':'60–86 · STANDARD<br>КАРТОЧНАЯ ПРЕЗЕНТАЦИЯ';
  slots.forEach((s,j)=>s.className='slot '+(j<current?'done':j===current?'active':''));
  elapsed=0;mode='enter';
 }
 function finishLineup(){finished=true;mode='final';hideInfo();$('title').textContent='Единая команда';$('tierNote').textContent='FIVE LEGENDS · READY';slots.forEach(s=>s.className='slot done');$('skip').textContent='К составу';}
-function reset(){current=-1;finished=false;mode='intro';$('title').textContent='Выход состава';$('subtitle').textContent='Тёмная арена · представление игроков';$('skip').textContent='Пропустить';$('tierNote').innerHTML='87–90 · CINEMATIC<br>91–99 · ELITE INTRO';actors.forEach(a=>{a.visible=false;a.position.set(0,0,-8);a.rotation.set(0,0,0);a.userData.phase=0});slots.forEach(s=>s.className='slot');camera.position.set(0,3.1,13.5);cameraTarget.set(0,1.5,0);enterNext();}
-function skipAll(){if(finished){reset();return}actors.forEach((a,i)=>{a.visible=true;a.position.set(positions[i][0],0,0);a.rotation.y=0;a.userData.phase=2});current=4;finishLineup();}
+function reset(){current=-1;finished=false;mode='intro';$('title').textContent='Выход состава';$('subtitle').textContent='Тёмная арена · представление игроков';$('skip').textContent='Пропустить';$('tierNote').innerHTML='87–90 · CINEMATIC<br>91–99 · ELITE INTRO';actors.forEach(a=>{a.visible=false;a.position.set(0,0,-8);a.rotation.set(0,0,0);a.userData.phase=0});standardCards.forEach(c=>{if(c){c.visible=false;c.position.z=-8;c.rotation.y=0;c.scale.setScalar(.82)}});slots.forEach(s=>s.className='slot');camera.position.set(0,3.1,13.5);cameraTarget.set(0,1.5,0);enterNext();}
+function skipAll(){if(finished){reset();return}actors.forEach((a,i)=>{const p=players[i];a.visible=p.rating>=87;if(a.visible){a.position.set(positions[i][0],0,0);a.rotation.y=0;a.userData.phase=2}});standardCards.forEach((c,i)=>{if(c){c.visible=true;c.position.set(positions[i][0],1.35,0);c.rotation.y=0;c.scale.setScalar(1)}});current=4;finishLineup();}
 $('skip').addEventListener('click',()=>{if(finished){reset();return}skipAll()});
 $('replay').addEventListener('click',()=>reset());
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.fov=w<650?43:34;camera.updateProjectionMatrix();const scale=w<650?1.22:1;actors.forEach(a=>a.scale.setScalar(scale));}
@@ -156,6 +171,7 @@ const clockStart=performance.now();
 function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
  const pos=smoke.geometry.attributes.position;for(let i=0;i<smokeN;i++){pos.array[i*3+1]+=.12*dt;pos.array[i*3]+=(Math.sin(t*.3+i)*.0009);if(pos.array[i*3+1]>4.5)pos.array[i*3+1]=0;}pos.needsUpdate=true;
+ standardCards.forEach((card,i)=>{if(!card||!card.visible)return;if(mode==='enter'&&i===current&&card.userData.phase<1){card.userData.phase+=dt;const q=Math.min(1,card.userData.phase/card.userData.duration),ease=1-Math.pow(1-q,3);card.position.z=THREE.MathUtils.lerp(-5.2,0,ease);card.rotation.y=THREE.MathUtils.lerp(Math.PI,0,ease);card.scale.setScalar(.82+.18*ease);if(q>=1){card.userData.phase=1;setTimeout(()=>{if(mode==='enter'&&current===i)enterNext()},550)}}});
  actors.forEach((a,i)=>{if(!a.visible)return;const p=players[i],phase=a.userData.phase;
   if(mode==='enter'&&i===current&&phase<2){a.userData.phase+=dt;const q=Math.min(1,a.userData.phase/a.userData.duration);const ease=1-Math.pow(1-q,3);a.position.x=THREE.MathUtils.lerp(positions[i][0]-.6,positions[i][0],ease);a.position.z=THREE.MathUtils.lerp(-5.2,positions[i][1]===0?0:positions[i][1],ease);a.rotation.y=THREE.MathUtils.lerp(Math.PI,0,Math.min(1,q*1.35));a.userData.body.position.y=Math.sin(t*2.3+i)*.018;
    if(q>=1){a.userData.phase=2;a.rotation.y=0;a.position.set(positions[i][0],0,0);a.userData.body.rotation.y=0;setTimeout(()=>{if(mode==='enter'&&current===i)enterNext()},p.rating>=91?850:620)}

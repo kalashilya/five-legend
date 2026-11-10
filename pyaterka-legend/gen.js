@@ -26,7 +26,7 @@ rows.forEach(([rk, pts, name, ros], ti) => {
   { const have = new Set(Object.values(role)); const need = [1, 2, 3].filter(r => !have.has(r)).concat([1, 2, 3]); rest().forEach((n, i) => role[n] = need[i]); }
   for (const n of ps) {
     seen.add(n.toLowerCase());
-    const old = reg.cards[n.toLowerCase() + '|' + name], h = hltvStats(n, role[n]);
+    const old = reg.cards[n.toLowerCase() + '|' + name.trim()], h = hltvStats(n, role[n]);
     const o = tb + ((hsh(n) % 400) / 100 - 2) + (STAR[n] || 0) - (role[n] === 4 && !(n in STAR) ? 2.5 : 0);
     cur.push([n, ti, role[n], h ? h.ovr : Math.round(Math.max(58, Math.min(96, o))), h ? h.st : old && old.st || null, h ? h.hltv : old && old.hltv || null]);
   }

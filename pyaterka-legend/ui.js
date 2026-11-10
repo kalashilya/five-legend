@@ -328,9 +328,11 @@ function afterOne(i) {
   trayPut(i); OV.index = i + 1;
   if (OV.index >= OV.cards.length) { later(420, poDone); return; }
   OV.phase = 'next';
+  const stage = $('#po-stage');
+  if (stage) stage.insertAdjacentHTML('beforeend', '<button class="po-next-hit" data-act="poNext" aria-label="Открыть следующую карточку" title="Нажмите на карточку, чтобы открыть следующую"></button>');
   const replay = OV.last3D === i ? '<button class="btn s" data-act="poReplay" style="width:100%;margin-top:6px">Повторить 3D-выход</button>' : '';
-  $('#po-btn').innerHTML = `<button class="btn pri" data-act="poNext" style="width:100%">Следующая карточка · ${OV.index + 1} из 5</button>${replay}<button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`;
-  $('#po-name').innerHTML += '<span class="sm mut">Нажмите, когда будете готовы</span>';
+  $('#po-btn').innerHTML = `${replay}<button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`;
+  $('#po-name').innerHTML += '<span class="sm mut">Нажмите на карточку, чтобы открыть следующую</span>';
 }
 function reveal(i) {
   if (OV.phase !== 'scan') return;
@@ -718,7 +720,7 @@ const ACT = {
   open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
   buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
   poTap() { return poTap(); }, poAll() { return poAll(); }, poNext() { return poNext(); },
-  poReplay() { if (!OV || OV.t !== 'pack' || OV.phase !== 'next' || OV.last3D == null) return false; const i = OV.last3D; OV.phase = 'replay'; $('#po-btn').innerHTML = '<button class="btn s" disabled style="width:100%">Повтор анимации…</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>'; showCase3D(OV.cards[i],false).then(()=>{ if (OV && OV.phase === 'replay') { OV.phase = 'next'; $('#po-name').innerHTML = nameH(OV.cards[i]) + '<span class="sm mut">Анимацию можно повторить ещё раз или перейти дальше</span>'; $('#po-btn').innerHTML = `<button class="btn pri" data-act="poNext" style="width:100%">Следующая карточка · ${OV.index + 1} из 5</button><button class="btn s" data-act="poReplay" style="width:100%;margin-top:6px">Повторить 3D-выход</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`; } }); return false; },
+  poReplay() { if (!OV || OV.t !== 'pack' || OV.phase !== 'next' || OV.last3D == null) return false; const i = OV.last3D; OV.phase = 'replay'; $('#po-btn').innerHTML = '<button class="btn s" disabled style="width:100%">Повтор анимации…</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>'; showCase3D(OV.cards[i],false).then(()=>{ if (OV && OV.phase === 'replay') { OV.phase = 'next'; const stage = $('#po-stage'); if (stage && !stage.querySelector('.po-next-hit')) stage.insertAdjacentHTML('beforeend', '<button class="po-next-hit" data-act="poNext" aria-label="Открыть следующую карточку" title="Нажмите на карточку, чтобы открыть следующую"></button>'); $('#po-name').innerHTML = nameH(OV.cards[i]) + '<span class="sm mut">Нажмите на карточку, чтобы открыть следующую</span>'; $('#po-btn').innerHTML = `<button class="btn s" data-act="poReplay" style="width:100%">Повторить 3D-выход</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`; } }); return false; },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
   fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1 }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },

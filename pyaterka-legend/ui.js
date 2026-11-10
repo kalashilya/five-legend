@@ -62,9 +62,14 @@ function probe(s, i) {
   im.onerror = () => probe(s, i + 1); im.src = u;
 }
 function faceH(c) {
-  const s = slug(c.nick); let u = IMG[c.base];
-  if (!u && s) { if (typeof PH[s] === 'string') u = PH[s]; else if (PH[s] === undefined) { PH[s] = 0; probe(s, 0); } }
-  return u ? `<img class="ph" src="${u}" alt="" loading="lazy">` : `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
+  const s = slug(c.nick);
+  let u = IMG[c.base];
+  if (!u && s && typeof PH[s] === 'string') u = PH[s];
+  if (!u && s && PH[s] === undefined) { PH[s] = 0; probe(s, 0); }
+  if (u) return `<img class="ph" src="${u}" alt="" loading="lazy">`;
+  const hltvId = c.hltv && Number(c.hltv.profileId);
+  if (hltvId > 0) return `<img class="ph hltv-photo" src="https://static.hltv.org/images/playerprofile/bodyshot/compressed/${hltvId}.png" alt="${esc(c.nick)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://static.hltv.org/images/playerprofile/bodyshot/unknown.png'">`;
+  return `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
 }
 function cardH(c, o = {}) {
   const lv = o.lv || 1, add = lv - 1;

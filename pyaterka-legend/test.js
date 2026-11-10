@@ -57,7 +57,7 @@ ok('сохранение переживает перезапуск без пот
 ok('версия 1 переносится: особые карточки, состав, монеты и уровень сохраняются', () => {
   const v1 = { v: 1, coins: 777, tro: 640, best: 700, xp: 30, lvl: 4, cards: { 0: { n: 2, lv: 3 }, 1000: { n: 1, lv: 1 }, 2003: { n: 1, lv: 2 }, 16: { n: 1, lv: 1 }, 26: { n: 1, lv: 1 }, 2: { n: 1, lv: 1 }, 17: { n: 3, lv: 1 } }, squad: [2003, 1000, 26, 2, 17], packs: { basic: 1, pro: 0, elite: 2 }, daily: NOW - 3600000, w: 9, l: 4 };
   const g = E.migrate(JSON.parse(JSON.stringify(v1)), NOW);
-  assert.strictEqual(g.v, 2); assert.strictEqual(g.coins, 777); assert.strictEqual(g.lvl, 4); assert.strictEqual(g.tro, 640);
+  assert.strictEqual(g.v, 2); assert.strictEqual(g.coins, 817); assert.strictEqual(g.streak.day, 1); assert.strictEqual(g.lvl, 4); assert.strictEqual(g.tro, 640);
   assert.deepStrictEqual(g.cards[0], { n: 2, lv: 3 }); assert(g.cards[E.W_ID] && g.cards[E.M_ID + 3].lv === 2); assert(!g.cards[1000] && !g.cards[2003]);
   assert.deepStrictEqual(g.squad, [E.M_ID + 3, E.W_ID, 26, 2, 17]); assert.strictEqual(E.CARDS[E.M_ID + 3].nick, E.CARDS[3].nick);
   assert.strictEqual(g.capts[0], 17); assert.strictEqual(g.tut, 3); assert.strictEqual(E.dailyReady(g, NOW), false); assert.strictEqual(g.tasks.d.length, 4);

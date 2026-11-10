@@ -24,6 +24,15 @@ jobs:
         run: |
           node gen.js
           git diff --exit-code -- data.js ids.json
+      - name: Check JavaScript syntax
+        working-directory: pyaterka-legend
+        run: |
+          node --check gen.js
+          node --check data.js
+          node --check core.js
+          node --check meta.js
+          node --check ui.js
+          node --check test.js
       - name: Build offline game and run logic tests
         working-directory: pyaterka-legend
         run: |

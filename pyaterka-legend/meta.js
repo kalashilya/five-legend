@@ -26,7 +26,7 @@ function normalize(G, now) {
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
   delete G.squad;
   G.squads = [0, 1, 2].map(i => [0, 1, 2, 3, 4].map(k => { const id = G.squads[i] && G.squads[i][k]; return id != null && G.cards[id] ? +id : null; }));
-  if (!Array.isArray(G.capts)) G.capts = G.squads.map(s => s[4] != null && CARDS[s[4]].role === 4 ? s[4] : null);
+  if (!Array.isArray(G.capts)) G.capts = G.squads.map(s => { const id = s[4]; return id != null && G.cards[id] && CARDS[id] && CARDS[id].role === 4 ? +id : null; });
   G.capts = [0, 1, 2].map(i => { const id = G.capts[i]; return id != null && G.squads[i].includes(id) && CARDS[id].role === 4 ? id : null; });
   Object.defineProperty(G, 'squad', { get() { return this.squads[this.sqi]; }, set(v) { this.squads[this.sqi] = v; }, enumerable: false, configurable: true });
   G.inbox = Array.isArray(G.inbox) ? G.inbox : []; G.picks = Array.isArray(G.picks) ? G.picks.filter(p => Array.isArray(p) && p.every(id => CARDS[id])) : [];

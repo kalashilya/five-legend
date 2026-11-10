@@ -13,7 +13,8 @@ pyaterka-legend/  — «Пятёрка Легенд», коллекционна�
   meta.js     сохранения, составы, контракты, задания, сезоны и прогресс
   ui.js       интерфейс: лобби, вскрытие кейса, матч в реальном времени, звук
   gen.js      генератор data.js из teams.txt и hltv-data.json (node gen.js)
-  teams.txt   топ-101 команд из рейтинга Valve от 2 ноября 2026\n  hltv-data.json проверенный снимок HLTV за 12 и 3 месяца (пока 10 игроков)
+  teams.txt   топ-101 команд из рейтинга Valve от 2 ноября 2026
+  hltv-data.json проверенный снимок HLTV за 12 и 3 месяца (пока 10 игроков)
   test.js     проверка игровой логики и баланса (bash build.sh && node test.js)
   build.sh    сборка одного HTML-файла из head.html, data.js, core.js, meta.js, ui.js (bash build.sh)
 

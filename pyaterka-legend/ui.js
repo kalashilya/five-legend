@@ -312,6 +312,7 @@ function poNext() {
 }
 function scanStep(i) {
   if (!OV || OV.phase !== 'scan') return;
+  $('#po-btn').innerHTML = '<span class="sm mut">Подготовка следующей карточки…</span>';
   if (i >= OV.cards.length) { poDone(); return; }
   const c = OV.cards[i].c, lines = ['РОЛЬ / ' + RNAME[c.role], 'КОМАНДА / ' + c.team, 'РЕЙТИНГ / ' + c.ovr];
   $('#po-bg').style.setProperty('--gl', '#8fa3b8');

@@ -167,6 +167,13 @@ const T = {}; for (const o of [66, 75, 85]) { T[o] = {}; for (const k in P) T[o]
 ok('игра без приказов заметно хуже любой другой', () => [66, 75, 85].forEach(o => assert(T[o].none.win < T[o].random.win - 8)));
 ok('чтение соперника выгоднее случайных решений', () => [66, 75, 85].forEach(o => assert(T[o].reader.win > T[o].random.win + 5, 'OVR ' + o)));
 ok('одно и то же направление каждый раунд наказывается', () => [66, 75, 85].forEach(o => assert(T[o].stubborn.win < T[o].reader.win - 5, 'OVR ' + o)));
+ok('матч безопасно отклоняет неизвестные карты и нормализует неверную тактику', () => {
+  const sq = mkSq(75), m = new E.Match(sq, 1200, E.squadInfo(sq).rating, { capt: 4 });
+  assert.strictEqual(m.canPlay(m.a, ['not-a-card']), false);
+  assert.strictEqual(m.canPlay(m.a, null), false);
+  const L = m.play([], { dir: 'invalid', tempo: 'invalid', focus: 99 });
+  assert(L); assert.strictEqual(m.hist[0].dirA, 'S'); assert.strictEqual(m.hist[0].focus, -1);
+});
 ok('слабый соперник ошибается чаще сильного', () => assert(E.AI_ERR[0] > E.AI_ERR[6] && E.AI_ERR.every((x, i) => i === 0 || x <= E.AI_ERR[i - 1])));
 ok('топовый соперник не непобедим, слабый не беспомощен', () => { assert(T[85].reader.win > 35 && T[85].reader.win < 80); assert(T[66].reader.win > 40 && T[66].reader.win < 85); });
 { const g = E.newProfile(NOW); g.tut = 3; E.refresh(g, NOW); let opened = 0, t = NOW; const open = k => { for (const c of E.openPack(k)) E.addCard(g, c.id); opened++; }; ['basic', 'pro', 'pro'].forEach(open);

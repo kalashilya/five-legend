@@ -17,11 +17,12 @@ const { chromium } = require('playwright');
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
+    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
     await page.goto('http://127.0.0.1:4173/', { waitUntil: 'load' });
     await page.waitForFunction(() => {
       const app = document.querySelector('#app');
       return app && app.dataset.ok === '1' && app.innerText.trim().length > 20;
-    }, { timeout: 15000 });
+    }, null, { timeout: 15000 });
     const text = await page.locator('#app').innerText();
     if (!text || text.length < 20) throw new Error('Главный экран пустой');
     if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));

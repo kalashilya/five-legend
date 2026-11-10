@@ -159,7 +159,7 @@ class Match {
   }
   draw(s) { while (s.hand.length < 4) { if (!s.deck.length) { s.deck = shuffle(s.disc); s.disc = []; } if (!s.deck.length) break; s.hand.push(s.deck.pop()); } }
   /* Приказов за раунд можно отдать сколько угодно, пока хватает импульса */
-  canPlay(s, cards) { return cards.every(k => s.hand.includes(k)) && new Set(cards).size === cards.length && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
+  canPlay(s, cards) { return !!s && Array.isArray(cards) && cards.every(k => typeof k === 'string' && AC[k] && s.hand.includes(k)) && new Set(cards).size === cards.length && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
   isPistol() { return !this.decider && (this.round === 1 || this.round === HALF + 1); }
   /* Закупка считается сама по деньгам команды; карта «Эко-раунд» заставляет сохранить деньги */
   buyOf(s, cards) { return this.isPistol() ? 'pistol' : cards && cards.includes('eco') ? 'eco' : s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
@@ -229,7 +229,10 @@ class Match {
   /* Разыграть раунд: mine — приказы игрока, plan — направление, темп и ставка на игрока */
   play(mine, plan) {
     if (this.over || !this.canPlay(this.a, mine)) return null;
-    plan = Object.assign({ dir: 'S', tempo: 'norm', focus: -1 }, plan);
+    plan = Object.assign({ dir: 'S', tempo: 'norm', focus: -1 }, plan && typeof plan === 'object' ? plan : {});
+    if (!DIRS.includes(plan.dir)) plan.dir = 'S';
+    if (!TEMPOS.includes(plan.tempo)) plan.tempo = 'norm';
+    if (!Number.isInteger(plan.focus) || plan.focus < 0 || plan.focus >= 5) plan.focus = -1;
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);

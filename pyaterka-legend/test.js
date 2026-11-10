@@ -1,20 +1,154 @@
-const E=require('./_t.js');
-console.log('cards',E.ALL.length,'pools',E.POOL.map(p=>p.length),'IF',E.IFP.map(p=>p.length),'MVP',E.MVPP.length);
-for(const t of ['basic','pro','elite']){const c=[0,0,0,0,0];let sp=0,z=0,d=0;for(let i=0;i<20000;i++)for(const x of E.openPack(t)){c[x.rar]++;if(x.sp)sp++;if(x.nick==='ZywOo')z++;if(x.nick==='donk')d++}console.log(t,c.map(x=>(x/1000).toFixed(2)+'%').join(' '),'special',(sp/1000).toFixed(2)+'%','ZywOo per 1000 packs',(z/20).toFixed(2),'donk',(d/20).toFixed(2))}
-// матч: случайная игра против ИИ при равных составах
-const mkSq=o=>[0,1,2,3,4].map(r=>({c:E.ALL.filter(x=>x.role===r&&!x.sp).sort((a,b)=>Math.abs(a.ovr-o)-Math.abs(b.ovr-o))[0],lv:1}));
-function sim(o,tro,policy,n=3000){let w=0,rounds=0;for(let i=0;i<n;i++){const sq=mkSq(o),m=new E.Match(sq,tro,E.squadInfo(sq).rating);let g=0;while(!m.over&&g++<40){m.play(policy(m))}if(m.won)w++;rounds+=m.round}return (100*w/n).toFixed(1)+'% rounds '+(rounds/n).toFixed(1)}
-const none=m=>[];
-const rand=m=>{const h=m.a.hand,o=[[]];for(let i=0;i<h.length;i++){o.push([h[i]]);for(let j=i+1;j<h.length;j++)o.push([h[i],h[j]])}const ok=o.filter(x=>m.canPlay(m.a,x));return ok[Math.floor(Math.random()*ok.length)]};
-const greedy=m=>{const h=m.a.hand,o=[[]];for(let i=0;i<h.length;i++){o.push([h[i]]);for(let j=i+1;j<h.length;j++)o.push([h[i],h[j]])}const ok=o.filter(x=>m.canPlay(m.a,x)&&!x.includes('eco')&&!x.includes('stack'));return ok.sort((a,b)=>b.reduce((s,k)=>s+E.AC[k].cost,0)-a.reduce((s,k)=>s+E.AC[k].cost,0))[0]||[]};
-// «умный»: читает стиль
-const smart=m=>{const st=m.style,h=m.a.hand;let want=st==='aggro'?['stack','awp','clutch','nades','timeout']:st==='def'?['nades','fake','awp','star','timeout','clutch']:['tempo','star','awp','clutch','timeout','cross'];let pl=[];for(const k of want){if(h.includes(k)&&m.canPlay(m.a,pl.concat(k)))pl.push(k);if(pl.length===2)break}return pl};
-for(const o of [66,75,85]){console.log('ovr',o,'pass',sim(o,(o-64)*40,none),'random',sim(o,(o-64)*40,rand),'greedy',sim(o,(o-64)*40,greedy),'smart',sim(o,(o-64)*40,smart))}
-console.log('strong squad 80 at 0 trophies greedy',sim(80,0,greedy),' weak 66 at 800 trophies',sim(66,800,greedy));
-// прогресс: 60 матчей жадной игрой, покупка базовых паков
-const G=E.newGame();let opened=0;const open=t=>{for(const c of E.openPack(t))E.addCard(G,c.id);opened++};
-['basic','pro','pro'].forEach(open);
-for(let i=0;i<60;i++){const sq=E.squadOf(G),m=new E.Match(sq,G.tro,E.squadInfo(sq).rating);while(!m.over)m.play(greedy(m));E.applyResult(G,m.won);while(G.coins>=400){G.coins-=400;open('basic')}
- // автосостав: лучший по роли
- for(let r=0;r<5;r++){const best=Object.keys(G.cards).map(id=>E.CARDS[id]).filter(c=>c.role===r).sort((a,b)=>b.ovr-a.ovr)[0];if(best)G.squad[r]=best.id}}
-console.log('after 60 matches: trophies',G.tro,'W-L',G.w+'-'+G.l,'lvl',G.lvl,'unique',Object.keys(G.cards).length,'packs opened',opened,'squad rating',E.squadInfo(E.squadOf(G)).rating.toFixed(1),'save bytes',JSON.stringify(G).length);
+/* Проверки игровой логики и баланса. Запуск: bash build.sh && node test.js  (или: cat data.js core.js meta.js > _t.js && node test.js)
+   QUICK=1 сокращает симуляции. Любая несошедшаяся проверка завершает запуск с ошибкой. */
+const assert = require('assert'), fs = require('fs'), os = require('os'), path = require('path'), cp = require('child_process');
+const E = require('./_t.js'), N = process.env.QUICK ? 600 : 3000, NOW = Date.UTC(2026, 10, 10, 12);
+let passed = 0; const ok = (name, fn) => { fn(); passed++; console.log('  ok  ' + name); };
+/* состав для симуляций: случайные обычные карточки нужной роли с рейтингом около заданного */
+const mkSq = o => { const sq = []; for (let r = 0; r < 5; r++) { const l = E.ALL.filter(x => x.role === r && !x.sp && !sq.some(q => q.c.nick === x.nick)).sort((a, b) => Math.abs(a.ovr - o) - Math.abs(b.ovr - o)).slice(0, 6); sq.push({ c: l[Math.floor(Math.random() * l.length)], lv: 1 }); } return sq; };
+const subsets = m => { const h = m.a.hand, o = []; for (let k = 0; k < 1 << h.length; k++) { const s = h.filter((x, i) => k >> i & 1); if (m.canPlay(m.a, s)) o.push(s); } return o; };
+const cost = s => s.reduce((x, k) => x + E.AC[k].cost, 0);
+const P = {
+  none: m => [[], {}],
+  random: m => { const o = subsets(m); return [o[Math.floor(Math.random() * o.length)], { dir: 'ASB'[Math.floor(Math.random() * 3)], tempo: E.TEMPOS[Math.floor(Math.random() * 3)] }]; },
+  /* «по цифрам»: берёт приказы с наибольшей суммой бонусов, которые показаны на картах; план не трогает */
+  greedy: m => { const ctx = { side: m.sideA, behind: m.a.score < m.b.score, cap: m.capIgl(m.a) }, val = k => k === 'eco' ? -9 : k === 'fake' ? 3 : E.acVal(k, m.a, ctx); return [subsets(m).sort((a, b) => b.reduce((x, k) => x + val(k), 0) - a.reduce((x, k) => x + val(k), 0))[0] || [], {}]; },
+  stubborn: m => [P.greedy(m)[0], { dir: 'A', tempo: 'fast' }],
+  /* «читающий»: пользуется разведкой, помнит точки и приказы соперника, не повторяется сам */
+  reader: m => {
+    const atk = m.sideA === 'A', it = m.nx.intel, h = m.hist.filter(x => x.side === m.sideA), c = { A: 0, B: 0, S: 0 }, mine = { A: 0, B: 0, S: 0 }; h.slice(-6).forEach(x => c[x.dirB]++); h.slice(-4).forEach(x => mine[x.dirA]++);
+    const guess = it && it.k === 'dir' ? it.v : h.length >= 2 && c.A !== c.B ? (c.A > c.B ? 'A' : 'B') : null;
+    let dir = !guess ? (Math.random() < .5 ? 'A' : 'B') : guess === 'S' ? (atk ? 'A' : 'S') : atk ? (guess === 'A' ? 'B' : 'A') : guess;
+    if (!(it && it.k === 'dir') && mine[dir] >= 3) dir = 'S';
+    const e = m.a.info.e, tempo = atk ? (e[1].st.ent >= e[2].st.utl ? 'fast' : 'slow') : 'norm', seen = {}; m.hist.slice(-6).forEach(x => x.theirs.forEach(k => seen[k] = (seen[k] || 0) + 1));
+    const ctx = { side: m.sideA, behind: m.a.score < m.b.score, cap: m.capIgl(m.a), oppStack: seen.stack >= 2, oppTempo: seen.tempo >= 2, oppNades: seen.nades >= 2 };
+    const val = k => k === 'eco' ? -9 : k === 'fake' ? 3 : E.acVal(k, m.a, ctx);
+    const cards = subsets(m).sort((a, b) => b.reduce((x, k) => x + val(k), 0) - a.reduce((x, k) => x + val(k), 0))[0] || [];
+    return [cards, { dir, tempo }];
+  }
+};
+function sim(o, tro, pol, n = N) { let w = 0, r = 0; for (let i = 0; i < n; i++) { const sq = mkSq(o), m = new E.Match(sq, tro, E.squadInfo(sq).rating, { capt: 4 }); let g = 0; while (!m.over && g++ < 40) { const [c, p] = pol(m); assert(m.play(c, p), 'раунд должен разыграться'); } assert(m.over); if (m.won) w++; r += m.hist.length; } return { win: 100 * w / n, rounds: r / n }; }
+
+console.log('1. Карточки и база');
+ok('551 карточка, номера уникальны, особые версии на месте', () => { assert.strictEqual(E.ALL.length, 551); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 551); assert.strictEqual(E.MVPP.length, 8); assert.strictEqual(E.IFP.flat().length, 43); });
+ok('редкости 240/150/75/27/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [240, 150, 75, 27, 8]));
+ok('у каждой карточки шесть показателей от 40 до 99', () => E.ALL.forEach(c => Object.values(c.st).forEach(v => assert(v >= 40 && v <= 99))));
+ok('обновление базы: трансфер создаёт новую карточку, старая остаётся архивной с тем же номером', () => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-')); for (const f of ['gen.js', 'teams.txt', 'ids.json']) fs.copyFileSync(f, path.join(d, f));
+  let t = fs.readFileSync(path.join(d, 'teams.txt'), 'utf8'); assert(t.includes('flameZ, ') && t.includes('donk, '));
+  t = t.replace('flameZ, ', '').replace('donk, ', 'donk, flameZ, '); fs.writeFileSync(path.join(d, 'teams.txt'), t);
+  cp.execFileSync('node', ['gen.js'], { cwd: d });
+  const D = new Function(fs.readFileSync(path.join(d, 'data.js'), 'utf8') + ';return {PL,TM}')(), old = E.ALL.find(c => c.nick === 'flameZ' && !c.sp);
+  const rows = D.PL.filter(p => p[0] === 'flameZ'); assert.strictEqual(rows.length, 2);
+  const arch = rows.find(p => p[6] === 1), cur = rows.find(p => p[6] === 0);
+  assert.strictEqual(arch[4], old.id); assert.strictEqual(D.TM[arch[1]], 'Vitality'); assert.strictEqual(arch[3], old.ovr); assert.strictEqual(D.TM[cur[1]], 'Spirit'); assert(cur[4] >= 500);
+  for (const c of E.ALL.filter(x => !x.sp)) assert(D.PL.some(p => p[4] === c.id && p[0] === c.nick), 'номер ' + c.id + ' сохранён');
+});
+
+console.log('2. Кейсы');
+for (const t of ['basic', 'pro', 'elite']) ok('шансы кейса «' + E.PACKS[t].n + '» совпадают с объявленными', () => {
+  const c = [0, 0, 0, 0, 0], n = N * 4; for (let i = 0; i < n; i++) { const p = E.openPack(t); assert.strictEqual(p.length, 5); for (const x of p) c[x.rar]++; assert(Math.max(...p.map(x => x.rar)) >= E.PACKS[t].min); }
+  if (t === 'basic') E.PACKS[t].odds.forEach((o, i) => assert(Math.abs(c[i] / n / 5 * 100 - o) < Math.max(1.2, o * .12), 'редкость ' + i));
+});
+
+console.log('3. Сохранение и перенос');
+const G = E.newProfile(NOW);
+ok('новый профиль: версия 2, пять карточек, три состава', () => { assert.strictEqual(G.v, 2); assert.strictEqual(Object.keys(G.cards).length, 5); assert.strictEqual(G.squads.length, 3); assert(G.squad.every(id => G.cards[id])); assert.strictEqual(G.tut, 0); });
+ok('сохранение переживает перезапуск без потерь', () => { const g2 = E.migrate(JSON.parse(JSON.stringify(G)), NOW); assert.deepStrictEqual(JSON.parse(JSON.stringify(g2)), JSON.parse(JSON.stringify(G))); assert.deepStrictEqual(g2.squad, G.squad); });
+ok('версия 1 переносится: особые карточки, состав, монеты и уровень сохраняются', () => {
+  const v1 = { v: 1, coins: 777, tro: 640, best: 700, xp: 30, lvl: 4, cards: { 0: { n: 2, lv: 3 }, 1000: { n: 1, lv: 1 }, 2003: { n: 1, lv: 2 }, 16: { n: 1, lv: 1 }, 26: { n: 1, lv: 1 }, 2: { n: 1, lv: 1 }, 17: { n: 3, lv: 1 } }, squad: [2003, 1000, 26, 2, 17], packs: { basic: 1, pro: 0, elite: 2 }, daily: NOW - 3600000, w: 9, l: 4 };
+  const g = E.migrate(JSON.parse(JSON.stringify(v1)), NOW);
+  assert.strictEqual(g.v, 2); assert.strictEqual(g.coins, 777); assert.strictEqual(g.lvl, 4); assert.strictEqual(g.tro, 640);
+  assert.deepStrictEqual(g.cards[0], { n: 2, lv: 3 }); assert(g.cards[E.W_ID] && g.cards[E.M_ID + 3].lv === 2); assert(!g.cards[1000] && !g.cards[2003]);
+  assert.deepStrictEqual(g.squad, [E.M_ID + 3, E.W_ID, 26, 2, 17]); assert.strictEqual(E.CARDS[E.M_ID + 3].nick, E.CARDS[3].nick);
+  assert.strictEqual(g.capts[0], 17); assert.strictEqual(g.tut, 3); assert.strictEqual(E.dailyReady(g, NOW), false); assert.strictEqual(g.tasks.d.length, 4);
+});
+ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
+  assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);
+  const g = E.migrate({ v: 2, coins: 'x', cards: { 5: { n: 1, lv: 9 }, 987654: { n: 2, lv: 1 } }, squads: [[5, 987654, null, null, null]] }, NOW);
+  assert.strictEqual(g.coins, 0); assert.strictEqual(g.cards[5].lv, 5); assert(!g.cards[987654] && g.orphans[987654]); assert.deepStrictEqual(g.squad, [5, null, null, null, null]); assert.strictEqual(E.squadInfo(E.squadOf(g)), null);
+});
+
+console.log('4. Карточки игрока: прокачка, продажа, состав');
+ok('прокачка до 5 уровня тратит дубликаты и монеты, выше 5 нельзя', () => {
+  const g = E.newProfile(NOW), id = g.squad[0]; g.cards[id].n = 30; g.coins = 1e6;
+  for (let lv = 1; lv < 5; lv++) { const n0 = g.cards[id].n, c0 = g.coins; assert(E.doUp(g, id)); assert.strictEqual(g.cards[id].lv, lv + 1); assert.strictEqual(n0 - g.cards[id].n, E.UP_N[lv - 1]); assert.strictEqual(c0 - g.coins, E.upCost(E.CARDS[id], lv)); }
+  assert.strictEqual(E.doUp(g, id), false); const e = E.effOf({ c: E.CARDS[id], lv: 5 }, E.CARDS[id].role); assert.strictEqual(e.ovr, E.CARDS[id].ovr + 4); assert(e.pw > E.abPow(E.CARDS[id], 1));
+});
+ok('штраф −5 за чужую роль и отключение способности', () => { const c = E.ALL.find(x => x.role === 0 && !x.sp), on = E.effOf({ c, lv: 1 }, 0), off = E.effOf({ c, lv: 1 }, 2); assert.strictEqual(on.ovr - off.ovr, 5); assert.strictEqual(off.pw, 0); assert(on.pw > 0); });
+ok('продажа: дубль и последняя копия; последняя копия из состава требует подтверждения и освобождает слот', () => {
+  const g = E.newProfile(NOW), id = g.squad[0]; g.cards[id].n = 2; const c0 = g.coins;
+  assert.strictEqual(E.sellNeedsConfirm(g, id), false); const v = E.sellOne(g, id); assert(v > 0 && g.coins === c0 + v && g.cards[id].n === 1);
+  assert.strictEqual(E.sellNeedsConfirm(g, id), true); E.sellOne(g, id); assert(!g.cards[id]); assert(g.squads.every(s => !s.includes(id))); assert.strictEqual(E.squadInfo(E.squadOf(g)), null);
+  const sp = E.MVPP[0]; g.cards[sp.id] = { n: 1, lv: 3 }; assert.strictEqual(E.sellNeedsConfirm(g, sp.id), true); assert(E.priceOf(sp, 3) > E.priceOf(sp, 1));
+});
+ok('химия: игроки одной команды и роли', () => { const t = E.ALL.filter(c => c.team === 'Vitality' && !c.sp && !c.hist), sq = [0, 1, 2, 3, 4].map(r => ({ c: t.find(c => c.role === r), lv: 1 })); assert(sq.every(x => x.c)); const i = E.squadInfo(sq); assert.strictEqual(i.mx, 5); assert.strictEqual(i.chem, 13); const m = E.squadInfo(mkSq(70)); assert(m.chem <= 13); });
+ok('капитан: только IGL, рекомендация, три состава независимы', () => {
+  const g = E.newProfile(NOW); assert.strictEqual(E.captSlot(g), 4); assert.strictEqual(E.bestCapt(g), g.squad[4]);
+  const a = E.ALL.find(c => c.role === 0 && !c.sp && c.nick !== E.CARDS[g.squad[0]].nick); E.addCard(g, a.id); E.setSlot(g, 4, a.id); assert.strictEqual(E.captSlot(g), -1); assert.strictEqual(E.bestCapt(g), null);
+  g.sqi = 1; assert.strictEqual(E.captSlot(g), 4); assert.notStrictEqual(g.squads[0][4], g.squads[1][4]);
+});
+
+console.log('5. Контракт');
+ok('10 обычных карточек одной редкости дают одну карточку той же или следующей редкости', () => {
+  const g = E.newProfile(NOW), pool = E.POOL[0].slice(0, 6); pool.forEach(c => { g.cards[c.id] = { n: 2, lv: 1 }; });
+  const ids = pool.slice(0, 5).flatMap(c => [c.id, c.id]); let inf = E.tuInfo(g, ids.slice(0, 9)); assert.strictEqual(inf.ok, false);
+  assert.strictEqual(E.tuInfo(g, ids.slice(0, 9).concat(E.POOL[1][0].id)).ok, false); assert.strictEqual(E.tuInfo(g, ids.slice(0, 9).concat(E.IFP[1][0].id)).ok, false);
+  inf = E.tuInfo(g, ids); assert(inf.ok && /–/.test(inf.up)); const before = Object.values(g.cards).reduce((s, o) => s + o.n, 0), r = E.tuRun(g, ids);
+  assert(r && !r.c.sp && (r.c.rar === 0 || r.c.rar === 1)); assert.strictEqual(Object.values(g.cards).reduce((s, o) => s + o.n, 0), before - 9); assert.strictEqual(E.tuRun(g, ids), null);
+  let up = 0; for (let i = 0; i < 2000; i++) { const g2 = E.newProfile(NOW); pool.forEach(c => { g2.cards[c.id] = { n: 2, lv: 1 }; }); const x = E.tuRun(g2, ids); if (x.up) up++; else assert(x.c.ovr >= Math.ceil(inf.avg)); } assert(Math.abs(up / 2000 - inf.p) < .05);
+  assert.strictEqual(E.tuInfo(g, E.POOL[4].slice(0, 8).map(c => c.id)).ok, false);
+});
+
+console.log('6. Матч');
+ok('матч идёт до 13 побед, стороны меняются после 12 раунда, деньги в границах', () => {
+  for (let i = 0; i < 300; i++) { const sq = mkSq(75), m = new E.Match(sq, 400, E.squadInfo(sq).rating, { capt: 4 }), s0 = m.sideA; let g = 0;
+    while (!m.over) { const [c, p] = P.random(m), r = m.round, L = m.play(c, p); g++; assert(L.kills.length >= 3 && L.kills.length <= 10); for (const t of [m.a, m.b]) assert(t.money >= 0 && t.money <= 12000 && t.en >= 0 && t.en <= 8);
+      if (r === 1 || r === 13) assert.strictEqual(L.buyA, m.hist.length === 25 ? 'full' : 'pistol'); if (r === 12 && !m.over) { assert(L.swap); assert.notStrictEqual(m.sideA, s0); assert.strictEqual(m.a.money, 800); } }
+    assert(Math.max(m.a.score, m.b.score) === 13 && g <= 25 && g === m.hist.length); assert.strictEqual(m.a.k.reduce((x, y) => x + y, 0), m.b.d.reduce((x, y) => x + y, 0)); assert.strictEqual(m.a.mv.reduce((x, y) => x + y, 0), m.a.score);
+    const rep = m.report(); assert(rep.players.length === 5 && rep.notes.length >= 1 && rep.moments.length <= 3); }
+});
+ok('счёт 12:12 приводит к одному решающему раунду с полной закупкой', () => {
+  let seen = 0; for (let i = 0; i < 4000 && seen < 5; i++) { const sq = mkSq(75), m = new E.Match(sq, 400, E.squadInfo(sq).rating, { capt: 4 }); while (!m.over) { if (m.decider) { assert.strictEqual(m.a.score, 12); assert.strictEqual(m.b.score, 12); assert.strictEqual(m.a.money, 12000); const L = m.play([], {}); assert(L.decider && L.buyA === 'full' && L.buyB === 'full' && m.over); seen++; } else m.play(...P.greedy(m)); } } assert(seen >= 1);
+});
+ok('приказов можно отдать больше двух, пока хватает импульса; без импульса нельзя', () => {
+  const sq = mkSq(75), m = new E.Match(sq, 0, 75, { capt: 4 }); m.a.en = 8; m.a.hand = ['clutch', 'timeout', 'awp', 'tempo']; assert(m.canPlay(m.a, ['clutch', 'timeout', 'awp', 'tempo'])); m.a.en = 3; assert(!m.canPlay(m.a, ['awp', 'tempo'])); assert(!m.canPlay(m.a, ['star']));
+});
+ok('без капитана нет разведки и меньше стартового импульса', () => { const sq = mkSq(75), m = new E.Match(sq, 0, 75, { capt: -1 }); assert.strictEqual(m.a.en, 2); for (let i = 0; i < 50; i++) { m.prep(); assert.strictEqual(m.nx.intel, null); } const m2 = new E.Match(sq, 0, 75, { capt: 4 }); assert.strictEqual(m2.a.en, 3); let n = 0; for (let i = 0; i < 300; i++) { m2.prep(); if (m2.nx.intel) n++; } assert(n > 20 && n < 280); });
+ok('награды: 40 и 10 монет; кубки +25, +30, −25, −30; ниже нуля кубки не падают', () => {
+  const g = E.newProfile(NOW); g.tro = 500; let r = E.applyResult(g, true, 13, 8); assert.strictEqual(r.tro, 25); assert.strictEqual(r.coins, 40);
+  assert.strictEqual(E.applyResult(g, true, 13, 7).tro, 30); assert.strictEqual(E.applyResult(g, true, 13, 0).tro, 30); r = E.applyResult(g, false, 9, 13); assert.strictEqual(r.tro, -25); assert.strictEqual(r.coins, 10); assert.strictEqual(E.applyResult(g, false, 0, 13).tro, -30);
+  g.tro = 10; assert.strictEqual(E.applyResult(g, false, 5, 13).tro, -10); assert.strictEqual(g.tro, 0);
+});
+
+console.log('7. Задания, бесплатный кейс, сезон');
+ok('4 ежедневных, 5 недельных, 1 особое; прогресс, ручная награда, обновление в 00:00 по Москве', () => {
+  const g = E.newProfile(NOW); assert.strictEqual(g.tasks.d.length, 0); g.tut = 3; E.refresh(g, NOW);
+  assert.strictEqual(g.tasks.d.length, 4); assert.strictEqual(g.tasks.w.length, 5); assert(g.tasks.s); assert(g.tasks.w[0].main && g.tasks.w[0].r.pick != null); assert.strictEqual(g.season.goals.length, 3);
+  const t = g.tasks.d[0], c0 = g.coins; assert.strictEqual(E.claimTask(g, t), false); E.taskAdd(g, { [t.k]: t.n + 5 }); assert.strictEqual(t.p, t.n); assert(E.claimTask(g, t)); assert.strictEqual(g.coins, c0 + t.r.coins); assert.strictEqual(E.claimTask(g, t), false);
+  const t2 = g.tasks.d[1]; E.taskAdd(g, { [t2.k]: t2.n }); const t3 = g.tasks.d[2], p3 = t3.p;
+  const midnight = Date.UTC(2026, 10, 10, 21, 0, 1); E.refresh(g, midnight - 2000); assert.strictEqual(g.tasks.d[1], t2); E.refresh(g, midnight);
+  assert.notStrictEqual(g.tasks.d[1], t2); assert(g.tasks.d.every(x => x.p === 0)); assert.strictEqual(g.inbox.length, 1); assert.strictEqual(g.tasks.w.length, 5);
+  const c1 = g.coins; assert(E.claimInbox(g, 0)); assert.strictEqual(g.coins, c1 + t2.r.coins); assert.strictEqual(g.inbox.length, 0); assert(p3 >= 0);
+  const w0 = g.tasks.w; E.refresh(g, NOW + 7 * 86400000); assert.notStrictEqual(g.tasks.w, w0);
+});
+ok('карточная награда: выбор одной из трёх, нельзя пропустить или получить дважды', () => { const g = E.newProfile(NOW); E.giveReward(g, { pick: 2 }); assert.strictEqual(g.picks.length, 1); assert(g.picks[0].every(id => E.CARDS[id].rar === 2 && !E.CARDS[id].sp)); const g2 = E.migrate(JSON.parse(JSON.stringify(g)), NOW); assert.deepStrictEqual(g2.picks, g.picks); const id = g.picks[0][1], r = E.choosePick(g, 1); assert.strictEqual(r.c.id, id); assert(g.cards[id]); assert.strictEqual(g.picks.length, 0); assert.strictEqual(E.choosePick(g, 0), null); });
+ok('задания выдаются только выполнимые', () => { const g = E.newProfile(NOW); g.tut = 3; const igl = g.squad[4]; delete g.cards[igl]; for (let i = 0; i < 200; i++) { assert(!E.genTasks(g, 'w').some(t => t.k === 'winCapt' || t.k === 'winRole')); const s = E.genTasks(g, 's'); assert(s.k !== 'winTeam3'); if (s.k === 'winCard') assert(g.cards[s.arg]); } });
+ok('бесплатный кейс: раз в сутки, обновляется в 00:00 по Москве, не накапливается', () => { const g = E.newProfile(NOW); assert(E.dailyReady(g, NOW)); g.daily = E.mskDay(NOW); assert(!E.dailyReady(g, NOW + 3600000)); assert(E.dailyReady(g, Date.UTC(2026, 10, 10, 21, 0, 1))); assert(E.dailyReady(g, NOW + 5 * 86400000)); });
+ok('сезон: в новом месяце итоги уходят в историю, рейтинг частично сбрасывается', () => { const g = E.newProfile(NOW); g.tut = 3; g.tro = 1000; E.refresh(g, NOW); const m0 = g.season.m; E.refresh(g, Date.UTC(2026, 11, 2)); assert.strictEqual(g.season.m, m0 + 1); assert.strictEqual(g.season.hist.length, 1); assert.strictEqual(g.season.hist[0].lg, 3); assert.strictEqual(g.season.hist[0].tro, 1000); assert(g.season.hist[0].place >= 1); assert(g.tro < 1000 && g.tro > 700); assert(g.inbox.some(x => /Итоги сезона/.test(x.t))); assert.strictEqual(g.frame, 3); });
+ok('таблица лидеров: место игрока согласовано с кубками', () => { const g = E.newProfile(NOW); g.tut = 3; E.refresh(g, NOW); g.tro = 0; const a = E.lbTable(g, 'all', NOW); g.tro = 5000; const b = E.lbTable(g, 'all', NOW); assert.strictEqual(b.me.place, 1); assert(a.me.place > 100); assert.strictEqual(a.top.length, 10); });
+
+console.log('8. Баланс матча (' + N + ' матчей на стратегию)');
+const T = {}; for (const o of [66, 75, 85]) { T[o] = {}; for (const k in P) T[o][k] = sim(o, (o - 64) * 40, P[k]); console.log('  OVR ' + o + ': ' + Object.keys(P).map(k => k + ' ' + T[o][k].win.toFixed(1) + '%').join(' · ') + ' · раундов ' + T[o].reader.rounds.toFixed(1)); }
+ok('игра без приказов заметно хуже любой другой', () => [66, 75, 85].forEach(o => assert(T[o].none.win < T[o].random.win - 8)));
+ok('чтение соперника выгоднее случайных решений', () => [66, 75, 85].forEach(o => assert(T[o].reader.win > T[o].random.win + 5, 'OVR ' + o)));
+ok('одно и то же направление каждый раунд наказывается', () => [66, 75, 85].forEach(o => assert(T[o].stubborn.win < T[o].reader.win - 5, 'OVR ' + o)));
+ok('слабый соперник ошибается чаще сильного', () => assert(E.AI_ERR[0] > E.AI_ERR[6] && E.AI_ERR.every((x, i) => i === 0 || x <= E.AI_ERR[i - 1])));
+ok('топовый соперник не непобедим, слабый не беспомощен', () => { assert(T[85].reader.win > 35 && T[85].reader.win < 80); assert(T[66].reader.win > 40 && T[66].reader.win < 85); });
+{ const g = E.newProfile(NOW); g.tut = 3; E.refresh(g, NOW); let opened = 0, t = NOW; const open = k => { for (const c of E.openPack(k)) E.addCard(g, c.id); opened++; }; ['basic', 'pro', 'pro'].forEach(open);
+  for (let i = 0; i < 60; i++) { if (i % 6 === 0) { t += 86400000; E.refresh(g, t); if (E.dailyReady(g, t)) { g.daily = E.mskDay(t); open('basic'); } }
+    const sq = E.squadOf(g), m = new E.Match(sq, g.tro, E.squadInfo(sq).rating, { capt: E.captSlot(g) }); while (!m.over) { const L = m.play(...P.reader(m)); E.taskAdd(g, E.roundEvent(L)); } E.taskAdd(g, E.matchEvent(g, m)); E.applyResult(g, m.won, m.a.score, m.b.score);
+    for (const x of E.allTasks(g)) E.claimTask(g, x); while (g.picks.length) E.choosePick(g, 0); for (const k of ['elite', 'pro', 'basic']) while (g.packs[k] > 0) { g.packs[k]--; open(k); } while (g.coins >= 400) { g.coins -= 400; open('basic'); }
+    for (let r = 0; r < 5; r++) { const best = Object.keys(g.cards).map(id => E.CARDS[id]).filter(c => c.role === r && !g.squad.some((s, k) => k !== r && s != null && E.CARDS[s].nick === c.nick)).sort((a, b) => b.ovr - a.ovr)[0]; if (best) E.setSlot(g, r, best.id); } g.capts[g.sqi] = E.bestCapt(g); }
+  console.log('  60 матчей за 10 дней: кубки ' + g.tro + ', ' + g.w + '–' + g.l + ', уровень ' + g.lvl + ', карточек ' + Object.keys(g.cards).length + ', кейсов открыто ' + opened + ', рейтинг состава ' + E.squadInfo(E.squadOf(g)).rating.toFixed(1) + ', сохранение ' + JSON.stringify(g).length + ' байт');
+  ok('прогресс за 60 матчей не останавливается', () => assert(opened >= 12 && Object.keys(g.cards).length >= 40)); }
+console.log('\nВсе проверки пройдены: ' + passed);

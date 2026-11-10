@@ -71,8 +71,8 @@ h3,.eyebrow{font:600 12px/1.2 var(--f-d);letter-spacing:.16em;text-transform:upp
 #app.enter>*:nth-child(2){animation-delay:.05s}#app.enter>*:nth-child(3){animation-delay:.1s}#app.enter>*:nth-child(4){animation-delay:.15s}#app.enter>*:nth-child(5){animation-delay:.2s}#app.enter>*:nth-child(n+6){animation-delay:.25s}
 @keyframes pin{from{opacity:0;transform:translate3d(calc(var(--dir,1)*36px),0,0)}to{opacity:1;transform:none}}
 #tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgb(9 10 12 / .86);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-#tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);padding-inline:0}
-#tabs button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px 9px;font:600 11px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);transition:color .2s}
+#tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr);padding-inline:0}
+#tabs button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px 9px;font:600 10px/1 var(--f-d);letter-spacing:.1em;text-transform:uppercase;color:var(--mut);transition:color .2s}
 #tabs svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 #tabs button::before{content:"";position:absolute;top:-1px;left:22%;right:22%;height:2px;background:var(--accent);transform:scaleX(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 #tabs button[aria-current]{color:var(--fg)}#tabs button[aria-current]::before{transform:scaleX(1)}
@@ -183,13 +183,36 @@ input[type=text]{width:100%;min-height:44px;padding:10px 12px;font:inherit;color
 .po-stage{width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:340px}
 .po-pk{width:62%;max-width:250px;animation:bob 2.4s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-8px)}}
-.reel{position:relative;width:100%;height:calc(var(--tw)*1.4 + 8px);overflow:hidden;background:rgb(0 0 0 / .5);border-block:1px solid var(--line);-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);--tw:62px}
-.reel::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--accent);box-shadow:0 0 12px var(--accent);z-index:3}
-.reel .strip{display:flex;gap:6px;padding:4px 0;position:absolute;left:0;top:0;will-change:transform}
-.reel .strip>div{flex:none;width:var(--tw);transition:opacity .4s,transform .4s}
-.reel.stop .strip>div{opacity:.28}
-.reel.stop .strip>div.hit{opacity:1;transform:scale(1.06);filter:drop-shadow(0 0 10px var(--gl))}
-.reel.stop{border-color:var(--gl);box-shadow:inset 0 0 40px -10px var(--gl)}
+.scan{--gl:#8fa3b8;position:relative;width:62%;max-width:240px;aspect-ratio:5/7;display:grid;place-items:center}
+.scan-fr{position:absolute;inset:0;border:1px solid color-mix(in srgb,var(--gl) 60%,transparent);background:repeating-linear-gradient(0deg,color-mix(in srgb,var(--gl) 12%,transparent) 0 1px,transparent 1px 7px),radial-gradient(60% 50% at 50% 40%,color-mix(in srgb,var(--gl) 28%,transparent),transparent 75%);overflow:hidden;clip-path:polygon(0 0,86% 0,100% 10%,100% 100%,0 100%)}
+.scan-fr svg{position:absolute;left:10%;top:10%;width:80%;height:62%;opacity:.55;--edge:var(--gl);animation:holo .5s steps(3) infinite}
+.scan-fr::before,.scan-fr::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--gl)}
+.scan-fr::before{left:6px;bottom:6px;border-right:0;border-top:0}.scan-fr::after{right:6px;bottom:6px;border-left:0;border-top:0}
+.scan-ln{position:absolute;left:0;right:0;top:0;height:22%;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--gl) 70%,transparent));border-bottom:2px solid var(--gl);animation:sweep .7s ease-in-out infinite alternate}
+.scan-tx{position:absolute;left:8%;right:8%;bottom:7%;display:flex;flex-direction:column;gap:3px;font:700 11px/1.2 var(--f-m);letter-spacing:.06em;text-transform:uppercase;color:var(--gl)}
+.scan-tx span{animation:kin .16s both;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scan.out{animation:mat .45s cubic-bezier(.2,1.3,.4,1) both}
+.scan.glitch .scan-fr{animation:glitch .12s steps(2) infinite}
+@keyframes sweep{from{transform:translateY(-100%)}to{transform:translateY(360%)}}
+@keyframes holo{50%{opacity:.4;transform:translateX(1px)}}
+@keyframes mat{from{opacity:0;transform:scale(1.25);filter:blur(8px) brightness(2.4)}}
+@keyframes glitch{0%{transform:translate(-4px,2px) skewX(6deg);filter:hue-rotate(40deg)}50%{transform:translate(5px,-3px) skewX(-8deg);filter:hue-rotate(-60deg) brightness(1.6)}100%{transform:none}}
+.tray{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%}
+.tray>div{aspect-ratio:5/7;border:1px dashed var(--line);background:rgb(255 255 255 / .03)}
+.tray>div.on{border:0;background:none;animation:pop .3s both}
+.arena{--tc:#f0a93a;position:fixed;inset:0;z-index:1;overflow:hidden;animation:fadein .6s both}
+.arena::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 62%,color-mix(in srgb,var(--tc) 45%,transparent),transparent 72%),linear-gradient(180deg,#040507 0,#0b0d12 55%,#1a1d24 56%,#07080a 100%)}
+.arena i{position:absolute;top:-10%;width:26vmax;height:130%;transform-origin:50% 0;background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 55%,#fff 20%),transparent 75%);opacity:.35;filter:blur(10px);mix-blend-mode:screen}
+.arena i:nth-child(1){left:-4%;animation:spot 2.6s ease-in-out infinite alternate}.arena i:nth-child(2){right:-4%;animation:spot 3.1s ease-in-out infinite alternate-reverse}.arena i:nth-child(3){left:38%;opacity:.2;animation:spot 3.6s ease-in-out infinite alternate}
+.arena b{position:absolute;left:0;right:0;bottom:8%;height:30%;background:radial-gradient(40% 60% at 30% 60%,rgb(255 255 255 / .12),transparent 70%),radial-gradient(40% 60% at 70% 50%,rgb(255 255 255 / .1),transparent 70%);filter:blur(12px);animation:drift 9s linear infinite alternate}
+.arena.a1::before{background:radial-gradient(60% 40% at 50% 62%,color-mix(in srgb,var(--tc) 45%,transparent),transparent 72%),repeating-linear-gradient(90deg,rgb(120 220 255 / .06) 0 1px,transparent 1px 40px),linear-gradient(180deg,#02060c,#071320 55%,#0e2233 56%,#03070c)}
+.arena.a2::before{background:radial-gradient(60% 40% at 50% 62%,color-mix(in srgb,var(--tc) 40%,transparent),transparent 72%),repeating-linear-gradient(135deg,rgb(0 0 0 / .3) 0 14px,transparent 14px 28px),linear-gradient(180deg,#0a0705,#15100b 55%,#241a10 56%,#080604)}
+.arena.a3::before{background:radial-gradient(70% 45% at 50% 60%,color-mix(in srgb,var(--tc) 50%,#fff 8%),transparent 72%),radial-gradient(2px 2px at 20% 20%,#fff,transparent),radial-gradient(2px 2px at 70% 12%,#fff,transparent),radial-gradient(2px 2px at 85% 30%,#fff,transparent),radial-gradient(2px 2px at 40% 8%,#fff,transparent),linear-gradient(180deg,#05040a,#100c1c 55%,#1c1730 56%,#06050b)}
+@keyframes spot{from{transform:rotate(-16deg)}to{transform:rotate(16deg)}}
+@keyframes fadein{from{opacity:0}}
+.rare-t{position:relative;z-index:2;font:700 26px/1.15 var(--f-d);letter-spacing:.16em;text-transform:uppercase;text-align:center;color:var(--gl);text-shadow:0 0 24px var(--gl);animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+.walk{position:relative;z-index:2;width:66%;max-width:260px;animation:walk 1.1s cubic-bezier(.2,.8,.2,1) both;filter:drop-shadow(0 24px 30px rgb(0 0 0 / .8))}
+@keyframes walk{from{opacity:0;transform:translateY(60px) scale(.7);filter:brightness(0)}60%{filter:brightness(.6)}}
 .po-name{min-height:44px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center}
 .po-name b{font:700 22px/1.1 var(--f-d);letter-spacing:.06em;text-transform:uppercase}
 .big{animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
@@ -223,7 +246,6 @@ input[type=text]{width:100%;min-height:44px;padding:10px 12px;font:inherit;color
 .sd-D{--sc:var(--ct)}.sd-A{--sc:var(--tt)}
 .hist{display:flex;gap:2px;align-items:center}
 .hist i{flex:1;height:5px;background:rgb(255 255 255 / .1)}.hist i.w{background:var(--go)}.hist i.l{background:var(--bad)}.hist i.h{flex:none;width:6px;height:9px;background:none;border-inline:1px solid var(--mut)}
-.arena{flex:1;display:flex;flex-direction:column;gap:6px;min-height:270px}
 .trow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
 .chipp{position:relative;display:flex;flex-direction:column;gap:2px;transition:opacity .25s,filter .25s,transform .25s}
 .chipp .f{position:relative;aspect-ratio:1;overflow:hidden;background:linear-gradient(180deg,#30353d,#14171b);border-bottom:3px solid var(--sc)}
@@ -234,7 +256,7 @@ input[type=text]{width:100%;min-height:44px;padding:10px 12px;font:inherit;color
 .chipp.dead{opacity:.34;filter:grayscale(1)}.chipp.dead .f::after{content:"";position:absolute;inset:0;background:linear-gradient(45deg,transparent 46%,var(--bad) 46% 54%,transparent 54%),linear-gradient(-45deg,transparent 46%,var(--bad) 46% 54%,transparent 54%)}
 .chipp.hit{animation:hitk .3s}
 @keyframes hitk{30%{transform:scale(1.12);filter:brightness(1.8)}}
-.mid{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;min-height:118px;border-block:1px solid var(--line);background:rgb(0 0 0 / .3);overflow:hidden}
+.mid{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;min-height:104px;border-block:1px solid var(--line);background:rgb(0 0 0 / .3);overflow:hidden}
 .feed{display:flex;flex-direction:column;gap:3px;align-items:flex-end;padding:6px 8px}
 .feed div{display:flex;align-items:center;gap:6px;font:600 12px/1 var(--f-d);letter-spacing:.03em;text-transform:uppercase;padding:4px 7px;background:rgb(0 0 0 / .62);border:1px solid rgb(255 255 255 / .1);animation:kin .22s both;max-width:100%}
 .feed div.me{border-color:var(--bad)}
@@ -272,6 +294,61 @@ input[type=text]{width:100%;min-height:44px;padding:10px 12px;font:inherit;color
 .tbl tr.star td{color:var(--accent)}
 .res-t{font:700 44px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;text-align:center;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
 .res-t.w{color:var(--go)}.res-t.l{color:var(--bad)}
+/* ---------- Редкости: свой фон и рамка; пятый уровень — золото ---------- */
+.pc.r1::before{background:repeating-linear-gradient(118deg,color-mix(in srgb,var(--edge) 12%,transparent) 0 2px,transparent 2px 10px)}
+.pc.r2::before{background:repeating-linear-gradient(0deg,color-mix(in srgb,var(--edge) 13%,transparent) 0 1px,transparent 1px 9px),repeating-linear-gradient(90deg,color-mix(in srgb,var(--edge) 13%,transparent) 0 1px,transparent 1px 9px)}
+.pc.r3::before{background:repeating-linear-gradient(60deg,color-mix(in srgb,var(--edge) 16%,transparent) 0 2px,transparent 2px 12px),repeating-linear-gradient(-60deg,color-mix(in srgb,var(--edge) 16%,transparent) 0 2px,transparent 2px 12px)}
+.pc.r4::before{background:radial-gradient(90% 60% at 50% 0,color-mix(in srgb,var(--edge) 40%,transparent),transparent 70%),repeating-linear-gradient(118deg,color-mix(in srgb,var(--edge) 20%,transparent) 0 3px,transparent 3px 11px)}
+.pc.r2::after{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--edge) 55%,transparent),inset 0 -3px 0 var(--edge)}
+.pc.r3::after,.pc.r4::after,.pc.sp1::after,.pc.sp2::after{box-shadow:inset 0 0 0 1.5px var(--edge),inset 0 -4px 0 var(--edge),inset 0 0 18px -6px var(--edge)}
+.pc.l5::after{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -4px 0 var(--gold),inset 0 0 22px -6px var(--gold)}
+.pc.l5 .ov{color:var(--gold)}.pc.l5 .lv i.on{background:var(--gold)}
+.pc .arc{position:absolute;z-index:4;right:5cqw;top:14cqw;font:700 5.6cqw/1 var(--f-m);padding:1.4cqw 2cqw;background:rgb(5 7 10 / .75);color:rgb(255 255 255 / .75);letter-spacing:.06em}
+.pc.xs .arc{display:none}
+/* ---------- Общие элементы новых экранов ---------- */
+.seg{display:flex;gap:2px;background:rgb(0 0 0 / .45);border:1px solid var(--line);padding:2px}
+.seg button{flex:1;min-height:34px;padding:6px 4px;font:600 12px/1.1 var(--f-d);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);text-align:center;position:relative}
+.seg button[aria-pressed=true]{background:rgb(255 255 255 / .16);color:var(--fg)}
+.seg .dot{position:absolute;top:4px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.frow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;color:var(--fg);background:rgb(0 0 0 / .55);border:1px solid var(--line)}
+.task{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:9px 10px;background:rgb(255 255 255 / .05);border-left:3px solid var(--line)}
+.task.done{border-left-color:var(--go)}.task.main{border-left-color:var(--accent)}.task.got{opacity:.5}
+.task .bar{grid-column:1/-1}.task p{font-size:13px;line-height:1.3}.task .rw{font:600 11px/1.2 var(--f-d);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.note{padding:10px 12px;background:rgb(240 169 58 / .14);border-left:3px solid var(--accent);font-size:13px}
+.note.bad{background:rgb(255 90 80 / .14);border-left-color:var(--bad)}
+.steps{display:flex;flex-direction:column;gap:6px}.steps div{display:flex;gap:10px;align-items:center;font-size:14px}
+.steps i{flex:none;width:22px;height:22px;display:grid;place-items:center;font:700 12px/1 var(--f-m);font-style:normal;border:1px solid var(--line)}.steps .ok i{background:var(--go);color:var(--on-go);border-color:transparent}.steps .now{color:var(--fg)}.steps div:not(.now):not(.ok){color:var(--mut)}
+.lb{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:6px 8px;font-size:13px;border-top:1px solid rgb(255 255 255 / .07)}
+.lb.me{background:rgb(240 169 58 / .16);color:var(--fg);font-weight:600}.lb b{font-family:var(--f-m)}
+.ab{padding:8px 10px;background:rgb(255 255 255 / .05);border-left:3px solid var(--rc,var(--accent));font-size:13px;line-height:1.35}.ab b{display:block;font:600 14px/1.2 var(--f-d);letter-spacing:.04em;text-transform:uppercase}
+.cmp{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px 10px;align-items:center;font-size:13px}
+.cmp .v{font:700 15px/1 var(--f-m);text-align:center}.cmp .v.hi{color:var(--good)}.cmp .k{font:600 10px/1.2 var(--f-d);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);text-align:center}
+.cmp2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sqtab{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.sqtab button{padding:8px;background:var(--panel);border:1px solid var(--line);text-align:left;display:flex;flex-direction:column;gap:2px}
+.sqtab button[aria-pressed=true]{border-color:var(--accent);background:rgb(240 169 58 / .14)}
+.sqtab b{font:700 18px/1 var(--f-d)}.sqtab span{font:600 10px/1.2 var(--f-d);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.slot.empty{border-left-color:var(--bad)}.slot .ph0{aspect-ratio:5/7;border:1px dashed var(--line);display:grid;place-items:center;color:var(--mut);font:700 20px var(--f-d)}
+.cap{display:inline-block;font:700 9px/1 var(--f-m);padding:3px 5px;background:var(--accent);color:#1a1000;letter-spacing:.06em;vertical-align:middle}
+.tu-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 8px;background:rgb(255 255 255 / .05)}
+.cnt-b{display:flex;align-items:center;gap:6px}.cnt-b button{width:32px;height:32px;border:1px solid var(--line);font:700 16px/1 var(--f-m);text-align:center}.cnt-b button:disabled{opacity:.3}
+/* ---------- План на раунд и мини-карта ---------- */
+.plan{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.plan .seg button{min-height:30px;font-size:11px;padding:4px 2px}
+.mm{position:absolute;inset:0;display:grid;grid-template-columns:1fr .8fr 1fr;gap:4px;padding:4px;opacity:.9;pointer-events:none}
+.mm div{position:relative;border:1px solid rgb(255 255 255 / .1);background:rgb(255 255 255 / .03);display:flex;align-items:flex-start;justify-content:center;padding-top:2px;font:700 22px/1 var(--f-d);color:rgb(255 255 255 / .1);transition:background .3s,border-color .3s}
+.mm div.me{border-color:var(--mc);background:color-mix(in srgb,var(--mc) 16%,transparent);color:color-mix(in srgb,var(--mc) 55%,transparent)}
+.mm div.op{box-shadow:inset 0 0 0 2px var(--oc)}
+.mm div.me.op{background:color-mix(in srgb,var(--bad) 22%,transparent)}
+.chipp.foc .f{box-shadow:0 0 0 2px var(--accent)}.chipp.foc .n{color:var(--accent)}
+.trow.mine .chipp{cursor:pointer}
+.feed{position:relative;z-index:1}.played{position:relative;z-index:1}
+.arena-m{flex:1;display:flex;flex-direction:column;gap:6px;min-height:240px}
+.rep li{font-size:13px;line-height:1.4;margin:0 0 4px 16px}
+.rep ul{margin:0;padding:0}
+@media (min-width:700px){.wrap{max-width:680px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.hand{grid-template-columns:repeat(4,minmax(0,1fr))}.frow{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1100px){.wrap{max-width:860px}.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -302,8 +379,10 @@ window.addEventListener('error', function (e) { window.__cmErr((e.message || 'о
 (function () {
 'use strict';
 /* Составы: рейтинг Valve Regional Standings от 2 ноября 2026. Показатели карточек рассчитаны игрой, это не статистика HLTV. */
+/* Строка игрока: ник, команда, роль, рейтинг, постоянный номер, редкость, архивная версия */
 const TM=["MOUZ","Vitality","FURIA","Aurora","Spirit","BETBOOM","Falcons","FUT","Legacy","Nemiga","G2","1win","Natus Vincere","Astralis","Ninjas in Pyjamas","PARIVISION","The MongolZ","HEROIC","MIBR","FaZe","Liquid","Eternal Fire","100 Thieves","9z","M80","HOTU","fnatic","B8","DENDELE","Inner Circle","Virtus.pro","BIG","SINNERS","K27","Imperial","JiJieHao","GamerLegion","Wildcard","Nemesis","Luminosity","magic","BBL","Envy","Sangal","BC.Game","PRIVATE","NRG","FlyQuest","BESTIA","Betclic","FOKUS","Alliance","paiN","Iberian Soul","Chinggis Warriors","Lynn Vision","Metizport","Nuclear TigeRES","TYLOO","Fluxo","Phantom","SAW","EYEBALLERS","UNiTY","Nexus","PURE","BRUTE","5star","SportsBetExpert","WBT","NEXVOID","INFINITE","Acend","QUAZAR","BARCA","Color","ex-Zero Tenacity","Black Phoenix","Voca","NAVI Junior","BASEMENT BOYS","Lazer Cats","ShindeN","UPGRADE","FORZE Reload","RBLS","Galorys","aimclub","NT","ex-INOX","Without a Roof","Alter Ego","Omega","Bounty Hunters","CYBERSHOKE","BAKS","Spirit Academy","BET-M","ASTRAL","9INE","LAG"];
-const PL=[["ZywOo",1,0,96],["donk",4,1,96],["Spinx",0,3,93],["torzsi",0,0,91],["KSCERATO",2,3,91],["molodoy",2,0,91],["yuurih",2,2,91],["xertioN",0,4,90],["flameZ",1,1,90],["m0NESY",6,0,90],["jL",1,2,89],["ropz",1,3,89],["YEKINDAR",2,1,89],["XANTARES",3,1,89],["Jimpphat",3,2,88],["woxic",3,0,88],["sh1ro",4,0,88],["mezii",1,4,87],["FalleN",2,4,87],["zont1x",4,3,87],["Magnojez",5,1,87],["NiKo",6,1,87],["Wicadia",3,3,86],["S1ren",5,3,86],["zorte",5,2,86],["kyousuke",6,3,86],["PR",0,2,85],["tN1R",4,2,85],["try",8,2,85],["HeavyGod",10,3,85],["Twistzz",19,2,85],["xelex",0,1,84],["d1Ledez",5,1,84],["karrigan",6,4,84],["Krabeni",7,4,84],["KaiR0N-",9,2,84],["Ax1Le",11,1,84],["w0nderful",12,0,84],["dem0n",7,1,83],["dziugss",7,2,83],["xfl0ud",7,3,83],["dumau",8,1,83],["latto",8,0,83],["zweih",15,1,83],["910",16,0,83],["device",22,0,83],["TeSeS",6,2,82],["n1ssim",8,3,82],["Staehr",13,2,82],["stavn",14,3,82],["insani",18,4,82],["EliGE",20,1,82],["malbsMd",20,1,82],["rain",22,1,82],["s1mple",44,0,82],["cmtry",7,0,81],["huNter-",10,4,81],["b1t",12,3,81],["iM",12,1,81],["frozen",19,3,81],["kyxsan",3,4,80],["magixx",4,4,80],["Xant3r",9,0,80],["MATYS",10,1,80],["NertZ",10,0,80],["r1nkle",10,2,80],["fame",11,2,80],["Aleksib",12,4,80],["makazze",12,2,80],["Krimbo",14,2,80],["Jame",15,0,80],["Brollan",17,1,80],["NAF",20,3,80],["Boombl4",5,4,79],["arT",8,4,79],["khaN",9,1,79],["robo",9,3,79],["ArtFr0st",11,0,79],["BELCHONOKK",11,3,79],["jabbi",13,1,79],["xKacpersky",14,0,79],["FL1T",15,3,79],["Techno",16,2,79],["MartinezSa",17,2,79],["tomaszin",18,1,79],["blameF",31,3,79],["mzinho",44,3,79],["syph0",9,4,78],["adamb",14,1,78],["HObbit",15,4,78],["xiELO",15,2,78],["bLitz",16,4,78],["nin9",16,3,78],["nilo",17,0,78],["LNZ",18,3,78],["venomzera",18,2,78],["Jorko",20,2,78],["jottAAA",21,2,78],["mizu",25,0,78],["n0rb3r7",25,1,78],["nafany",11,4,77],["phzy",13,0,77],["ryu",13,3,77],["sjuush",14,4,77],["Chr1zN",17,3,77],["regali",21,1,77],["dgt",23,3,77],["meyern",23,2,77],["Lake",24,3,77],["dwushka",25,3,77],["cairne",26,3,77],["esenthial",27,0,77],["JDC",31,2,77],["REZ",36,1,77],["Senzu",44,1,77],["nitr0",46,4,77],["saffee",52,0,77],["siuhy",13,4,76],["cobrazera",16,1,76],["jcobbb",19,1,76],["Neityu",19,0,76],["poiii",22,2,76],["frontales",25,2,76],["jackasmo",26,2,76],["kensizor",27,1,76],["doc",28,0,76],["koala",28,3,76],["rdnzao",28,2,76],["onic",29,1,76],["zeRRoFIX",29,3,76],["xeedo",33,1,76],["saadzin",34,0,76],["lux",39,2,76],["Grim",46,3,76],["jks",47,2,76],["nqz",18,0,75],["JBOEN",19,4,75],["JT",20,4,75],["Kvem",21,3,75],["MisteM",21,0,75],["Gizmy",22,3,75],["HUASOPEEK",23,1,75],["luchov",23,0,75],["JBa",24,1,75],["slaxz-",24,0,75],["Swisher",24,2,75],["fEAR",26,0,75],["npl",27,4,75],["gafolo",28,1,75],["b1st",30,2,75],["mir",30,1,75],["Patsi",30,0,75],["tabseN",31,4,75],["beastik",32,3,75],["stressarN",32,0,75],["kashl1d",33,2,75],["VINI",34,4,75],["Bibu",35,0,75],["CacaNito",35,3,75],["m1N1",35,1,75],["hypex",36,0,75],["fr3nd",37,2,75],["reck",37,0,75],["r3salt",38,2,75],["lattykk",40,3,75],["salazar",41,0,75],["adamS",43,1,75],["Magisk",44,4,75],["JW",62,0,75],["susp",17,4,74],["sirah",22,4,74],["kade0",25,4,74],["jambo",26,1,74],["alex666",27,3,74],["s1zzi",27,2,74],["faveN",31,0,74],["SHOCK",32,2,74],["clax",33,3,74],["chelo",34,1,74],["HexT",37,3,74],["AZUWU",39,1,74],["AW",40,2,74],["Maka",42,2,74],["H4SAN4TOR",45,1,74],["hallzerk",46,0,74],["Sonic",46,1,74],["biguzera",52,4,74],["KRIMZ",62,1,74],["soulfly",21,4,73],["mazay",26,4,73],["cptkurtka023",29,2,73],["headtr1ck",29,0,73],["tO0RO",30,3,73],["gr1ks",31,1,73],["MoDo",32,1,73],["noway",34,3,73],["sinnopsyy",35,2,73],["nEMANHA",37,1,73],["tex1y",38,1,73],["tenzy",40,0,73],["leakz",41,2,73],["sowalio",45,0,73],["Jeorge",46,2,73],["drop",48,0,73],["jocab",50,0,73],["podi",50,3,73],["mopoz",53,1,73],["max",23,4,72],["s1n",24,4,72],["qw1nk1",33,4,72],["X5G7V",33,0,72],["decenty",34,2,72],["FL4MUS",36,2,72],["shalfey",36,4,72],["Tauson",36,3,72],["Cxzi",37,4,72],["mag1k3Y",38,3,72],["Sdaim",38,0,72],["afro",39,3,72],["MaSvAl",40,1,72],["sFade8",40,4,72],["IceBerg",41,4,72],["NickyB",41,3,72],["Graviti",42,3,72],["Lucky",42,1,72],["misutaaa",42,4,72],["Joey",43,4,72],["asap",44,2,72],["sh1nejezzz",45,3,72],["nettik",47,3,72],["timo",48,1,72],["Demho",49,1,72],["Prism",49,2,72],["Banjo",50,2,72],["twist",51,2,72],["snow",52,2,72],["fury5k",54,3,72],["ROUX",54,2,72],["Plopski",56,3,72],["JamYoung",58,0,72],["zevy",59,2,72],["maxxkor",28,4,71],["Dawy",29,4,71],["0SAMAS",35,4,71],["SELLTER",38,4,71],["Rainwaker",39,0,71],["yxngstxr",39,4,71],["MistR",41,1,71],["Kursy",42,0,71],["bnox",43,3,71],["puuha",43,0,71],["R4DYX",43,2,71],["z1k4",45,2,71],["aliStair",47,0,71],["Qlocuu",49,3,71],["avid",51,3,71],["bobeksde",51,0,71],["eraa",51,1,71],["alex",53,2,71],["EmiliaQAQ",55,2,71],["forsyy",56,1,71],["MaiL09",56,0,71],["zhokiNg",58,1,71],["Kylar",60,1,71],["nicoodoz",60,0,71],["krazy",61,1,71],["KWERTZZ",63,0,71],["M1key",63,3,71],["CeRq",90,0,71],["AquaRS",30,4,70],["kisserek",32,4,70],["Vexite",47,1,70],["buda",48,2,70],["cass1n",48,3,70],["ex1st",49,0,70],["ztr",50,1,70],["Rkzinho",52,1,70],["Ag1l",53,0,70],["dav1g",53,3,70],["cool4st",54,0,70],["sk0R",54,1,70],["Starry",55,0,70],["z4KR",55,1,70],["F1KU",56,2,70],["Djon8",57,0,70],["flouzer",57,1,70],["senka",57,3,70],["Mercury",58,3,70],["dav1deuS",59,1,70],["kye",59,3,70],["Ltz",59,1,70],["Kunai",60,2,70],["NOPEEj",61,2,70],["dex",62,2,70],["aNdu",65,1,70],["tein",65,0,70],["autimatic",90,1,70],["Stewie2K",90,4,70],["1eeR",45,4,69],["ultimate",49,4,69],["Matheos",50,4,69],["Tatu",52,3,69],["C4LLM3SU3",55,3,69],["Westmelon",55,4,69],["ayuki",57,2,69],["story",61,0,69],["maxster",62,3,69],["Nexius",64,1,69],["shield",64,3,69],["Polbandana",65,2,69],["tAk",66,2,69],["ScrunK",71,1,69],["volt",71,3,69],["INS",47,4,68],["kauez",48,4,68],["upE",51,4,68],["tikuak",54,4,68],["Moseyuh",58,2,68],["Zero",58,4,68],["KEi",60,3,68],["ewjerkz",61,3,68],["Ro1f",62,4,68],["2high",63,2,68],["POLO",65,3,68],["hoolig4n",67,3,68],["NEUZ",67,0,68],["s4ltovsk1yy",69,3,68],["Smash",69,0,68],["MiQ",70,2,68],["gehji",73,0,68],["newt",73,1,68],["divine",74,3,68],["happ",74,2,68],["oz1k",75,0,68],["junior",78,3,68],["sausol",53,4,67],["stanislaw",56,4,67],["tronic",57,4,67],["Sn0w",63,1,67],["fNk",64,0,67],["HOLY",64,4,67],["s0und",64,2,67],["keen",65,4,67],["aidKiT",66,0,67],["ariucle",67,2,67],["consti",68,4,67],["Infinite",68,3,67],["motm",68,2,67],["DemQQ",69,2,67],["xerolte",70,3,67],["sl3nd",71,2,67],["REDSTAR",72,0,67],["SPELLAN",72,3,67],["kaiori",73,2,67],["pancc",74,1,67],["reyoz",75,1,67],["Cjoffo",76,3,67],["Kind0",76,1,67],["guty",82,0,67],["tw1sterzaza",83,3,67],["KusMe",84,2,67],["Brehze",90,3,67],["exit",59,4,66],["TMB",60,4,66],["MUTiRiS",61,4,66],["Dytor",63,4,66],["nbqq",66,1,66],["oontoma",66,3,66],["clouden",67,4,66],["rate",67,1,66],["Peeping",68,0,66],["shane",68,1,66],["Psycho",69,1,66],["tyr1k",69,4,66],["AccuracyTG",70,1,66],["Zesta",70,0,66],["AwaykeN",72,4,66],["Ne1XXX",73,3,66],["zmb",74,0,66],["brutmonster",76,0,66],["topo",77,2,66],["MarKE",78,0,66],["skizzyee",79,2,66],["yoki",79,0,66],["n0rths",81,0,66],["nikitea",81,2,66],["naz",82,3,66],["tom1jed",82,2,66],["pleynnn",83,0,66],["SquEzxc",83,2,66],["relaxxie",84,0,66],["aragornN",85,1,66],["gbb",86,2,66],["tomate",86,1,66],["ta9z",88,0,66],["El1an",89,2,66],["adeX",91,1,66],["ZEDKO",66,4,65],["kyuubii",71,0,65],["SHiPZ",72,1,65],["Skrimo",72,2,65],["Alisson",74,4,65],["cronuss",75,4,65],["Dragon",76,2,65],["4X1s",77,0,65],["dare",78,1,65],["FAZERY",79,4,65],["MahaR",79,3,65],["maggent",80,1,65],["Tr0ublE",80,3,65],["Kiy0o",81,3,65],["tripex17",81,1,65],["synyx",83,1,65],["Icarus",85,2,65],["stadodo",85,0,65],["waZz",87,3,65],["fakerealityy",88,2,65],["m4d4ra",88,1,65],["adai",92,2,65],["Botpa1",92,3,65],["def1zer",92,0,65],["ponter",93,3,65],["Alkaren",94,2,65],["whisper",95,0,65],["Blytz",71,4,64],["Porya",73,4,64],["VLDN",76,4,64],["karnez",77,1,64],["snav",78,2,64],["kodak",79,1,64],["kAlash",80,0,64],["abizz",82,1,64],["reNTU",82,4,64],["Lack1",84,3,64],["YumsaN",84,1,64],["arrozdoce",85,3,64],["Shr",85,4,64],["laxiee",91,3,64],["dan4o",92,1,64],["pepe",93,0,64],["zock",93,1,64],["alpha",94,0,64],["nota",94,1,64],["Norwi",95,2,64],["k0gaSs",96,2,64],["Netrix",96,1,64],["executor",97,1,64],["Raijin",97,2,64],["Neqy",98,0,64],["kraghen",99,0,64],["erkaSt",70,4,63],["OWNER",80,2,63],["destiny",86,0,63],["PKL",86,3,63],["ragga",87,2,63],["XELLOW",87,0,63],["zewts",87,1,63],["Ryuzak1",88,3,63],["finW",89,0,63],["gooddeph",89,3,63],["m1QUSE",89,1,63],["Bloody",91,2,63],["shadiy",91,0,63],["urban0",93,4,63],["danistzz",95,3,63],["s1nside",96,3,63],["bluewh1te",97,0,63],["b1elany",99,2,63],["MRcreed",77,4,62],["nosraC",78,4,62],["FaNg",90,2,62],["Aldikon",92,4,62],["KAISER",93,2,62],["glowiing",95,4,62],["VILBy",96,0,62],["z1Nny",97,4,62],["RaY5ive",98,1,62],["swiz",98,2,62],["raalz",99,3,62],["Bwills",100,1,62],["kr1vda",80,4,61],["Magic",81,4,61],["DAN9ARMATURA",83,4,61],["HeCkBNk",84,4,61],["detr0ittJ",86,4,61],["k1slll",89,4,61],["PokemoN",91,4,61],["turbo",95,1,61],["Kiryasoo",96,4,61],["gxx-",98,3,61],["meowpop",98,4,61],["flayy",99,1,61],["rigoN",99,4,61],["Cryptic",100,0,61],["Sandman",100,3,61],["mhN1",87,4,60],["Woro2k",88,4,60],["Mokuj1n",94,4,60],["djay",100,2,60],["SLIGHT",100,4,58]];
+const PL=[["ZywOo",1,0,96,0,4,0],["donk",4,1,96,1,4,0],["Spinx",0,3,93,2,4,0],["torzsi",0,0,91,3,4,0],["KSCERATO",2,3,91,4,4,0],["molodoy",2,0,91,5,4,0],["yuurih",2,2,91,6,4,0],["xertioN",0,4,90,7,4,0],["flameZ",1,1,90,8,3,0],["m0NESY",6,0,90,9,3,0],["jL",1,2,89,10,3,0],["ropz",1,3,89,11,3,0],["YEKINDAR",2,1,89,12,3,0],["XANTARES",3,1,89,13,3,0],["Jimpphat",3,2,88,14,3,0],["woxic",3,0,88,15,3,0],["sh1ro",4,0,88,16,3,0],["mezii",1,4,87,17,3,0],["FalleN",2,4,87,18,3,0],["zont1x",4,3,87,19,3,0],["Magnojez",5,1,87,20,3,0],["NiKo",6,1,87,21,3,0],["Wicadia",3,3,86,22,3,0],["S1ren",5,3,86,23,3,0],["zorte",5,2,86,24,3,0],["kyousuke",6,3,86,25,3,0],["PR",0,2,85,26,3,0],["tN1R",4,2,85,27,3,0],["try",8,2,85,28,3,0],["HeavyGod",10,3,85,29,3,0],["Twistzz",19,2,85,30,3,0],["xelex",0,1,84,31,3,0],["d1Ledez",5,1,84,32,3,0],["karrigan",6,4,84,33,3,0],["Krabeni",7,4,84,34,3,0],["KaiR0N-",9,2,84,35,2,0],["Ax1Le",11,1,84,36,2,0],["w0nderful",12,0,84,37,2,0],["dem0n",7,1,83,38,2,0],["dziugss",7,2,83,39,2,0],["xfl0ud",7,3,83,40,2,0],["dumau",8,1,83,41,2,0],["latto",8,0,83,42,2,0],["zweih",15,1,83,43,2,0],["910",16,0,83,44,2,0],["device",22,0,83,45,2,0],["TeSeS",6,2,82,46,2,0],["n1ssim",8,3,82,47,2,0],["Staehr",13,2,82,48,2,0],["stavn",14,3,82,49,2,0],["insani",18,4,82,50,2,0],["EliGE",20,1,82,51,2,0],["malbsMd",20,1,82,52,2,0],["rain",22,1,82,53,2,0],["s1mple",44,0,82,54,2,0],["cmtry",7,0,81,55,2,0],["huNter-",10,4,81,56,2,0],["b1t",12,3,81,57,2,0],["iM",12,1,81,58,2,0],["frozen",19,3,81,59,2,0],["kyxsan",3,4,80,60,2,0],["magixx",4,4,80,61,2,0],["Xant3r",9,0,80,62,2,0],["MATYS",10,1,80,63,2,0],["NertZ",10,0,80,64,2,0],["r1nkle",10,2,80,65,2,0],["fame",11,2,80,66,2,0],["Aleksib",12,4,80,67,2,0],["makazze",12,2,80,68,2,0],["Krimbo",14,2,80,69,2,0],["Jame",15,0,80,70,2,0],["Brollan",17,1,80,71,2,0],["NAF",20,3,80,72,2,0],["Boombl4",5,4,79,73,2,0],["arT",8,4,79,74,2,0],["khaN",9,1,79,75,2,0],["robo",9,3,79,76,2,0],["ArtFr0st",11,0,79,77,2,0],["BELCHONOKK",11,3,79,78,2,0],["jabbi",13,1,79,79,2,0],["xKacpersky",14,0,79,80,2,0],["FL1T",15,3,79,81,2,0],["Techno",16,2,79,82,2,0],["MartinezSa",17,2,79,83,2,0],["tomaszin",18,1,79,84,2,0],["blameF",31,3,79,85,2,0],["mzinho",44,3,79,86,2,0],["syph0",9,4,78,87,2,0],["adamb",14,1,78,88,2,0],["HObbit",15,4,78,89,2,0],["xiELO",15,2,78,90,2,0],["bLitz",16,4,78,91,2,0],["nin9",16,3,78,92,2,0],["nilo",17,0,78,93,2,0],["LNZ",18,3,78,94,2,0],["venomzera",18,2,78,95,2,0],["Jorko",20,2,78,96,2,0],["jottAAA",21,2,78,97,2,0],["mizu",25,0,78,98,2,0],["n0rb3r7",25,1,78,99,2,0],["nafany",11,4,77,100,2,0],["phzy",13,0,77,101,2,0],["ryu",13,3,77,102,2,0],["sjuush",14,4,77,103,2,0],["Chr1zN",17,3,77,104,2,0],["regali",21,1,77,105,2,0],["dgt",23,3,77,106,2,0],["meyern",23,2,77,107,2,0],["Lake",24,3,77,108,2,0],["dwushka",25,3,77,109,2,0],["cairne",26,3,77,110,1,0],["esenthial",27,0,77,111,1,0],["JDC",31,2,77,112,1,0],["REZ",36,1,77,113,1,0],["Senzu",44,1,77,114,1,0],["nitr0",46,4,77,115,1,0],["saffee",52,0,77,116,1,0],["siuhy",13,4,76,117,1,0],["cobrazera",16,1,76,118,1,0],["jcobbb",19,1,76,119,1,0],["Neityu",19,0,76,120,1,0],["poiii",22,2,76,121,1,0],["frontales",25,2,76,122,1,0],["jackasmo",26,2,76,123,1,0],["kensizor",27,1,76,124,1,0],["doc",28,0,76,125,1,0],["koala",28,3,76,126,1,0],["rdnzao",28,2,76,127,1,0],["onic",29,1,76,128,1,0],["zeRRoFIX",29,3,76,129,1,0],["xeedo",33,1,76,130,1,0],["saadzin",34,0,76,131,1,0],["lux",39,2,76,132,1,0],["Grim",46,3,76,133,1,0],["jks",47,2,76,134,1,0],["nqz",18,0,75,135,1,0],["JBOEN",19,4,75,136,1,0],["JT",20,4,75,137,1,0],["Kvem",21,3,75,138,1,0],["MisteM",21,0,75,139,1,0],["Gizmy",22,3,75,140,1,0],["HUASOPEEK",23,1,75,141,1,0],["luchov",23,0,75,142,1,0],["JBa",24,1,75,143,1,0],["slaxz-",24,0,75,144,1,0],["Swisher",24,2,75,145,1,0],["fEAR",26,0,75,146,1,0],["npl",27,4,75,147,1,0],["gafolo",28,1,75,148,1,0],["b1st",30,2,75,149,1,0],["mir",30,1,75,150,1,0],["Patsi",30,0,75,151,1,0],["tabseN",31,4,75,152,1,0],["beastik",32,3,75,153,1,0],["stressarN",32,0,75,154,1,0],["kashl1d",33,2,75,155,1,0],["VINI",34,4,75,156,1,0],["Bibu",35,0,75,157,1,0],["CacaNito",35,3,75,158,1,0],["m1N1",35,1,75,159,1,0],["hypex",36,0,75,160,1,0],["fr3nd",37,2,75,161,1,0],["reck",37,0,75,162,1,0],["r3salt",38,2,75,163,1,0],["lattykk",40,3,75,164,1,0],["salazar",41,0,75,165,1,0],["adamS",43,1,75,166,1,0],["Magisk",44,4,75,167,1,0],["JW",62,0,75,168,1,0],["susp",17,4,74,169,1,0],["sirah",22,4,74,170,1,0],["kade0",25,4,74,171,1,0],["jambo",26,1,74,172,1,0],["alex666",27,3,74,173,1,0],["s1zzi",27,2,74,174,1,0],["faveN",31,0,74,175,1,0],["SHOCK",32,2,74,176,1,0],["clax",33,3,74,177,1,0],["chelo",34,1,74,178,1,0],["HexT",37,3,74,179,1,0],["AZUWU",39,1,74,180,1,0],["AW",40,2,74,181,1,0],["Maka",42,2,74,182,1,0],["H4SAN4TOR",45,1,74,183,1,0],["hallzerk",46,0,74,184,1,0],["Sonic",46,1,74,185,1,0],["biguzera",52,4,74,186,1,0],["KRIMZ",62,1,74,187,1,0],["soulfly",21,4,73,188,1,0],["mazay",26,4,73,189,1,0],["cptkurtka023",29,2,73,190,1,0],["headtr1ck",29,0,73,191,1,0],["tO0RO",30,3,73,192,1,0],["gr1ks",31,1,73,193,1,0],["MoDo",32,1,73,194,1,0],["noway",34,3,73,195,1,0],["sinnopsyy",35,2,73,196,1,0],["nEMANHA",37,1,73,197,1,0],["tex1y",38,1,73,198,1,0],["tenzy",40,0,73,199,1,0],["leakz",41,2,73,200,1,0],["sowalio",45,0,73,201,1,0],["Jeorge",46,2,73,202,1,0],["drop",48,0,73,203,1,0],["jocab",50,0,73,204,1,0],["podi",50,3,73,205,1,0],["mopoz",53,1,73,206,1,0],["max",23,4,72,207,1,0],["s1n",24,4,72,208,1,0],["qw1nk1",33,4,72,209,1,0],["X5G7V",33,0,72,210,1,0],["decenty",34,2,72,211,1,0],["FL4MUS",36,2,72,212,1,0],["shalfey",36,4,72,213,1,0],["Tauson",36,3,72,214,1,0],["Cxzi",37,4,72,215,1,0],["mag1k3Y",38,3,72,216,1,0],["Sdaim",38,0,72,217,1,0],["afro",39,3,72,218,1,0],["MaSvAl",40,1,72,219,1,0],["sFade8",40,4,72,220,1,0],["IceBerg",41,4,72,221,1,0],["NickyB",41,3,72,222,1,0],["Graviti",42,3,72,223,1,0],["Lucky",42,1,72,224,1,0],["misutaaa",42,4,72,225,1,0],["Joey",43,4,72,226,1,0],["asap",44,2,72,227,1,0],["sh1nejezzz",45,3,72,228,1,0],["nettik",47,3,72,229,1,0],["timo",48,1,72,230,1,0],["Demho",49,1,72,231,1,0],["Prism",49,2,72,232,1,0],["Banjo",50,2,72,233,1,0],["twist",51,2,72,234,1,0],["snow",52,2,72,235,1,0],["fury5k",54,3,72,236,1,0],["ROUX",54,2,72,237,1,0],["Plopski",56,3,72,238,1,0],["JamYoung",58,0,72,239,1,0],["zevy",59,2,72,240,1,0],["maxxkor",28,4,71,241,1,0],["Dawy",29,4,71,242,1,0],["0SAMAS",35,4,71,243,1,0],["SELLTER",38,4,71,244,1,0],["Rainwaker",39,0,71,245,1,0],["yxngstxr",39,4,71,246,1,0],["MistR",41,1,71,247,1,0],["Kursy",42,0,71,248,1,0],["bnox",43,3,71,249,1,0],["puuha",43,0,71,250,1,0],["R4DYX",43,2,71,251,1,0],["z1k4",45,2,71,252,1,0],["aliStair",47,0,71,253,1,0],["Qlocuu",49,3,71,254,1,0],["avid",51,3,71,255,1,0],["bobeksde",51,0,71,256,1,0],["eraa",51,1,71,257,1,0],["alex",53,2,71,258,1,0],["EmiliaQAQ",55,2,71,259,1,0],["forsyy",56,1,71,260,0,0],["MaiL09",56,0,71,261,0,0],["zhokiNg",58,1,71,262,0,0],["Kylar",60,1,71,263,0,0],["nicoodoz",60,0,71,264,0,0],["krazy",61,1,71,265,0,0],["KWERTZZ",63,0,71,266,0,0],["M1key",63,3,71,267,0,0],["CeRq",90,0,71,268,0,0],["AquaRS",30,4,70,269,0,0],["kisserek",32,4,70,270,0,0],["Vexite",47,1,70,271,0,0],["buda",48,2,70,272,0,0],["cass1n",48,3,70,273,0,0],["ex1st",49,0,70,274,0,0],["ztr",50,1,70,275,0,0],["Rkzinho",52,1,70,276,0,0],["Ag1l",53,0,70,277,0,0],["dav1g",53,3,70,278,0,0],["cool4st",54,0,70,279,0,0],["sk0R",54,1,70,280,0,0],["Starry",55,0,70,281,0,0],["z4KR",55,1,70,282,0,0],["F1KU",56,2,70,283,0,0],["Djon8",57,0,70,284,0,0],["flouzer",57,1,70,285,0,0],["senka",57,3,70,286,0,0],["Mercury",58,3,70,287,0,0],["dav1deuS",59,1,70,288,0,0],["kye",59,3,70,289,0,0],["Ltz",59,1,70,290,0,0],["Kunai",60,2,70,291,0,0],["NOPEEj",61,2,70,292,0,0],["dex",62,2,70,293,0,0],["aNdu",65,1,70,294,0,0],["tein",65,0,70,295,0,0],["autimatic",90,1,70,296,0,0],["Stewie2K",90,4,70,297,0,0],["1eeR",45,4,69,298,0,0],["ultimate",49,4,69,299,0,0],["Matheos",50,4,69,300,0,0],["Tatu",52,3,69,301,0,0],["C4LLM3SU3",55,3,69,302,0,0],["Westmelon",55,4,69,303,0,0],["ayuki",57,2,69,304,0,0],["story",61,0,69,305,0,0],["maxster",62,3,69,306,0,0],["Nexius",64,1,69,307,0,0],["shield",64,3,69,308,0,0],["Polbandana",65,2,69,309,0,0],["tAk",66,2,69,310,0,0],["ScrunK",71,1,69,311,0,0],["volt",71,3,69,312,0,0],["INS",47,4,68,313,0,0],["kauez",48,4,68,314,0,0],["upE",51,4,68,315,0,0],["tikuak",54,4,68,316,0,0],["Moseyuh",58,2,68,317,0,0],["Zero",58,4,68,318,0,0],["KEi",60,3,68,319,0,0],["ewjerkz",61,3,68,320,0,0],["Ro1f",62,4,68,321,0,0],["2high",63,2,68,322,0,0],["POLO",65,3,68,323,0,0],["hoolig4n",67,3,68,324,0,0],["NEUZ",67,0,68,325,0,0],["s4ltovsk1yy",69,3,68,326,0,0],["Smash",69,0,68,327,0,0],["MiQ",70,2,68,328,0,0],["gehji",73,0,68,329,0,0],["newt",73,1,68,330,0,0],["divine",74,3,68,331,0,0],["happ",74,2,68,332,0,0],["oz1k",75,0,68,333,0,0],["junior",78,3,68,334,0,0],["sausol",53,4,67,335,0,0],["stanislaw",56,4,67,336,0,0],["tronic",57,4,67,337,0,0],["Sn0w",63,1,67,338,0,0],["fNk",64,0,67,339,0,0],["HOLY",64,4,67,340,0,0],["s0und",64,2,67,341,0,0],["keen",65,4,67,342,0,0],["aidKiT",66,0,67,343,0,0],["ariucle",67,2,67,344,0,0],["consti",68,4,67,345,0,0],["Infinite",68,3,67,346,0,0],["motm",68,2,67,347,0,0],["DemQQ",69,2,67,348,0,0],["xerolte",70,3,67,349,0,0],["sl3nd",71,2,67,350,0,0],["REDSTAR",72,0,67,351,0,0],["SPELLAN",72,3,67,352,0,0],["kaiori",73,2,67,353,0,0],["pancc",74,1,67,354,0,0],["reyoz",75,1,67,355,0,0],["Cjoffo",76,3,67,356,0,0],["Kind0",76,1,67,357,0,0],["guty",82,0,67,358,0,0],["tw1sterzaza",83,3,67,359,0,0],["KusMe",84,2,67,360,0,0],["Brehze",90,3,67,361,0,0],["exit",59,4,66,362,0,0],["TMB",60,4,66,363,0,0],["MUTiRiS",61,4,66,364,0,0],["Dytor",63,4,66,365,0,0],["nbqq",66,1,66,366,0,0],["oontoma",66,3,66,367,0,0],["clouden",67,4,66,368,0,0],["rate",67,1,66,369,0,0],["Peeping",68,0,66,370,0,0],["shane",68,1,66,371,0,0],["Psycho",69,1,66,372,0,0],["tyr1k",69,4,66,373,0,0],["AccuracyTG",70,1,66,374,0,0],["Zesta",70,0,66,375,0,0],["AwaykeN",72,4,66,376,0,0],["Ne1XXX",73,3,66,377,0,0],["zmb",74,0,66,378,0,0],["brutmonster",76,0,66,379,0,0],["topo",77,2,66,380,0,0],["MarKE",78,0,66,381,0,0],["skizzyee",79,2,66,382,0,0],["yoki",79,0,66,383,0,0],["n0rths",81,0,66,384,0,0],["nikitea",81,2,66,385,0,0],["naz",82,3,66,386,0,0],["tom1jed",82,2,66,387,0,0],["pleynnn",83,0,66,388,0,0],["SquEzxc",83,2,66,389,0,0],["relaxxie",84,0,66,390,0,0],["aragornN",85,1,66,391,0,0],["gbb",86,2,66,392,0,0],["tomate",86,1,66,393,0,0],["ta9z",88,0,66,394,0,0],["El1an",89,2,66,395,0,0],["adeX",91,1,66,396,0,0],["ZEDKO",66,4,65,397,0,0],["kyuubii",71,0,65,398,0,0],["SHiPZ",72,1,65,399,0,0],["Skrimo",72,2,65,400,0,0],["Alisson",74,4,65,401,0,0],["cronuss",75,4,65,402,0,0],["Dragon",76,2,65,403,0,0],["4X1s",77,0,65,404,0,0],["dare",78,1,65,405,0,0],["FAZERY",79,4,65,406,0,0],["MahaR",79,3,65,407,0,0],["maggent",80,1,65,408,0,0],["Tr0ublE",80,3,65,409,0,0],["Kiy0o",81,3,65,410,0,0],["tripex17",81,1,65,411,0,0],["synyx",83,1,65,412,0,0],["Icarus",85,2,65,413,0,0],["stadodo",85,0,65,414,0,0],["waZz",87,3,65,415,0,0],["fakerealityy",88,2,65,416,0,0],["m4d4ra",88,1,65,417,0,0],["adai",92,2,65,418,0,0],["Botpa1",92,3,65,419,0,0],["def1zer",92,0,65,420,0,0],["ponter",93,3,65,421,0,0],["Alkaren",94,2,65,422,0,0],["whisper",95,0,65,423,0,0],["Blytz",71,4,64,424,0,0],["Porya",73,4,64,425,0,0],["VLDN",76,4,64,426,0,0],["karnez",77,1,64,427,0,0],["snav",78,2,64,428,0,0],["kodak",79,1,64,429,0,0],["kAlash",80,0,64,430,0,0],["abizz",82,1,64,431,0,0],["reNTU",82,4,64,432,0,0],["Lack1",84,3,64,433,0,0],["YumsaN",84,1,64,434,0,0],["arrozdoce",85,3,64,435,0,0],["Shr",85,4,64,436,0,0],["laxiee",91,3,64,437,0,0],["dan4o",92,1,64,438,0,0],["pepe",93,0,64,439,0,0],["zock",93,1,64,440,0,0],["alpha",94,0,64,441,0,0],["nota",94,1,64,442,0,0],["Norwi",95,2,64,443,0,0],["k0gaSs",96,2,64,444,0,0],["Netrix",96,1,64,445,0,0],["executor",97,1,64,446,0,0],["Raijin",97,2,64,447,0,0],["Neqy",98,0,64,448,0,0],["kraghen",99,0,64,449,0,0],["erkaSt",70,4,63,450,0,0],["OWNER",80,2,63,451,0,0],["destiny",86,0,63,452,0,0],["PKL",86,3,63,453,0,0],["ragga",87,2,63,454,0,0],["XELLOW",87,0,63,455,0,0],["zewts",87,1,63,456,0,0],["Ryuzak1",88,3,63,457,0,0],["finW",89,0,63,458,0,0],["gooddeph",89,3,63,459,0,0],["m1QUSE",89,1,63,460,0,0],["Bloody",91,2,63,461,0,0],["shadiy",91,0,63,462,0,0],["urban0",93,4,63,463,0,0],["danistzz",95,3,63,464,0,0],["s1nside",96,3,63,465,0,0],["bluewh1te",97,0,63,466,0,0],["b1elany",99,2,63,467,0,0],["MRcreed",77,4,62,468,0,0],["nosraC",78,4,62,469,0,0],["FaNg",90,2,62,470,0,0],["Aldikon",92,4,62,471,0,0],["KAISER",93,2,62,472,0,0],["glowiing",95,4,62,473,0,0],["VILBy",96,0,62,474,0,0],["z1Nny",97,4,62,475,0,0],["RaY5ive",98,1,62,476,0,0],["swiz",98,2,62,477,0,0],["raalz",99,3,62,478,0,0],["Bwills",100,1,62,479,0,0],["kr1vda",80,4,61,480,0,0],["Magic",81,4,61,481,0,0],["DAN9ARMATURA",83,4,61,482,0,0],["HeCkBNk",84,4,61,483,0,0],["detr0ittJ",86,4,61,484,0,0],["k1slll",89,4,61,485,0,0],["PokemoN",91,4,61,486,0,0],["turbo",95,1,61,487,0,0],["Kiryasoo",96,4,61,488,0,0],["gxx-",98,3,61,489,0,0],["meowpop",98,4,61,490,0,0],["flayy",99,1,61,491,0,0],["rigoN",99,4,61,492,0,0],["Cryptic",100,0,61,493,0,0],["Sandman",100,3,61,494,0,0],["mhN1",87,4,60,495,0,0],["Woro2k",88,4,60,496,0,0],["Mokuj1n",94,4,60,497,0,0],["djay",100,2,60,498,0,0],["SLIGHT",100,4,58,499,0,0]];
+const SPW=[0,13,19,36,38,45,48,57,58,92,100,111,116,118,128,145,146,185,211,214,220,223,230,236,246,259,269,293,298,306,345,348,369,370,385,398,405,417,424,437,455,456,463],SPM=[0,1,2,3,4,5,6,7];
 /* ===== Ядро: карточки, паки, состав, матч ===== */
 const R = Math.random, rnd = (a, b) => a + R() * (b - a), ri = (a, b) => Math.floor(rnd(a, b + 1)), pick = a => a[Math.floor(R() * a.length)], clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -312,22 +391,35 @@ const RN = ['AWP', 'ENT', 'SUP', 'LRK', 'IGL'], RNAME = ['Снайпер', 'Эн
 const SK = ['aim', 'ent', 'clu', 'utl', 'pos', 'igl'], SN = { aim: 'Стрельба', ent: 'Опенинг', clu: 'Клатч', utl: 'Гранаты', pos: 'Позиция', igl: 'Тактика' }, SS = { aim: 'СТР', ent: 'ОПН', clu: 'КЛЧ', utl: 'ГРН', pos: 'ПОЗ', igl: 'ТАК' };
 const RAR = ['Ширпотреб', 'Армейское', 'Запрещённое', 'Засекреченное', 'Тайное'], SPN = ['', 'Игрок недели', 'MVP'];
 const PROF = [{ aim: 4, pos: 4, ent: -2, utl: -3, igl: -3 }, { ent: 6, aim: 2, clu: -3, pos: -3, igl: -2 }, { utl: 7, pos: 1, ent: -4, aim: -2 }, { clu: 6, pos: 3, ent: -3, utl: -3, igl: -3 }, { igl: 10, utl: 3, aim: -5, ent: -3, clu: -3 }];
-const TIER = [8, 35, 110, 260];           // границы редкостей по месту в общем рейтинге
+const W_ID = 100000, M_ID = 200000;      // номера особых версий: «Игрок недели» и MVP
 const CARDS = {}, POOL = [[], [], [], [], []], IFP = [[], [], [], [], []], MVPP = [];
 (function build() {
-  const mk = (id, i, add, sp, rar) => {
-    const [nick, t, role, o] = PL[i], ovr = Math.min(99, o + add), st = {};
+  const rows = {};
+  const mk = (id, row, add, sp, rar) => {
+    const [nick, t, role, o, pid, , hist] = row, ovr = Math.min(99, o + add), st = {};
     for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
-    return CARDS[id] = { id, base: i, nick, team: TM[t], t, role, ovr, rar, sp, st };
+    return CARDS[id] = { id, base: pid, nick, team: TM[t], t: Math.min(t, 100), role, ovr, rar, sp, hist: !!hist, st };
   };
-  PL.forEach((p, i) => {
-    const rar = i < TIER[0] ? 4 : i < TIER[1] ? 3 : i < TIER[2] ? 2 : i < TIER[3] ? 1 : 0;
-    POOL[rar].push(mk(i, i, 0, 0, rar));
-    if (i < TIER[0]) MVPP.push(mk(2000 + i, i, 3, 2, 4));
-    if (hsh(p[0] + 'week') % 100 < 8) { const r2 = Math.min(4, rar + 1); IFP[r2].push(mk(1000 + i, i, 3, 1, r2)); }
-  });
+  PL.forEach(row => { rows[row[4]] = row; POOL[row[5]].push(mk(row[4], row, 0, 0, row[5])); });
+  SPM.forEach(pid => { if (rows[pid]) MVPP.push(mk(M_ID + pid, rows[pid], 3, 2, 4)); });
+  SPW.forEach(pid => { if (rows[pid]) { const r2 = Math.min(4, rows[pid][5] + 1); IFP[r2].push(mk(W_ID + pid, rows[pid], 3, 1, r2)); } });
 })();
 const ALL = Object.values(CARDS).sort((a, b) => b.ovr - a.ovr || a.id - b.id);
+
+/* ---------- Способности ----------
+   Базовая зависит от естественной роли и работает только на своей роли. Индивидуальная задаётся по нику в IND;
+   пока данных HLTV нет, у всех нейтральная «Командная игра». Сила растёт с уровнем, у особых версий она выше. */
+const AB_BASE = [
+  { n: 'Первый выстрел', d: 'В защите надёжнее встречает первый выход соперника.' },
+  { n: 'Размен', d: 'Проигранная первая дуэль обходится команде вдвое дешевле.' },
+  { n: 'Поддержка', d: 'Гранаты команды работают на четверть сильнее.' },
+  { n: 'Тайминг', d: 'Усиливает команду, когда она отстаёт по счёту, и в решающем раунде.' },
+  { n: 'Чтение игры', d: 'Смягчает неудачный выбор направления.' }
+];
+const AB_IND = { team: { n: 'Командная игра', d: 'Небольшой бонус команде, пока игрок на своей роли.' } };
+const IND = {};                            // ник -> ключ AB_IND; заполняется по данным HLTV
+const indOf = c => AB_IND[IND[c.nick] || 'team'];
+const abPow = (c, lv) => (1 + .1 * (lv - 1)) * (c.sp ? 1.3 : 1);
 
 /* ---------- Паки ---------- */
 const PACKS = {
@@ -340,7 +432,7 @@ function rollRar(odds) { let r = R() * 100; for (let i = 0; i < 5; i++) { r -= o
 function pickIn(rar) {
   if (rar === 4 && R() < MVP_CH) return pick(MVPP);
   if (IFP[rar].length && R() < IF_CH) return pick(IFP[rar]);
-  const pool = POOL[rar], mn = pool[pool.length - 1].ovr; let tot = 0;
+  const pool = POOL[rar], mn = Math.min(...pool.map(c => c.ovr)); let tot = 0;
   const w = pool.map(c => { const x = 1 / ((1 + .3 * (c.ovr - mn)) * (1 + (100 - c.t) / 100)); tot += x; return x; });
   let r = R() * tot; for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; } return pool[0];
 }
@@ -357,20 +449,18 @@ const SELL = [20, 50, 150, 600, 3000], UP_N = [1, 2, 4, 8], UP_C = [100, 250, 60
 const sellVal = c => SELL[c.rar] * (c.sp ? 3 : 1);
 const upCost = (c, lv) => UP_C[lv - 1] * (1 + c.rar);
 function newGame() {
-  const G = { v: 1, coins: 600, tro: 0, best: 0, xp: 0, lvl: 1, cards: {}, squad: [null, null, null, null, null], packs: { basic: 1, pro: 2, elite: 0 }, daily: 0, w: 0, l: 0 };
+  const G = { v: 2, coins: 600, tro: 0, best: 0, xp: 0, lvl: 1, cards: {}, squad: [null, null, null, null, null], packs: { basic: 1, pro: 2, elite: 0 }, daily: 0, w: 0, l: 0 };
   for (let role = 0; role < 5; role++) { const c = pick(POOL[0].filter(x => x.role === role && x.ovr <= 66)) || POOL[0].find(x => x.role === role); G.cards[c.id] = { n: 1, lv: 1 }; G.squad[role] = c.id; }
   return G;
 }
 function addCard(G, id) { const o = G.cards[id]; if (o) { o.n++; return false; } G.cards[id] = { n: 1, lv: 1 }; return true; }
 function canUp(G, id) { const o = G.cards[id], c = CARDS[id]; return !!o && o.lv < 5 && o.n - 1 >= UP_N[o.lv - 1] && G.coins >= upCost(c, o.lv); }
 function doUp(G, id) { if (!canUp(G, id)) return false; const o = G.cards[id]; G.coins -= upCost(CARDS[id], o.lv); o.n -= UP_N[o.lv - 1]; o.lv++; return true; }
-function sellDupes(G, id, all) { const o = G.cards[id]; if (!o || o.n < 2) return 0; const k = all ? o.n - 1 : 1, v = k * sellVal(CARDS[id]); o.n -= k; G.coins += v; return v; }
 function addXp(G, x) { G.xp += x; let up = 0; while (G.xp >= 100 * G.lvl) { G.xp -= 100 * G.lvl; G.lvl++; G.packs.basic++; up++; } return up; }
-const DAY = 20 * 3600 * 1000;
 
 /* ---------- Состав ---------- */
 /* squad: массив из 5 { c: карточка, lv } по слотам ролей */
-function effOf(e, slot) { const pen = e.c.role === slot ? 0 : 5, add = e.lv - 1 - pen, st = {}; for (const k of SK) st[k] = e.c.st[k] + add; return { c: e.c, ovr: e.c.ovr + add, st, off: pen > 0 }; }
+function effOf(e, slot) { const pen = e.c.role === slot ? 0 : 5, add = e.lv - 1 - pen, st = {}; for (const k of SK) st[k] = e.c.st[k] + add; return { c: e.c, lv: e.lv, ovr: e.c.ovr + add, st, off: pen > 0, pw: pen ? 0 : abPow(e.c, e.lv) }; }
 function squadOf(G) { return G.squad.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id] ? G.cards[id].lv : 1 }); }
 function squadInfo(sq) {
   if (sq.some(x => !x)) return null;
@@ -386,12 +476,12 @@ const AC = {
   tempo: { n: 'Быстрый темп', cost: 2, d: 'Бонус от опенинга вашего энтри, в атаке на четверть сильнее. Проваливается против «Стека».' },
   stack: { n: 'Стек точки', cost: 2, d: 'Слабая сама по себе, но ломает «Быстрый темп» соперника. Проигрывает «Раскидке».' },
   nades: { n: 'Раскидка гранат', cost: 3, d: 'Бонус от гранат вашего саппорта. Наказывает «Стек».' },
-  fake: { n: 'Фейк', cost: 2, d: 'Отменяет самую дорогую карту соперника в этом раунде.' },
+  fake: { n: 'Фейк', cost: 2, d: 'Отменяет самую дорогую карту соперника. В атаке спасает, если соперник угадал точку.' },
   awp: { n: 'AWP-пик', cost: 2, d: 'Бонус от стрельбы вашего снайпера.' },
   clutch: { n: 'Клатч', cost: 1, d: 'Бонус от клатча люркера. Удваивается, когда вы отстаёте по счёту.' },
-  timeout: { n: 'Тайм-аут', cost: 1, d: 'Бонус от тактики капитана и +1 энергия в следующем раунде.' },
+  timeout: { n: 'Тайм-аут', cost: 1, d: 'Бонус от тактики капитана и +1 импульс в следующем раунде.' },
   star: { n: 'Звезда раунда', cost: 4, d: 'Большой бонус от общего рейтинга вашего лучшего игрока.' },
-  eco: { n: 'Эко-раунд', cost: 0, d: 'Команда не закупается: раунд слабее, зато деньги целы и +3 энергии.' },
+  eco: { n: 'Эко-раунд', cost: 0, d: 'Команда не закупается: раунд слабее, зато деньги целы и +3 импульса.' },
   cross: { n: 'Перекрёстный огонь', cost: 3, d: 'Бонус от позиции всей пятёрки, в защите в полтора раза сильнее.' }
 };
 const DECK = Object.keys(AC);
@@ -403,7 +493,7 @@ function acVal(k, me, ctx) {
     case 'nades': return 6 + (e[2].st.utl - 70) / 4 + (ctx.oppStack ? 3 : 0);
     case 'awp': return 3.5 + (e[0].st.aim - 70) / 3;
     case 'clutch': return (2 + (e[3].st.clu - 70) / 5) * (ctx.behind ? 2 : 1);
-    case 'timeout': return 1.5 + (e[4].st.igl - 70) / 5;
+    case 'timeout': return 1.5 + (ctx.cap - 70) / 5;
     case 'star': return 8 + (me.info.best - 75) / 2;
     case 'eco': return -7;
     case 'cross': return (5 + (me.info.pos - 70) / 4) * (ctx.side === 'D' ? 1.5 : 1);
@@ -424,32 +514,60 @@ const MAPS = [
   { n: 'Train', ct: 2, hue: 215, d: 'Сильная защита' }
 ];
 const BUY = { pistol: { n: 'Пистолеты', v: 0, c: 800 }, full: { n: 'Полная закупка', v: 0, c: 4000 }, force: { n: 'Форс-бай', v: -4, c: 2500 }, eco: { n: 'Эко', v: -9, c: 0 } };
-const EDGE_A = 2.5;                       // фора игроку: ИИ разыгрывает карты без ошибок по энергии
 const WIN_N = 13, HALF = 12, START_MONEY = 800, MAX_MONEY = 12000;
 const END = { elim: 'Команда уничтожена', bomb: 'Бомба взорвана', defuse: 'Бомба обезврежена', time: 'Время вышло' };
+const DIRS = ['A', 'S', 'B'], DIRN = { A: 'точка A', S: 'по центру', B: 'точка B' }, TEMPOS = ['fast', 'norm', 'slow'], TEMPON = { fast: 'быстро', norm: 'обычно', slow: 'медленно' };
+const T_OPEN = { fast: 1.4, norm: 1, slow: .6 }, T_UTIL = { fast: .5, norm: 1, slow: 1.4 };
+const AI_ERR = [.42, .36, .3, .24, .18, .13, .08];   // доля ошибочных решений соперника по лигам
+const DIR_HIT = 6.5;                      // цена угаданного или неугаданного направления
+const other = s => s === 'A' ? 'D' : 'A';
 
+/* ---------- Матч: до 13 побед, смена сторон после 12 раунда, экономика, план на раунд ---------- */
 class Match {
-  constructor(mySq, tro, myRating, map) {
-    const mk = (name, sq) => ({ name, sq, info: squadInfo(sq), score: 0, en: 3, bonusEn: 0, deck: shuffle([...DECK]), hand: [], disc: [], money: START_MONEY, ls: 0, ws: 0, k: [0, 0, 0, 0, 0], d: [0, 0, 0, 0, 0] });
-    this.a = mk('Вы', mySq);
-    const t = .45 * clamp(64 + tro / 40, 64, 93) + .55 * myRating + rnd(-2, 2), osq = [];
-    for (let role = 0; role < 5; role++) { const c = [...ALL].filter(x => x.role === role && !x.sp && !osq.some(o => o.c.nick === x.nick)).sort((x, y) => Math.abs(x.ovr - t) + R() * 3 - (Math.abs(y.ovr - t) + R() * 3))[0]; osq.push({ c, lv: 1 }); }
-    this.b = mk(pick(ONAMES), osq); this.style = pick(Object.keys(STYLES));
-    this.map = map || pick(MAPS);
+  /* o.capt — слот капитана в составе игрока или -1 */
+  constructor(mySq, tro, myRating, o = {}) {
+    const mk = (name, sq, capt) => { const info = squadInfo(sq); return { name, sq, info, capt, score: 0, en: capt >= 0 ? 3 : 2, bonusEn: 0, deck: shuffle([...DECK]), hand: [], disc: [], money: START_MONEY, ls: 0, ws: 0, k: [0, 0, 0, 0, 0], d: [0, 0, 0, 0, 0], mv: [0, 0, 0, 0, 0], op: [0, 0, 0, 0, 0], spent: 0, buys: {} }; };
+    this.a = mk('Вы', mySq, o.capt == null ? -1 : o.capt);
+    const btro = Math.max(0, tro + ri(-100, 100)), t = .45 * clamp(64 + btro / 40, 64, 93) + .55 * myRating + rnd(-2, 2), osq = [];
+    for (let role = 0; role < 5; role++) { const c = [...ALL].filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick)).sort((x, y) => Math.abs(x.ovr - t) + R() * 3 - (Math.abs(y.ovr - t) + R() * 3))[0]; osq.push({ c, lv: 1 }); }
+    this.b = mk(pick(ONAMES), osq, 4); this.style = pick(Object.keys(STYLES));
+    this.opp = { name: this.b.name, tro: btro, lg: leagueOf(btro), rating: this.b.info.rating }; this.err = AI_ERR[this.opp.lg];
+    this.fav = { A: pick(['A', 'B']), D: pick(['A', 'B']) };          // любимые точки соперника в атаке и в защите
+    this.map = o.map || pick(MAPS);
     this.round = 1; this.sideA = R() < .5 ? 'A' : 'D'; this.over = false; this.hist = []; this.last = null; this.decider = false;
-    this.draw(this.a); this.draw(this.b);
+    this.draw(this.a); this.draw(this.b); this.prep();
   }
   draw(s) { while (s.hand.length < 4) { if (!s.deck.length) { s.deck = shuffle(s.disc); s.disc = []; } if (!s.deck.length) break; s.hand.push(s.deck.pop()); } }
-  canPlay(s, cards) { return cards.length <= 2 && cards.every(k => s.hand.includes(k)) && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
+  /* Приказов за раунд можно отдать сколько угодно, пока хватает импульса */
+  canPlay(s, cards) { return cards.every(k => s.hand.includes(k)) && new Set(cards).size === cards.length && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
   isPistol() { return !this.decider && (this.round === 1 || this.round === HALF + 1); }
   /* Закупка считается сама по деньгам команды; карта «Эко-раунд» заставляет сохранить деньги */
   buyOf(s, cards) { return this.isPistol() ? 'pistol' : cards && cards.includes('eco') ? 'eco' : s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
-  aiChoose() {
-    const s = this.b, w = STYLES[this.style].w, h = s.hand, opts = [[]];
-    for (let i = 0; i < h.length; i++) { opts.push([h[i]]); for (let j = i + 1; j < h.length; j++) opts.push([h[i], h[j]]); }
+  capIgl(s) { return s.capt >= 0 ? s.info.e[s.capt].st.igl : 55; }
+  /* Соперник решает до игрока и видит только прошлые раунды */
+  prep() {
+    const slip = R() < this.err;
+    this.nx = { plan: this.aiPlan(slip), cards: this.aiChoose(slip), slip };
+    this.nx.intel = this.recon();
+  }
+  aiPlan(slip) {
+    if (slip) return { dir: pick(DIRS), tempo: pick(TEMPOS), focus: -1 };
+    const st = this.style, aiSide = other(this.sideA), all = this.hist.filter(x => x.side === this.sideA), h = all.slice(-5), cnt = { A: 0, S: 0, B: 0 }; h.forEach(x => cnt[x.dirA]++);
+    /* сильный соперник меняет привычную точку, если его дважды переиграли */
+    if (this.opp.lg >= 2 && all.slice(-3).filter(x => x.read === 'good' && x.dirB === this.fav[aiSide]).length >= 2) this.fav[aiSide] = this.fav[aiSide] === 'A' ? 'B' : 'A';
+    const top = cnt.A >= cnt.B ? 'A' : 'B', aiDef = aiSide === 'D';
+    const dir = h.length >= 3 && cnt[top] >= 3 && R() < .6 ? (aiDef ? top : top === 'A' ? 'B' : 'A') : R() < .55 ? this.fav[aiSide] : pick(DIRS);
+    const tempo = pick(st === 'aggro' ? ['fast', 'fast', 'norm'] : st === 'def' ? ['slow', 'slow', 'norm'] : ['norm', 'norm', 'fast', 'slow']);
+    return { dir, tempo, focus: -1 };
+  }
+  aiChoose(slip) {
+    const s = this.b, w = Object.assign({}, STYLES[this.style].w), h = s.hand, opts = [];
+    for (let mask = 0; mask < 1 << h.length; mask++) { const o = h.filter((k, i) => mask >> i & 1); if (this.canPlay(s, o)) opts.push(o); }
+    if (slip) return pick(opts.filter(o => o.length <= 1));
+    const seen = {}; this.hist.slice(-6).forEach(x => x.mine.forEach(k => seen[k] = (seen[k] || 0) + 1));
+    if (seen.tempo >= 2) w.stack *= 1.8; if (seen.stack >= 2) { w.nades *= 1.6; w.tempo *= .5; } if (seen.nades >= 2) w.stack *= .4;
     let best = [], bs = -1e9;
     for (const o of opts) {
-      if (!this.canPlay(s, o)) continue;
       let sc = o.length ? 0 : (s.en < 3 ? 2.6 : s.en >= 6 ? -1 : 1);
       for (const k of o) sc += k === 'eco' ? (s.en <= 1 && s.money < BUY.full.c ? 3.5 : .1) * w.eco : w[k] * (1 + AC[k].cost * .6);
       if (o.includes('eco') && o.length > 1) sc -= 3;
@@ -458,96 +576,321 @@ class Match {
     }
     return best;
   }
-  /* Кто кого убил в раунде: победитель теряет от 0 до 4 игроков */
-  feed(win, pa, pb, sideA) {
-    const a = this.a, b = this.b, W = win ? a : b, L = win ? b : a, wSide = win ? sideA : (sideA === 'A' ? 'D' : 'A');
+  /* Частичная разведка: капитан иногда узнаёт одну деталь плана соперника на этот раунд */
+  recon() {
+    const a = this.a; if (a.capt < 0) return null;
+    if (R() > clamp(.3 + (this.capIgl(a) - 65) / 70, .15, .7)) return null;
+    const p = this.nx.plan, aiDef = this.sideA === 'A';
+    return R() < .65 ? { k: 'dir', v: p.dir, t: aiDef ? 'Соперник усиливает: ' + DIRN[p.dir] : 'Соперник пойдёт: ' + DIRN[p.dir] } : { k: 'tempo', v: p.tempo, t: 'Темп соперника: ' + TEMPON[p.tempo] };
+  }
+  /* Кто кого убил: первое убийство — исход первой дуэли, победитель раунда теряет от 0 до 4 игроков */
+  feed(win, pa, pb, sideA, open) {
+    const a = this.a, b = this.b, W = win ? a : b, L = win ? b : a, wSide = win ? sideA : other(sideA);
     const r = R(), end = wSide === 'A' ? (r < .3 ? 'bomb' : 'elim') : (r < .22 ? 'defuse' : r < .32 ? 'time' : 'elim');
-    const gap = Math.abs(pa - pb), surv = clamp(Math.round(rnd(.6, 3.2) + gap / 9 + (R() < .12 ? -1.5 : 0)), 1, 5);
+    const gap = Math.abs(pa - pb), firstW = open.team === W;
+    const surv = clamp(Math.round(rnd(.6, 3.2) + gap / 9 + (R() < .12 ? -1.5 : 0)), 1, firstW ? 5 : 4);
     const lSurv = end === 'elim' ? 0 : end === 'bomb' ? ri(0, 2) : end === 'time' ? ri(1, 2) : ri(0, 1);
     const order = shuffle([...Array(5 - lSurv).fill(1), ...Array(5 - surv).fill(0)]);
     if (lSurv === 0 && order[order.length - 1] !== 1) { const i = order.lastIndexOf(1); order[i] = 0; order[order.length - 1] = 1; }
+    const want = firstW ? 1 : 0; if (order[0] !== want) { let j = -1; for (let i = 1; i < order.length; i++) if (order[i] === want && !(lSurv === 0 && i === order.length - 1)) { j = i; break; } if (j > 0) { order[j] = order[0]; order[0] = want; } }
     const alive = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]], kills = [], cnt = {};
     const wp = (team, arr) => { let tot = 0; const ws = arr.map(i => { const x = Math.pow(team.info.e[i].st.aim / 70, 4); tot += x; return x; }); let q = R() * tot; for (let i = 0; i < arr.length; i++) { q -= ws[i]; if (q <= 0) return arr[i]; } return arr[0]; };
-    for (const byW of order) {
+    order.forEach((byW, n) => {
       const K = byW ? W : L, V = byW ? L : W, ka = alive[byW ? 0 : 1], va = alive[byW ? 1 : 0];
-      const ki = wp(K, ka), vi = pick(va); va.splice(va.indexOf(vi), 1);
-      K.k[ki]++; V.d[vi]++; const key = (K === a ? 'a' : 'b') + ki; cnt[key] = (cnt[key] || 0) + 1;
+      const first = n === 0 && K === open.team;
+      const ki = first ? open.k : wp(K, ka), vi = first && va.includes(open.v) ? open.v : pick(va); va.splice(va.indexOf(vi), 1);
+      K.k[ki]++; V.d[vi]++; if (first) K.op[ki]++; const key = (K === a ? 'a' : 'b') + ki; cnt[key] = (cnt[key] || 0) + 1;
       kills.push({ byA: K === a, k: ki, v: vi, hs: R() < .45, awp: K.info.e[ki].c.role === 0 && R() < .7 });
-    }
+    });
     let top = null; for (const key in cnt) if ((key[0] === 'a') === (W === a) && (!top || cnt[key] > cnt[top])) top = key;
-    const ti = top ? +top[1] : wp(W, [0, 1, 2, 3, 4]), frags = top ? cnt[top] : 0;
-    return { kills, end, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && alive[0][0] === ti };
+    const ti = top ? +top[1] : wp(W, [0, 1, 2, 3, 4]), frags = top ? cnt[top] : 0; W.mv[ti]++;
+    return { kills, end, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && alive[0][0] === ti, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
   }
-  /* Разыграть раунд: mine — карты игрока */
-  play(mine) {
+  /* Разыграть раунд: mine — приказы игрока, plan — направление, темп и ставка на игрока */
+  play(mine, plan) {
     if (this.over || !this.canPlay(this.a, mine)) return null;
-    const a = this.a, b = this.b, theirs = this.aiChoose(), sideA = this.sideA, sideB = sideA === 'A' ? 'D' : 'A', pistol = this.isPistol();
-    const act = (own, other) => { let l = [...own]; if (other.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
+    plan = Object.assign({ dir: 'S', tempo: 'norm', focus: -1 }, plan);
+    const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
+    const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
     const buyA = this.decider ? 'full' : this.buyOf(a, mine), buyB = this.decider ? 'full' : this.buyOf(b, theirs);
-    const val = (me, my, opp, side, behind) => { const ctx = { side, behind, oppStack: opp.includes('stack'), oppTempo: opp.includes('tempo'), oppNades: opp.includes('nades') }; return my.filter(k => k !== 'eco').map(k => ({ k, v: acVal(k, me, ctx) })); };
+    const val = (me, my, opp, side, behind) => { const ctx = { side, behind, cap: this.capIgl(me), oppStack: opp.includes('stack'), oppTempo: opp.includes('tempo'), oppNades: opp.includes('nades') }; return my.filter(k => k !== 'eco').map(k => ({ k, v: acVal(k, me, ctx) })); };
     const va = val(a, A.l, B.l, sideA, a.score < b.score), vb = val(b, B.l, A.l, sideB, b.score < a.score);
     const mapV = s => (s === 'D' ? 1 : -1) * this.map.ct / 2, hot = s => s.ws >= 2 ? 1.5 : 0;
+    /* вклад ролей и способностей */
+    const role = (s, pl, behind) => {
+      const e = s.info.e, util = (e[2].st.utl - 70) / 6 * T_UTIL[pl.tempo] * (1 + .25 * e[2].pw), lurk = behind || this.decider ? .8 * e[3].pw : 0, ind = e.reduce((x, y) => x + .3 * y.pw, 0);
+      return util + lurk + ind;
+    };
+    const avg = a.info.e.reduce((x, y) => x + y.ovr, 0) / 5, fN = plan.focus >= 0 ? this.hist.slice(-4).filter(x => x.focus === plan.focus).length : 0;
+    const focus = plan.focus < 0 ? 0 : fN >= 3 && !ai.slip ? -1.5 : clamp((a.info.e[plan.focus].ovr - avg) * .35, -1.5, 2.5);
+    const att = sideA === 'A' ? a : b, def = att === a ? b : a, pAtt = att === a ? plan : pB, pDef = att === a ? pB : plan, cAtt = att === a ? A.l : B.l;
+    /* направление: атака в усиленную точку проигрывает, мимо усиления — выигрывает */
+    let dm = pAtt.dir !== 'S' && pDef.dir !== 'S' ? (pAtt.dir === pDef.dir ? -DIR_HIT : DIR_HIT) : pAtt.dir === 'S' && pDef.dir !== 'S' ? 1 : 0;
+    const faked = dm < 0 && cAtt.includes('fake'); if (faked) dm = 0;
+    dm *= 1 - .3 * (dm < 0 ? att : def).info.e[4].pw;
+    /* первая дуэль: энтри атаки против снайпера защиты, ставка зависит от темпа атаки */
+    const ent = att.info.e[1], hold = def.info.e[0], pO = 1 / (1 + Math.exp(-(ent.st.ent - (hold.st.aim + hold.st.pos) / 2 - 1.5 * hold.pw + 2) / 7)), openAtt = R() < pO;
+    const stake = 3 * T_OPEN[pAtt.tempo], swing = openAtt ? stake : -stake * (1 - .5 * Math.min(1, ent.pw));
+    const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
-    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0), pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0);
-    const p = 1 / (1 + Math.exp(-(pa - pb + EDGE_A) / 9)), win = R() < p;
+    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + sgn * (dm + swing) / 2;
+    const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) - sgn * (dm + swing) / 2;
+    const p = 1 / (1 + Math.exp(-(pa - pb) / 9)), win = R() < p;
     const W = win ? a : b, L = win ? b : a; W.score++;
-    const f = this.feed(win, pa, pb, sideA);
+    const open = openAtt ? { team: att, k: 1, v: ri(0, 4) } : { team: def, k: 0, v: 1 };
+    const f = this.feed(win, pa, pb, sideA, open);
     for (const [s, pl, buy] of [[a, mine, buyA], [b, theirs, buyB]]) {
       s.en -= pl.reduce((x, k) => x + AC[k].cost, 0);
       s.bonusEn = (pl.includes('timeout') ? 1 : 0) + (pl.includes('eco') ? 3 : 0);
       for (const k of pl) { s.hand.splice(s.hand.indexOf(k), 1); s.disc.push(k); }
       if (!pl.length && s.hand.length) s.disc.push(s.hand.shift());
-      s.money = Math.max(0, s.money - BUY[buy].c);
+      s.money = Math.max(0, s.money - BUY[buy].c); s.spent += BUY[buy].c; const q = s.buys[buy] = s.buys[buy] || [0, 0]; q[0]++; if (s === W) q[1]++;
     }
     W.money = Math.min(MAX_MONEY, W.money + 3250 + 500 * f.surv); L.money = Math.min(MAX_MONEY, L.money + 1900 + 500 * Math.min(L.ls, 3) + 400 * f.lSurv);
     W.ws++; W.ls = 0; L.ls++; L.ws = 0;
-    this.last = Object.assign({ round: this.round, mine, theirs, cutA: A.cut, cutB: B.cut, va, vb, baseA, baseB, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, hotA: hot(a) > 0, swap: false }, f);
-    this.hist.push({ win, theirs: [...theirs], side: sideA, end: f.end });
+    const read = pAtt.dir === 'S' || pDef.dir === 'S' ? null : faked ? 'fake' : (pAtt.dir === pDef.dir) === (att === a) ? 'bad' : 'good';
+    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false }, f);
+    this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
     if (a.score >= WIN_N || b.score >= WIN_N) { this.over = true; this.won = a.score > b.score; return this.last; }
     this.round++;
     if (this.round === HALF + 1) { this.sideA = sideB; this.last.swap = true; for (const s of [a, b]) { s.money = START_MONEY; s.ls = 0; s.ws = 0; } }
     if (a.score === HALF && b.score === HALF) { this.decider = true; for (const s of [a, b]) s.money = MAX_MONEY; }
     for (const s of [a, b]) { s.en = Math.min(8, s.en + 2 + s.bonusEn); s.bonusEn = 0; this.draw(s); }
+    this.prep();
     return this.last;
   }
   /* Лучший игрок матча: больше всего убийств у победителей */
   mvp() { const W = this.won ? this.a : this.b; let i = 0; for (let k = 1; k < 5; k++) if (W.k[k] > W.k[i]) i = k; return { nick: W.info.e[i].c.nick, k: W.k[i], d: W.d[i], mine: this.won }; }
+  /* Послематчевый отчёт: игроки, экономика, ключевые моменты и выводы */
+  report() {
+    const a = this.a, h = this.hist, my = h.filter(x => x.win), lost = h.filter(x => !x.win), mom = [], notes = [];
+    const players = a.info.e.map((x, i) => ({ nick: x.c.nick, k: a.k[i], d: a.d[i], mv: a.mv[i], op: a.op[i] }));
+    const cl = h.find(x => x.win && (x.ace || x.clutch)); if (cl) mom.push(`Раунд ${cl.round}: ${cl.mvp} — ${cl.ace ? 'эйс' : 'клатч'}, счёт стал ${cl.score}.`);
+    const up = my.slice().sort((x, y) => x.p - y.p)[0]; if (up && up.p < .4 && up !== cl) mom.push(`Раунд ${up.round}: взяли раунд с шансом ${Math.round(up.p * 100)}%${up.buyA === 'eco' || up.buyA === 'force' ? ' на слабой закупке' : ''}.`);
+    const dn = lost.slice().sort((x, y) => y.p - x.p)[0]; if (dn && dn.p > .62) mom.push(`Раунд ${dn.round}: отдали раунд при шансе ${Math.round(dn.p * 100)}%.`);
+    let run = 0, best = 0, at = 0; h.forEach(x => { run = x.win ? run + 1 : 0; if (run > best) { best = run; at = x.round; } }); if (best >= 4 && mom.length < 3) mom.push(`Серия из ${best} раундов подряд закончилась в раунде ${at}.`);
+    const bad = h.filter(x => x.read === 'bad').length, good = h.filter(x => x.read === 'good').length;
+    if (bad >= 4 && bad > good) notes.push(`Соперник ${bad} раз прочитал ваше направление, вы его — ${good}. Чаще меняйте точку и следите за разведкой.`);
+    else if (good >= 4 && good > bad) notes.push(`Вы ${good} раз переиграли соперника по направлению — выбор точки работал.`);
+    const op = h.filter(x => x.openMine).length; if (h.length >= 8) notes.push(op / h.length < .42 ? `Первые дуэли: выиграно ${op} из ${h.length}. Усильте энтри и снайпера или играйте медленнее.` : op / h.length > .58 ? `Первые дуэли: выиграно ${op} из ${h.length}. Быстрый темп будет давать ещё больше.` : `Первые дуэли: выиграно ${op} из ${h.length}.`);
+    const fr = a.buys.force; if (fr && fr[0] >= 3 && fr[1] / fr[0] < .34) notes.push(`Форс-закупки почти не сработали: ${fr[1]} из ${fr[0]}. Выгоднее сохранять деньги картой «Эко-раунд».`);
+    const side = s => { const r = h.filter(x => x.side === s); return r.length ? r.filter(x => x.win).length + ' из ' + r.length : '—'; };
+    if (notes.length < 3) notes.push(`Раунды в атаке: ${side('A')}, в защите: ${side('D')}.`);
+    return { players, moments: mom.slice(0, 3), notes: notes.slice(0, 3), eco: { spent: a.spent, buys: a.buys } };
+  }
 }
-function applyResult(G, won) {
-  const lg0 = leagueOf(G.best), lg = leagueOf(G.tro), r = { won, tro: won ? ri(28, 32) : -Math.min(G.tro, ri(18, 22)), coins: won ? 150 + 25 * lg : 50, xp: won ? 40 : 15, packs: [] };
+/* Награды за рейтинговый матч: монеты 40 и 10; кубки +25, +30 за разницу больше 5 раундов; −25, −30 за 0:13 */
+function applyResult(G, won, sa, sb) {
+  const lg0 = leagueOf(G.best), r = { won, tro: won ? (sa - sb > 5 ? 30 : 25) : -Math.min(G.tro, sa === 0 && sb >= WIN_N ? 30 : 25), coins: won ? 40 : 10, xp: won ? 40 : 15, packs: [] };
   G.tro += r.tro; G.coins += r.coins; if (won) G.w++; else G.l++;
   if (G.tro > G.best) { G.best = G.tro; const n = leagueOf(G.best); if (n > lg0) { G.packs.pro++; r.packs.push('кейс «Про» за лигу «' + LEAGUES[n][0] + '»'); } }
   const up = addXp(G, r.xp); if (up) r.packs.push('базовый кейс за уровень ' + G.lvl);
   return r;
 }
-if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, IFP, MVPP, PACKS, openPack, newGame, addCard, squadOf, squadInfo, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellDupes, sellVal };
+/* ===== Прогресс: сохранение, составы, продажа, контракты, задания, сезоны ===== */
+const SAVE_V = 2, MSK = 3 * 3600000;
+const mskDay = ts => Math.floor((ts + MSK) / 86400000);            // сутки меняются в 00:00 по Москве
+const mskWeek = day => Math.floor((day + 3) / 7);                   // неделя начинается в понедельник
+const mskMonth = ts => { const d = new Date(ts + MSK); return d.getUTCFullYear() * 12 + d.getUTCMonth(); };
+const monthName = m => ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'][m % 12] + ' ' + Math.floor(m / 12);
+
+/* ---------- Сохранение: перенос старых версий и проверка данных ---------- */
+function migrate(d, now) {
+  if (!d || typeof d !== 'object' || !d.cards || typeof d.cards !== 'object' || !(Array.isArray(d.squad) || Array.isArray(d.squads))) return null;
+  if (d.v === 1) {                                                   // версия 1: особые карточки имели номера 1000+ и 2000+
+    const map = id => { id = +id; return id >= 2000 && id < 2500 ? M_ID + id - 2000 : id >= 1000 && id < 1500 ? W_ID + id - 1000 : id; };
+    const cards = {}; for (const k in d.cards) cards[map(k)] = d.cards[k];
+    d.cards = cards; d.squad = d.squad.map(x => x == null ? null : map(x));
+    d.daily = d.daily ? mskDay(d.daily) : -1; d.tut = 3; d.v = 2;
+  }
+  return d.v === SAVE_V ? normalize(d, now) : null;
+}
+function normalize(G, now) {
+  const num = (k, v) => { if (typeof G[k] !== 'number' || !isFinite(G[k])) G[k] = v; };
+  num('coins', 0); num('tro', 0); num('best', G.tro); num('xp', 0); num('lvl', 1); num('daily', -1); num('w', 0); num('l', 0); num('tut', 3); num('frame', -1); num('sqi', 0);
+  G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.lvl = Math.max(1, G.lvl); G.sqi = clamp(G.sqi | 0, 0, 2);
+  G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs);
+  G.orphans = G.orphans || {};
+  for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !(o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
+  if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
+  delete G.squad;
+  G.squads = [0, 1, 2].map(i => [0, 1, 2, 3, 4].map(k => { const id = G.squads[i] && G.squads[i][k]; return id != null && G.cards[id] ? +id : null; }));
+  if (!Array.isArray(G.capts)) G.capts = G.squads.map(s => s[4] != null && CARDS[s[4]].role === 4 ? s[4] : null);
+  G.capts = [0, 1, 2].map(i => { const id = G.capts[i]; return id != null && G.squads[i].includes(id) && CARDS[id].role === 4 ? id : null; });
+  Object.defineProperty(G, 'squad', { get() { return this.squads[this.sqi]; }, set(v) { this.squads[this.sqi] = v; }, enumerable: false, configurable: true });
+  G.inbox = Array.isArray(G.inbox) ? G.inbox : []; G.picks = Array.isArray(G.picks) ? G.picks.filter(p => Array.isArray(p) && p.every(id => CARDS[id])) : [];
+  G.season = G.season && typeof G.season === 'object' ? G.season : { m: -1, goals: [], hist: [] };
+  G.tasks = G.tasks && typeof G.tasks === 'object' ? G.tasks : { day: -1, d: [], week: -1, w: [], s: null, sStart: -99 };
+  if (now != null) refresh(G, now);
+  return G;
+}
+function newProfile(now) { const G = newGame(); G.tut = 0; return normalize(G, now); }
+
+/* ---------- Составы и капитан ---------- */
+const captSlot = G => { const id = G.capts[G.sqi]; return id == null ? -1 : G.squad.indexOf(id); };
+function bestCapt(G) { let best = null; for (const id of G.squad) if (id != null && CARDS[id].role === 4) { const v = CARDS[id].st.igl + G.cards[id].lv; if (!best || v > best.v) best = { id, v }; } return best ? best.id : null; }
+function setSlot(G, slot, id) {
+  const c = CARDS[id], sq = G.squad, j = sq.findIndex(x => x != null && CARDS[x].nick === c.nick), old = sq[slot];
+  if (j >= 0 && j !== slot) sq[j] = old; sq[slot] = id;
+  if (!sq.includes(G.capts[G.sqi])) G.capts[G.sqi] = null;
+}
+function dropFromSquads(G, id) { G.squads.forEach((s, i) => { const k = s.indexOf(+id); if (k >= 0) s[k] = null; if (G.capts[i] === +id) G.capts[i] = null; }); }
+const inSquads = (G, id) => G.squads.some(s => s.includes(+id));
+
+/* ---------- Продажа: цена зависит от редкости, рейтинга и уровня (формула предложена, не утверждена) ---------- */
+function priceOf(c, lv) {
+  const pool = POOL[c.rar], mn = Math.min(...pool.map(x => x.ovr)), mx = Math.max(...pool.map(x => x.ovr));
+  const rel = mx > mn ? clamp((c.ovr - (c.sp ? 3 : 0) - mn) / (mx - mn), 0, 1) : .5;
+  return Math.round(sellVal(c) * (.9 + .2 * rel) * (1 + .25 * ((lv || 1) - 1)));
+}
+const sellNeedsConfirm = (G, id) => { const o = G.cards[id]; return !!o && o.n === 1 && (inSquads(G, id) || !!CARDS[id].sp); };
+function sellOne(G, id) {
+  const o = G.cards[id]; if (!o) return 0;
+  const last = o.n === 1, v = priceOf(CARDS[id], last ? o.lv : 1);
+  if (last) { delete G.cards[id]; dropFromSquads(G, id); } else o.n--;
+  G.coins += v; return v;
+}
+
+/* ---------- Контракт: 10 обычных карточек одной редкости -> одна карточка (вероятности предложены, не утверждены) ---------- */
+function tuInfo(G, ids) {
+  if (!ids.length) return { ok: false, why: 'Выберите 10 обычных карточек одной редкости.' };
+  const cs = ids.map(id => CARDS[id]), rar = cs[0].rar, cnt = {};
+  for (const c of cs) { if (!c || c.sp) return { ok: false, why: 'Особые версии в контракт не идут.' }; if (c.rar !== rar) return { ok: false, why: 'Все карточки должны быть одной редкости.' }; cnt[c.id] = (cnt[c.id] || 0) + 1; if (!G.cards[c.id] || G.cards[c.id].n < cnt[c.id]) return { ok: false, why: 'Не хватает копий.' }; }
+  const avg = cs.reduce((s, c) => s + c.ovr, 0) / cs.length, pool = POOL[rar], mn = Math.min(...pool.map(x => x.ovr)), mx = Math.max(...pool.map(x => x.ovr));
+  const p = clamp(.2 + .3 * (mx > mn ? (avg - mn) / (mx - mn) : 0), .2, .5), band = p < .3 ? '20–30%' : p < .4 ? '30–40%' : '40–50%';
+  if (rar === 4) return { ok: false, rar, avg, why: 'Для редкости «Тайное» контракт пока закрыт: правило ещё не утверждено.' };
+  return { ok: ids.length === 10, rar, avg, p, up: band, same: p < .3 ? '70–80%' : p < .4 ? '60–70%' : '50–60%', why: ids.length < 10 ? `Выбрано ${ids.length} из 10.` : '' };
+}
+function tuRun(G, ids) {
+  const inf = tuInfo(G, ids); if (!inf.ok) return null;
+  for (const id of ids) { const o = G.cards[id]; if (--o.n <= 0) { delete G.cards[id]; dropFromSquads(G, id); } }
+  let out;
+  if (R() < inf.p) { const pool = POOL[inf.rar + 1], mn = Math.min(...pool.map(c => c.ovr)); let tot = 0; const w = pool.map(c => { const x = 1 / (1 + .3 * (c.ovr - mn)); tot += x; return x; }); let r = R() * tot; out = pool[0]; for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) { out = pool[i]; break; } } }
+  else { const better = POOL[inf.rar].filter(c => c.ovr >= Math.ceil(inf.avg)); out = pick(better.length ? better : POOL[inf.rar].slice(0, 5)); }
+  const isNew = addCard(G, out.id);
+  return { c: out, isNew, up: out.rar > inf.rar };
+}
+
+/* ---------- Награды ---------- */
+function giveReward(G, r) {
+  if (r.coins) G.coins += r.coins;
+  if (r.pack) for (const k in r.pack) G.packs[k] += r.pack[k];
+  if (r.pick != null) { const pool = POOL[r.pick], ids = []; for (let i = 0; i < 3; i++) ids.push(pick(pool).id); G.picks.push(ids); }
+}
+const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object.keys(r.pack).map(k => 'кейс «' + PACKS[k].n + '»' + (r.pack[k] > 1 ? ' ×' + r.pack[k] : '')).join(', ') : '', r.pick != null ? 'карточка на выбор («' + RAR[r.pick] + '»)' : ''].filter(Boolean).join(' + ');
+function choosePick(G, i) { const p = G.picks[0]; if (!p || p[i] == null) return null; G.picks.shift(); const isNew = addCard(G, p[i]); return { c: CARDS[p[i]], isNew }; }
+
+/* ---------- Задания: 4 ежедневных, 5 недельных, 1 особое на 7 дней (цели и награды предложены, не утверждены) ---------- */
+const T_DAILY = [['match', 'Сыграйте матчей: {n}', 2], ['rounds', 'Сыграйте раундов: {n}', 30], ['kills', 'Сделайте убийств: {n}', 40], ['cards', 'Отдайте приказов: {n}', 20], ['open', 'Выиграйте первых дуэлей: {n}', 12], ['rwin', 'Выиграйте раундов: {n}', 15]];
+const T_WEEK = [['match', 'Сыграйте матчей: {n}', 12], ['kills', 'Сделайте убийств: {n}', 250], ['awpk', 'Сделайте убийств снайпером: {n}', 45], ['atkw', 'Выиграйте раундов в атаке: {n}', 50], ['winRole', 'Победите составом без штрафов за роль: {n}', 3], ['winCapt', 'Победите с капитаном: {n}', 3], ['open', 'Выиграйте первых дуэлей: {n}', 70]];
+const W_REW = [{ pack: { basic: 1 } }, { pack: { basic: 1 } }, { coins: 500 }, { pack: { pro: 1 } }];
+const ownsRole = (G, r) => Object.keys(G.cards).some(id => CARDS[id].role === r);
+function team3(G) { const t = {}; for (const id in G.cards) { const c = CARDS[id]; (t[c.team] = t[c.team] || new Set()).add(c.nick); } return Object.values(t).some(s => s.size >= 3); }
+const feasible = (G, k) => k === 'winCapt' ? ownsRole(G, 4) : k === 'awpk' ? ownsRole(G, 0) : k === 'winRole' ? [0, 1, 2, 3, 4].every(r => ownsRole(G, r)) : k === 'winTeam3' ? team3(G) : true;
+const mkTask = (k, text, n, r, x) => Object.assign({ k, t: text.replace('{n}', n), n, p: 0, r, claimed: false }, x);
+function genTasks(G, kind) {
+  const lg = leagueOf(G.tro), sc = n => Math.max(1, Math.round(n * (1 + .1 * lg)));
+  if (kind === 'd') return shuffle(T_DAILY.slice()).slice(0, 4).map(([k, t, n]) => mkTask(k, t, sc(n), { coins: 90 + 10 * lg }));
+  if (kind === 'w') {
+    const rest = shuffle(T_WEEK.filter(x => feasible(G, x[0]))).slice(0, 4);
+    return [mkTask('win', 'Главное: победите в матчах: {n}', sc(6), { pick: clamp(1 + Math.floor(lg / 2), 1, 3) }, { main: true })].concat(rest.map(([k, t, n], i) => mkTask(k, t, sc(n), W_REW[i])));
+  }
+  const rw = { pick: clamp(2 + Math.floor(lg / 2), 2, 4), pack: { pro: 1 } }, opts = [() => mkTask('winBig', 'Победите с разницей больше 5 раундов: {n}', 4, rw)];
+  if (feasible(G, 'winTeam3')) opts.push(() => mkTask('winTeam3', 'Победите с тремя игроками одной команды в составе: {n}', 6, rw));
+  const own = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !c.sp).sort((a, b) => b.ovr - a.ovr), c = own.length ? pick(own.slice(0, Math.max(1, Math.ceil(own.length / 2)))) : null;
+  if (c) opts.push(() => mkTask('winCard', `Победите с игроком ${c.nick} (${c.team}) в составе: {n}`, 6, rw, { arg: c.id }));
+  return pick(opts)();
+}
+const SEASON_GOALS = [['win', 'Победите в матчах за сезон: {n}', 25, { coins: 600 }], ['match', 'Сыграйте матчей за сезон: {n}', 50, { pack: { pro: 1 } }], ['kills', 'Сделайте убийств за сезон: {n}', 1500, { pack: { pro: 1 } }]];
+const S_COINS = [100, 200, 300, 500, 700, 1000, 1500], S_DROP = [0, 40, 80, 130, 180, 250, 350];
+const taskDone = t => t.p >= t.n;
+function allTasks(G) { const T = G.tasks; return T.d.concat(T.w, T.s ? [T.s] : [], G.season.goals); }
+/* Смена суток, недели, особого задания и сезона. Выполненные, но не забранные награды уходят во «Входящие» и не сгорают */
+function refresh(G, now) {
+  const day = mskDay(now), wk = mskWeek(day), mo = mskMonth(now), T = G.tasks, stash = l => l.forEach(t => { if (t && taskDone(t) && !t.claimed) G.inbox.push({ t: t.t.replace('Главное: ', ''), r: t.r }); });
+  if (G.season.m !== mo) {
+    if (G.season.m >= 0) {
+      const lg = leagueOf(G.tro), place = lbPlace(G, G.season.m, now);
+      G.season.hist.unshift({ m: G.season.m, lg, tro: G.tro, place }); G.season.hist = G.season.hist.slice(0, 24);
+      stash(G.season.goals); G.frame = Math.max(G.frame, lg);
+      G.inbox.push({ t: `Итоги сезона «${monthName(G.season.m)}»: лига «${LEAGUES[lg][0]}», место ${place}`, r: Object.assign({ coins: S_COINS[lg] }, lg >= 5 ? { pack: { elite: 1 } } : lg >= 3 ? { pack: { pro: 1 } } : lg >= 1 ? { pack: { basic: 1 } } : {}) });
+      G.tro = Math.max(0, G.tro - S_DROP[lg]);
+    }
+    G.season.m = mo; G.season.goals = SEASON_GOALS.map(([k, t, n, r]) => mkTask(k, t, n, r));
+  }
+  if (G.tut < 3) return;                                               // задания открываются после первого матча
+  if (T.day !== day) { stash(T.d); T.d = genTasks(G, 'd'); T.day = day; }
+  if (T.week !== wk) { stash(T.w); T.w = genTasks(G, 'w'); T.week = wk; }
+  if (!T.s || day >= T.sStart + 7) { stash([T.s]); T.s = genTasks(G, 's'); T.sStart = day; }
+}
+function taskAdd(G, ev) {
+  for (const t of allTasks(G)) { if (taskDone(t)) continue; let v = ev[t.k]; if (t.k === 'winCard') v = ev.win && ev.cards5 && ev.cards5.includes(t.arg) ? 1 : 0; if (v) t.p = Math.min(t.n, t.p + v); }
+}
+function claimTask(G, t) { if (!t || !taskDone(t) || t.claimed) return false; t.claimed = true; giveReward(G, t.r); return true; }
+function claimInbox(G, i) { const x = G.inbox[i]; if (!x) return false; G.inbox.splice(i, 1); giveReward(G, x.r); return true; }
+/* События матча для заданий: раунд засчитывается сразу, победа и матч — только при завершении */
+const roundEvent = L => ({ rounds: 1, rwin: L.win ? 1 : 0, kills: L.kA, cards: L.mine.length, open: L.openMine ? 1 : 0, awpk: L.awpK, atkw: L.win && L.sideA === 'A' ? 1 : 0 });
+function matchEvent(G, m) {
+  const sq = squadOf(G), info = m.a.info, w = m.won ? 1 : 0;
+  return { match: 1, win: w, winRole: w && info.onRole ? 1 : 0, winCapt: w && m.a.capt >= 0 ? 1 : 0, winTeam3: w && info.mx >= 3 ? 1 : 0, winBig: w && m.a.score - m.b.score > 5 ? 1 : 0, cards5: sq.map(x => x.c.id) };
+}
+const dailyReady = (G, now) => G.daily !== mskDay(now);
+
+/* ---------- Таблицы лидеров: без сервера соперники в таблице — боты ---------- */
+function lbBots(month, now) {
+  let s = (month * 2654435761) >>> 0; const r = () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const A = ['Ka', 'Ro', 'Zi', 'Mo', 'Te', 'Vi', 'Sha', 'No', 'Dre', 'Lu', 'Fen', 'Gri', 'Xa', 'Bo', 'Ti'], B = ['rik', 'zzo', 'man', 'lex', 'tor', 'dan', 'vik', 'sen', 'kov', 'mir', 'tas', 'ron'];
+  const d = new Date(now + MSK), prog = mskMonth(now) > month ? 1 : d.getUTCDate() / new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate(), out = [];
+  for (let i = 0; i < 150; i++) out.push({ name: A[Math.floor(r() * A.length)] + B[Math.floor(r() * B.length)] + Math.floor(r() * 90 + 10), tro: Math.round(3300 * Math.pow(1 - i / 150, 2.4) * (.3 + .7 * prog) + r() * 20) });
+  return out;
+}
+function lbTable(G, scope, now) {
+  const lg = leagueOf(G.tro), rows = lbBots(G.season.m, now).filter(b => scope === 'all' || leagueOf(b.tro) === lg).concat([{ name: 'Вы', tro: G.tro, me: true }]).sort((a, b) => b.tro - a.tro || (a.me ? -1 : 1));
+  rows.forEach((x, i) => x.place = i + 1); const me = rows.find(x => x.me);
+  return { top: rows.slice(0, 10), me, total: rows.length };
+}
+const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro).length + 1;
+
+if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, IFP, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
+  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText };
 /* ===== Интерфейс ===== */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const nf = n => Math.round(n).toLocaleString('ru-RU');
 const KEY = 'pyaterka-legend-v1', IKEY = KEY + '-img', SKEY = KEY + '-mute';
-let G, IMG = {}, tab = 'home', lastTab = null, sheet = null, OV = null, askNew = false, colF = 'all', colQ = '', colN = 45, imgMsg = '', mute = false;
+let G, IMG = {}, tab = 'home', lastTab = null, sub = 'cards', taskTab = 'd', lbScope = 'all', sheet = null, OV = null, askNew = false, askSell = null, colN = 45, imgMsg = '', snd = 'min', tuSel = [], tuRar = 0;
+const F = { q: '', rar: 'all', role: 'all', team: 'all', own: 'all', sort: 'ovr' };
+const now = () => Date.now();
 
+/* ---------- Сохранение: перед переносом и при нечитаемых данных остаётся копия ---------- */
 function save() { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) { /* без хранилища игра идёт до закрытия страницы */ } }
+function backup(sfx, raw) { try { localStorage.setItem(KEY + sfx, raw); } catch (e) { /* копия не поместилась */ } }
 function load() {
-  try { mute = localStorage.getItem(SKEY) === '1'; } catch (e) { /* звук включён */ }
+  try { const v = localStorage.getItem(SKEY); snd = v === '1' || v === 'off' ? 'off' : v === 'full' ? 'full' : 'min'; } catch (e) { /* звук по умолчанию */ }
   try { const im = JSON.parse(localStorage.getItem(IKEY)); if (im && typeof im === 'object') IMG = im; } catch (e) { /* нет картинок */ }
-  try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && d.v === 1 && d.cards && d.squad) { G = d; return true; } } catch (e) { /* пусто */ }
-  return false;
+  let raw = null; try { raw = localStorage.getItem(KEY); } catch (e) { /* хранилище недоступно */ }
+  if (!raw) return 'new';
+  let d = null, g = null; try { d = JSON.parse(raw); } catch (e) { /* не JSON */ }
+  const old = d && d.v === 1;
+  try { g = migrate(d, now()); } catch (e) { g = null; }
+  if (!g) { backup('-broken-' + now(), raw); return 'broken'; }
+  if (old) backup('-before-v2', raw);
+  G = g; return 'ok';
 }
 const own = id => G.cards[id];
 const packCount = () => G.packs.basic + G.packs.pro + G.packs.elite;
-const dailyReady = () => Date.now() - G.daily >= DAY;
 const RCOL = ['#b0c3d9', '#6c8cff', '#a274ff', '#e45cf2', '#ff5a5a'];
 const glow = c => c.sp === 1 ? '#ff8a3d' : c.sp === 2 ? '#f2c14e' : RCOL[c.rar];
+const teamCol = c => `hsl(${hsh(c.team) % 360} 75% 58%)`;
 const rarName = c => c.sp ? SPN[c.sp] : RAR[c.rar];
 const noMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+const claimable = l => l.some(t => t && taskDone(t) && !t.claimed);
+const todo = () => G.tut === 3 && (G.inbox.length > 0 || claimable(allTasks(G)));
 
-/* ---------- Звук: короткие синтезированные сигналы ---------- */
+/* ---------- Звук: три режима — выключен, минимальный (по умолчанию), полный ---------- */
 let AUD = null;
-function snd(f, d = .06, type = 'square', v = .04, to = 0) {
-  if (mute) return;
+function tone(f, d = .06, type = 'square', v = .04, to = 0) {
   try {
     AUD = AUD || new (window.AudioContext || window.webkitAudioContext)();
     const o = AUD.createOscillator(), g = AUD.createGain(), t = AUD.currentTime;
@@ -556,13 +899,14 @@ function snd(f, d = .06, type = 'square', v = .04, to = 0) {
     o.connect(g); g.connect(AUD.destination); o.start(t); o.stop(t + d);
   } catch (e) { /* звук недоступен */ }
 }
-const SFX = {
-  tap: () => snd(900, .03, 'square', .02), tick: () => snd(1400, .02, 'square', .015),
-  stop: r => { snd(300 + r * 120, .18, 'triangle', .07); if (r >= 3) setTimeout(() => snd(600 + r * 160, .4, 'sawtooth', .05, 1400), 90); },
-  open: () => snd(160, .35, 'sawtooth', .06, 60), kill: () => snd(180, .07, 'square', .04, 70),
-  win: () => { snd(520, .12, 'triangle', .07); setTimeout(() => snd(780, .22, 'triangle', .07), 110); },
-  lose: () => snd(260, .3, 'triangle', .06, 140), found: () => { snd(440, .1, 'square', .04); setTimeout(() => snd(660, .1, 'square', .04), 120); setTimeout(() => snd(880, .25, 'square', .04), 240); }
+const SND = {
+  tap: [1, () => tone(900, .03, 'square', .02)], scan: [1, () => tone(1400, .03, 'square', .015)], kill: [1, () => tone(180, .07, 'square', .04, 70)],
+  stop: [0, r => { tone(300 + r * 120, .18, 'triangle', .07); if (r >= 3) setTimeout(() => tone(600 + r * 160, .4, 'sawtooth', .05, 1400), 90); }],
+  open: [0, () => tone(160, .35, 'sawtooth', .06, 60)], rare: [0, () => { tone(110, .9, 'sawtooth', .07, 440); setTimeout(() => tone(880, .5, 'triangle', .06, 1320), 700); }],
+  win: [0, () => { tone(520, .12, 'triangle', .07); setTimeout(() => tone(780, .22, 'triangle', .07), 110); }], lose: [0, () => tone(260, .3, 'triangle', .06, 140)],
+  found: [0, () => { tone(440, .1, 'square', .04); setTimeout(() => tone(660, .1, 'square', .04), 120); setTimeout(() => tone(880, .25, 'square', .04), 240); }]
 };
+function sfx(k, a) { const s = SND[k]; if (snd === 'off' || (s[0] && snd !== 'full')) return; s[1](a); }
 
 /* ---------- Фото игроков: файл photos/<ник>.png|jpg рядом с игрой либо картинка, добавленная на экране карточки ---------- */
 const PH = {}, EXT = ['png', 'jpg', 'jpeg', 'webp'];
@@ -570,86 +914,178 @@ const slug = n => n.toLowerCase().replace(/[^a-z0-9а-яё_-]/g, '');
 function probe(s, i) {
   if (i >= EXT.length) return;
   const im = new Image(), u = 'photos/' + s + '.' + EXT[i];
-  im.onload = () => { PH[s] = u; document.querySelectorAll('[data-ph="' + s + '"]').forEach(el => { el.outerHTML = `<img class="ph" src="${u}" alt="">`; }); };
+  im.onload = () => { PH[s] = u; document.querySelectorAll('[data-ph="' + s + '"]').forEach(el => { el.outerHTML = `<img class="ph" src="${u}" alt="" loading="lazy">`; }); };
   im.onerror = () => probe(s, i + 1); im.src = u;
 }
 function faceH(c) {
   const s = slug(c.nick); let u = IMG[c.base];
   if (!u && s) { if (typeof PH[s] === 'string') u = PH[s]; else if (PH[s] === undefined) { PH[s] = 0; probe(s, 0); } }
-  return u ? `<img class="ph" src="${u}" alt="">` : `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
+  return u ? `<img class="ph" src="${u}" alt="" loading="lazy">` : `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
 }
-
 function cardH(c, o = {}) {
   const lv = o.lv || 1, add = lv - 1;
-  return `<div class="pc r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:hsl(${hsh(c.team) % 360} 75% 58%)"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span><div class="ft">${c.sp ? `<span class="tag">${SPN[c.sp]}</span>` : ''}<span class="nk">${esc(c.nick)}</span><span class="tm">${esc(c.team)}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
+  return `<div class="pc r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${lv >= 5 ? 'l5' : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:${teamCol(c)}"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span>${c.hist ? '<span class="arc">архив</span>' : ''}<div class="ft">${c.sp ? `<span class="tag">${SPN[c.sp]}</span>` : ''}<span class="nk">${esc(c.nick)}</span><span class="tm">${esc(c.team)}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
 }
 const ownH = (id, cls) => { const o = own(id); return cardH(CARDS[id], { lv: o ? o.lv : 1, n: o ? o.n : 0, cls, pips: !!o, no: !o }); };
 const pkH = (t, cls) => `<div class="pk ${t} ${cls || ''}"><i class="lid"></i><i class="lock"></i><div class="box"><b>${PACKS[t].n}</b></div></div>`;
 const LCOL = ['#b98a5a', '#b9c2cc', '#f2c14e', '#7fe0d0', '#8fb8ff', '#e45cf2', '#ff5a5a'];
 const rankH = i => `<svg class="rank" viewBox="0 0 44 30" aria-hidden="true"><path d="M2 2h40v17L22 28 2 19z" fill="#101215" stroke="${LCOL[i]}" stroke-width="1.6"/>${[0, 1, 2].slice(0, i % 3 + 1).map(k => `<path d="M12 ${7 + k * 5}l10 4 10-4" fill="none" stroke="${LCOL[i]}" stroke-width="2.2"/>`).join('')}</svg>`;
+const segH = (act, cur, opts) => `<div class="seg">${opts.map(([v, n, dot]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${n}${dot ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>`;
 function hudH() {
   const lg = leagueOf(G.tro);
-  return `<div class="who">${rankH(lg)}<div style="min-width:0"><b>${LEAGUES[lg][0]} · ${G.tro}</b><span class="sm mut">уровень ${G.lvl}</span><span class="xp" aria-label="Опыт ${G.xp} из ${100 * G.lvl}"><i style="width:${G.xp / G.lvl}%"></i></span></div></div><div class="pill"><i class="coin"></i>${nf(G.coins)}</div><button class="ibtn" data-act="mute" aria-label="${mute ? 'Включить звук' : 'Выключить звук'}"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/>${mute ? '<path d="M17 9l5 6M22 9l-5 6"/>' : '<path d="M17 8a5 5 0 0 1 0 8"/>'}</svg></button>`;
+  return `<div class="who">${rankH(lg)}<div style="min-width:0"><b>${LEAGUES[lg][0]} · ${G.tro}</b><span class="sm mut">уровень ${G.lvl}</span><span class="xp" aria-label="Опыт ${G.xp} из ${100 * G.lvl}"><i style="width:${G.xp / G.lvl}%"></i></span></div></div><div class="pill"><i class="coin"></i>${nf(G.coins)}</div>`;
 }
 
-function vHome() {
-  const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), left = DAY - (Date.now() - G.daily);
-  const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100;
-  return `<section class="lobby"><div class="kv"><span>Ваша пятёрка</span><span>Рейтинг <b>${info.rating.toFixed(1)}</b></span></div>
-  <div class="lineup">${G.squad.map(id => `<button data-act="card" data-id="${id}" aria-label="${esc(CARDS[id].nick)}">${ownH(id, 'xs')}</button>`).join('')}</div>
-  <button class="btn pri go" data-act="fight">Играть</button>
-  <div class="stats"><div class="stat"><b>${info.atk.toFixed(1)}</b><span>атака</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>защита</span></div><div class="stat"><b>${info.chem}/13</b><span>химия</span></div></div></section>
-  <section class="pn"><div class="kv"><span>Лига «${LEAGUES[lg][0]}»</span><span>Побед <b>${G.w}</b> · поражений <b>${G.l}</b></span></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» ещё ${nx[1] - G.tro} кубков. За новую лигу дают кейс «Про».` : 'Высшая лига достигнута.'}</p></section>
-  <section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3>${dailyReady() ? '<button class="btn" data-act="daily">Забрать</button>' : `<p class="sm mut">Следующий через ${Math.max(1, Math.ceil(left / 3600000))} ч.</p>`}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">Неоткрытых кейсов: ${packCount()}</button>` : ''}</div></div></section>
-  <p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек рассчитаны игрой, это не статистика HLTV. Фото игроков берутся из папки photos рядом с файлом игры: имя файла — ник маленькими буквами, например zywoo.png.</p>
-  <section class="plain">${askNew ? '<p class="sm">Коллекция и прогресс будут удалены. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
+/* ---------- Главная ---------- */
+function taskRowH(t, key) {
+  const done = taskDone(t);
+  return `<div class="task ${done ? 'done' : ''} ${t.main ? 'main' : ''} ${t.claimed ? 'got' : ''}"><div style="min-width:0"><p>${esc(t.t)}</p><span class="rw">${rewardText(t.r)}</span></div>${t.claimed ? '<span class="sm mut">получено</span>' : done ? `<button class="btn pri s" data-act="claim" data-v="${key}">Забрать награду</button>` : `<span class="num sm">${t.p}/${t.n}</span>`}<span class="bar"><i style="width:${Math.min(100, t.p / t.n * 100)}%"></i></span></div>`;
 }
+function tasksH() {
+  const T = G.tasks, day = mskDay(now()), lists = { d: T.d, w: T.w, s: T.s ? [T.s] : [], m: G.season.goals }, l = lists[taskTab];
+  const foot = { d: 'Новые задания каждый день в 00:00 по Москве. Невыполненные сгорают.', w: 'Новая неделя начинается в понедельник в 00:00 по Москве.', s: `До смены особого задания: ${Math.max(1, T.sStart + 7 - day)} дн.`, m: `Сезон «${monthName(G.season.m)}». Цели действуют до конца месяца.` }[taskTab];
+  return `<section class="pn"><h3>Задания</h3>${G.inbox.map((x, i) => `<div class="task done"><div style="min-width:0"><p>${esc(x.t)}</p><span class="rw">${rewardText(x.r)}</span></div><button class="btn pri s" data-act="inbox" data-v="${i}">Забрать награду</button></div>`).join('')}
+  ${segH('ttab', taskTab, [['d', 'День', claimable(T.d)], ['w', 'Неделя', claimable(T.w)], ['s', 'Особое', claimable(lists.s)], ['m', 'Сезон', claimable(lists.m)]])}
+  <div class="list">${l.map((t, i) => taskRowH(t, taskTab + ':' + i)).join('')}</div><p class="sm mut">${foot} Засчитываются только рейтинговые матчи.</p></section>`;
+}
+function vHome() {
+  const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), low = lg > 0 && G.tro - LEAGUES[lg][1] < 30;
+  const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100, st = G.tut;
+  const tut = st < 3 ? `<section class="pn"><h3>Первые шаги</h3><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
+  return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk" style="margin-top:8px">Понятно</button></div>` : ''}${tut}
+  <section class="lobby"><div class="kv"><span>Пятёрка ${G.sqi + 1}</span><span>Рейтинг <b>${info ? info.rating.toFixed(1) : '—'}</b></span></div>
+  <div class="lineup">${G.squad.map((id, i) => id == null ? `<button data-act="slot" data-v="${i}" aria-label="Пустой слот: ${RNAME[i]}"><div class="slot empty" style="display:block;padding:0"><div class="ph0">+</div></div></button>` : `<button data-act="card" data-id="${id}" aria-label="${esc(CARDS[id].nick)}">${ownH(id, 'xs')}</button>`).join('')}</div>
+  ${info ? '<button class="btn pri go" data-act="fight">Играть</button>' : '<button class="btn go" data-act="goSquad">Соберите пятёрку</button>'}
+  ${info ? `<div class="stats"><div class="stat"><b>${info.atk.toFixed(1)}</b><span>атака</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>защита</span></div><div class="stat"><b>${info.chem}/13</b><span>химия</span></div></div>` : ''}</section>
+  <section class="pn"><div class="kv"><span>Лига «${LEAGUES[lg][0]}»</span><span>Кубки <b>${G.tro}</b></span></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» ещё ${nx[1] - G.tro} кубков.` : 'Высшая лига достигнута.'}</p>${low ? `<p class="warn">До понижения в лигу «${LEAGUES[lg - 1][0]}» осталось ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}</section>
+  ${st === 3 ? tasksH() : ''}
+  <section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3>${dailyReady(G, now()) ? '<button class="btn" data-act="daily">Забрать</button>' : '<p class="sm mut">Следующий — после 00:00 по Москве.</p>'}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">Неоткрытых кейсов: ${packCount()}</button>` : ''}</div></div></section>`;
+}
+
+/* ---------- Матчи ---------- */
+function lbH() {
+  const t = lbTable(G, lbScope, now()), row = x => `<div class="lb ${x.me ? 'me' : ''}"><b>${x.place}</b><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.name)}</span><b>${x.tro}</b></div>`;
+  return `<section class="pn"><h3>Таблица лидеров</h3>${segH('lb', lbScope, [['all', 'Общая'], ['lg', 'Моя лига']])}<div>${t.top.map(row).join('')}${t.me.place > 10 ? '<div class="lb"><span></span><span class="mut">…</span><span></span></div>' + row(t.me) : ''}</div><p class="sm mut">Мест в таблице: ${t.total}. Пока у игры нет сервера, соперники в таблице — боты.</p></section>`;
+}
+function sqTabsH() {
+  return `<div class="sqtab">${G.squads.map((s, i) => { const inf = squadInfo(s.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id].lv })); return `<button data-act="sq" data-v="${i}" aria-pressed="${G.sqi === i}"><span>Пятёрка ${i + 1}</span><b>${inf ? inf.rating.toFixed(1) : '—'}</b><span>${inf ? 'химия ' + inf.chem + (G.capts[i] != null ? ' · капитан' : ' · без капитана') : 'не собрана'}</span></button>`; }).join('')}</div>`;
+}
+function vPlay() {
+  const info = squadInfo(squadOf(G)), cs = captSlot(G), h = G.season.hist;
+  return `<section class="plain"><h3>Состав на матч</h3>${sqTabsH()}<p class="sm mut">${info ? (cs >= 0 ? `Капитан: ${esc(CARDS[G.squad[cs]].nick)}. Он даёт разведку и стартовый импульс 3.` : 'Капитан не назначен: нет разведки, стартовый импульс 2.') : 'В этой пятёрке есть пустые слоты.'}</p>
+  ${info ? '<button class="btn pri go" data-act="fight">Играть</button>' : '<button class="btn go" data-act="goSquad">Соберите пятёрку</button>'}<p class="sm mut">Рейтинговый матч до 13 побед. Победа: +40 монет и +25 кубков, с разницей больше 5 раундов +30. Поражение: +10 монет и −25 кубков, при 0:13 −30.</p></section>
+  ${G.tut === 3 ? lbH() + `<section class="pn"><h3>Сезон «${monthName(G.season.m)}»</h3><p class="sm mut">Сезон длится месяц. В конце выдаются монеты и кейсы по лиге, а часть кубков сбрасывается: чем выше лига, тем больше.</p>${h.length ? '<div class="list">' + h.slice(0, 3).map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет.</p>'}</section>` : ''}`;
+}
+
+/* ---------- Кейсы ---------- */
 function vPacks() {
   const inv = Object.keys(PACKS).filter(k => G.packs[k] > 0);
-  return `${inv.length ? `<section class="plain"><h3>Ваши кейсы</h3>${inv.map(k => `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${PACKS[k].n} <span class="num mut" style="font-size:15px">×${G.packs[k]}</span></h2><button class="btn pri" data-act="open" data-v="${k}">Открыть</button></div></div></div>`).join('')}</section>` : ''}
+  return `${dailyReady(G, now()) ? `<section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3><button class="btn pri" data-act="daily">Забрать</button></div></div></section>` : ''}
+  ${inv.length ? `<section class="plain"><h3>Ваши кейсы</h3>${inv.map(k => `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${PACKS[k].n} <span class="num mut" style="font-size:15px">×${G.packs[k]}</span></h2><button class="btn pri" data-act="open" data-v="${k}">Открыть</button></div></div></div>`).join('')}</section>` : ''}
   <section class="plain"><h3>Магазин</h3>${Object.keys(PACKS).map(k => { const P = PACKS[k]; return `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${P.n}</h2><p class="sm mut">${P.d}</p><div class="pill" style="align-self:flex-start"><i class="coin"></i>${nf(P.price)}</div></div></div><div class="odds">${P.odds.map((o, i) => `<span style="--rc:var(--r${i})">${o}%</span>`).join('')}</div><button class="btn" data-act="buy" data-v="${k}" ${G.coins < P.price ? 'disabled' : ''}>${G.coins < P.price ? 'Не хватает монет' : 'Купить и открыть'}</button></div>`; }).join('')}</section>
   <p class="sm mut">В кейсе пять карточек. Проценты показывают шанс редкости каждой из них: ${RAR.map(x => x.toLowerCase()).join(', ')}. Внутри редкости реже выпадают игроки с высоким рейтингом и из команд выше в таблице. С шансом 7% вместо обычной версии выпадает «${SPN[1]}» (+3 к рейтингу), с шансом 12% вместо высшей редкости выпадает «${SPN[2]}».</p>`;
 }
+
+/* ---------- Коллекция: карточки, составы, контракты ---------- */
 function colList() {
-  const q = colQ.trim().toLowerCase();
-  return ALL.filter(c => (colF === 'all' || (colF === 'mine' ? own(c.id) : colF === 'sp' ? c.sp : !c.sp && c.rar === +colF)) && (!q || c.nick.toLowerCase().includes(q) || c.team.toLowerCase().includes(q)));
+  const q = F.q.trim().toLowerCase();
+  const l = ALL.filter(c => (F.rar === 'all' || c.rar === +F.rar) && (F.role === 'all' || c.role === +F.role) && (F.team === 'all' || c.team === F.team)
+    && (F.own === 'all' || (F.own === 'mine' ? own(c.id) : F.own === 'sp' ? c.sp : F.own === 'hist' ? c.hist : !own(c.id))) && (!q || c.nick.toLowerCase().includes(q)));
+  const lv = c => own(c.id) ? own(c.id).lv : 0;
+  return F.sort === 'lv' ? l.sort((a, b) => lv(b) - lv(a) || b.ovr - a.ovr) : F.sort === 'low' ? l.slice().reverse() : l;
 }
 function colGrid() {
   const l = colList();
   return `<p class="sm mut">Найдено: ${l.length}</p><div class="grid">${l.slice(0, colN).map(c => `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`).join('')}</div>${l.length > colN ? '<button class="btn" data-act="more">Показать ещё</button>' : ''}`;
 }
-function vCol() {
-  const have = Object.keys(G.cards).length, F = [['all', 'Все'], ['mine', 'Мои'], ['4', RAR[4]], ['3', RAR[3]], ['2', RAR[2]], ['1', RAR[1]], ['0', RAR[0]], ['sp', 'Особые']];
-  return `<section class="pn"><div class="kv"><span>Инвентарь</span><span><b>${have}</b> из ${ALL.length}</span></div><span class="bar"><i style="width:${have / ALL.length * 100}%"></i></span></section>
-  <input type="text" id="col-q" placeholder="Ник или команда" value="${esc(colQ)}" aria-label="Поиск по нику или команде">
-  <div class="chips">${F.map(([k, n]) => `<button class="chip" data-act="filter" data-v="${k}" aria-pressed="${colF === k}" style="${k === 'sp' ? '--rc:var(--sp)' : k >= '0' && k <= '4' ? `--rc:var(--r${k})` : ''}">${n}</button>`).join('')}</div>
+const selH = (k, opts, label) => `<select data-f="${k}" aria-label="${label}">${opts.map(([v, n]) => `<option value="${esc(v)}" ${String(F[k]) === String(v) ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>`;
+function vCards() {
+  const have = Object.keys(G.cards).length, teams = [...new Set(ALL.map(c => c.team))].sort((a, b) => a.localeCompare(b));
+  return `<section class="pn"><div class="kv"><span>Собрано</span><span><b>${have}</b> из ${ALL.length}</span></div><span class="bar"><i style="width:${have / ALL.length * 100}%"></i></span></section>
+  <input type="text" id="col-q" placeholder="Поиск по нику" value="${esc(F.q)}" aria-label="Поиск по нику">
+  <div class="frow">${selH('rar', [['all', 'Любая редкость']].concat(RAR.map((n, i) => [i, n])), 'Редкость')}${selH('role', [['all', 'Любая роль и способность']].concat(RNAME.map((n, i) => [i, n + ' — «' + AB_BASE[i].n + '»'])), 'Роль и способность')}${selH('team', [['all', 'Любая команда']].concat(teams.map(t => [t, t])), 'Команда')}${selH('sort', [['ovr', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки']], 'Сортировка')}</div>
+  ${segH('fown', F.own, [['all', 'Все'], ['mine', 'Мои'], ['none', 'Нет'], ['sp', 'Особые'], ['hist', 'Архив']])}
   <div class="plain" id="col-grid">${colGrid()}</div>`;
 }
-function vSquad() {
-  const sq = squadOf(G), info = squadInfo(sq);
-  return `<div class="stats"><div class="stat"><b>${info.rating.toFixed(1)}</b><span>рейтинг</span></div><div class="stat"><b>${info.atk.toFixed(1)}</b><span>сила в атаке</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>сила в защите</span></div></div>
-  <section class="plain">${G.squad.map((id, i) => { const c = CARDS[id], off = c.role !== i; return `<button class="slot" data-act="slot" data-v="${i}"><span>${ownH(id, 'xs')}</span><span style="min-width:0"><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 19px/1.1 var(--f-d);text-transform:uppercase;overflow-wrap:anywhere">${esc(c.nick)}</b><span class="sm mut">${esc(c.team)}</span>${off ? '<span class="warn" style="display:block">Не своя роль: −5 ко всем показателям</span>' : ''}</span><span class="sm mut">Сменить</span></button>`; }).join('')}</section>
-  <section class="pn"><h3>Химия ${info.chem} из 13</h3><p class="sm mut">Игроков из одной команды: ${info.mx}. Два дают +2, три +4, четыре +7, пять +10. ${info.onRole ? 'Все на своих ролях: +3.' : 'Если все пятеро на своих ролях, добавится ещё +3.'} Каждые 4 очка химии дают +1 к силе состава.</p><button class="btn" data-act="auto">Собрать лучший состав</button></section>
-  <section class="pn"><h3>Тактические карты</h3>${DECK.map(k => `<p class="sm"><b>${AC[k].n}</b> <span class="num mut">${AC[k].cost}</span> <span class="mut">— ${AC[k].d}</span></p>`).join('')}</section>`;
+function vSquads() {
+  const sq = squadOf(G), info = squadInfo(sq), rec = bestCapt(G), cap = G.capts[G.sqi], igls = G.squad.filter(id => id != null && CARDS[id].role === 4);
+  const mates = id => G.squad.filter(x => x != null && x !== id && CARDS[x].team === CARDS[id].team).length;
+  return `${sqTabsH()}
+  ${info ? `<div class="stats"><div class="stat"><b>${info.rating.toFixed(1)}</b><span>рейтинг</span></div><div class="stat"><b>${info.atk.toFixed(1)}</b><span>сила в атаке</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>сила в защите</span></div></div>` : '<div class="note">В пятёрке есть пустые слоты. Заполните их, чтобы играть.</div>'}
+  <section class="plain">${G.squad.map((id, i) => { if (id == null) return `<button class="slot empty" data-act="slot" data-v="${i}"><span><div class="ph0">+</div></span><span><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 17px/1.2 var(--f-d);text-transform:uppercase">Слот пуст</b></span><span class="sm mut">Выбрать</span></button>`;
+    const c = CARDS[id], off = c.role !== i, m = mates(id); return `<button class="slot" data-act="slot" data-v="${i}"><span>${ownH(id, 'xs')}</span><span style="min-width:0"><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 19px/1.1 var(--f-d);text-transform:uppercase;overflow-wrap:anywhere">${esc(c.nick)} ${cap === id ? '<span class="cap">капитан</span>' : ''}</b><span class="sm mut">${esc(c.team)} · ${m ? 'партнёров по команде: ' + m : 'без партнёров по команде'}</span><span class="${off ? 'warn' : 'sm mut'}" style="display:block">${off ? 'Не своя роль: −5 ко всем показателям, способности отключены' : '«' + AB_BASE[c.role].n + '» и «' + indOf(c).n + '»'}</span></span><span class="sm mut">Сменить</span></button>`; }).join('')}</section>
+  <section class="pn"><h3>Капитан</h3><p class="sm mut">Капитаном может быть только игрок с естественной ролью «Капитан». Он даёт разведку, усиливает «Тайм-аут» и добавляет стартовый импульс.</p>${igls.length ? '<div class="list">' + igls.map(id => `<div class="prow" style="--rc:${glow(CARDS[id])}"><span class="o">${CARDS[id].st.igl + own(id).lv - 1}</span><span><b>${esc(CARDS[id].nick)}</b>${id === rec ? ' <span class="sm" style="color:var(--good)">рекомендуем</span>' : ''}<span class="sm mut" style="display:block">тактика · ${esc(CARDS[id].team)}</span></span>${cap === id ? '<span class="cap">капитан</span>' : `<button class="btn s" data-act="capt" data-id="${id}">Назначить</button>`}</div>`).join('') + '</div>' : '<p class="warn">В пятёрке нет игрока с ролью «Капитан».</p>'}${cap != null ? '<button class="btn s" data-act="capt" data-id="">Играть без капитана</button>' : ''}</section>
+  ${info ? `<section class="pn"><h3>Химия ${info.chem} из 13</h3><p class="sm mut">Игроков из одной команды: ${info.mx}. Два дают +2, три +4, четыре +7, пять +10. ${info.onRole ? 'Все на своих ролях: +3.' : 'Если все пятеро на своих ролях, добавится ещё +3.'} Каждые 4 очка химии дают +1 к силе состава. Химия не растёт от числа матчей.</p></section>` : ''}
+  <button class="btn" data-act="auto">Собрать лучший состав</button>
+  <section class="pn"><h3>Тактические приказы</h3>${DECK.map(k => `<p class="sm"><b>${AC[k].n}</b> <span class="num mut">${AC[k].cost}</span> <span class="mut">— ${AC[k].d}</span></p>`).join('')}</section>`;
+}
+function vTu() {
+  const inf = tuInfo(G, tuSel), cnt = id => tuSel.filter(x => x === id).length;
+  const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !c.sp && c.rar === tuRar).sort((a, b) => a.ovr - b.ovr);
+  const risky = [...new Set(tuSel)].filter(id => own(id) && cnt(id) >= own(id).n && inSquads(G, id));
+  return `<section class="pn"><h3>Контракт</h3><p class="sm mut">Десять обычных карточек одной редкости обмениваются на одну. Выпадет либо карточка следующей редкости, либо карточка той же редкости с рейтингом не ниже среднего по вложенным. Чем выше средний рейтинг, тем вероятнее следующая редкость.</p>
+  ${segH('turar', String(tuRar), RAR.map((n, i) => [String(i), n.slice(0, 5) + (n.length > 5 ? '.' : '')]))}
+  <div class="kv"><span>Выбрано</span><span><b>${tuSel.length}</b> из 10</span></div><span class="bar"><i style="width:${tuSel.length * 10}%"></i></span>
+  ${tuSel.length ? `<div class="grid g5">${tuSel.map(id => cardH(CARDS[id], { cls: 'xs' })).join('')}</div>` : ''}
+  ${inf.avg ? `<p class="sm">Средний рейтинг: <b class="num">${inf.avg.toFixed(1)}</b>${inf.up ? ` · следующая редкость: примерно <b>${inf.up}</b> · та же редкость сильнее: примерно <b>${inf.same}</b>` : ''}</p>` : ''}
+  ${inf.why ? `<p class="${tuRar === 4 ? 'warn' : 'sm mut'}">${inf.why}</p>` : ''}${risky.length ? `<p class="warn">В контракт уйдёт последняя копия игрока из состава: ${risky.map(id => esc(CARDS[id].nick)).join(', ')}.</p>` : ''}
+  <div class="rowb"><button class="btn s" data-act="tuFill" ${tuRar === 4 ? 'disabled' : ''}>Добавить слабейшие дубликаты</button><button class="btn s" data-act="tuClear" ${tuSel.length ? '' : 'disabled'}>Очистить</button></div>
+  <button class="btn pri" data-act="tuGo" ${inf.ok ? '' : 'disabled'}>Исполнить контракт — отменить нельзя</button></section>
+  <section class="list">${l.length ? l.map(c => { const o = own(c.id), n = cnt(c.id); return `<div class="tu-row"><span class="num" style="font-weight:700;color:${glow(c)}">${c.ovr}</span><span style="min-width:0"><b>${esc(c.nick)}</b><span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)} · копий ${o.n}${o.lv > 1 ? ' · ур. ' + o.lv : ''}</span></span><span class="cnt-b"><button data-act="tuDel" data-id="${c.id}" ${n ? '' : 'disabled'} aria-label="Убрать">−</button><span class="num">${n}</span><button data-act="tuAdd" data-id="${c.id}" ${n < o.n && tuSel.length < 10 ? '' : 'disabled'} aria-label="Добавить">+</button></span></div>`; }).join('') : '<p class="sm mut">Обычных карточек этой редкости у вас нет.</p>'}</section>`;
+}
+function vCol() {
+  const body = sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : vCards();
+  return `${segH('sub', sub, [['cards', 'Карточки'], ['squads', 'Составы'], ['tu', 'Контракты']])}${body}`;
+}
+
+/* ---------- Профиль ---------- */
+function vProf() {
+  const lg = leagueOf(G.tro), fr = G.frame, h = G.season.hist, n = G.w + G.l;
+  return `<section class="pn" style="${fr >= 0 ? `box-shadow:inset 0 0 0 2px ${LCOL[fr]}` : ''}"><div class="kv"><span>Профиль</span><span>${fr >= 0 ? `рамка сезона: «${LEAGUES[fr][0]}»` : 'рамка сезона появится после первого сезона'}</span></div>
+  <div class="stats"><div class="stat"><b>${G.lvl}</b><span>уровень</span></div><div class="stat"><b>${G.tro}</b><span>кубки, лучший ${G.best}</span></div><div class="stat"><b>${n ? Math.round(G.w / n * 100) + '%' : '—'}</b><span>побед: ${G.w} из ${n}</span></div></div></section>
+  <section class="pn"><h3>История сезонов</h3>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий: «' + monthName(G.season.m) + '».</p>'}</section>
+  <section class="pn"><h3>Звук</h3>${segH('snd', snd, [['off', 'Выключен'], ['min', 'Минимум'], ['full', 'Полный']])}<p class="sm mut">Минимум — только сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
+  <section class="pn"><h3>Об игре</h3><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Фото игроков берутся из папки photos рядом с файлом игры: имя файла — ник маленькими буквами, например zywoo.png. Прогресс хранится в этом браузере.</p>
+  ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
+}
+
+/* ---------- Нижний лист: карточка, выбор в слот, сравнение ---------- */
+function abH(c, lv) {
+  const pw = Math.round(abPow(c, lv) * 100), i = indOf(c);
+  return `<div class="ab" style="--rc:${glow(c)}"><b>${AB_BASE[c.role].n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${AB_BASE[c.role].d} Работает только на роли «${RNAME[c.role]}».</div><div class="ab"><b>${i.n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${i.d}${IND[c.nick] ? '' : ' Индивидуальная способность появится после загрузки статистики HLTV.'}</div>`;
 }
 function vSheet() {
   if (!sheet) return '';
   if (sheet.t === 'slot') {
-    const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i).map(id => CARDS[id].nick));
+    const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i && x != null).map(id => CARDS[id].nick));
     const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((a, b) => (b.role === i) - (a.role === i) || (b.ovr + own(b.id).lv) - (a.ovr + own(a.id).lv)).slice(0, 60);
-    return `<div class="in"><div class="wrap col"><h2>${RNAME[i]}: кого поставить</h2><p class="sm mut">Сначала показаны игроки этой роли. Чужая роль даёт −5 ко всем показателям.</p><div class="list">${l.map(c => `<button class="prow" style="--rc:${glow(c)}" data-act="put" data-id="${c.id}" data-v="${i}"><span class="o" style="color:${glow(c)}">${c.ovr + own(c.id).lv - 1 - (c.role === i ? 0 : 5)}</span><span style="min-width:0"><b>${esc(c.nick)}</b>${c.sp ? ` <span class="sm" style="color:${glow(c)}">${SPN[c.sp]}</span>` : ''}<span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)}</span></span><span class="sm mut">${G.squad[i] === c.id ? 'в составе' : ''}</span></button>`).join('')}</div><button class="btn" data-act="close">Закрыть</button></div></div>`;
+    return `<div class="in"><div class="wrap col"><h2>${RNAME[i]}: кого поставить</h2><p class="sm mut">Сначала показаны игроки этой роли. Чужая роль даёт −5 ко всем показателям и отключает способности.</p><div class="list">${l.map(c => `<button class="prow" style="--rc:${glow(c)}" data-act="put" data-id="${c.id}" data-v="${i}"><span class="o" style="color:${glow(c)}">${c.ovr + own(c.id).lv - 1 - (c.role === i ? 0 : 5)}</span><span style="min-width:0"><b>${esc(c.nick)}</b>${c.sp ? ` <span class="sm" style="color:${glow(c)}">${SPN[c.sp]}</span>` : ''}${c.hist ? ' <span class="sm mut">архив</span>' : ''}<span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)}</span></span><span class="sm mut">${G.squad[i] === c.id ? 'в составе' : ''}</span></button>`).join('')}</div><button class="btn" data-act="close">Закрыть</button></div></div>`;
+  }
+  if (sheet.t === 'cmpPick') {
+    const a = CARDS[sheet.id], q = (sheet.q || '').toLowerCase(), l = ALL.filter(c => c.id !== a.id && (!q || c.nick.toLowerCase().includes(q))).sort((x, y) => !!own(y.id) - !!own(x.id) || (y.role === a.role) - (x.role === a.role) || y.ovr - x.ovr).slice(0, 40);
+    return `<div class="in"><div class="wrap col"><h2>С кем сравнить ${esc(a.nick)}</h2><input type="text" id="cmp-q" placeholder="Поиск по нику" value="${esc(sheet.q || '')}" aria-label="Поиск по нику"><div class="list" id="cmp-list">${l.map(c => `<button class="prow" style="--rc:${glow(c)}" data-act="cmp" data-id="${c.id}"><span class="o" style="color:${glow(c)}">${c.ovr + (own(c.id) ? own(c.id).lv - 1 : 0)}</span><span style="min-width:0"><b>${esc(c.nick)}</b>${c.sp ? ` <span class="sm" style="color:${glow(c)}">${SPN[c.sp]}</span>` : ''}<span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)}</span></span><span class="sm mut">${own(c.id) ? 'есть' : ''}</span></button>`).join('')}</div><button class="btn" data-act="card" data-id="${a.id}">Назад</button></div></div>`;
+  }
+  if (sheet.t === 'cmp') {
+    const A = CARDS[sheet.a], B = CARDS[sheet.b], la = own(A.id) ? own(A.id).lv : 1, lb = own(B.id) ? own(B.id).lv : 1;
+    const row = (k, x, y) => `<span class="v ${x > y ? 'hi' : ''}">${x}</span><span class="k">${k}</span><span class="v ${y > x ? 'hi' : ''}">${y}</span>`;
+    return `<div class="in"><div class="wrap col"><h2>Сравнение</h2><div class="cmp2"><div>${cardH(A, { lv: la, pips: true })}</div><div>${cardH(B, { lv: lb, pips: true })}</div></div>
+    <div class="cmp">${row('Рейтинг', A.ovr + la - 1, B.ovr + lb - 1)}${SK.map(k => row(SN[k], A.st[k] + la - 1, B.st[k] + lb - 1)).join('')}${row('Сила способностей, %', Math.round(abPow(A, la) * 100), Math.round(abPow(B, lb) * 100))}</div>
+    <div class="cmp2"><div class="plain"><p class="eyebrow">${RNAME[A.role]}</p>${abH(A, la)}</div><div class="plain"><p class="eyebrow">${RNAME[B.role]}</p>${abH(B, lb)}</div></div>
+    <p class="sm mut">Показатели учитывают уровень прокачки ваших копий.</p><div class="rowb"><button class="btn s" data-act="cmpPick" data-id="${A.id}">Другой игрок</button><button class="btn s" data-act="close">Закрыть</button></div></div></div>`;
   }
   const c = CARDS[sheet.id], o = own(c.id), lv = o ? o.lv : 1, add = lv - 1;
   let act = '';
   if (o) {
-    if (o.lv < 5) { const need = UP_N[o.lv - 1], cost = upCost(c, o.lv); act += `<button class="btn pri" data-act="up" data-id="${c.id}" ${canUp(G, c.id) ? '' : 'disabled'}>Уровень ${o.lv + 1}: ${need} дубл. и ${nf(cost)} мон.</button><p class="sm mut">Дубликатов: ${o.n - 1}. Каждый уровень даёт +1 ко всем показателям.</p>`; }
-    else act += '<p class="sm">Максимальный уровень.</p>';
-    if (o.n > 1) act += `<div class="rowb"><button class="btn s" data-act="sell" data-id="${c.id}">Продать дубль за ${nf(sellVal(c))}</button><button class="btn s" data-act="sellAll" data-id="${c.id}">Продать все за ${nf(sellVal(c) * (o.n - 1))}</button></div>`;
-    act += G.squad.includes(c.id) ? '<p class="sm mut">Сейчас в составе.</p>' : `<button class="btn" data-act="put" data-id="${c.id}" data-v="${c.role}">Поставить в состав на роль «${RNAME[c.role]}»</button>`;
+    if (o.lv < 5) { const need = UP_N[o.lv - 1], cost = upCost(c, o.lv); act += `<div class="ab"><b>Уровень ${o.lv} → ${o.lv + 1}</b>Рейтинг ${c.ovr + add} → ${c.ovr + add + 1}, все шесть показателей +1, сила способностей ${Math.round(abPow(c, o.lv) * 100)}% → ${Math.round(abPow(c, o.lv + 1) * 100)}%.${o.lv === 4 ? ' На пятом уровне карточка получает золотое оформление.' : ''}</div><button class="btn pri" data-act="up" data-id="${c.id}" ${canUp(G, c.id) ? '' : 'disabled'}>Улучшить: ${need} дубл. и ${nf(cost)} мон.</button><p class="sm mut">Дубликатов: ${o.n - 1}.</p>`; }
+    else act += '<p class="sm" style="color:var(--gold)">Максимальный уровень.</p>';
+    const last = o.n === 1, price = priceOf(c, last ? o.lv : 1);
+    act += askSell === c.id ? `<p class="warn">Это последняя копия${c.sp ? ' особой версии' : ''}${inSquads(G, c.id) ? ', игрок стоит в составе — слот освободится' : ''}. Прокачка пропадёт. Продать за ${nf(price)} монет?</p><div class="rowb"><button class="btn dan s" data-act="sellYes" data-id="${c.id}">Да, продать</button><button class="btn s" data-act="sellNo">Отмена</button></div>` : `<button class="btn s" data-act="sell" data-id="${c.id}">${last ? 'Продать последнюю копию' : 'Продать дубликат'} за ${nf(price)}</button>`;
+    if (!G.squad.includes(c.id)) act += `<button class="btn" data-act="put" data-id="${c.id}" data-v="${c.role}">Поставить в пятёрку ${G.sqi + 1} на роль «${RNAME[c.role]}»</button>`;
   } else act = '<p class="sm mut">Этой карточки у вас пока нет. Она выпадает из кейсов.</p>';
-  const pic = `<div class="rowb"><label class="btn s" for="img-in" tabindex="0">${IMG[c.base] ? 'Заменить фото' : 'Добавить фото'}</label>${IMG[c.base] ? `<button class="btn s" data-act="imgDel" data-id="${c.base}">Убрать фото</button>` : ''}</div><input type="file" id="img-in" accept="image/*" data-base="${c.base}" hidden><p class="sm mut">${imgMsg || `Фото хранится в этом браузере. Чтобы оно было у всех версий игры, положите файл ${esc(slug(c.nick))}.png в папку photos.`}</p>`;
-  return `<div class="in"><div class="wrap col"><div class="insp"><div class="tilt">${cardH(c, { lv, pips: !!o, stats: true })}</div></div><div class="plain" style="text-align:center;gap:4px"><p class="eyebrow" style="color:${glow(c)}">${rarName(c)}</p><h2 style="overflow-wrap:anywhere">${esc(c.nick)}</h2><p class="sm mut">${RNAME[c.role]} · ${esc(c.team)}, место команды ${c.t + 1} · ${o ? 'копий ' + o.n + ', уровень ' + o.lv : 'нет в инвентаре'}</p></div>
-  <div class="plain" style="--rc:${glow(c)}">${SK.map(k => `<div class="attr"><span class="mut">${SN[k]}</span><span class="bar"><i style="width:${c.st[k] + add}%"></i></span><b>${c.st[k] + add}</b></div>`).join('')}</div>${act}${pic}<button class="btn" data-act="close">Закрыть</button></div></div>`;
+  const pic = `<div class="rowb"><label class="btn s" for="img-in" tabindex="0">${IMG[c.base] ? 'Заменить фото' : 'Добавить фото'}</label>${IMG[c.base] ? `<button class="btn s" data-act="imgDel" data-id="${c.base}">Убрать фото</button>` : ''}</div><input type="file" id="img-in" accept="image/*" data-base="${c.base}" hidden><p class="sm mut">${imgMsg || `Фото хранится в этом браузере. Чтобы оно было у всех, положите файл ${esc(slug(c.nick))}.png в папку photos.`}</p>`;
+  return `<div class="in"><div class="wrap col"><div class="insp"><div class="tilt">${cardH(c, { lv, pips: !!o, stats: true })}</div></div><div class="plain" style="text-align:center;gap:4px"><p class="eyebrow" style="color:${glow(c)}">${rarName(c)}${c.hist ? ' · архивная версия' : ''}</p><h2 style="overflow-wrap:anywhere">${esc(c.nick)}</h2><p class="sm mut">${RNAME[c.role]} · ${esc(c.team)} · ${o ? 'копий ' + o.n + ', уровень ' + o.lv : 'нет в коллекции'}</p></div>
+  <div class="plain" style="--rc:${glow(c)}">${SK.map(k => `<div class="attr"><span class="mut">${SN[k]}</span><span class="bar"><i style="width:${c.st[k] + add}%"></i></span><b>${c.st[k] + add}</b></div>`).join('')}</div>
+  ${abH(c, lv)}${act}<button class="btn s" data-act="cmpPick" data-id="${c.id}">Сравнить с другой карточкой</button>${pic}<button class="btn" data-act="close">Закрыть</button></div></div>`;
 }
 
 /* ---------- Сцена за интерфейсом ---------- */
@@ -670,15 +1106,15 @@ function buildScene() {
     return `<svg viewBox="0 0 2000 300" preserveAspectRatio="none" aria-hidden="true"><path d="${p}" fill="${far ? '#232a33' : '#0a0c0f'}"/><path d="${w2}" fill="#f0a93a" opacity=".5"/></svg>`;
   };
   $('#pan-far').innerHTML = mk(7, true); $('#pan-near').innerHTML = mk(31, false);
-  let d = ''; for (let i = 0; i < 16; i++) d += `<i style="left:${ri(0, 100)}%;top:${ri(40, 100)}%;--dx:${ri(-60, 60)}px;animation-duration:${ri(9, 20)}s;animation-delay:-${ri(0, 18)}s"></i>`;
+  let d = ''; for (let i = 0; i < 10; i++) d += `<i style="left:${ri(0, 100)}%;top:${ri(40, 100)}%;--dx:${ri(-60, 60)}px;animation-duration:${ri(9, 20)}s;animation-delay:-${ri(0, 18)}s"></i>`;
   $('#dust').innerHTML = d;
 }
 function sceneTo(t) {
   const i = Math.max(0, Object.keys(TABS).indexOf(t));
-  $('#scene').dataset.s = t; $('#pan-near').style.transform = `translate3d(${-i * 25}%,0,0)`; $('#pan-far').style.transform = `translate3d(${-i * 17}%,0,0)`;
+  $('#scene').dataset.s = { home: 'home', play: 'squad', col: 'col', packs: 'packs', prof: 'home' }[t]; $('#pan-near').style.transform = `translate3d(${-i * 18.75}%,0,0)`; $('#pan-far').style.transform = `translate3d(${-i * 12.5}%,0,0)`;
 }
 
-/* ---------- Вскрытие кейса: пять лент, останавливаются по очереди ---------- */
+/* ---------- Частицы и вспышка ---------- */
 let FX = [], fxOn = false;
 function burst(col, n, el) {
   const cv = $('#fx'); if (!cv || !el || !n || noMotion()) return;
@@ -694,52 +1130,78 @@ function fxLoop() {
   c.globalAlpha = 1; if (FX.length) requestAnimationFrame(fxLoop); else fxOn = false;
 }
 function flashNow() { if (noMotion()) return; const f = document.createElement('div'); f.className = 'flash'; $('#over').appendChild(f); setTimeout(() => f.remove(), 600); }
+const later = (ms, fn) => { const me = OV; setTimeout(() => { if (OV === me) fn(); }, noMotion() ? Math.min(ms, 150) : ms); };
+
+/* ---------- Открытие кейса: голографический сканер; для редкой карточки — выход на арену ---------- */
+const ARENAS = ['Championship Arena', 'Cyber Arena', 'Underground Arena', 'World Finals'];
+const isRare = (type, c) => !!c.sp || PACKS[type].odds[c.rar] < 5;
 function startPack(type) {
   const cards = openPack(type).map(c => ({ c, isNew: addCard(G, c.id) })).sort((a, b) => (a.c.rar + (a.c.sp ? .5 : 0)) - (b.c.rar + (b.c.sp ? .5 : 0)) || a.c.ovr - b.c.ovr);
-  OV = { t: 'pack', type, cards, phase: 'case', built: false, left: 5 }; save();
+  if (G.tut === 0) G.tut = 1;
+  OV = { t: 'pack', type, cards, phase: 'case', built: false }; save();
 }
 function packBuild() {
   const o = $('#over');
-  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Нажмите на кейс, чтобы открыть</span></div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать сразу</button></div></div>`;
+  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div id="arena"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Нажмите на кейс, чтобы открыть</span></div><div class="tray" id="tray">${OV.cards.map(() => '<div></div>').join('')}</div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать сразу</button></div></div>`;
   o.hidden = false; o.scrollTop = 0; OV.built = true;
-}
-function reelsBuild() {
-  const P = PACKS[OV.type], st = $('#po-stage'), W = st.clientWidth, tw = W < 340 ? 52 : 62, step = tw + 6, HIT = 24, N = 29, me = OV;
-  st.innerHTML = OV.cards.map((x, i) => { let h = ''; for (let k = 0; k < N; k++) h += `<div class="${k === HIT ? 'hit' : ''}">${cardH(k === HIT ? x.c : pick(POOL[rollRar(P.odds)]), { cls: 'xs' })}</div>`; return `<div class="reel" id="reel${i}" style="--tw:${tw}px;--gl:${glow(x.c)}"><div class="strip">${h}</div></div>`; }).join('');
-  $('#po-name').innerHTML = '<span class="mut">Ленты останавливаются по очереди</span>';
-  OV.phase = 'spin';
-  const tk = setInterval(() => { if (OV !== me || OV.phase !== 'spin') clearInterval(tk); else SFX.tick(); }, 95);
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    if (OV !== me) return;
-    OV.cards.forEach((x, i) => {
-      const s = $('#reel' + i + ' .strip'), dur = noMotion() ? 0 : 2000 + i * 620;
-      s.style.transition = `transform ${dur}ms cubic-bezier(.12,.62,.1,1)`;
-      s.style.transform = `translate3d(${W / 2 - (HIT * step + tw / 2) - rnd(-.34, .34) * tw}px,0,0)`;
-      setTimeout(() => { if (OV === me && OV.phase === 'spin') reelStop(i); }, dur + 60);
-    });
-  }));
-}
-function reelStop(i) {
-  const x = OV.cards[i], r = x.c.sp ? Math.max(3, x.c.rar) : x.c.rar, el = $('#reel' + i);
-  el.classList.add('stop'); SFX.stop(r); burst(glow(x.c), [0, 10, 26, 70, 140][r], el.querySelector('.hit'));
-  if (r >= 3) flashNow();
-  $('#po-bg').style.setProperty('--gl', glow(x.c));
-  $('#po-name').innerHTML = `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${rarName(x.c)} · ${esc(x.c.team)} · <span class="bdg ${x.isNew ? 'new' : 'dup'}">${x.isNew ? 'новая' : 'дубль'}</span></span>`;
-  if (--OV.left <= 0) { OV.phase = 'stopped'; $('#po-btn').innerHTML = '<button class="btn pri" data-act="poSkip">Показать карточки</button>'; }
 }
 function poTap() {
   if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
-  OV.phase = 'busy'; const me = OV, p = $('.po-pk .pk'); SFX.open();
+  OV.phase = 'scan'; const p = $('.po-pk .pk'); sfx('open');
   if (p) { p.classList.add('shake'); setTimeout(() => p.classList.add('open'), noMotion() ? 0 : 380); }
-  setTimeout(() => { if (OV === me && OV.phase === 'busy') { flashNow(); reelsBuild(); } }, noMotion() ? 0 : 950);
+  later(850, () => { flashNow(); scanStep(0); });
+}
+function scanStep(i) {
+  if (OV.phase !== 'scan') return; if (i >= OV.cards.length) { later(500, poDone); return; }
+  const c = OV.cards[i].c, lines = ['Роль: ' + RNAME[c.role], 'Команда: ' + c.team, 'Рейтинг: ' + c.ovr], rare = i === OV.cards.length - 1 && isRare(OV.type, c);
+  $('#po-bg').style.setProperty('--gl', '#8fa3b8');
+  $('#po-stage').innerHTML = `<div class="scan" id="scan" style="--gl:#8fd8ff"><div class="scan-fr"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg><i class="scan-ln"></i><div class="scan-tx" id="scan-tx"></div></div></div>`;
+  $('#po-name').innerHTML = `<span class="mut">Сканирование ${i + 1} из ${OV.cards.length}</span>`;
+  lines.forEach((t, k) => later(110 + k * 120, () => { if (OV.phase !== 'scan') return; const x = $('#scan-tx'); if (x) { x.insertAdjacentHTML('beforeend', `<span>${esc(t)}</span>`); sfx('scan'); } }));
+  later(520, () => rare ? rareSeq(i) : reveal(i));
+}
+function trayPut(i) { const t = $('#tray'); if (t && t.children[i]) { t.children[i].className = 'on'; t.children[i].innerHTML = cardH(OV.cards[i].c, { cls: 'xs' }); } }
+const nameH = x => `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${rarName(x.c)} · ${esc(x.c.team)} · <span class="bdg ${x.isNew ? 'new' : 'dup'}">${x.isNew ? 'новая' : 'дубль'}</span></span>`;
+function reveal(i) {
+  if (OV.phase !== 'scan') return;
+  const x = OV.cards[i], r = x.c.sp ? Math.max(3, x.c.rar) : x.c.rar;
+  $('#po-stage').innerHTML = `<div class="scan out" id="scan" style="--gl:${glow(x.c)}">${cardH(x.c, { stats: true })}</div>`;
+  $('#po-bg').style.setProperty('--gl', glow(x.c)); $('#po-name').innerHTML = nameH(x);
+  sfx('stop', r); burst(glow(x.c), [8, 14, 30, 70, 120][r], $('#scan')); if (r >= 3) flashNow();
+  later(520, () => { trayPut(i); scanStep(i + 1); });
+}
+function rareSeq(i) {
+  const x = OV.cards[i], c = x.c, k = hsh(c.nick) % 4, sc = $('#scan'); if (sc) sc.classList.add('glitch');
+  later(600, () => { if (OV.phase !== 'scan') return; $('#po-stage').innerHTML = ''; $('#po-name').innerHTML = ''; $('#po-bg').style.setProperty('--gl', '#000000');
+    later(900, () => { if (OV.phase !== 'scan') return; sfx('rare'); $('#po-stage').innerHTML = `<p class="rare-t" style="--gl:${glow(c)}">${c.sp === 2 ? 'Обнаружен MVP' : c.sp === 1 ? 'Обнаружен игрок недели' : 'Обнаружен редкий игрок'}</p>`;
+      later(1500, () => { if (OV.phase !== 'scan') return; $('#arena').innerHTML = `<div class="arena a${k}" style="--tc:${teamCol(c)}"><i></i><i></i><i></i><b></b></div>`; $('#po-top').textContent = ARENAS[k];
+        $('#po-stage').innerHTML = `<div class="walk" id="scan">${cardH(c, { stats: true })}</div>`;
+        later(1100, () => { if (OV.phase !== 'scan') return; flashNow(); burst(glow(c), 160, $('#scan')); sfx('stop', 4); $('#po-name').innerHTML = nameH(x); later(1900, () => { trayPut(i); scanStep(i + 1); }); });
+      });
+    });
+  });
 }
 function poDone() {
-  OV.phase = 'done';
+  if (!OV || OV.t !== 'pack') return; OV.phase = 'done';
   const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0];
+  $('#arena').innerHTML = ''; $('#tray').innerHTML = ''; $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · 5 карточек`;
   $('#po-bg').style.setProperty('--gl', glow(top.c));
   $('#po-stage').innerHTML = `<div class="grid" style="width:100%">${l.map((x, i) => `<div class="plain big" style="gap:4px;animation-delay:${i * 70}ms"><button data-act="card" data-id="${x.c.id}" aria-label="${esc(x.c.nick)}">${cardH(x.c, { lv: own(x.c.id).lv, pips: true })}</button><span class="bdg ${x.isNew ? 'new' : 'dup'}" style="align-self:flex-start">${x.isNew ? 'новая' : 'дубль'}</span></div>`).join('')}</div>`;
   $('#po-name').innerHTML = `<b style="color:${glow(top.c)}">Лучшая: ${esc(top.c.nick)}</b><span class="sm mut">Новых карточек: ${l.filter(x => x.isNew).length} из 5</span>`;
   $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose">Забрать</button>';
+}
+/* Выбор карточки в награду: одна из трёх, пропустить нельзя */
+function pickBuild() {
+  const o = $('#over'), ids = G.picks[0];
+  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg" style="--gl:${RCOL[CARDS[ids[0]].rar]}"></div><div class="wrap po"><p class="eyebrow">Награда</p><div class="po-name"><b>Выберите одну карточку</b><span class="sm mut">Остальные две пропадут. Изменить выбор нельзя.</span></div><div class="po-stage" id="po-stage"><div class="grid" style="width:100%">${ids.map((id, i) => `<div class="plain big" style="gap:6px;animation-delay:${i * 80}ms">${cardH(CARDS[id], { stats: true })}<span class="bdg ${own(id) ? 'dup' : 'new'}" style="align-self:flex-start">${own(id) ? 'есть' : 'новая'}</span><button class="btn pri s" data-act="pick" data-v="${i}">Взять</button></div>`).join('')}</div></div><div id="po-btn"></div></div>`;
+  o.hidden = false; o.scrollTop = 0; OV.built = true;
+}
+/* Контракт: результат уже записан, анимацию нельзя отменить или пропустить */
+function tuBuild() {
+  const o = $('#over'), x = OV.res;
+  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow">Контракт</p><div class="po-stage" id="po-stage"><div class="scan glitch" id="scan" style="--gl:${RCOL[OV.rar]}"><div class="scan-fr"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg><i class="scan-ln"></i></div></div></div><div class="po-name" id="po-name"><span class="mut">Десять карточек обмениваются на одну…</span></div><div id="po-btn" class="rowb" style="width:100%"></div></div>`;
+  o.hidden = false; o.scrollTop = 0; OV.built = true; sfx('open');
+  later(1700, () => { $('#po-stage').innerHTML = `<div class="scan out" id="scan" style="--gl:${glow(x.c)}">${cardH(x.c, { stats: true })}</div>`; $('#po-bg').style.setProperty('--gl', glow(x.c)); $('#po-name').innerHTML = `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${x.up ? 'Следующая редкость: ' : 'Та же редкость: '}${rarName(x.c)} · ${x.isNew ? 'новая' : 'дубль'}</span>`; flashNow(); burst(glow(x.c), x.up ? 120 : 40, $('#scan')); sfx('stop', x.c.rar); $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose">Забрать</button>'; });
 }
 function addImage(file, base) {
   const rd = new FileReader();
@@ -754,75 +1216,87 @@ function addImage(file, base) {
   rd.readAsDataURL(file);
 }
 
-/* ---------- Матч: заставка, бан карты, раунды в реальном времени, итог ---------- */
-const T_BUY = 2200, T_BUY1 = 4200, T_KILL = 160, T_END = 800, T_HALF = 1700;
+/* ---------- Матч: заставка, бан карты, раунды в реальном времени, отчёт ---------- */
+const T_BUY = 3000, T_BUY1 = 6000, T_KILL = 150, T_END = 850, T_HALF = 1700;
 let LV = null;
-const sideName = s => s === 'A' ? 'в атаке' : 'в защите', other = s => s === 'A' ? 'D' : 'A';
-const later = (ms, fn) => { const me = OV; setTimeout(() => { if (OV === me) fn(); }, noMotion() ? Math.min(ms, 200) : ms); };
+const sideName = s => s === 'A' ? 'в атаке' : 'в защите';
 function matchBuild() {
-  const o = $('#over'), m = OV.m;
-  o.innerHTML = `<div class="mt"><div class="mt-bg"></div><div class="wrap mt-in" id="mt"><div class="splash"><h1>Матч найден</h1><div class="vs"><p class="eyebrow">${esc(m.b.name)} · рейтинг ${m.b.info.rating.toFixed(1)}</p><div class="grid g5 op">${m.b.sq.map(x => cardH(x.c, { cls: 'xs' })).join('')}</div><span class="x">VS</span><div class="grid g5">${m.a.sq.map(x => cardH(x.c, { cls: 'xs', lv: x.lv })).join('')}</div><p class="eyebrow">Вы · рейтинг ${m.a.info.rating.toFixed(1)}</p></div></div></div></div>`;
-  o.hidden = false; o.scrollTop = 0; OV.built = true; SFX.found();
-  later(1900, vetoBuild);
+  const o = $('#over'), m = OV.m, q = m.opp;
+  o.innerHTML = `<div class="mt"><div class="mt-bg"></div><div class="wrap mt-in" id="mt"><div class="splash"><h1>Матч найден</h1><div class="pn" style="width:100%;text-align:left"><div class="kv"><span>Соперник</span><span>${rankH(q.lg)}</span></div><h2>${esc(q.name)}</h2><div class="stats"><div class="stat"><b>${q.rating.toFixed(1)}</b><span>рейтинг состава</span></div><div class="stat"><b>${LEAGUES[q.lg][0]}</b><span>лига</span></div><div class="stat"><b>${q.tro}</b><span>кубки</span></div></div></div><span class="vs"><span class="x">VS</span></span><p class="eyebrow">Вы · рейтинг ${m.a.info.rating.toFixed(1)} · ${G.tro} кубков</p></div></div></div>`;
+  o.hidden = false; o.scrollTop = 0; OV.built = true; sfx('found');
+  later(2000, vetoBuild);
 }
 function vetoBuild() {
   OV.st = 'veto';
-  $('#mt').innerHTML = `<div class="splash"><p class="eyebrow">Выбор карты</p><h2 id="veto-t">Забаньте одну карту</h2><div class="maps">${OV.maps.map((x, i) => `<button class="map" id="map${i}" data-act="ban" data-v="${i}" style="--h:${x.hue}"><b>${x.n}</b><span>${x.d}</span></button>`).join('')}</div><p class="sm mut" id="veto-d">Соперник ${STYLES[OV.m.style].n}: ${STYLES[OV.m.style].d}.</p></div>`;
+  $('#mt').innerHTML = `<div class="splash"><p class="eyebrow">Выбор карты</p><h2 id="veto-t">Забаньте одну карту</h2><div class="maps">${OV.maps.map((x, i) => `<button class="map" id="map${i}" data-act="ban" data-v="${i}" style="--h:${x.hue}"><b>${x.n}</b><span>${x.d}</span></button>`).join('')}</div><p class="sm mut" id="veto-d">Соперник забанит вторую, играть будем на оставшейся.</p></div>`;
 }
 function vetoBan(i) {
   if (OV.st !== 'veto' || OV.ban.length) return;
-  OV.ban.push(i); $('#map' + i).classList.add('ban'); SFX.tap(); $('#veto-t').textContent = 'Соперник банит…';
+  OV.ban.push(i); $('#map' + i).classList.add('ban'); sfx('tap'); $('#veto-t').textContent = 'Соперник банит…';
   later(700, () => {
     const rest = [0, 1, 2].filter(k => k !== i), b = pick(rest), p = rest.find(k => k !== b), m = OV.m;
-    $('#map' + b).classList.add('ban'); SFX.tap();
-    later(600, () => { m.map = OV.maps[p]; $('#map' + p).classList.add('pick'); $('#veto-t').textContent = 'Играем ' + m.map.n; $('#veto-d').textContent = `Вы начинаете ${sideName(m.sideA)}. Игра до 13 побед, смена сторон после 12 раунда.`; SFX.win(); later(1500, liveBuild); });
+    $('#map' + b).classList.add('ban'); sfx('tap');
+    later(600, () => { m.map = OV.maps[p]; $('#map' + p).classList.add('pick'); $('#veto-t').textContent = 'Играем ' + m.map.n; $('#veto-d').textContent = `Вы начинаете ${sideName(m.sideA)}. Перед каждым раундом выбирайте точку и темп, нажатие на своего игрока делает на него ставку.`; sfx('win'); later(1800, liveBuild); });
   });
 }
-const chipH = (x, id) => `<div class="chipp" id="${id}"><div class="f">${faceH(x.c).replace('class="art"', '')}<span class="k">0</span></div><span class="n">${esc(x.c.nick)}</span></div>`;
+const chipH = (x, id, i, mine) => `<div class="chipp" id="${id}" ${mine ? `data-act="focus" data-v="${i}" role="button" aria-label="Ставка на ${esc(x.c.nick)}"` : ''}><div class="f">${faceH(x.c).replace('class="art"', '')}<span class="k">0</span></div><span class="n">${esc(x.c.nick)}</span></div>`;
 function liveBuild() {
   const m = OV.m; OV.st = 'live';
   document.querySelector('.mt').style.setProperty('--mh', m.map.hue);
   $('#mt').innerHTML = `<div class="sbar"><div class="t" id="tA"><b>Вы</b><span id="monA"></span></div><div class="c"><b id="scA">0</b><div><span id="rn"></span><span>${m.map.n}</span></div><b id="scB">0</b></div><div class="t r" id="tB"><b>${esc(m.b.name)}</b><span id="monB"></span></div></div>
   <div class="hist" id="hist"></div>
-  <div class="arena"><div class="trow" id="rowB">${m.b.info.e.map((x, i) => chipH(x, 'cB' + i)).join('')}</div><div class="mid"><div class="played" id="played"></div><div class="feed" id="feed" aria-live="off"></div><div id="bn"></div></div><div class="trow" id="rowA">${m.a.info.e.map((x, i) => chipH(x, 'cA' + i)).join('')}</div></div>
+  <div class="arena-m"><div class="trow" id="rowB">${m.b.info.e.map((x, i) => chipH(x, 'cB' + i, i, false)).join('')}</div><div class="mid"><div class="mm" id="mm"><div data-d="A">A</div><div data-d="S"></div><div data-d="B">B</div></div><div class="played" id="played"></div><div class="feed" id="feed" aria-live="off"></div><div id="bn"></div></div><div class="trow mine" id="rowA">${m.a.info.e.map((x, i) => chipH(x, 'cA' + i, i, true)).join('')}</div></div>
   <div class="phase"><b id="phl"></b><span class="bar"><i id="phb"></i></span><span id="buyl"></span></div>
-  <div class="en" id="en"></div><div class="hand" id="hand"></div><div class="rowb" id="mbtn"></div>`;
+  <div class="plan" id="plan"></div><div class="en" id="en"></div><div class="hand" id="hand"></div><div class="rowb" id="mbtn"></div>`;
   LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] } };
   lvBuy(true); lvBtns(); requestAnimationFrame(lvTick);
 }
 function lvBtns() { $('#mbtn').innerHTML = OV.askQuit ? '<button class="btn dan s" data-act="quitYes">Сдаться, засчитать поражение</button><button class="btn s" data-act="quitNo">Играть дальше</button>' : `<button class="btn s" data-act="pause">${LV.paused ? 'Продолжить' : 'Пауза'}</button><button class="btn s" data-act="quitAsk">Сдаться</button>`; }
 function lvHud() {
-  const m = OV.m, a = m.a, b = m.b;
+  const m = OV.m, a = m.a, b = m.b, sn = s => s === 'A' ? 'T' : 'CT';
   $('#rn').textContent = m.over ? 'Финал' : m.decider ? 'Решающий' : 'Раунд ' + m.round;
-  $('#tA').className = 't sd-' + m.sideA; $('#rowA').className = 'trow sd-' + m.sideA; $('#tB').className = 't r sd-' + other(m.sideA); $('#rowB').className = 'trow sd-' + other(m.sideA);
-  const sn = s => s === 'A' ? 'T' : 'CT'; $('#monA').textContent = '$' + nf(a.money) + ' · ' + sn(m.sideA); $('#monB').textContent = sn(other(m.sideA)) + ' · $' + nf(b.money);
+  $('#tA').className = 't sd-' + m.sideA; $('#rowA').className = 'trow mine sd-' + m.sideA; $('#tB').className = 't r sd-' + other(m.sideA); $('#rowB').className = 'trow sd-' + other(m.sideA);
+  $('#monA').textContent = '$' + nf(a.money) + ' · ' + sn(m.sideA); $('#monB').textContent = sn(other(m.sideA)) + ' · $' + nf(b.money);
   $('#scA').textContent = a.score; $('#scB').textContent = b.score;
   let h = ''; for (let i = 0; i < 24; i++) { if (i === 12) h += '<i class="h"></i>'; const x = m.hist[i]; h += `<i class="${x ? (x.win ? 'w' : 'l') : ''}"></i>`; } $('#hist').innerHTML = h;
+}
+/* Мини-карта: ваша точка подсвечена цветом стороны, точка соперника появляется после раунда */
+function mmDraw(opp) {
+  const m = OV.m, side = LV.ph === 'buy' ? m.sideA : LV.last.sideA, mine = LV.ph === 'buy' ? OV.plan.dir : LV.last.plan.dir, mm = $('#mm');
+  mm.style.setProperty('--mc', side === 'D' ? 'var(--ct)' : 'var(--tt)'); mm.style.setProperty('--oc', side === 'D' ? 'var(--tt)' : 'var(--ct)');
+  mm.querySelectorAll('div').forEach(d => { d.className = (d.dataset.d === mine ? 'me ' : '') + (opp && d.dataset.d === opp ? 'op' : ''); });
+}
+function planDraw() {
+  const m = OV.m, atk = m.sideA === 'A';
+  $('#plan').innerHTML = m.over ? '' : segH('dir', OV.plan.dir, [['A', atk ? 'Идём на A' : 'Держим A'], ['S', atk ? 'Центр' : 'Ровно'], ['B', atk ? 'Идём на B' : 'Держим B']]) + segH('tempo', OV.plan.tempo, [['fast', 'Быстро'], ['norm', 'Обычно'], ['slow', 'Медленно']]);
+  document.querySelectorAll('#rowA .chipp').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i));
+  mmDraw(null);
 }
 function handDraw() {
   const m = OV.m, a = m.a, hd = $('#hand'), en = $('#en');
   if (m.over) { hd.innerHTML = ''; en.innerHTML = ''; $('#buyl').textContent = ''; return; }
   OV.sel = OV.sel.filter(k => a.hand.includes(k)); if (!m.canPlay(a, OV.sel)) OV.sel = [];
-  const cost = OV.sel.reduce((s, k) => s + AC[k].cost, 0), ctx = { side: m.sideA, behind: a.score < b_score(m) };
+  const cost = OV.sel.reduce((s, k) => s + AC[k].cost, 0), ctx = { side: m.sideA, behind: a.score < m.b.score, cap: m.capIgl(a) };
   en.innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i class="${i <= a.en - cost ? 'on' : i <= a.en ? 'use' : ''}"></i>`).join('') + `<span>${a.en - cost}/8</span>`;
-  en.setAttribute('aria-label', `Энергия ${a.en - cost} из 8`);
-  hd.innerHTML = a.hand.map(k => { const on = OV.sel.includes(k), v = acVal(k, a, ctx), dis = !on && (OV.sel.length >= 2 || cost + AC[k].cost > a.en); return `<button class="ac ${dis ? 'dis' : ''}" data-act="sel" data-v="${k}" aria-pressed="${on}" ${dis ? 'aria-disabled="true"' : ''}><span class="h"><span class="n">${AC[k].n}</span><span class="c" aria-label="Стоит ${AC[k].cost} энергии">${AC[k].cost}</span></span>${k === 'fake' || k === 'eco' ? '' : `<span class="v ${v < 0 ? 'neg' : 'pos'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</span>`}<span class="d">${AC[k].d}</span></button>`; }).join('');
+  en.setAttribute('aria-label', `Импульс ${a.en - cost} из 8`);
+  hd.innerHTML = a.hand.map(k => { const on = OV.sel.includes(k), v = acVal(k, a, ctx), dis = !on && cost + AC[k].cost > a.en; return `<button class="ac ${dis ? 'dis' : ''}" data-act="sel" data-v="${k}" aria-pressed="${on}" ${dis ? 'aria-disabled="true"' : ''}><span class="h"><span class="n">${AC[k].n}</span><span class="c" aria-label="Стоит ${AC[k].cost} импульса">${AC[k].cost}</span></span>${k === 'fake' || k === 'eco' ? '' : `<span class="v ${v < 0 ? 'neg' : 'pos'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</span>`}<span class="d">${AC[k].d}</span></button>`; }).join('');
   $('#buyl').textContent = m.decider ? 'Полная закупка' : BUY[m.buyOf(a, OV.sel)].n;
 }
-const b_score = m => m.b.score;
 function lvBuy(first) {
   const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY;
   document.querySelectorAll('.chipp').forEach(c => c.classList.remove('dead', 'hit'));
-  $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#played').innerHTML = `<span>${m.isPistol() ? 'Пистолетный раунд' : m.decider ? 'Счёт 12:12 — решающий раунд' : m.a.ws >= 2 ? 'Серия побед: +1,5 к силе' : ''}</span><span>${m.decider || m.isPistol() ? '' : 'Соперник: ' + BUY[m.buyOf(m.b, [])].n.toLowerCase()}</span>`;
-  $('#phl').textContent = 'Закупка'; lvHud(); handDraw();
+  const it = m.nx.intel, head = m.isPistol() ? 'Пистолетный раунд' : m.decider ? 'Счёт 12:12 — решающий раунд' : m.a.ws >= 2 ? 'Серия побед: +1,5 к силе' : '';
+  $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#played').innerHTML = `<span>${it ? '<b>Разведка:</b> ' + esc(it.t) : head}</span><span>${m.decider || m.isPistol() ? '' : 'Соперник: ' + BUY[m.buyOf(m.b, [])].n.toLowerCase()}</span>`;
+  $('#phl').textContent = (m.sideA === 'A' ? 'Атака' : 'Защита') + ' · закупка'; lvHud(); planDraw(); handDraw();
 }
 function lvPlay() {
-  const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [], L = m.play(sel);
+  const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [], L = m.play(sel, OV.plan);
   OV.sel = []; LV.last = L; LV.q = [...L.kills]; LV.ph = 'kills'; LV.t = 340;
-  const tg = (pl, vals, cut) => pl.length ? pl.map(k => { const v = vals.find(x => x.k === k); return k === cut ? `<s>${AC[k].n}</s>` : `<b>${AC[k].n}${v && k !== 'fake' ? ' ' + (v.v >= 0 ? '+' : '−') + Math.abs(v.v).toFixed(1) : ''}</b>`; }).join(', ') : 'без карт';
+  taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
+  const tg = (pl, vals, cut) => pl.length ? pl.map(k => { const v = vals.find(x => x.k === k); return k === cut ? `<s>${AC[k].n}</s>` : `<b>${AC[k].n}${v && k !== 'fake' ? ' ' + (v.v >= 0 ? '+' : '−') + Math.abs(v.v).toFixed(1) : ''}</b>`; }).join(', ') : 'без приказов';
   $('#played').innerHTML = `<span>Вы: ${tg(L.mine, L.va, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.vb, L.cutB)}</span>`;
   $('#phl').textContent = 'Раунд идёт'; $('#phb').style.width = '0%'; $('#buyl').textContent = `шанс ${Math.round(L.p * 100)}%`;
-  handDraw();
+  mmDraw(L.planB.dir); handDraw(); $('#plan').innerHTML = `<p class="sm mut" style="grid-column:1/-1">Соперник: ${DIRN[L.planB.dir]}, ${TEMPON[L.planB.tempo]}. Вы: ${DIRN[L.plan.dir]}, ${TEMPON[L.plan.tempo]}.</p>`;
 }
 function lvKill(k) {
   const L = LV.last, kt = k.byA ? 'A' : 'B', vt = k.byA ? 'B' : 'A', m = OV.m, K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
@@ -831,16 +1305,21 @@ function lvKill(k) {
   while (f.children.length > 4) f.firstChild.remove();
   $('#c' + vt + k.v).classList.add('dead');
   const kc = $('#c' + kt + k.k); kc.classList.remove('hit'); void kc.offsetWidth; kc.classList.add('hit'); kc.querySelector('.k').textContent = ++LV.kc[kt][k.k];
-  SFX.kill();
+  sfx('kill');
 }
 function lvEnd() {
   const L = LV.last; LV.ph = 'end'; LV.t = T_END;
-  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span></div>`;
-  lvHud(); (L.win ? SFX.win : SFX.lose)();
+  const rd = { good: 'вы переиграли соперника по направлению', bad: 'соперник прочитал ваше направление', fake: 'фейк спас атаку' }[L.read];
+  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span>${rd ? `<span>${rd}</span>` : ''}</div>`;
+  lvHud(); sfx(L.win ? 'win' : 'lose');
+}
+function finishMatch() {
+  const m = OV.m; OV.st = 'end'; OV.reward = applyResult(G, m.won, m.a.score, m.b.score);
+  taskAdd(G, matchEvent(G, m)); delete G.live; if (G.tut < 3) G.tut = 3; refresh(G, now()); save(); endBuild();
 }
 function lvNext() {
   const m = OV.m, L = LV.last;
-  if (m.over) { OV.st = 'end'; OV.reward = applyResult(G, m.won); save(); endBuild(); return; }
+  if (m.over) { finishMatch(); return; }
   if (LV.ph === 'end' && L.swap) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = `<div class="banner n"><b>Смена сторон</b><span>Вы теперь ${sideName(m.sideA)} · деньги сброшены</span></div>`; lvHud(); return; }
   if (LV.ph === 'end' && m.decider) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = '<div class="banner n"><b>12:12</b><span>Решающий раунд, полная закупка у обеих команд</span></div>'; return; }
   lvBuy(false);
@@ -857,22 +1336,29 @@ function lvTick(ts) {
   requestAnimationFrame(lvTick);
 }
 function endBuild() {
-  const m = OV.m, r = OV.reward, mv = m.mvp();
-  const tb = (s, side) => `<table class="tbl sd-${side}"><tr><th>${esc(s.name)}</th><th>У</th><th>С</th></tr>${s.info.e.map((x, i) => ({ x, k: s.k[i], d: s.d[i] })).sort((p, q) => q.k - p.k).map(p => `<tr class="${p.x.c.nick === mv.nick && (s === m.a) === mv.mine ? 'star' : ''}"><td>${esc(p.x.c.nick)}</td><td>${p.k}</td><td>${p.d}</td></tr>`).join('')}</table>`;
+  const m = OV.m, r = OV.reward, mv = m.mvp(), rep = m.report(), by = rep.eco.buys, bq = k => by[k] ? by[k][1] + ' из ' + by[k][0] : '—';
+  const mine = `<table class="tbl sd-${m.sideA}"><tr><th>Вы</th><th>У</th><th>С</th><th>MVP</th><th>1-е</th></tr>${rep.players.slice().sort((p, q) => q.k - p.k).map(p => `<tr class="${m.won && p.nick === mv.nick ? 'star' : ''}"><td>${esc(p.nick)}</td><td>${p.k}</td><td>${p.d}</td><td>${p.mv}</td><td>${p.op}</td></tr>`).join('')}</table>`;
+  const opp = `<table class="tbl sd-${other(m.sideA)}"><tr><th>${esc(m.b.name)}</th><th>У</th><th>С</th><th>MVP</th></tr>${m.b.info.e.map((x, i) => ({ n: x.c.nick, k: m.b.k[i], d: m.b.d[i], v: m.b.mv[i] })).sort((p, q) => q.k - p.k).map(p => `<tr class="${!m.won && p.n === mv.nick ? 'star' : ''}"><td>${esc(p.n)}</td><td>${p.k}</td><td>${p.d}</td><td>${p.v}</td></tr>`).join('')}</table>`;
   $('#mt').innerHTML = `<p class="res-t ${m.won ? 'w' : 'l'}">${m.won ? 'Победа' : 'Поражение'}</p><p class="eyebrow" style="text-align:center">${m.a.score}:${m.b.score} · ${m.map.n} · лучший игрок ${esc(mv.nick)}, ${mv.k} уб.</p>
   <div class="stats"><div class="stat"><b>${r.tro >= 0 ? '+' : '−'}${Math.abs(r.tro)}</b><span>кубки</span></div><div class="stat"><b>+${r.coins}</b><span>монеты</span></div><div class="stat"><b>+${r.xp}</b><span>опыт</span></div></div>${r.packs.map(p => `<p class="sm">Награда: ${p}.</p>`).join('')}
-  <div class="pn">${tb(m.a, m.sideA)}</div><div class="pn">${tb(m.b, other(m.sideA))}</div><p class="sm mut">У — убийства, С — смерти.</p><button class="btn pri" data-act="ovClose">Продолжить</button>`;
-  $('#over').scrollTop = 0; (m.won ? SFX.win : SFX.lose)();
+  ${rep.moments.length ? `<div class="pn rep"><h3>Ключевые моменты</h3><ul>${rep.moments.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+  <div class="pn rep"><h3>Выводы</h3><ul>${rep.notes.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+  <div class="pn">${mine}<p class="sm mut">У — убийства, С — смерти, MVP — лучший в раунде, 1-е — первые убийства.</p></div><div class="pn">${opp}</div>
+  <div class="pn"><h3>Экономика</h3><p class="sm">Потрачено: $${nf(rep.eco.spent)}. Выиграно раундов: с полной закупкой ${bq('full')}, на форсе ${bq('force')}, на эко ${bq('eco')}, пистолетных ${bq('pistol')}.</p></div>
+  <button class="btn pri" data-act="ovClose">Продолжить</button>`;
+  $('#over').scrollTop = 0; sfx(m.won ? 'win' : 'lose');
 }
 
 const TABS = {
-  home: ['Лобби', vHome, '<path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/>'],
+  home: ['Главная', vHome, '<path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/>'],
+  play: ['Матчи', vPlay, '<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>'],
+  col: ['Коллекция', vCol, '<rect x="3" y="7" width="11" height="14"/><path d="M8 3h13v14"/>'],
   packs: ['Кейсы', vPacks, '<path d="M3 9h18v11H3zM5 9l2-4h10l2 4M12 9v4"/><path d="M10 13h4"/>'],
-  col: ['Инвентарь', vCol, '<rect x="3" y="7" width="11" height="14"/><path d="M8 3h13v14"/>'],
-  squad: ['Состав', vSquad, '<circle cx="12" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/>']
+  prof: ['Профиль', vProf, '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/>']
 };
 function render() {
   if (!G) return;
+  try { refresh(G, now()); } catch (e) { /* задания обновятся при следующем действии */ }
   $('#hud .wrap').innerHTML = hudH();
   const app = $('#app'); app.innerHTML = TABS[tab][1]();
   if (tab !== lastTab) {
@@ -880,57 +1366,83 @@ function render() {
     app.style.setProperty('--dir', j < 0 || i >= j ? 1 : -1); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
     sceneTo(tab); lastTab = tab;
   } else app.classList.remove('enter');
-  $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${k === 'packs' && (packCount() || dailyReady()) ? '<span class="dot"></span>' : ''}</button>`).join('');
+  const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()) };
+  $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${dots[k] ? '<span class="dot"></span>' : ''}</button>`).join('');
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
   const ov = $('#over');
+  if (!OV && G.picks.length && !sheet) OV = { t: 'pick', built: false };
   if (!OV) { ov.innerHTML = ''; ov.hidden = true; }
-  else if (!OV.built) { if (OV.t === 'pack') packBuild(); else matchBuild(); }
+  else if (!OV.built) { ({ pack: packBuild, match: matchBuild, pick: pickBuild, tu: tuBuild })[OV.t](); }
 }
 function autoSquad() {
-  const used = new Set();
+  const used = new Set(), sq = [null, null, null, null, null];
   for (let i = 0; i < 5; i++) {
     const c = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((x, y) => (y.ovr + own(y.id).lv - (y.role === i ? 0 : 5)) - (x.ovr + own(x.id).lv - (x.role === i ? 0 : 5)))[0];
-    G.squad[i] = c.id; used.add(c.nick);
+    if (c) { sq[i] = c.id; used.add(c.nick); }
   }
+  G.squads[G.sqi] = sq; G.capts[G.sqi] = bestCapt(G);
 }
+const taskByKey = v => { const [k, i] = v.split(':'); return ({ d: G.tasks.d, w: G.tasks.w, s: [G.tasks.s], m: G.season.goals })[k][+i]; };
 const ACT = {
-  tab(v) { tab = v; colN = 45; window.scrollTo(0, 0); },
-  mute() { mute = !mute; try { localStorage.setItem(SKEY, mute ? '1' : '0'); } catch (e) { /* не сохранится */ } },
-  close() { sheet = null; imgMsg = ''; },
-  card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; },
+  tab(v) { tab = v; colN = 45; askSell = null; window.scrollTo(0, 0); sfx('tap'); },
+  sub(v) { sub = v; colN = 45; }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
+  snd(v) { snd = v; try { localStorage.setItem(SKEY, v); } catch (e) { /* не сохранится */ } sfx('win'); },
+  noteOk() { delete G.note; },
+  close() { sheet = null; imgMsg = ''; askSell = null; },
+  card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },
   slot(v) { sheet = { t: 'slot', slot: +v }; },
-  put(v, d) { const id = +d.id, i = +v, c = CARDS[id], j = G.squad.findIndex(x => CARDS[x].nick === c.nick); if (j >= 0 && j !== i) G.squad[j] = G.squad[i]; G.squad[i] = id; sheet = null; },
-  auto() { autoSquad(); },
+  goSquad() { tab = 'col'; sub = 'squads'; window.scrollTo(0, 0); },
+  sq(v) { G.sqi = +v; },
+  put(v, d) { setSlot(G, +v, +d.id); if (G.capts[G.sqi] == null) G.capts[G.sqi] = bestCapt(G); if (G.tut === 1 && squadInfo(squadOf(G))) G.tut = 2; sheet = null; },
+  capt(v, d) { G.capts[G.sqi] = d.id === '' ? null : +d.id; },
+  auto() { autoSquad(); if (G.tut === 1) G.tut = 2; },
   up(v, d) { doUp(G, +d.id); },
-  sell(v, d) { sellDupes(G, +d.id, false); }, sellAll(v, d) { sellDupes(G, +d.id, true); },
+  sell(v, d) { const id = +d.id; if (sellNeedsConfirm(G, id)) { askSell = id; return; } const last = own(id).n === 1; sellOne(G, id); if (last) sheet = null; },
+  sellYes(v, d) { sellOne(G, +d.id); askSell = null; sheet = null; }, sellNo() { askSell = null; },
+  cmpPick(v, d) { sheet = { t: 'cmpPick', id: +d.id, q: '' }; }, cmp(v, d) { sheet = { t: 'cmp', a: sheet.id, b: +d.id }; },
   imgDel(v, d) { delete IMG[d.id]; try { localStorage.setItem(IKEY, JSON.stringify(IMG)); } catch (e) { /* хранилище недоступно */ } },
-  filter(v) { colF = v; colN = 45; }, more() { colN += 45; },
-  daily() { if (dailyReady()) { G.daily = Date.now(); G.packs.basic++; tab = 'packs'; } },
+  more() { colN += 45; },
+  claim(v) { claimTask(G, taskByKey(v)); sfx('win'); }, inbox(v) { claimInbox(G, +v); sfx('win'); },
+  pick(v) { const r = choosePick(G, +v); if (!r) return; save(); $('#po-stage').innerHTML = `<div class="scan out" id="scan" style="--gl:${glow(r.c)}">${cardH(r.c, { stats: true })}</div>`; $('.po-name').innerHTML = `<b style="color:${glow(r.c)}">${esc(r.c.nick)}</b><span class="sm mut">${r.isNew ? 'Новая карточка в коллекции' : 'Дубликат: пригодится для прокачки'}</span>`; $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose" style="width:100%">Забрать</button>'; burst(glow(r.c), 80, $('#scan')); sfx('stop', r.c.rar); return false; },
+  turar(v) { tuRar = +v; tuSel = []; }, tuClear() { tuSel = []; },
+  tuAdd(v, d) { const id = +d.id; if (tuSel.length < 10 && tuSel.filter(x => x === id).length < own(id).n) tuSel.push(id); },
+  tuDel(v, d) { const i = tuSel.lastIndexOf(+d.id); if (i >= 0) tuSel.splice(i, 1); },
+  tuFill() { const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !c.sp && c.rar === tuRar).sort((a, b) => a.ovr - b.ovr); for (const c of l) { let free = own(c.id).n - 1 - tuSel.filter(x => x === c.id).length; while (free-- > 0 && tuSel.length < 10) tuSel.push(c.id); } },
+  tuGo() { const rar = tuRar, res = tuRun(G, tuSel); if (!res) return; tuSel = []; OV = { t: 'tu', res, rar, built: false }; },
+  daily() { if (dailyReady(G, now())) { G.daily = mskDay(now()); G.packs.basic++; tab = 'packs'; } },
   open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
   buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
   poTap() { poTap(); return false; },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
-  fight() { const sq = squadOf(G); OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, squadInfo(sq).rating), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], reward: null, askQuit: false, built: false }; },
+  fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1 }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },
   ban(v) { vetoBan(+v); return false; },
-  sel(v) { if (!OV || OV.st !== 'live') return false; const m = OV.m, i = OV.sel.indexOf(v); if (i >= 0) OV.sel.splice(i, 1); else if (OV.sel.length < 2 && m.canPlay(m.a, OV.sel.concat(v))) OV.sel.push(v); else return false; SFX.tap(); handDraw(); return false; },
+  sel(v) { if (!OV || OV.st !== 'live') return false; const m = OV.m, i = OV.sel.indexOf(v); if (i >= 0) OV.sel.splice(i, 1); else if (m.canPlay(m.a, OV.sel.concat(v))) OV.sel.push(v); else return false; sfx('tap'); handDraw(); return false; },
+  dir(v) { if (OV && OV.st === 'live' && LV.ph === 'buy') { OV.plan.dir = v; planDraw(); } else if (OV && OV.st === 'live') OV.plan.dir = v; return false; },
+  tempo(v) { if (OV && OV.st === 'live') { OV.plan.tempo = v; if (LV.ph === 'buy') planDraw(); } return false; },
+  focus(v) { if (OV && OV.st === 'live') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; document.querySelectorAll('#rowA .chipp').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); } return false; },
   pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
   quitAsk() { OV.askQuit = true; lvBtns(); return false; }, quitNo() { OV.askQuit = false; lvBtns(); return false; },
-  quitYes() { applyResult(G, false); OV = null; LV = null; },
+  quitYes() { applyResult(G, false, OV.m.a.score, WIN_N); delete G.live; OV = null; LV = null; },
   newAsk() { askNew = true; }, newNo() { askNew = false; },
-  newYes() { askNew = false; G = newGame(); tab = 'home'; }
+  newYes() { askNew = false; try { backup('-before-reset', localStorage.getItem(KEY) || ''); } catch (e) { /* копия не сохранилась */ } G = newProfile(now()); tab = 'home'; tuSel = []; }
 };
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
-  if (!b) { if (e.target.id === 'sheet') { sheet = null; render(); } return; }
+  if (!b) { if (e.target.id === 'sheet') { sheet = null; askSell = null; render(); } return; }
   if (b.disabled) return;
   const fn = ACT[b.dataset.act]; if (!fn) return;
   if (fn(b.dataset.v, b.dataset) === false) return;
-  if (b.dataset.act === 'tab') SFX.tap();
   save(); render();
 });
-document.addEventListener('input', e => { if (e.target.id === 'col-q') { colQ = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); } });
-document.addEventListener('change', e => { if (e.target.id === 'img-in' && e.target.files && e.target.files[0]) addImage(e.target.files[0], +e.target.dataset.base); });
+document.addEventListener('input', e => {
+  if (e.target.id === 'col-q') { F.q = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); }
+  if (e.target.id === 'cmp-q' && sheet && sheet.t === 'cmpPick') { sheet.q = e.target.value; const tmp = document.createElement('div'); tmp.innerHTML = vSheet(); const nl = tmp.querySelector('#cmp-list'), l = $('#cmp-list'); if (nl && l) l.innerHTML = nl.innerHTML; }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'img-in' && e.target.files && e.target.files[0]) addImage(e.target.files[0], +e.target.dataset.base);
+  if (e.target.dataset && e.target.dataset.f) { F[e.target.dataset.f] = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); }
+});
 /* Осмотр карточки: наклон и блик за пальцем */
 document.addEventListener('pointermove', e => {
   const t = e.target.closest && e.target.closest('.tilt'); if (!t || noMotion()) return;
@@ -939,7 +1451,12 @@ document.addEventListener('pointermove', e => {
   t.style.setProperty('--gx', (x * 100).toFixed(0) + '%'); t.style.setProperty('--gy', (y * 100).toFixed(0) + '%');
 });
 document.addEventListener('pointerout', e => { const t = e.target.closest && e.target.closest('.tilt'); if (t && !t.contains(e.relatedTarget)) { t.style.setProperty('--rx', '0deg'); t.style.setProperty('--ry', '0deg'); } });
-function start() { if (!load()) { G = newGame(); save(); } buildScene(); render(); }
+function start() {
+  const r = load();
+  if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
+  if (G.live) { applyResult(G, false, G.live.sa || 0, WIN_N); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
+  save(); buildScene(); render();
+}
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
 })();
 </script>

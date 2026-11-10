@@ -349,6 +349,40 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 @media (min-width:700px){.wrap{max-width:680px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.hand{grid-template-columns:repeat(4,minmax(0,1fr))}.frow{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (min-width:1100px){.wrap{max-width:860px}.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Новая кинематографичная сцена выхода: только CSS и векторный силуэт, без тяжёлых видео и 3D-моделей */
+.po-pk .pk{transition:transform .55s cubic-bezier(.2,.8,.2,1),filter .55s}
+.po-pk .pk.open{transform:translateY(18px) scale(.82);filter:brightness(1.8) saturate(1.3);animation:none}
+.po-stage{perspective:1000px}
+.walk-scene{position:relative;display:flex;align-items:center;justify-content:center;width:100%;max-width:540px;min-height:330px;isolation:isolate}
+.walk-card{position:absolute;right:7%;top:7%;width:43%;max-width:215px;z-index:1;transform:perspective(900px) rotateY(-13deg) scale(.94);filter:drop-shadow(0 18px 26px #000b);animation:card-arrive 1s cubic-bezier(.16,1,.3,1) both}
+.operator{position:relative;z-index:2;width:64%;max-width:300px;align-self:flex-end;filter:drop-shadow(0 22px 22px #000c);animation:operator-arrive 1.45s cubic-bezier(.16,1,.3,1) both}
+.operator svg{display:block;width:100%;height:auto;overflow:visible}
+.actor-body{transform-origin:50% 90%;animation:operator-idle 2.8s ease-in-out infinite}
+.op-rifle .actor-body{animation:rifle-check 2.8s ease-in-out infinite}
+.op-awp .prop{transform-origin:55% 50%;animation:awp-recoil 2.5s 1.2s ease-out 1}
+.op-igl .prop{transform-origin:70% 55%;animation:notebook-check 2.8s ease-in-out infinite}
+.walk-caption{position:absolute;z-index:3;left:2%;right:2%;bottom:1%;text-align:center;font:600 10px var(--f-m);letter-spacing:.2em;color:var(--gl,#f2c14e);text-shadow:0 2px 10px #000;opacity:.85}
+@keyframes card-arrive{from{opacity:0;transform:perspective(900px) translateX(70px) rotateY(-28deg) scale(.72);filter:blur(8px)}to{opacity:1;transform:perspective(900px) rotateY(-13deg) scale(.94);filter:drop-shadow(0 18px 26px #000b)}}
+@keyframes operator-arrive{0%{opacity:0;transform:translate(-90px,35px) scale(.72);filter:brightness(0) blur(7px)}65%{opacity:1;filter:brightness(.65)}100%{transform:translate(0,0) scale(1);filter:drop-shadow(0 22px 22px #000c)}}
+@keyframes operator-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes rifle-check{0%,100%{transform:translateY(0) rotate(0)}22%{transform:translateY(-2px) rotate(-2deg)}48%{transform:translateY(0) rotate(2.5deg)}72%{transform:translateY(-1px) rotate(-1deg)}}
+@keyframes awp-recoil{0%{transform:translateX(0)}12%{transform:translateX(-7px)}24%{transform:translateX(3px)}40%,100%{transform:translateX(0)}}
+@keyframes notebook-check{0%,100%{transform:rotate(0)}35%{transform:rotate(-4deg)}65%{transform:rotate(2deg)}}
+.all-reveal{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+.all-reveal .walk-scene{min-height:220px;max-height:260px;transform:scale(.82);transform-origin:center bottom;margin-block:-18px}
+.all-reveal .operator{width:56%;max-width:205px}
+.all-reveal .walk-card{width:34%;max-width:145px}
+.all-cards{width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;align-items:start}
+.all-card{min-width:0;opacity:0;animation:all-card-in .8s var(--delay) cubic-bezier(.16,1,.3,1) forwards}
+.all-card .pc{width:100%;font-size:clamp(6px,1.8vw,10px)}
+.all-card>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-size:9px;color:var(--mut);margin-top:4px}
+@keyframes all-card-in{from{opacity:0;transform:translateY(24px) scale(.82);filter:blur(5px)}to{opacity:1;transform:translateY(0) scale(1);filter:none}}
+#po-btn{gap:8px}
+#po-btn .btn{min-height:44px}
+@media(max-width:420px){.walk-scene{min-height:300px}.walk-card{right:2%;width:44%}.operator{width:68%}.all-reveal .walk-scene{min-height:190px;max-height:215px}.all-cards{gap:3px}.all-card .pc{font-size:6px}}
+@media(prefers-reduced-motion:reduce){.operator,.operator .actor-body,.operator .prop,.walk-card,.all-card{animation:none!important;opacity:1!important;filter:none!important}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

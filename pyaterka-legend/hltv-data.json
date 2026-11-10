@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "source": "HLTV.org",
+  "gameVersion": "CS2",
+  "snapshotDate": "2026-11-10",
+  "periods": {
+    "last12m": {
+      "from": "2025-11-10",
+      "to": "2026-11-10"
+    },
+    "last3m": {
+      "from": "2026-08-10",
+      "to": "2026-11-10"
+    }
+  },
+  "metricNotes": {
+    "firepower": "HLTV Firepower score /100",
+    "opening": "HLTV Opening score /100",
+    "trading": "HLTV Trading score /100",
+    "closing": "HLTV Closing score /100",
+    "utility": "HLTV Utility score /100",
+    "clutchesPer24": "HLTV clutches won per 24 rounds"
+  },
+  "players": {
+    "donk": {
+      "profileId": 21167,
+      "last12m": {
+        "maps": 177,
+        "rating3": 1.4,
+        "roundSwing": 3.08,
+        "firepower": 97,
+        "opening": 88,
+        "trading": 71,
+        "closing": 31,
+        "utility": 48,
+        "clutchesPer24": 0.19
+      },
+      "last3m": {
+        "maps": 62,
+        "rating3": 1.34,
+        "roundSwing": 2.33
+      }
+    },
+    "ZywOo": {
+      "profileId": 11893,
+      "last12m": {
+        "maps": 195,
+        "rating3": 1.38,
+        "roundSwing": 3.96,
+        "firepower": 91,
+        "opening": 61,
+        "trading": 47,
+        "closing": 59,
+        "utility": 62,
+        "clutchesPer24": 0.46
+      },
+      "last3m": {
+        "maps": 70,
+        "rating3": 1.36,
+        "roundSwing": 3.73
+      }
+    },
+    "m0NESY": {
+      "profileId": 19230,
+      "last12m": {
+        "maps": 184,
+        "rating3": 1.29,
+        "roundSwing": 3.26,
+        "firepower": 85,
+        "opening": 58,
+        "trading": 42,
+        "closing": 70,
+        "utility": 67,
+        "clutchesPer24": 0.3
+      },
+      "last3m": {
+        "maps": 53,
+        "rating3": 1.3,
+        "roundSwing": 3.51
+      }
+    },
+    "Vexite": {
+      "profileId": 17384,
+      "last12m": {
+        "maps": 132,
+        "rating3": 1.28,
+        "roundSwing": 2.24,
+        "firepower": 88,
+        "opening": 73,
+        "trading": 49,
+        "closing": 51,
+        "utility": 69,
+        "clutchesPer24": 0.43
+      },
+      "last3m": {
+        "maps": 58,
+        "rating3": 1.31,
+        "roundSwing": 2.37
+      }
+    },
+    "jks": {
+      "profileId": 4679,
+      "last12m": {
+        "maps": 132,
+        "rating3": 1.26,
+        "roundSwing": 1.88,
+        "firepower": 82,
+        "opening": 29,
+        "trading": 39,
+        "closing": 70,
+        "utility": 75,
+        "clutchesPer24": 0.33
+      },
+      "last3m": {
+        "maps": 58,
+        "rating3": 1.3,
+        "roundSwing": 2.3
+      }
+    },
+    "insani": {
+      "profileId": 21037,
+      "last12m": {
+        "maps": 193,
+        "rating3": 1.25,
+        "roundSwing": 1.76,
+        "firepower": 92,
+        "opening": 93,
+        "trading": 55,
+        "closing": 44,
+        "utility": 56,
+        "clutchesPer24": 0.3
+      },
+      "last3m": {
+        "maps": 61,
+        "rating3": 1.23,
+        "roundSwing": 1.3
+      }
+    },
+    "blameF": {
+      "profileId": 15165,
+      "last12m": {
+        "maps": 211,
+        "rating3": 1.23,
+        "roundSwing": 1.72,
+        "firepower": 93,
+        "opening": 54,
+        "trading": 65,
+        "closing": 80,
+        "utility": 22,
+        "clutchesPer24": 0.26
+      },
+      "last3m": {
+        "maps": 44,
+        "rating3": 1.18,
+        "roundSwing": 0.96
+      }
+    },
+    "asap": {
+      "profileId": 18545,
+      "last12m": {
+        "maps": 199,
+        "rating3": 1.22,
+        "roundSwing": 1.9,
+        "firepower": 79,
+        "opening": 45,
+        "trading": 53,
+        "closing": 45,
+        "utility": 47,
+        "clutchesPer24": 0.19
+      },
+      "last3m": {
+        "maps": 56,
+        "rating3": 1.11,
+        "roundSwing": 1.01
+      }
+    },
+    "JamYoung": {
+      "profileId": 19645,
+      "last12m": {
+        "maps": 173,
+        "rating3": 1.21,
+        "roundSwing": 2,
+        "firepower": 66,
+        "opening": 48,
+        "trading": 50,
+        "closing": 61,
+        "utility": 76,
+        "clutchesPer24": 0.26
+      },
+      "last3m": {
+        "maps": 50,
+        "rating3": 1.23,
+        "roundSwing": 2.37
+      }
+    },
+    "Senzu": {
+      "profileId": 20903,
+      "last12m": {
+        "maps": 116,
+        "rating3": 1.21,
+        "roundSwing": 1.59,
+        "firepower": 81,
+        "opening": 79,
+        "trading": 53,
+        "closing": 38,
+        "utility": 35,
+        "clutchesPer24": 0.22
+      },
+      "last3m": {
+        "maps": 40,
+        "rating3": 1.15,
+        "roundSwing": 0.92
+      }
+    }
+  }
+}

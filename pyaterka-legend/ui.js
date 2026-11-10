@@ -371,9 +371,25 @@ async function showCase3D(x, showAll = false) {
   const token=++CASE3D_RUN,c=x.c,stage=$('#po-stage');
   if(!stage)return false;
   const elite=c.ovr>=91,accent=elite?'#e6bd75':'#8bc8ec';
-  const duration=noMotion()?0:(showAll?3600:(elite?6500:5200));
+  const duration=noMotion()?0:(showAll?7200:(elite?6500:5200));
   const lightning='<svg class="reveal-bolts" viewBox="0 0 600 520" preserveAspectRatio="none" aria-hidden="true"><path class="bolt bolt-a" d="M80 30 L190 130 L150 180 L270 260 L220 315 L345 430"/><path class="bolt bolt-b" d="M520 12 L405 110 L445 170 L330 245 L385 310 L260 470"/><path class="bolt bolt-c" d="M15 250 L115 270 L80 330 L190 375"/><path class="bolt bolt-d" d="M585 210 L485 245 L520 300 L410 360"/></svg>';
-  const cards=showAll?OV.cards.map((v,i)=>'<div class="reveal-card" style="--delay:'+i*170+'ms">'+cardH(v.c,{cls:'xs'})+'<span class="reveal-nick">'+esc(v.c.nick)+'</span></div>').join(''):'<div class="reveal-single" style="--accent:'+accent+'"><div class="card-suspension"><div class="card-halo"></div><div class="card-electric">'+lightning+'</div><div class="card-face">'+cardH(c,{stats:true})+'</div><div class="card-electric front">'+lightning+'</div></div></div>';
+  let cards;
+  if(showAll){
+    const ordered=OV.cards.slice();
+    const rareIndices=ordered.map((v,i)=>v.c.ovr>=87?i:-1).filter(i=>i>=0);
+    const finalIndex=rareIndices.length?rareIndices.reduce((best,i)=>ordered[i].c.ovr>ordered[best].c.ovr?i:best,rareIndices[0]):-1;
+    const sequence=ordered.filter((v,i)=>i!==finalIndex);
+    if(finalIndex>=0)sequence.push(ordered[finalIndex]);
+    cards=sequence.map((v,i)=>{
+      const finalRare=i===sequence.length-1&&v.c.ovr>=87;
+      const delay=i*650;
+      return finalRare
+        ? '<div class="reveal-card final-rare" style="--delay:'+delay+'ms;--accent:'+ (v.c.ovr>=91?'#e6bd75':'#8bc8ec') +'"><div class="card-suspension"><div class="card-halo"></div><div class="card-electric">'+lightning+'</div><div class="card-face">'+cardH(v.c,{stats:true})+'</div><div class="card-electric front">'+lightning+'</div></div><span class="reveal-nick">'+esc(v.c.nick)+'</span></div>'
+        : '<div class="reveal-card" style="--delay:'+delay+'ms">'+cardH(v.c,{cls:'xs'})+'<span class="reveal-nick">'+esc(v.c.nick)+'</span></div>';
+    }).join('');
+  }else{
+    cards='<div class="reveal-single" style="--accent:'+accent+'"><div class="card-suspension"><div class="card-halo"></div><div class="card-electric">'+lightning+'</div><div class="card-face">'+cardH(c,{stats:true})+'</div><div class="card-electric front">'+lightning+'</div></div></div>';
+  }
   stage.innerHTML='<div class="cinematic-reveal '+(showAll?'multi':'single')+(elite?' legendary':'')+'" style="--accent:'+accent+'"><div class="reveal-bg"></div><div class="reveal-vignette"></div><div class="reveal-flash"></div><div class="reveal-lines"></div><div class="reveal-topline"><span>FIVE LEGENDS</span><span>'+(elite?'LEGENDARY PLAYER':'PLAYER REVEAL')+'</span></div><div class="reveal-caption">'+(showAll?'ПЯТЬ НОВЫХ КАРТОЧЕК':'ОБНАРУЖЕН ИГРОК')+'</div><div class="reveal-content">'+cards+'</div><div class="reveal-footer">'+(showAll?'СОСТАВ ОТКРЫТ':' '+esc(RNAME[c.role])+' · '+esc(c.team)+' · OVERALL '+c.ovr)+'</div></div>';
   if(duration) await new Promise(resolve=>setTimeout(resolve,duration));
   return token===CASE3D_RUN;
@@ -391,12 +407,11 @@ function rareSeq(i, done) {
 }
 function poRevealAll() {
   if(!OV||OV.phase!=='scan')return;
-  const rareIndex=OV.cards.length-1, rare=isRare(OV.type,OV.cards[rareIndex].c);
-  const showcaseIndex=OV.cards.reduce((best,x,i)=>x.c.ovr>OV.cards[best].c.ovr?i:best,0);
+  const rare=OV.cards.some(x=>x.c.ovr>=87)||OV.cards.some(x=>isRare(OV.type,x.c));
+  const top=OV.cards.reduce((best,x)=>x.c.ovr>best.c.ovr?x:best,OV.cards[0]);
   $('#po-top').textContent='ПЯТЬ КАРТОЧЕК · ПОЛНОЕ ОТКРЫТИЕ';
-  if(OV.cards[showcaseIndex].c.ovr>=87) showCase3D(OV.cards[showcaseIndex],true);
-  else $('#po-stage').innerHTML=`<div class="all-reveal"><div class="all-cards">${OV.cards.map((x,i)=>`<div class="all-card" style="--delay:${i*130}ms">${cardH(x.c,{cls:'xs'})}<span>${esc(x.c.nick)}</span></div>`).join('')}</div></div>`;
-  $('#po-bg').style.setProperty('--gl',glow(OV.cards[rareIndex].c));
+  showCase3D(top,true);
+  $('#po-bg').style.setProperty('--gl',glow(top.c));
   $('#po-name').innerHTML='<b>Все пять карточек открыты</b><span class="sm mut">Нажмите «Забрать», чтобы продолжить</span>';
   OV.phase='done';sfx(rare?'rare':'stop',rare?null:2);if(rare)flashNow();
   $('#po-btn').innerHTML='<button class="btn pri" data-act="ovClose" style="width:100%">Забрать карточки</button>';
@@ -438,6 +453,17 @@ if(!document.getElementById(revealStyleId)){
   .bolt-c{stroke:#fff;stroke-width:1.8;animation:bolt-draw 3.8s .78s ease-out infinite}
   .bolt-d{stroke:var(--accent);stroke-width:2;animation:bolt-draw 3.8s 1.05s ease-out infinite}
   .reveal-card{width:19%;max-width:132px;min-width:0;opacity:0;transform:translateY(38px) rotateY(18deg) scale(.88);animation:reveal-multi .8s calc(1.1s + var(--delay)) cubic-bezier(.16,1,.3,1) forwards;filter:drop-shadow(0 8px 18px #000)}
+  .reveal-card.final-rare{position:relative;isolation:isolate;filter:drop-shadow(0 0 18px color-mix(in srgb,var(--accent) 55%,transparent)) drop-shadow(0 12px 24px #000)}
+  .reveal-card.final-rare .card-suspension{animation:card-hover 3.2s ease-in-out infinite}
+  .reveal-card.final-rare .card-halo{inset:5% -20%;filter:blur(12px)}
+  .reveal-card.final-rare .card-face{opacity:0;transform:translateY(25px) rotateX(14deg) scale(.82);clip-path:inset(48% 0 48% 0 round 9px);filter:brightness(.35) blur(5px);animation:card-materialize 2.1s calc(1.1s + var(--delay)) cubic-bezier(.16,1,.3,1) forwards}
+  .reveal-card.final-rare .card-face .pc{width:100%;max-width:none}
+  .reveal-card.final-rare .card-electric{inset:-12% -35%;animation:electric-strike 3.8s calc(1.1s + var(--delay)) ease-out infinite}
+  .reveal-card.final-rare .card-electric.front{animation-delay:calc(1.7s + var(--delay))}
+  .reveal-card.final-rare .bolt-a{animation-delay:calc(1.1s + var(--delay))}
+  .reveal-card.final-rare .bolt-b{animation-delay:calc(1.35s + var(--delay))}
+  .reveal-card.final-rare .bolt-c{animation-delay:calc(1.6s + var(--delay))}
+  .reveal-card.final-rare .bolt-d{animation-delay:calc(1.85s + var(--delay))}
   .reveal-nick{display:block;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:700 10px var(--f-m);margin-top:7px;color:#f4f7fb}
   .reveal-footer{position:absolute;bottom:22px;text-align:center;font:700 9px var(--f-m);letter-spacing:.2em;color:#aab8c6;opacity:0;animation:reveal-text .7s 2.15s ease-out forwards}
   .cinematic-reveal.legendary .reveal-bg{background:radial-gradient(ellipse at 50% 47%,#574322 0%,#19140d 26%,#030407 70%)}
@@ -454,7 +480,7 @@ if(!document.getElementById(revealStyleId)){
   @keyframes reveal-multi{to{opacity:1;transform:translateY(0) rotateY(0) scale(1)}}
   @keyframes reveal-card-glow{from{filter:brightness(1)}to{filter:brightness(1.12)}}
   @media(prefers-reduced-motion:reduce){.cinematic-reveal *{animation-duration:.01ms!important;animation-delay:0ms!important}}
-  @media(max-width:520px){.cinematic-reveal{min-height:370px;height:58vh}.reveal-topline{left:12px;right:12px;font-size:8px}.reveal-caption{top:14%;letter-spacing:.2em}.reveal-single{width:min(58vw,196px)}.card-electric{inset:-12% -34%}.card-electric.front{inset:-10% -30%}.reveal-card{width:19%}.reveal-nick{font-size:8px}.reveal-footer{font-size:8px;letter-spacing:.1em}}
+  @media(max-width:520px){.cinematic-reveal{min-height:370px;height:58vh}.reveal-topline{left:12px;right:12px;font-size:8px}.reveal-caption{top:14%;letter-spacing:.2em}.reveal-single{width:min(58vw,196px)}.card-electric{inset:-12% -34%}.card-electric.front{inset:-10% -30%}.reveal-card{width:19%}.reveal-card.final-rare .card-face .pc{width:100%}.reveal-nick{font-size:8px}.reveal-footer{font-size:8px;letter-spacing:.1em}}
   `;document.head.appendChild(st);
 }
 /* Выбор карточки в награду: одна из трёх, пропустить нельзя */

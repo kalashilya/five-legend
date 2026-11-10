@@ -1,0 +1,946 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Пятёрка Легенд</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#0c0e11">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Oswald:wght@500;600;700&display=swap">
+<style>
+/* Вид: тактический шутер. Вертикальный экран телефона; за интерфейсом — сцена карты (небо, два слоя построек, дым, пыль),
+   камера сдвигается при смене раздела; панели — тёмное стекло со срезанным углом; кейсы, лента редкостей и матч идут полноэкранными слоями */
+@property --s1{syntax:'<color>';inherits:true;initial-value:#14181d}
+@property --s2{syntax:'<color>';inherits:true;initial-value:#6b4a2a}
+@property --s3{syntax:'<color>';inherits:true;initial-value:#0a0b0d}
+:root{
+  --bg:#0c0e11;--panel:rgb(18 21 26 / .66);--panel2:rgb(255 255 255 / .06);--line:rgb(255 255 255 / .11);--fg:#eef0f3;--mut:#9aa3ae;
+  --accent:#f0a93a;--go:#7bc043;--go2:#4f9a23;--on-go:#0c1a04;--bad:#ff6b5e;--good:#7bd65a;--coin:#f2c14e;--sel:#ffd27a;
+  --ct:#7fb2ff;--tt:#f0c269;
+  --r0:#b0c3d9;--r1:#6c8cff;--r2:#a274ff;--r3:#e45cf2;--r4:#ff5a5a;--sp:#ff8a3d;--gold:#f2c14e;
+  --f-d:'Oswald','Roboto Condensed','Arial Narrow',Impact,system-ui,sans-serif;
+  --f-b:'Golos Text',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-m:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --cut:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--f-b);-webkit-tap-highlight-color:transparent;overflow-x:hidden;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+button:focus-visible,input:focus-visible,label:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+.wrap{max-width:520px;margin:0 auto;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--f-m);font-variant-numeric:tabular-nums}
+.mut{color:var(--mut)}.sm{font-size:13px}
+h2{font:600 22px/1.1 var(--f-d);letter-spacing:.03em;text-transform:uppercase}
+h3,.eyebrow{font:600 12px/1.2 var(--f-d);letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+.plain{display:flex;flex-direction:column;gap:10px;min-width:0}
+.rowb{display:flex;gap:8px;flex-wrap:wrap}.rowb>*{flex:1 1 140px}
+
+/* ---------- Сцена ---------- */
+#scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;--s1:#14181d;--s2:#7a4f26;--s3:#0a0b0d;transition:--s1 .9s,--s2 .9s,--s3 .9s;background:linear-gradient(180deg,var(--s1) 0%,color-mix(in srgb,var(--s1) 55%,var(--s2)) 46%,var(--s2) 62%,var(--s3) 78%)}
+#scene[data-s="packs"]{--s1:#0b1114;--s2:#8a5a16;--s3:#060708}
+#scene[data-s="col"]{--s1:#0e1622;--s2:#2f5d86;--s3:#07090d}
+#scene[data-s="squad"]{--s1:#0e1512;--s2:#4f6a35;--s3:#070907}
+#scene .sun{position:absolute;left:50%;top:58%;width:130vmax;height:60vmax;transform:translate(-50%,-50%);background:radial-gradient(closest-side,color-mix(in srgb,var(--s2) 85%,#fff 15%),transparent 70%);opacity:.55}
+#scene .pan{position:absolute;left:0;bottom:22%;width:400%;height:38vh;min-height:240px;transition:transform .9s cubic-bezier(.6,0,.2,1);will-change:transform}
+#scene .pan.far{bottom:26%;opacity:.55;transition-duration:1.15s}
+#scene .pan svg{width:100%;height:100%;display:block}
+#scene .beam{position:absolute;top:-10%;width:34vmax;height:120%;background:linear-gradient(180deg,rgb(255 255 255 / .1),transparent 70%);transform-origin:50% 0;filter:blur(14px);mix-blend-mode:screen}
+#scene .beam.b1{left:8%;transform:rotate(14deg);animation:sway 11s ease-in-out infinite alternate}
+#scene .beam.b2{right:4%;transform:rotate(-18deg);animation:sway 14s ease-in-out infinite alternate-reverse;opacity:.7}
+#scene .fog{position:absolute;left:-30%;right:-30%;bottom:8%;height:44%;background:radial-gradient(40% 55% at 22% 60%,rgb(255 255 255 / .1),transparent 70%),radial-gradient(45% 60% at 68% 50%,rgb(255 255 255 / .08),transparent 70%),radial-gradient(30% 50% at 48% 80%,rgb(255 255 255 / .07),transparent 70%);filter:blur(10px);animation:drift 26s linear infinite alternate}
+#scene .floor{position:absolute;left:0;right:0;bottom:0;height:24%;background:linear-gradient(180deg,var(--s3),#050607)}
+#scene .dust{position:absolute;inset:0}
+#scene .dust i{position:absolute;width:3px;height:3px;border-radius:50%;background:rgb(255 240 210 / .5);animation:mote linear infinite}
+#scene .vig{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 40%,transparent 40%,rgb(0 0 0 / .72)),linear-gradient(180deg,rgb(0 0 0 / .35),transparent 22%)}
+@keyframes sway{to{transform:rotate(-6deg)}}
+@keyframes drift{to{transform:translateX(12%)}}
+@keyframes mote{from{transform:translate3d(0,0,0);opacity:0}15%{opacity:1}to{transform:translate3d(var(--dx),-70vh,0);opacity:0}}
+
+/* ---------- Каркас ---------- */
+#hud{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgb(8 9 11 / .92),rgb(8 9 11 / .55) 70%,transparent);padding-top:env(safe-area-inset-top,0px)}
+#hud .wrap{display:flex;align-items:center;gap:10px;padding-block:10px 14px}
+#hud .who{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+#hud .who b{display:block;font:600 16px/1.1 var(--f-d);letter-spacing:.06em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank{flex:none;width:44px;height:30px}
+.xp{display:block;height:3px;background:rgb(255 255 255 / .14);margin-top:5px;width:120px;max-width:100%}.xp i{display:block;height:100%;background:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:6px;font:700 14px/1 var(--f-m);padding:8px 10px;background:rgb(0 0 0 / .45);border:1px solid var(--line)}
+.coin{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c4,var(--coin) 55%,#8a6410);flex:none}
+.ibtn{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);background:rgb(0 0 0 / .45);flex:none}
+.ibtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#app{position:relative;z-index:1;padding-block:4px 104px;display:flex;flex-direction:column;gap:14px;min-height:70vh}
+#app.enter>*{animation:pin .46s cubic-bezier(.2,.8,.2,1) both}
+#app.enter>*:nth-child(2){animation-delay:.05s}#app.enter>*:nth-child(3){animation-delay:.1s}#app.enter>*:nth-child(4){animation-delay:.15s}#app.enter>*:nth-child(5){animation-delay:.2s}#app.enter>*:nth-child(n+6){animation-delay:.25s}
+@keyframes pin{from{opacity:0;transform:translate3d(calc(var(--dir,1)*36px),0,0)}to{opacity:1;transform:none}}
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgb(9 10 12 / .86);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+#tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);padding-inline:0}
+#tabs button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px 9px;font:600 11px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);transition:color .2s}
+#tabs svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#tabs button::before{content:"";position:absolute;top:-1px;left:22%;right:22%;height:2px;background:var(--accent);transform:scaleX(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+#tabs button[aria-current]{color:var(--fg)}#tabs button[aria-current]::before{transform:scaleX(1)}
+#tabs .dot{position:absolute;top:7px;left:calc(50% + 9px);width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+.pn{background:var(--panel);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);clip-path:var(--cut);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0;position:relative}
+.pn::before{content:"";position:absolute;left:0;top:0;width:3px;height:26px;background:var(--accent)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 14px;font:600 15px/1.1 var(--f-d);letter-spacing:.1em;text-transform:uppercase;background:rgb(255 255 255 / .09);border:1px solid var(--line);text-align:center;transition:background .15s,transform .1s}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:linear-gradient(180deg,var(--go),var(--go2));color:var(--on-go);border-color:transparent;font-weight:700}
+.btn.go{min-height:62px;font-size:24px;letter-spacing:.18em;clip-path:var(--cut);box-shadow:0 0 0 1px rgb(255 255 255 / .2) inset}
+.btn.s{min-height:38px;font-size:13px}
+.btn.dan{background:rgb(255 90 80 / .16);border-color:rgb(255 107 94 / .5);color:#ffb3ab}
+.btn:disabled{opacity:.42;cursor:default}
+.bar{display:block;height:5px;background:rgb(255 255 255 / .12);overflow:hidden}.bar i{display:block;height:100%;background:var(--rc,var(--accent))}
+input[type=text]{width:100%;min-height:44px;padding:10px 12px;font:inherit;color:var(--fg);background:rgb(0 0 0 / .5);border:1px solid var(--line)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chip{flex:none;padding:8px 12px;font:600 12px/1 var(--f-d);letter-spacing:.1em;text-transform:uppercase;background:rgb(0 0 0 / .45);border:1px solid var(--line);color:var(--mut);border-bottom:2px solid var(--rc,var(--line))}
+.chip[aria-pressed=true]{color:var(--fg);background:rgb(255 255 255 / .14)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.grid.g5{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat{background:var(--panel);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:10px;display:flex;flex-direction:column;gap:2px;border-bottom:2px solid var(--line)}
+.stat b{font:700 22px/1 var(--f-d)}.stat span{font:600 10px/1.2 var(--f-d);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.warn{color:#ffb86b;font-size:12px}
+.bdg{font:700 10px/1 var(--f-m);padding:3px 6px;text-transform:uppercase;letter-spacing:.06em}.bdg.new{background:var(--go);color:var(--on-go)}.bdg.dup{background:rgb(255 255 255 / .14);color:var(--mut)}
+
+/* ---------- Карточка игрока ---------- */
+.pc{--edge:var(--r0);--tc:#888;container-type:inline-size;position:relative;display:block;aspect-ratio:5/7;width:100%;min-width:0;overflow:hidden;isolation:isolate;clip-path:polygon(0 0,86% 0,100% 10%,100% 100%,0 100%);background:radial-gradient(130% 62% at 50% 104%,color-mix(in srgb,var(--edge) 62%,transparent),transparent 72%),radial-gradient(80% 46% at 50% 30%,color-mix(in srgb,var(--tc) 34%,transparent),transparent 75%),linear-gradient(180deg,#2b3038,#171a20 55%,#0b0d10);color:#f4f6f8;text-align:left}
+.pc.r1{--edge:var(--r1)}.pc.r2{--edge:var(--r2)}.pc.r3{--edge:var(--r3)}.pc.r4{--edge:var(--r4)}.pc.sp1{--edge:var(--sp)}.pc.sp2{--edge:var(--gold)}
+.pc::before{content:"";position:absolute;inset:0;z-index:0;background:repeating-linear-gradient(118deg,rgb(255 255 255 / .045) 0 1.5px,transparent 1.5px 9px);pointer-events:none}
+.pc::after{content:"";position:absolute;inset:0;z-index:5;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .13),inset 0 -3px 0 var(--edge);pointer-events:none}
+.pc.sp1::before,.pc.sp2::before{background:repeating-linear-gradient(118deg,color-mix(in srgb,var(--edge) 26%,transparent) 0 3px,transparent 3px 11px)}
+.pc .sh{position:absolute;inset:-20% -60%;z-index:3;background:linear-gradient(105deg,transparent 42%,rgb(255 255 255 / .3) 50%,transparent 58%);transform:translateX(-60%);pointer-events:none;opacity:0}
+.pc.r3 .sh,.pc.r4 .sh,.pc.sp1 .sh,.pc.sp2 .sh{opacity:1;animation:shine 3.6s ease-in-out infinite}
+@keyframes shine{0%,55%{transform:translateX(-60%)}100%{transform:translateX(60%)}}
+.pc .mg{position:absolute;z-index:0;right:-2cqw;top:14cqw;font:700 50cqw/1 var(--f-d);color:rgb(255 255 255 / .06);text-transform:uppercase;pointer-events:none}
+.pc .art{position:absolute;z-index:1;left:12%;width:88%;top:15%;height:56%;opacity:.9}
+.pc .ph{position:absolute;z-index:1;left:0;top:0;width:100%;height:78%;object-fit:cover;object-position:50% 10%;-webkit-mask-image:linear-gradient(#000 64%,transparent);mask-image:linear-gradient(#000 64%,transparent)}
+.pc .hd{position:absolute;z-index:4;left:6cqw;top:5cqw;display:flex;flex-direction:column;align-items:flex-start;gap:1.5cqw}
+.pc .ov{font:700 24cqw/1 var(--f-d);text-shadow:0 2px 8px rgb(0 0 0 / .7)}
+.pc .rl{font:700 7.4cqw/1 var(--f-m);letter-spacing:.05em;padding:1.6cqw 2.4cqw;background:rgb(5 7 10 / .7);color:var(--edge)}
+.pc .rk{position:absolute;z-index:4;right:15cqw;top:4.5cqw;font:700 6.4cqw/1 var(--f-m);color:rgb(255 255 255 / .6)}
+.pc .ft{position:absolute;z-index:4;left:0;right:0;bottom:0;padding:16cqw 6cqw 6.5cqw;display:flex;flex-direction:column;gap:.8cqw;background:linear-gradient(transparent,rgb(6 7 9 / .9) 46%)}
+.pc .tag{font:700 6cqw/1.2 var(--f-m);letter-spacing:.08em;text-transform:uppercase;color:var(--edge)}
+.pc .nk{font:600 12.5cqw/1.1 var(--f-d);letter-spacing:.02em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc .tm{font-size:7.2cqw;line-height:1.2;color:rgb(255 255 255 / .68);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:2cqw}
+.pc .tm::before{content:"";flex:none;width:2.4cqw;height:2.4cqw;background:var(--tc);transform:rotate(45deg)}
+.pc .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:1cqw 2cqw;margin-top:2cqw;padding-top:2.4cqw;border-top:1px solid rgb(255 255 255 / .18);font:500 5.6cqw/1.2 var(--f-m);color:rgb(255 255 255 / .68)}
+.pc .sg b{font-size:7.4cqw;color:#fff;margin-right:1.2cqw}
+.pc .lv{display:flex;gap:1.4cqw;margin-top:1.8cqw}.pc .lv i{width:5cqw;height:1.6cqw;background:rgb(255 255 255 / .22)}.pc .lv i.on{background:var(--edge)}
+.pc .cnt{position:absolute;z-index:6;right:5cqw;bottom:7cqw;font:700 7cqw/1 var(--f-m);padding:1.6cqw 2.6cqw;background:#f4f6f8;color:#0b0d10}
+.pc.no{filter:grayscale(1) brightness(.75);opacity:.55}
+.pc.xs .tm,.pc.xs .tag,.pc.xs .lv,.pc.xs .rk,.pc.xs .cnt{display:none}
+.pc.xs .nk{font-size:15cqw}.pc.xs .ov{font-size:27cqw}.pc.xs .rl{font-size:10cqw}.pc.xs .ft{padding-bottom:9cqw}
+
+/* ---------- Лобби ---------- */
+.lobby{display:flex;flex-direction:column;gap:12px}
+.lineup{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;align-items:end;padding:26px 0 0;position:relative;perspective:700px}
+.lineup::after{content:"";position:absolute;left:0;right:0;bottom:-16px;height:34px;background:radial-gradient(50% 100% at 50% 0,rgb(0 0 0 / .75),transparent 80%);z-index:-1}
+.lineup>button{display:block;filter:drop-shadow(0 14px 14px rgb(0 0 0 / .6))}
+.lineup>button:nth-child(1),.lineup>button:nth-child(5){transform:translateY(0) scale(.94)}
+.lineup>button:nth-child(3){transform:translateY(-18px) scale(1.08);z-index:2}
+.lineup>button:nth-child(2),.lineup>button:nth-child(4){transform:translateY(-9px)}
+#app.enter .lineup>button{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}#app.enter .lineup>button:nth-child(2){animation-delay:.06s}#app.enter .lineup>button:nth-child(3){animation-delay:.12s}#app.enter .lineup>button:nth-child(4){animation-delay:.18s}#app.enter .lineup>button:nth-child(5){animation-delay:.24s}
+@keyframes rise{from{opacity:0;translate:0 40px}to{opacity:1;translate:0 0}}
+.kv{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font:600 12px/1.2 var(--f-d);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.kv b{font:700 17px/1 var(--f-d);color:var(--fg);letter-spacing:.02em}
+.shop{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center}
+
+/* ---------- Кейс ---------- */
+.pk{--kc:#8fa3b8;position:relative;aspect-ratio:10/8;width:100%;filter:drop-shadow(0 12px 12px rgb(0 0 0 / .6))}
+.pk.pro{--kc:var(--r2)}.pk.elite{--kc:var(--gold)}
+.pk .lid,.pk .box{position:absolute;left:0;right:0;background:linear-gradient(180deg,#4a515c,#262a31);box-shadow:inset 0 0 0 1px rgb(255 255 255 / .18)}
+.pk .lid{top:6%;height:34%;clip-path:polygon(6% 0,94% 0,100% 100%,0 100%);transform-origin:50% 100%;transition:transform .5s cubic-bezier(.3,1.5,.5,1)}
+.pk .box{top:40%;bottom:0;background:linear-gradient(180deg,#2e333b,#15181c);display:grid;place-items:center}
+.pk .box::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--kc)}
+.pk .box::after{content:"";position:absolute;left:8%;right:8%;bottom:14%;height:3px;background:repeating-linear-gradient(90deg,var(--kc) 0 8px,transparent 8px 14px);opacity:.7}
+.pk .lock{position:absolute;left:50%;top:40%;width:16%;aspect-ratio:1;transform:translate(-50%,-50%);background:var(--kc);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);z-index:2;transition:transform .4s,opacity .4s}
+.pk b{font:700 11px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:rgb(255 255 255 / .8)}
+.pk.open .lid{transform:perspective(300px) rotateX(-62deg)}.pk.open .lock{transform:translate(-50%,160%) rotate(90deg);opacity:0}
+.pk.shake{animation:shake .5s}
+@keyframes shake{20%{transform:rotate(-3deg)}40%{transform:rotate(3deg)}60%{transform:rotate(-2deg)}80%{transform:rotate(2deg)}}
+.odds{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.odds span{font:700 11px/1 var(--f-m);text-align:center;padding:7px 2px;background:rgb(0 0 0 / .4);border-bottom:2px solid var(--rc)}
+
+/* ---------- Нижний лист ---------- */
+#sheet{position:fixed;inset:0;z-index:40;background:rgb(0 0 0 / .72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center}
+#sheet[hidden],#over[hidden]{display:none}
+#sheet .in{width:100%;max-height:94vh;overflow-y:auto;background:linear-gradient(180deg,#1a1d22,#0e1013);border-top:2px solid var(--accent);padding:16px 0 calc(18px + env(safe-area-inset-bottom,0px));animation:up .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.col{display:flex;flex-direction:column;gap:12px}
+.insp{display:grid;place-items:center;padding:6px 0;perspective:800px}
+.tilt{width:62%;max-width:250px;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .12s;position:relative;filter:drop-shadow(0 20px 22px rgb(0 0 0 / .7));touch-action:none}
+.tilt::after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;background:radial-gradient(60% 50% at var(--gx,50%) var(--gy,20%),rgb(255 255 255 / .28),transparent 70%);mix-blend-mode:screen;clip-path:polygon(0 0,86% 0,100% 10%,100% 100%,0 100%)}
+.attr{display:grid;grid-template-columns:86px 1fr 30px;gap:10px;align-items:center;font-size:13px}.attr b{font:700 13px var(--f-m);text-align:right}
+.list{display:flex;flex-direction:column;gap:6px}
+.prow{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;background:rgb(255 255 255 / .05);border-left:3px solid var(--rc,var(--line))}
+.prow .o{font:700 20px/1 var(--f-d)}
+.slot{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 12px 8px 8px;background:var(--panel);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-left:3px solid var(--accent)}
+
+/* ---------- Полноэкранный слой ---------- */
+#over{position:fixed;inset:0;z-index:50;background:#07080a;overflow-y:auto;overflow-x:hidden}
+#fx{position:fixed;inset:0;z-index:60;pointer-events:none}
+.flash{position:fixed;inset:0;z-index:59;background:#fff;pointer-events:none;animation:fl .6s ease-out forwards}
+@keyframes fl{from{opacity:.75}to{opacity:0}}
+.po{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:12px;padding-block:calc(16px + env(safe-area-inset-top,0px)) 20px;position:relative;z-index:1}
+.po-bg{position:fixed;inset:0;background:radial-gradient(70% 45% at 50% 38%,color-mix(in srgb,var(--gl,#8fa3b8) 30%,transparent),transparent 70%),linear-gradient(180deg,#0d0f12,#050607);transition:--gl .4s}
+.po-stage{width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:340px}
+.po-pk{width:62%;max-width:250px;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.reel{position:relative;width:100%;height:calc(var(--tw)*1.4 + 8px);overflow:hidden;background:rgb(0 0 0 / .5);border-block:1px solid var(--line);-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);--tw:62px}
+.reel::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--accent);box-shadow:0 0 12px var(--accent);z-index:3}
+.reel .strip{display:flex;gap:6px;padding:4px 0;position:absolute;left:0;top:0;will-change:transform}
+.reel .strip>div{flex:none;width:var(--tw);transition:opacity .4s,transform .4s}
+.reel.stop .strip>div{opacity:.28}
+.reel.stop .strip>div.hit{opacity:1;transform:scale(1.06);filter:drop-shadow(0 0 10px var(--gl))}
+.reel.stop{border-color:var(--gl);box-shadow:inset 0 0 40px -10px var(--gl)}
+.po-name{min-height:44px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center}
+.po-name b{font:700 22px/1.1 var(--f-d);letter-spacing:.06em;text-transform:uppercase}
+.big{animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+
+/* ---------- Матч ---------- */
+.mt{--mh:38;min-height:100vh;position:relative;display:flex;flex-direction:column}
+.mt-bg{position:fixed;inset:0;background:radial-gradient(90% 50% at 50% 42%,hsl(var(--mh) 45% 30% / .55),transparent 72%),repeating-linear-gradient(0deg,rgb(255 255 255 / .025) 0 1px,transparent 1px 34px),repeating-linear-gradient(90deg,rgb(255 255 255 / .025) 0 1px,transparent 1px 34px),linear-gradient(180deg,#0b0d10,#050607)}
+.mt-in{position:relative;z-index:1;flex:1;width:100%;display:flex;flex-direction:column;gap:8px;padding-block:calc(10px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-bottom,0px))}
+.splash{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.splash h1{font:700 40px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+.vs{width:100%;display:flex;flex-direction:column;gap:8px;align-items:center}
+.vs .x{font:700 22px/1 var(--f-d);color:var(--accent);letter-spacing:.2em}
+.vs .grid{width:100%;animation:pin .5s .2s both}
+.vs .grid.op{--dir:-1}
+.maps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
+.map{position:relative;aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding:8px;text-align:left;background:linear-gradient(180deg,hsl(var(--h) 40% 34%),hsl(var(--h) 45% 12%));border:1px solid var(--line);overflow:hidden;transition:opacity .4s,filter .4s,transform .3s}
+.map::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgb(0 0 0 / .16) 0 10px,transparent 10px 22px),radial-gradient(60% 40% at 70% 20%,rgb(255 255 255 / .25),transparent 70%)}
+.map b{position:relative;font:700 18px/1 var(--f-d);letter-spacing:.06em;text-transform:uppercase}
+.map span{position:relative;font-size:11px;line-height:1.2;color:rgb(255 255 255 / .75)}
+.map.ban{opacity:.3;filter:grayscale(1)}.map.ban::after{content:"БАН";position:absolute;inset:0;display:grid;place-items:center;font:700 26px var(--f-d);letter-spacing:.2em;color:var(--bad);transform:rotate(-14deg)}
+.map.pick{transform:scale(1.04);border-color:var(--go);box-shadow:0 0 24px -4px var(--go)}
+.sbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;background:rgb(10 11 13 / .85);border:1px solid var(--line)}
+.sbar .t{padding:7px 10px;min-width:0;border-bottom:3px solid var(--sc)}
+.sbar .t.r{text-align:right}
+.sbar .t b{display:block;font:600 15px/1.1 var(--f-d);letter-spacing:.06em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sbar .t span{display:block;font:700 10.5px/1.3 var(--f-m);color:var(--sc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar .c{display:flex;align-items:center;gap:10px;padding:0 12px;background:rgb(0 0 0 / .5)}
+.sbar .c b{font:700 32px/1 var(--f-d);min-width:24px;text-align:center}
+.sbar .c div{display:flex;flex-direction:column;align-items:center;gap:2px;font:600 10px/1.1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.sd-D{--sc:var(--ct)}.sd-A{--sc:var(--tt)}
+.hist{display:flex;gap:2px;align-items:center}
+.hist i{flex:1;height:5px;background:rgb(255 255 255 / .1)}.hist i.w{background:var(--go)}.hist i.l{background:var(--bad)}.hist i.h{flex:none;width:6px;height:9px;background:none;border-inline:1px solid var(--mut)}
+.arena{flex:1;display:flex;flex-direction:column;gap:6px;min-height:270px}
+.trow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.chipp{position:relative;display:flex;flex-direction:column;gap:2px;transition:opacity .25s,filter .25s,transform .25s}
+.chipp .f{position:relative;aspect-ratio:1;overflow:hidden;background:linear-gradient(180deg,#30353d,#14171b);border-bottom:3px solid var(--sc)}
+.chipp .f img,.chipp .f svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.chipp .f svg{left:8%;top:10%;width:92%;height:92%}
+.chipp .n{font:600 11px/1.1 var(--f-d);letter-spacing:.02em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chipp .k{position:absolute;right:2px;top:2px;font:700 10px/1 var(--f-m);padding:2px 3px;background:rgb(0 0 0 / .7)}
+.chipp.dead{opacity:.34;filter:grayscale(1)}.chipp.dead .f::after{content:"";position:absolute;inset:0;background:linear-gradient(45deg,transparent 46%,var(--bad) 46% 54%,transparent 54%),linear-gradient(-45deg,transparent 46%,var(--bad) 46% 54%,transparent 54%)}
+.chipp.hit{animation:hitk .3s}
+@keyframes hitk{30%{transform:scale(1.12);filter:brightness(1.8)}}
+.mid{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;min-height:118px;border-block:1px solid var(--line);background:rgb(0 0 0 / .3);overflow:hidden}
+.feed{display:flex;flex-direction:column;gap:3px;align-items:flex-end;padding:6px 8px}
+.feed div{display:flex;align-items:center;gap:6px;font:600 12px/1 var(--f-d);letter-spacing:.03em;text-transform:uppercase;padding:4px 7px;background:rgb(0 0 0 / .62);border:1px solid rgb(255 255 255 / .1);animation:kin .22s both;max-width:100%}
+.feed div.me{border-color:var(--bad)}
+.feed .ka{color:var(--ka)}.feed .va{color:var(--vc)}
+.feed svg{width:22px;height:10px;flex:none;fill:#e9ebee}
+.feed .hs{width:9px;height:9px;border:2px solid #e9ebee;border-radius:50%;flex:none}
+@keyframes kin{from{opacity:0;transform:translateX(24px)}}
+.played{display:flex;justify-content:space-between;gap:8px;padding:4px 8px;font:600 10px/1.2 var(--f-d);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.played span:last-child{text-align:right}
+.played b{color:var(--fg);font-weight:600}
+.banner{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:rgb(6 7 9 / .93);animation:bn .28s both;padding:0 12px}
+.banner b{font:700 26px/1 var(--f-d);letter-spacing:.12em;text-transform:uppercase}
+.banner.w b{color:var(--go)}.banner.l b{color:var(--bad)}.banner.n b{color:var(--accent)}
+.banner span{font:600 12px/1.2 var(--f-d);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+@keyframes bn{from{opacity:0;transform:scaleY(.4)}}
+.phase{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font:600 11px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.phase b{color:var(--fg)}
+.en{display:flex;gap:3px;align-items:center}
+.en i{flex:1;height:8px;background:rgb(255 255 255 / .12);transform:skewX(-18deg)}.en i.on{background:var(--accent)}.en i.use{background:rgb(240 169 58 / .35)}
+.en span{font:700 12px/1 var(--f-m);color:var(--accent);min-width:34px;text-align:right}
+.hand{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.ac{position:relative;display:flex;flex-direction:column;gap:3px;min-height:74px;padding:8px 9px;background:rgb(22 25 30 / .92);border:1px solid var(--line);border-left:3px solid var(--mut);transition:transform .12s,border-color .12s,background .12s}
+.ac .h{display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+.ac .n{font:600 14px/1.1 var(--f-d);letter-spacing:.04em;text-transform:uppercase}
+.ac .c{flex:none;font:700 12px/1 var(--f-m);padding:3px 6px;background:var(--accent);color:#1a1000;transform:skewX(-12deg)}
+.ac .v{font:700 13px/1 var(--f-m)}.ac .v.pos{color:var(--good)}.ac .v.neg{color:var(--bad)}
+.ac .d{font-size:10.5px;line-height:1.25;color:var(--mut)}
+.ac[aria-pressed=true]{border-color:var(--go);border-left-color:var(--go);background:rgb(60 100 30 / .5);transform:translateY(-2px)}
+.ac.dis{opacity:.4}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font:600 10px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);text-align:right;padding:4px 6px}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:5px 6px;text-align:right;font-family:var(--f-m);border-top:1px solid rgb(255 255 255 / .07)}
+.tbl td:first-child{font:600 13px/1.1 var(--f-d);letter-spacing:.03em;text-transform:uppercase;border-left:3px solid var(--sc);padding-left:8px}
+.tbl tr.star td{color:var(--accent)}
+.res-t{font:700 44px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;text-align:center;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+.res-t.w{color:var(--go)}.res-t.l{color:var(--bad)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="sil" viewBox="0 0 100 100">
+  <path d="M4 100C4 76 22 67 38 64l12 9 12-9c16 3 34 12 34 36z" style="fill:rgb(5 7 10 / .82)"/>
+  <path d="M38 64l12 9 12-9 3 1-15 15-15-15z" style="fill:var(--tc,#888)"/>
+  <rect x="43" y="53" width="14" height="15" rx="4" style="fill:rgb(5 7 10 / .9)"/>
+  <ellipse cx="50" cy="38" rx="16.5" ry="19.5" style="fill:rgb(5 7 10 / .9)"/>
+  <path d="M31 39a19 21 0 0 1 38 0" style="fill:none;stroke:var(--edge,#b0c3d9);stroke-width:4;stroke-linecap:round"/>
+  <rect x="27" y="34" width="8" height="15" rx="3.5" style="fill:var(--edge,#b0c3d9)"/>
+  <rect x="65" y="34" width="8" height="15" rx="3.5" style="fill:var(--edge,#b0c3d9)"/>
+  <path d="M31 49q0 10 13 10" style="fill:none;stroke:var(--edge,#b0c3d9);stroke-width:2.2;stroke-linecap:round"/>
+</symbol>
+<symbol id="gun" viewBox="0 0 44 20"><path d="M0 6h30V4h3v2h11v3H34v2h-6l-2 3h-6l1-3h-7l-3 8H5l3-8H0z"/></symbol>
+<symbol id="awp" viewBox="0 0 44 20"><path d="M0 8h44v2H30v2h-8l-2 4h-5l1-4H9l-3 6H1l3-6H0zM16 3h12v3H16z"/></symbol>
+</svg>
+<div id="scene" data-s="home"><div class="sun"></div><div class="beam b1"></div><div class="beam b2"></div><div class="pan far" id="pan-far"></div><div class="pan" id="pan-near"></div><div class="floor"></div><div class="fog"></div><div class="dust" id="dust"></div><div class="vig"></div></div>
+<header id="hud"><div class="wrap"></div></header>
+<main id="app" class="wrap"><p class="mut" style="padding-block:24px">Загружаем игру…</p></main>
+<nav id="tabs" aria-label="Разделы"><div class="wrap"></div></nav>
+<div id="sheet" hidden></div>
+<div id="over" hidden></div>
+<script>
+window.__cmErr = function (m) { var a = document.getElementById('app'); if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Скопируйте этот текст и отправьте в чат:</p><p class="num sm" style="overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</p></div>'; };
+window.addEventListener('error', function (e) { window.__cmErr((e.message || 'ошибка') + ' · строка ' + (e.lineno || '?')); });
+</script>
+<script>
+(function () {
+'use strict';
+/* Составы: рейтинг Valve Regional Standings от 2 ноября 2026. Показатели карточек рассчитаны игрой, это не статистика HLTV. */
+const TM=["MOUZ","Vitality","FURIA","Aurora","Spirit","BETBOOM","Falcons","FUT","Legacy","Nemiga","G2","1win","Natus Vincere","Astralis","Ninjas in Pyjamas","PARIVISION","The MongolZ","HEROIC","MIBR","FaZe","Liquid","Eternal Fire","100 Thieves","9z","M80","HOTU","fnatic","B8","DENDELE","Inner Circle","Virtus.pro","BIG","SINNERS","K27","Imperial","JiJieHao","GamerLegion","Wildcard","Nemesis","Luminosity","magic","BBL","Envy","Sangal","BC.Game","PRIVATE","NRG","FlyQuest","BESTIA","Betclic","FOKUS","Alliance","paiN","Iberian Soul","Chinggis Warriors","Lynn Vision","Metizport","Nuclear TigeRES","TYLOO","Fluxo","Phantom","SAW","EYEBALLERS","UNiTY","Nexus","PURE","BRUTE","5star","SportsBetExpert","WBT","NEXVOID","INFINITE","Acend","QUAZAR","BARCA","Color","ex-Zero Tenacity","Black Phoenix","Voca","NAVI Junior","BASEMENT BOYS","Lazer Cats","ShindeN","UPGRADE","FORZE Reload","RBLS","Galorys","aimclub","NT","ex-INOX","Without a Roof","Alter Ego","Omega","Bounty Hunters","CYBERSHOKE","BAKS","Spirit Academy","BET-M","ASTRAL","9INE","LAG"];
+const PL=[["ZywOo",1,0,96],["donk",4,1,96],["Spinx",0,3,93],["torzsi",0,0,91],["KSCERATO",2,3,91],["molodoy",2,0,91],["yuurih",2,2,91],["xertioN",0,4,90],["flameZ",1,1,90],["m0NESY",6,0,90],["jL",1,2,89],["ropz",1,3,89],["YEKINDAR",2,1,89],["XANTARES",3,1,89],["Jimpphat",3,2,88],["woxic",3,0,88],["sh1ro",4,0,88],["mezii",1,4,87],["FalleN",2,4,87],["zont1x",4,3,87],["Magnojez",5,1,87],["NiKo",6,1,87],["Wicadia",3,3,86],["S1ren",5,3,86],["zorte",5,2,86],["kyousuke",6,3,86],["PR",0,2,85],["tN1R",4,2,85],["try",8,2,85],["HeavyGod",10,3,85],["Twistzz",19,2,85],["xelex",0,1,84],["d1Ledez",5,1,84],["karrigan",6,4,84],["Krabeni",7,4,84],["KaiR0N-",9,2,84],["Ax1Le",11,1,84],["w0nderful",12,0,84],["dem0n",7,1,83],["dziugss",7,2,83],["xfl0ud",7,3,83],["dumau",8,1,83],["latto",8,0,83],["zweih",15,1,83],["910",16,0,83],["device",22,0,83],["TeSeS",6,2,82],["n1ssim",8,3,82],["Staehr",13,2,82],["stavn",14,3,82],["insani",18,4,82],["EliGE",20,1,82],["malbsMd",20,1,82],["rain",22,1,82],["s1mple",44,0,82],["cmtry",7,0,81],["huNter-",10,4,81],["b1t",12,3,81],["iM",12,1,81],["frozen",19,3,81],["kyxsan",3,4,80],["magixx",4,4,80],["Xant3r",9,0,80],["MATYS",10,1,80],["NertZ",10,0,80],["r1nkle",10,2,80],["fame",11,2,80],["Aleksib",12,4,80],["makazze",12,2,80],["Krimbo",14,2,80],["Jame",15,0,80],["Brollan",17,1,80],["NAF",20,3,80],["Boombl4",5,4,79],["arT",8,4,79],["khaN",9,1,79],["robo",9,3,79],["ArtFr0st",11,0,79],["BELCHONOKK",11,3,79],["jabbi",13,1,79],["xKacpersky",14,0,79],["FL1T",15,3,79],["Techno",16,2,79],["MartinezSa",17,2,79],["tomaszin",18,1,79],["blameF",31,3,79],["mzinho",44,3,79],["syph0",9,4,78],["adamb",14,1,78],["HObbit",15,4,78],["xiELO",15,2,78],["bLitz",16,4,78],["nin9",16,3,78],["nilo",17,0,78],["LNZ",18,3,78],["venomzera",18,2,78],["Jorko",20,2,78],["jottAAA",21,2,78],["mizu",25,0,78],["n0rb3r7",25,1,78],["nafany",11,4,77],["phzy",13,0,77],["ryu",13,3,77],["sjuush",14,4,77],["Chr1zN",17,3,77],["regali",21,1,77],["dgt",23,3,77],["meyern",23,2,77],["Lake",24,3,77],["dwushka",25,3,77],["cairne",26,3,77],["esenthial",27,0,77],["JDC",31,2,77],["REZ",36,1,77],["Senzu",44,1,77],["nitr0",46,4,77],["saffee",52,0,77],["siuhy",13,4,76],["cobrazera",16,1,76],["jcobbb",19,1,76],["Neityu",19,0,76],["poiii",22,2,76],["frontales",25,2,76],["jackasmo",26,2,76],["kensizor",27,1,76],["doc",28,0,76],["koala",28,3,76],["rdnzao",28,2,76],["onic",29,1,76],["zeRRoFIX",29,3,76],["xeedo",33,1,76],["saadzin",34,0,76],["lux",39,2,76],["Grim",46,3,76],["jks",47,2,76],["nqz",18,0,75],["JBOEN",19,4,75],["JT",20,4,75],["Kvem",21,3,75],["MisteM",21,0,75],["Gizmy",22,3,75],["HUASOPEEK",23,1,75],["luchov",23,0,75],["JBa",24,1,75],["slaxz-",24,0,75],["Swisher",24,2,75],["fEAR",26,0,75],["npl",27,4,75],["gafolo",28,1,75],["b1st",30,2,75],["mir",30,1,75],["Patsi",30,0,75],["tabseN",31,4,75],["beastik",32,3,75],["stressarN",32,0,75],["kashl1d",33,2,75],["VINI",34,4,75],["Bibu",35,0,75],["CacaNito",35,3,75],["m1N1",35,1,75],["hypex",36,0,75],["fr3nd",37,2,75],["reck",37,0,75],["r3salt",38,2,75],["lattykk",40,3,75],["salazar",41,0,75],["adamS",43,1,75],["Magisk",44,4,75],["JW",62,0,75],["susp",17,4,74],["sirah",22,4,74],["kade0",25,4,74],["jambo",26,1,74],["alex666",27,3,74],["s1zzi",27,2,74],["faveN",31,0,74],["SHOCK",32,2,74],["clax",33,3,74],["chelo",34,1,74],["HexT",37,3,74],["AZUWU",39,1,74],["AW",40,2,74],["Maka",42,2,74],["H4SAN4TOR",45,1,74],["hallzerk",46,0,74],["Sonic",46,1,74],["biguzera",52,4,74],["KRIMZ",62,1,74],["soulfly",21,4,73],["mazay",26,4,73],["cptkurtka023",29,2,73],["headtr1ck",29,0,73],["tO0RO",30,3,73],["gr1ks",31,1,73],["MoDo",32,1,73],["noway",34,3,73],["sinnopsyy",35,2,73],["nEMANHA",37,1,73],["tex1y",38,1,73],["tenzy",40,0,73],["leakz",41,2,73],["sowalio",45,0,73],["Jeorge",46,2,73],["drop",48,0,73],["jocab",50,0,73],["podi",50,3,73],["mopoz",53,1,73],["max",23,4,72],["s1n",24,4,72],["qw1nk1",33,4,72],["X5G7V",33,0,72],["decenty",34,2,72],["FL4MUS",36,2,72],["shalfey",36,4,72],["Tauson",36,3,72],["Cxzi",37,4,72],["mag1k3Y",38,3,72],["Sdaim",38,0,72],["afro",39,3,72],["MaSvAl",40,1,72],["sFade8",40,4,72],["IceBerg",41,4,72],["NickyB",41,3,72],["Graviti",42,3,72],["Lucky",42,1,72],["misutaaa",42,4,72],["Joey",43,4,72],["asap",44,2,72],["sh1nejezzz",45,3,72],["nettik",47,3,72],["timo",48,1,72],["Demho",49,1,72],["Prism",49,2,72],["Banjo",50,2,72],["twist",51,2,72],["snow",52,2,72],["fury5k",54,3,72],["ROUX",54,2,72],["Plopski",56,3,72],["JamYoung",58,0,72],["zevy",59,2,72],["maxxkor",28,4,71],["Dawy",29,4,71],["0SAMAS",35,4,71],["SELLTER",38,4,71],["Rainwaker",39,0,71],["yxngstxr",39,4,71],["MistR",41,1,71],["Kursy",42,0,71],["bnox",43,3,71],["puuha",43,0,71],["R4DYX",43,2,71],["z1k4",45,2,71],["aliStair",47,0,71],["Qlocuu",49,3,71],["avid",51,3,71],["bobeksde",51,0,71],["eraa",51,1,71],["alex",53,2,71],["EmiliaQAQ",55,2,71],["forsyy",56,1,71],["MaiL09",56,0,71],["zhokiNg",58,1,71],["Kylar",60,1,71],["nicoodoz",60,0,71],["krazy",61,1,71],["KWERTZZ",63,0,71],["M1key",63,3,71],["CeRq",90,0,71],["AquaRS",30,4,70],["kisserek",32,4,70],["Vexite",47,1,70],["buda",48,2,70],["cass1n",48,3,70],["ex1st",49,0,70],["ztr",50,1,70],["Rkzinho",52,1,70],["Ag1l",53,0,70],["dav1g",53,3,70],["cool4st",54,0,70],["sk0R",54,1,70],["Starry",55,0,70],["z4KR",55,1,70],["F1KU",56,2,70],["Djon8",57,0,70],["flouzer",57,1,70],["senka",57,3,70],["Mercury",58,3,70],["dav1deuS",59,1,70],["kye",59,3,70],["Ltz",59,1,70],["Kunai",60,2,70],["NOPEEj",61,2,70],["dex",62,2,70],["aNdu",65,1,70],["tein",65,0,70],["autimatic",90,1,70],["Stewie2K",90,4,70],["1eeR",45,4,69],["ultimate",49,4,69],["Matheos",50,4,69],["Tatu",52,3,69],["C4LLM3SU3",55,3,69],["Westmelon",55,4,69],["ayuki",57,2,69],["story",61,0,69],["maxster",62,3,69],["Nexius",64,1,69],["shield",64,3,69],["Polbandana",65,2,69],["tAk",66,2,69],["ScrunK",71,1,69],["volt",71,3,69],["INS",47,4,68],["kauez",48,4,68],["upE",51,4,68],["tikuak",54,4,68],["Moseyuh",58,2,68],["Zero",58,4,68],["KEi",60,3,68],["ewjerkz",61,3,68],["Ro1f",62,4,68],["2high",63,2,68],["POLO",65,3,68],["hoolig4n",67,3,68],["NEUZ",67,0,68],["s4ltovsk1yy",69,3,68],["Smash",69,0,68],["MiQ",70,2,68],["gehji",73,0,68],["newt",73,1,68],["divine",74,3,68],["happ",74,2,68],["oz1k",75,0,68],["junior",78,3,68],["sausol",53,4,67],["stanislaw",56,4,67],["tronic",57,4,67],["Sn0w",63,1,67],["fNk",64,0,67],["HOLY",64,4,67],["s0und",64,2,67],["keen",65,4,67],["aidKiT",66,0,67],["ariucle",67,2,67],["consti",68,4,67],["Infinite",68,3,67],["motm",68,2,67],["DemQQ",69,2,67],["xerolte",70,3,67],["sl3nd",71,2,67],["REDSTAR",72,0,67],["SPELLAN",72,3,67],["kaiori",73,2,67],["pancc",74,1,67],["reyoz",75,1,67],["Cjoffo",76,3,67],["Kind0",76,1,67],["guty",82,0,67],["tw1sterzaza",83,3,67],["KusMe",84,2,67],["Brehze",90,3,67],["exit",59,4,66],["TMB",60,4,66],["MUTiRiS",61,4,66],["Dytor",63,4,66],["nbqq",66,1,66],["oontoma",66,3,66],["clouden",67,4,66],["rate",67,1,66],["Peeping",68,0,66],["shane",68,1,66],["Psycho",69,1,66],["tyr1k",69,4,66],["AccuracyTG",70,1,66],["Zesta",70,0,66],["AwaykeN",72,4,66],["Ne1XXX",73,3,66],["zmb",74,0,66],["brutmonster",76,0,66],["topo",77,2,66],["MarKE",78,0,66],["skizzyee",79,2,66],["yoki",79,0,66],["n0rths",81,0,66],["nikitea",81,2,66],["naz",82,3,66],["tom1jed",82,2,66],["pleynnn",83,0,66],["SquEzxc",83,2,66],["relaxxie",84,0,66],["aragornN",85,1,66],["gbb",86,2,66],["tomate",86,1,66],["ta9z",88,0,66],["El1an",89,2,66],["adeX",91,1,66],["ZEDKO",66,4,65],["kyuubii",71,0,65],["SHiPZ",72,1,65],["Skrimo",72,2,65],["Alisson",74,4,65],["cronuss",75,4,65],["Dragon",76,2,65],["4X1s",77,0,65],["dare",78,1,65],["FAZERY",79,4,65],["MahaR",79,3,65],["maggent",80,1,65],["Tr0ublE",80,3,65],["Kiy0o",81,3,65],["tripex17",81,1,65],["synyx",83,1,65],["Icarus",85,2,65],["stadodo",85,0,65],["waZz",87,3,65],["fakerealityy",88,2,65],["m4d4ra",88,1,65],["adai",92,2,65],["Botpa1",92,3,65],["def1zer",92,0,65],["ponter",93,3,65],["Alkaren",94,2,65],["whisper",95,0,65],["Blytz",71,4,64],["Porya",73,4,64],["VLDN",76,4,64],["karnez",77,1,64],["snav",78,2,64],["kodak",79,1,64],["kAlash",80,0,64],["abizz",82,1,64],["reNTU",82,4,64],["Lack1",84,3,64],["YumsaN",84,1,64],["arrozdoce",85,3,64],["Shr",85,4,64],["laxiee",91,3,64],["dan4o",92,1,64],["pepe",93,0,64],["zock",93,1,64],["alpha",94,0,64],["nota",94,1,64],["Norwi",95,2,64],["k0gaSs",96,2,64],["Netrix",96,1,64],["executor",97,1,64],["Raijin",97,2,64],["Neqy",98,0,64],["kraghen",99,0,64],["erkaSt",70,4,63],["OWNER",80,2,63],["destiny",86,0,63],["PKL",86,3,63],["ragga",87,2,63],["XELLOW",87,0,63],["zewts",87,1,63],["Ryuzak1",88,3,63],["finW",89,0,63],["gooddeph",89,3,63],["m1QUSE",89,1,63],["Bloody",91,2,63],["shadiy",91,0,63],["urban0",93,4,63],["danistzz",95,3,63],["s1nside",96,3,63],["bluewh1te",97,0,63],["b1elany",99,2,63],["MRcreed",77,4,62],["nosraC",78,4,62],["FaNg",90,2,62],["Aldikon",92,4,62],["KAISER",93,2,62],["glowiing",95,4,62],["VILBy",96,0,62],["z1Nny",97,4,62],["RaY5ive",98,1,62],["swiz",98,2,62],["raalz",99,3,62],["Bwills",100,1,62],["kr1vda",80,4,61],["Magic",81,4,61],["DAN9ARMATURA",83,4,61],["HeCkBNk",84,4,61],["detr0ittJ",86,4,61],["k1slll",89,4,61],["PokemoN",91,4,61],["turbo",95,1,61],["Kiryasoo",96,4,61],["gxx-",98,3,61],["meowpop",98,4,61],["flayy",99,1,61],["rigoN",99,4,61],["Cryptic",100,0,61],["Sandman",100,3,61],["mhN1",87,4,60],["Woro2k",88,4,60],["Mokuj1n",94,4,60],["djay",100,2,60],["SLIGHT",100,4,58]];
+/* ===== Ядро: карточки, паки, состав, матч ===== */
+const R = Math.random, rnd = (a, b) => a + R() * (b - a), ri = (a, b) => Math.floor(rnd(a, b + 1)), pick = a => a[Math.floor(R() * a.length)], clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const hsh = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+const RN = ['AWP', 'ENT', 'SUP', 'LRK', 'IGL'], RNAME = ['Снайпер', 'Энтри', 'Саппорт', 'Люркер', 'Капитан'];
+const SK = ['aim', 'ent', 'clu', 'utl', 'pos', 'igl'], SN = { aim: 'Стрельба', ent: 'Опенинг', clu: 'Клатч', utl: 'Гранаты', pos: 'Позиция', igl: 'Тактика' }, SS = { aim: 'СТР', ent: 'ОПН', clu: 'КЛЧ', utl: 'ГРН', pos: 'ПОЗ', igl: 'ТАК' };
+const RAR = ['Ширпотреб', 'Армейское', 'Запрещённое', 'Засекреченное', 'Тайное'], SPN = ['', 'Игрок недели', 'MVP'];
+const PROF = [{ aim: 4, pos: 4, ent: -2, utl: -3, igl: -3 }, { ent: 6, aim: 2, clu: -3, pos: -3, igl: -2 }, { utl: 7, pos: 1, ent: -4, aim: -2 }, { clu: 6, pos: 3, ent: -3, utl: -3, igl: -3 }, { igl: 10, utl: 3, aim: -5, ent: -3, clu: -3 }];
+const TIER = [8, 35, 110, 260];           // границы редкостей по месту в общем рейтинге
+const CARDS = {}, POOL = [[], [], [], [], []], IFP = [[], [], [], [], []], MVPP = [];
+(function build() {
+  const mk = (id, i, add, sp, rar) => {
+    const [nick, t, role, o] = PL[i], ovr = Math.min(99, o + add), st = {};
+    for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
+    return CARDS[id] = { id, base: i, nick, team: TM[t], t, role, ovr, rar, sp, st };
+  };
+  PL.forEach((p, i) => {
+    const rar = i < TIER[0] ? 4 : i < TIER[1] ? 3 : i < TIER[2] ? 2 : i < TIER[3] ? 1 : 0;
+    POOL[rar].push(mk(i, i, 0, 0, rar));
+    if (i < TIER[0]) MVPP.push(mk(2000 + i, i, 3, 2, 4));
+    if (hsh(p[0] + 'week') % 100 < 8) { const r2 = Math.min(4, rar + 1); IFP[r2].push(mk(1000 + i, i, 3, 1, r2)); }
+  });
+})();
+const ALL = Object.values(CARDS).sort((a, b) => b.ovr - a.ovr || a.id - b.id);
+
+/* ---------- Паки ---------- */
+const PACKS = {
+  basic: { n: 'Базовый', price: 400, odds: [62, 27, 9, 1.8, .2], min: 0, d: 'Пять карточек, чаще всего ширпотреб.' },
+  pro: { n: 'Про', price: 1200, odds: [30, 40, 23, 6, 1], min: 2, d: 'Минимум одна «Запрещённое» или выше.' },
+  elite: { n: 'Элитный', price: 4000, odds: [0, 40, 42, 14, 4], min: 3, d: 'Минимум одна «Засекреченное» или выше.' }
+};
+const IF_CH = .07, MVP_CH = .12;
+function rollRar(odds) { let r = R() * 100; for (let i = 0; i < 5; i++) { r -= odds[i]; if (r <= 0) return i; } return 0; }
+function pickIn(rar) {
+  if (rar === 4 && R() < MVP_CH) return pick(MVPP);
+  if (IFP[rar].length && R() < IF_CH) return pick(IFP[rar]);
+  const pool = POOL[rar], mn = pool[pool.length - 1].ovr; let tot = 0;
+  const w = pool.map(c => { const x = 1 / ((1 + .3 * (c.ovr - mn)) * (1 + (100 - c.t) / 100)); tot += x; return x; });
+  let r = R() * tot; for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; } return pool[0];
+}
+function openPack(type) {
+  const P = PACKS[type], out = []; let best = 0;
+  for (let i = 0; i < 5; i++) { let r = rollRar(P.odds); if (i === 4 && best < P.min) r = Math.max(r, P.min); best = Math.max(best, r); out.push(pickIn(r)); }
+  return shuffle(out);
+}
+
+/* ---------- Профиль ---------- */
+const LEAGUES = [['Бронза', 0], ['Серебро', 200], ['Золото', 500], ['Платина', 900], ['Алмаз', 1400], ['Элита', 2000], ['Легенда', 2800]];
+const leagueOf = t => { let i = 0; for (let k = 0; k < LEAGUES.length; k++) if (t >= LEAGUES[k][1]) i = k; return i; };
+const SELL = [20, 50, 150, 600, 3000], UP_N = [1, 2, 4, 8], UP_C = [100, 250, 600, 1500];
+const sellVal = c => SELL[c.rar] * (c.sp ? 3 : 1);
+const upCost = (c, lv) => UP_C[lv - 1] * (1 + c.rar);
+function newGame() {
+  const G = { v: 1, coins: 600, tro: 0, best: 0, xp: 0, lvl: 1, cards: {}, squad: [null, null, null, null, null], packs: { basic: 1, pro: 2, elite: 0 }, daily: 0, w: 0, l: 0 };
+  for (let role = 0; role < 5; role++) { const c = pick(POOL[0].filter(x => x.role === role && x.ovr <= 66)) || POOL[0].find(x => x.role === role); G.cards[c.id] = { n: 1, lv: 1 }; G.squad[role] = c.id; }
+  return G;
+}
+function addCard(G, id) { const o = G.cards[id]; if (o) { o.n++; return false; } G.cards[id] = { n: 1, lv: 1 }; return true; }
+function canUp(G, id) { const o = G.cards[id], c = CARDS[id]; return !!o && o.lv < 5 && o.n - 1 >= UP_N[o.lv - 1] && G.coins >= upCost(c, o.lv); }
+function doUp(G, id) { if (!canUp(G, id)) return false; const o = G.cards[id]; G.coins -= upCost(CARDS[id], o.lv); o.n -= UP_N[o.lv - 1]; o.lv++; return true; }
+function sellDupes(G, id, all) { const o = G.cards[id]; if (!o || o.n < 2) return 0; const k = all ? o.n - 1 : 1, v = k * sellVal(CARDS[id]); o.n -= k; G.coins += v; return v; }
+function addXp(G, x) { G.xp += x; let up = 0; while (G.xp >= 100 * G.lvl) { G.xp -= 100 * G.lvl; G.lvl++; G.packs.basic++; up++; } return up; }
+const DAY = 20 * 3600 * 1000;
+
+/* ---------- Состав ---------- */
+/* squad: массив из 5 { c: карточка, lv } по слотам ролей */
+function effOf(e, slot) { const pen = e.c.role === slot ? 0 : 5, add = e.lv - 1 - pen, st = {}; for (const k of SK) st[k] = e.c.st[k] + add; return { c: e.c, ovr: e.c.ovr + add, st, off: pen > 0 }; }
+function squadOf(G) { return G.squad.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id] ? G.cards[id].lv : 1 }); }
+function squadInfo(sq) {
+  if (sq.some(x => !x)) return null;
+  const e = sq.map(effOf), cnt = {}; let mx = 0;
+  for (const x of e) mx = Math.max(mx, cnt[x.c.t] = (cnt[x.c.t] || 0) + 1);
+  const onRole = e.every(x => !x.off), chem = [0, 0, 2, 4, 7, 10][mx] + (onRole ? 3 : 0), cb = chem * .25;
+  const m = f => e.reduce((s, x) => s + f(x.st), 0) / 5;
+  return { e, chem, mx, onRole, rating: e.reduce((s, x) => s + x.ovr, 0) / 5 + cb, atk: m(s => .4 * s.aim + .35 * s.ent + .25 * s.utl) + cb, def: m(s => .4 * s.aim + .35 * s.pos + .25 * s.clu) + cb, best: Math.max(...e.map(x => x.ovr)), pos: m(s => s.pos) };
+}
+
+/* ---------- Карты действий ---------- */
+const AC = {
+  tempo: { n: 'Быстрый темп', cost: 2, d: 'Бонус от опенинга вашего энтри, в атаке на четверть сильнее. Проваливается против «Стека».' },
+  stack: { n: 'Стек точки', cost: 2, d: 'Слабая сама по себе, но ломает «Быстрый темп» соперника. Проигрывает «Раскидке».' },
+  nades: { n: 'Раскидка гранат', cost: 3, d: 'Бонус от гранат вашего саппорта. Наказывает «Стек».' },
+  fake: { n: 'Фейк', cost: 2, d: 'Отменяет самую дорогую карту соперника в этом раунде.' },
+  awp: { n: 'AWP-пик', cost: 2, d: 'Бонус от стрельбы вашего снайпера.' },
+  clutch: { n: 'Клатч', cost: 1, d: 'Бонус от клатча люркера. Удваивается, когда вы отстаёте по счёту.' },
+  timeout: { n: 'Тайм-аут', cost: 1, d: 'Бонус от тактики капитана и +1 энергия в следующем раунде.' },
+  star: { n: 'Звезда раунда', cost: 4, d: 'Большой бонус от общего рейтинга вашего лучшего игрока.' },
+  eco: { n: 'Эко-раунд', cost: 0, d: 'Команда не закупается: раунд слабее, зато деньги целы и +3 энергии.' },
+  cross: { n: 'Перекрёстный огонь', cost: 3, d: 'Бонус от позиции всей пятёрки, в защите в полтора раза сильнее.' }
+};
+const DECK = Object.keys(AC);
+function acVal(k, me, ctx) {
+  const e = me.info.e;
+  switch (k) {
+    case 'tempo': return ctx.oppStack ? -6 : (4 + (e[1].st.ent - 70) / 4) * (ctx.side === 'A' ? 1.25 : 1);
+    case 'stack': return ctx.oppTempo ? 11 : ctx.oppNades ? -3 : 2;
+    case 'nades': return 6 + (e[2].st.utl - 70) / 4 + (ctx.oppStack ? 3 : 0);
+    case 'awp': return 3.5 + (e[0].st.aim - 70) / 3;
+    case 'clutch': return (2 + (e[3].st.clu - 70) / 5) * (ctx.behind ? 2 : 1);
+    case 'timeout': return 1.5 + (e[4].st.igl - 70) / 5;
+    case 'star': return 8 + (me.info.best - 75) / 2;
+    case 'eco': return -7;
+    case 'cross': return (5 + (me.info.pos - 70) / 4) * (ctx.side === 'D' ? 1.5 : 1);
+    default: return 0;
+  }
+}
+const STYLES = {
+  aggro: { n: 'агрессивный', d: 'часто играет «Быстрый темп» и «Звезду раунда»', w: { tempo: 3, star: 2, awp: 1.2, clutch: 1, nades: .8, fake: .6, stack: .4, timeout: .7, cross: .5, eco: .5 } },
+  tact: { n: 'тактический', d: 'любит «Раскидку», «Фейк» и «Тайм-аут»', w: { nades: 2.6, fake: 2, timeout: 1.8, awp: 1, tempo: .7, stack: .9, star: 1, clutch: .8, cross: 1, eco: .7 } },
+  def: { n: 'осторожный', d: 'ставит «Стек» и «Перекрёстный огонь»', w: { stack: 2.4, cross: 2.4, awp: 1.5, clutch: 1.2, timeout: 1, nades: .8, tempo: .5, fake: .8, star: .9, eco: .8 } }
+};
+const ONAMES = ['xXKamazXx', 'dedInside7', 'ne_tilt', 'Borsch1k', 'frag_hunter', 'L0tus', 'mid_or_feed', 'Valera_AWP', 'k1tty_cat', 'SiberianOwl', 'tolik2007', 'CtrlAltDefuse', 'smoke_mid', 'Zefir4ik', 'eco_king', 'rush_b_bro', 'Marmok_fan', 'silent_step', 'KoT_B_canorax', 'onetap_andrey'];
+
+const MAPS = [
+  { n: 'Mirage', ct: 0, hue: 38, d: 'Равная карта' }, { n: 'Inferno', ct: 1, hue: 22, d: 'Чуть легче в защите' },
+  { n: 'Nuke', ct: 2.5, hue: 205, d: 'Сильная защита' }, { n: 'Ancient', ct: 1.5, hue: 150, d: 'Легче в защите' },
+  { n: 'Anubis', ct: -1.5, hue: 48, d: 'Легче в атаке' }, { n: 'Dust II', ct: -1, hue: 42, d: 'Чуть легче в атаке' },
+  { n: 'Train', ct: 2, hue: 215, d: 'Сильная защита' }
+];
+const BUY = { pistol: { n: 'Пистолеты', v: 0, c: 800 }, full: { n: 'Полная закупка', v: 0, c: 4000 }, force: { n: 'Форс-бай', v: -4, c: 2500 }, eco: { n: 'Эко', v: -9, c: 0 } };
+const EDGE_A = 2.5;                       // фора игроку: ИИ разыгрывает карты без ошибок по энергии
+const WIN_N = 13, HALF = 12, START_MONEY = 800, MAX_MONEY = 12000;
+const END = { elim: 'Команда уничтожена', bomb: 'Бомба взорвана', defuse: 'Бомба обезврежена', time: 'Время вышло' };
+
+class Match {
+  constructor(mySq, tro, myRating, map) {
+    const mk = (name, sq) => ({ name, sq, info: squadInfo(sq), score: 0, en: 3, bonusEn: 0, deck: shuffle([...DECK]), hand: [], disc: [], money: START_MONEY, ls: 0, ws: 0, k: [0, 0, 0, 0, 0], d: [0, 0, 0, 0, 0] });
+    this.a = mk('Вы', mySq);
+    const t = .45 * clamp(64 + tro / 40, 64, 93) + .55 * myRating + rnd(-2, 2), osq = [];
+    for (let role = 0; role < 5; role++) { const c = [...ALL].filter(x => x.role === role && !x.sp && !osq.some(o => o.c.nick === x.nick)).sort((x, y) => Math.abs(x.ovr - t) + R() * 3 - (Math.abs(y.ovr - t) + R() * 3))[0]; osq.push({ c, lv: 1 }); }
+    this.b = mk(pick(ONAMES), osq); this.style = pick(Object.keys(STYLES));
+    this.map = map || pick(MAPS);
+    this.round = 1; this.sideA = R() < .5 ? 'A' : 'D'; this.over = false; this.hist = []; this.last = null; this.decider = false;
+    this.draw(this.a); this.draw(this.b);
+  }
+  draw(s) { while (s.hand.length < 4) { if (!s.deck.length) { s.deck = shuffle(s.disc); s.disc = []; } if (!s.deck.length) break; s.hand.push(s.deck.pop()); } }
+  canPlay(s, cards) { return cards.length <= 2 && cards.every(k => s.hand.includes(k)) && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
+  isPistol() { return !this.decider && (this.round === 1 || this.round === HALF + 1); }
+  /* Закупка считается сама по деньгам команды; карта «Эко-раунд» заставляет сохранить деньги */
+  buyOf(s, cards) { return this.isPistol() ? 'pistol' : cards && cards.includes('eco') ? 'eco' : s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
+  aiChoose() {
+    const s = this.b, w = STYLES[this.style].w, h = s.hand, opts = [[]];
+    for (let i = 0; i < h.length; i++) { opts.push([h[i]]); for (let j = i + 1; j < h.length; j++) opts.push([h[i], h[j]]); }
+    let best = [], bs = -1e9;
+    for (const o of opts) {
+      if (!this.canPlay(s, o)) continue;
+      let sc = o.length ? 0 : (s.en < 3 ? 2.6 : s.en >= 6 ? -1 : 1);
+      for (const k of o) sc += k === 'eco' ? (s.en <= 1 && s.money < BUY.full.c ? 3.5 : .1) * w.eco : w[k] * (1 + AC[k].cost * .6);
+      if (o.includes('eco') && o.length > 1) sc -= 3;
+      sc += rnd(0, 2.5);
+      if (sc > bs) { bs = sc; best = o; }
+    }
+    return best;
+  }
+  /* Кто кого убил в раунде: победитель теряет от 0 до 4 игроков */
+  feed(win, pa, pb, sideA) {
+    const a = this.a, b = this.b, W = win ? a : b, L = win ? b : a, wSide = win ? sideA : (sideA === 'A' ? 'D' : 'A');
+    const r = R(), end = wSide === 'A' ? (r < .3 ? 'bomb' : 'elim') : (r < .22 ? 'defuse' : r < .32 ? 'time' : 'elim');
+    const gap = Math.abs(pa - pb), surv = clamp(Math.round(rnd(.6, 3.2) + gap / 9 + (R() < .12 ? -1.5 : 0)), 1, 5);
+    const lSurv = end === 'elim' ? 0 : end === 'bomb' ? ri(0, 2) : end === 'time' ? ri(1, 2) : ri(0, 1);
+    const order = shuffle([...Array(5 - lSurv).fill(1), ...Array(5 - surv).fill(0)]);
+    if (lSurv === 0 && order[order.length - 1] !== 1) { const i = order.lastIndexOf(1); order[i] = 0; order[order.length - 1] = 1; }
+    const alive = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]], kills = [], cnt = {};
+    const wp = (team, arr) => { let tot = 0; const ws = arr.map(i => { const x = Math.pow(team.info.e[i].st.aim / 70, 4); tot += x; return x; }); let q = R() * tot; for (let i = 0; i < arr.length; i++) { q -= ws[i]; if (q <= 0) return arr[i]; } return arr[0]; };
+    for (const byW of order) {
+      const K = byW ? W : L, V = byW ? L : W, ka = alive[byW ? 0 : 1], va = alive[byW ? 1 : 0];
+      const ki = wp(K, ka), vi = pick(va); va.splice(va.indexOf(vi), 1);
+      K.k[ki]++; V.d[vi]++; const key = (K === a ? 'a' : 'b') + ki; cnt[key] = (cnt[key] || 0) + 1;
+      kills.push({ byA: K === a, k: ki, v: vi, hs: R() < .45, awp: K.info.e[ki].c.role === 0 && R() < .7 });
+    }
+    let top = null; for (const key in cnt) if ((key[0] === 'a') === (W === a) && (!top || cnt[key] > cnt[top])) top = key;
+    const ti = top ? +top[1] : wp(W, [0, 1, 2, 3, 4]), frags = top ? cnt[top] : 0;
+    return { kills, end, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && alive[0][0] === ti };
+  }
+  /* Разыграть раунд: mine — карты игрока */
+  play(mine) {
+    if (this.over || !this.canPlay(this.a, mine)) return null;
+    const a = this.a, b = this.b, theirs = this.aiChoose(), sideA = this.sideA, sideB = sideA === 'A' ? 'D' : 'A', pistol = this.isPistol();
+    const act = (own, other) => { let l = [...own]; if (other.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
+    const A = act(mine, theirs), B = act(theirs, mine);
+    const buyA = this.decider ? 'full' : this.buyOf(a, mine), buyB = this.decider ? 'full' : this.buyOf(b, theirs);
+    const val = (me, my, opp, side, behind) => { const ctx = { side, behind, oppStack: opp.includes('stack'), oppTempo: opp.includes('tempo'), oppNades: opp.includes('nades') }; return my.filter(k => k !== 'eco').map(k => ({ k, v: acVal(k, me, ctx) })); };
+    const va = val(a, A.l, B.l, sideA, a.score < b.score), vb = val(b, B.l, A.l, sideB, b.score < a.score);
+    const mapV = s => (s === 'D' ? 1 : -1) * this.map.ct / 2, hot = s => s.ws >= 2 ? 1.5 : 0;
+    const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
+    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0), pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0);
+    const p = 1 / (1 + Math.exp(-(pa - pb + EDGE_A) / 9)), win = R() < p;
+    const W = win ? a : b, L = win ? b : a; W.score++;
+    const f = this.feed(win, pa, pb, sideA);
+    for (const [s, pl, buy] of [[a, mine, buyA], [b, theirs, buyB]]) {
+      s.en -= pl.reduce((x, k) => x + AC[k].cost, 0);
+      s.bonusEn = (pl.includes('timeout') ? 1 : 0) + (pl.includes('eco') ? 3 : 0);
+      for (const k of pl) { s.hand.splice(s.hand.indexOf(k), 1); s.disc.push(k); }
+      if (!pl.length && s.hand.length) s.disc.push(s.hand.shift());
+      s.money = Math.max(0, s.money - BUY[buy].c);
+    }
+    W.money = Math.min(MAX_MONEY, W.money + 3250 + 500 * f.surv); L.money = Math.min(MAX_MONEY, L.money + 1900 + 500 * Math.min(L.ls, 3) + 400 * f.lSurv);
+    W.ws++; W.ls = 0; L.ls++; L.ws = 0;
+    this.last = Object.assign({ round: this.round, mine, theirs, cutA: A.cut, cutB: B.cut, va, vb, baseA, baseB, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, hotA: hot(a) > 0, swap: false }, f);
+    this.hist.push({ win, theirs: [...theirs], side: sideA, end: f.end });
+    if (a.score >= WIN_N || b.score >= WIN_N) { this.over = true; this.won = a.score > b.score; return this.last; }
+    this.round++;
+    if (this.round === HALF + 1) { this.sideA = sideB; this.last.swap = true; for (const s of [a, b]) { s.money = START_MONEY; s.ls = 0; s.ws = 0; } }
+    if (a.score === HALF && b.score === HALF) { this.decider = true; for (const s of [a, b]) s.money = MAX_MONEY; }
+    for (const s of [a, b]) { s.en = Math.min(8, s.en + 2 + s.bonusEn); s.bonusEn = 0; this.draw(s); }
+    return this.last;
+  }
+  /* Лучший игрок матча: больше всего убийств у победителей */
+  mvp() { const W = this.won ? this.a : this.b; let i = 0; for (let k = 1; k < 5; k++) if (W.k[k] > W.k[i]) i = k; return { nick: W.info.e[i].c.nick, k: W.k[i], d: W.d[i], mine: this.won }; }
+}
+function applyResult(G, won) {
+  const lg0 = leagueOf(G.best), lg = leagueOf(G.tro), r = { won, tro: won ? ri(28, 32) : -Math.min(G.tro, ri(18, 22)), coins: won ? 150 + 25 * lg : 50, xp: won ? 40 : 15, packs: [] };
+  G.tro += r.tro; G.coins += r.coins; if (won) G.w++; else G.l++;
+  if (G.tro > G.best) { G.best = G.tro; const n = leagueOf(G.best); if (n > lg0) { G.packs.pro++; r.packs.push('кейс «Про» за лигу «' + LEAGUES[n][0] + '»'); } }
+  const up = addXp(G, r.xp); if (up) r.packs.push('базовый кейс за уровень ' + G.lvl);
+  return r;
+}
+if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, IFP, MVPP, PACKS, openPack, newGame, addCard, squadOf, squadInfo, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellDupes, sellVal };
+/* ===== Интерфейс ===== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const nf = n => Math.round(n).toLocaleString('ru-RU');
+const KEY = 'pyaterka-legend-v1', IKEY = KEY + '-img', SKEY = KEY + '-mute';
+let G, IMG = {}, tab = 'home', lastTab = null, sheet = null, OV = null, askNew = false, colF = 'all', colQ = '', colN = 45, imgMsg = '', mute = false;
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) { /* без хранилища игра идёт до закрытия страницы */ } }
+function load() {
+  try { mute = localStorage.getItem(SKEY) === '1'; } catch (e) { /* звук включён */ }
+  try { const im = JSON.parse(localStorage.getItem(IKEY)); if (im && typeof im === 'object') IMG = im; } catch (e) { /* нет картинок */ }
+  try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && d.v === 1 && d.cards && d.squad) { G = d; return true; } } catch (e) { /* пусто */ }
+  return false;
+}
+const own = id => G.cards[id];
+const packCount = () => G.packs.basic + G.packs.pro + G.packs.elite;
+const dailyReady = () => Date.now() - G.daily >= DAY;
+const RCOL = ['#b0c3d9', '#6c8cff', '#a274ff', '#e45cf2', '#ff5a5a'];
+const glow = c => c.sp === 1 ? '#ff8a3d' : c.sp === 2 ? '#f2c14e' : RCOL[c.rar];
+const rarName = c => c.sp ? SPN[c.sp] : RAR[c.rar];
+const noMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+
+/* ---------- Звук: короткие синтезированные сигналы ---------- */
+let AUD = null;
+function snd(f, d = .06, type = 'square', v = .04, to = 0) {
+  if (mute) return;
+  try {
+    AUD = AUD || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AUD.createOscillator(), g = AUD.createGain(), t = AUD.currentTime;
+    o.type = type; o.frequency.setValueAtTime(f, t); if (to) o.frequency.exponentialRampToValueAtTime(to, t + d);
+    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g); g.connect(AUD.destination); o.start(t); o.stop(t + d);
+  } catch (e) { /* звук недоступен */ }
+}
+const SFX = {
+  tap: () => snd(900, .03, 'square', .02), tick: () => snd(1400, .02, 'square', .015),
+  stop: r => { snd(300 + r * 120, .18, 'triangle', .07); if (r >= 3) setTimeout(() => snd(600 + r * 160, .4, 'sawtooth', .05, 1400), 90); },
+  open: () => snd(160, .35, 'sawtooth', .06, 60), kill: () => snd(180, .07, 'square', .04, 70),
+  win: () => { snd(520, .12, 'triangle', .07); setTimeout(() => snd(780, .22, 'triangle', .07), 110); },
+  lose: () => snd(260, .3, 'triangle', .06, 140), found: () => { snd(440, .1, 'square', .04); setTimeout(() => snd(660, .1, 'square', .04), 120); setTimeout(() => snd(880, .25, 'square', .04), 240); }
+};
+
+/* ---------- Фото игроков: файл photos/<ник>.png|jpg рядом с игрой либо картинка, добавленная на экране карточки ---------- */
+const PH = {}, EXT = ['png', 'jpg', 'jpeg', 'webp'];
+const slug = n => n.toLowerCase().replace(/[^a-z0-9а-яё_-]/g, '');
+function probe(s, i) {
+  if (i >= EXT.length) return;
+  const im = new Image(), u = 'photos/' + s + '.' + EXT[i];
+  im.onload = () => { PH[s] = u; document.querySelectorAll('[data-ph="' + s + '"]').forEach(el => { el.outerHTML = `<img class="ph" src="${u}" alt="">`; }); };
+  im.onerror = () => probe(s, i + 1); im.src = u;
+}
+function faceH(c) {
+  const s = slug(c.nick); let u = IMG[c.base];
+  if (!u && s) { if (typeof PH[s] === 'string') u = PH[s]; else if (PH[s] === undefined) { PH[s] = 0; probe(s, 0); } }
+  return u ? `<img class="ph" src="${u}" alt="">` : `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
+}
+
+function cardH(c, o = {}) {
+  const lv = o.lv || 1, add = lv - 1;
+  return `<div class="pc r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:hsl(${hsh(c.team) % 360} 75% 58%)"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span><div class="ft">${c.sp ? `<span class="tag">${SPN[c.sp]}</span>` : ''}<span class="nk">${esc(c.nick)}</span><span class="tm">${esc(c.team)}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
+}
+const ownH = (id, cls) => { const o = own(id); return cardH(CARDS[id], { lv: o ? o.lv : 1, n: o ? o.n : 0, cls, pips: !!o, no: !o }); };
+const pkH = (t, cls) => `<div class="pk ${t} ${cls || ''}"><i class="lid"></i><i class="lock"></i><div class="box"><b>${PACKS[t].n}</b></div></div>`;
+const LCOL = ['#b98a5a', '#b9c2cc', '#f2c14e', '#7fe0d0', '#8fb8ff', '#e45cf2', '#ff5a5a'];
+const rankH = i => `<svg class="rank" viewBox="0 0 44 30" aria-hidden="true"><path d="M2 2h40v17L22 28 2 19z" fill="#101215" stroke="${LCOL[i]}" stroke-width="1.6"/>${[0, 1, 2].slice(0, i % 3 + 1).map(k => `<path d="M12 ${7 + k * 5}l10 4 10-4" fill="none" stroke="${LCOL[i]}" stroke-width="2.2"/>`).join('')}</svg>`;
+function hudH() {
+  const lg = leagueOf(G.tro);
+  return `<div class="who">${rankH(lg)}<div style="min-width:0"><b>${LEAGUES[lg][0]} · ${G.tro}</b><span class="sm mut">уровень ${G.lvl}</span><span class="xp" aria-label="Опыт ${G.xp} из ${100 * G.lvl}"><i style="width:${G.xp / G.lvl}%"></i></span></div></div><div class="pill"><i class="coin"></i>${nf(G.coins)}</div><button class="ibtn" data-act="mute" aria-label="${mute ? 'Включить звук' : 'Выключить звук'}"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/>${mute ? '<path d="M17 9l5 6M22 9l-5 6"/>' : '<path d="M17 8a5 5 0 0 1 0 8"/>'}</svg></button>`;
+}
+
+function vHome() {
+  const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), left = DAY - (Date.now() - G.daily);
+  const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100;
+  return `<section class="lobby"><div class="kv"><span>Ваша пятёрка</span><span>Рейтинг <b>${info.rating.toFixed(1)}</b></span></div>
+  <div class="lineup">${G.squad.map(id => `<button data-act="card" data-id="${id}" aria-label="${esc(CARDS[id].nick)}">${ownH(id, 'xs')}</button>`).join('')}</div>
+  <button class="btn pri go" data-act="fight">Играть</button>
+  <div class="stats"><div class="stat"><b>${info.atk.toFixed(1)}</b><span>атака</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>защита</span></div><div class="stat"><b>${info.chem}/13</b><span>химия</span></div></div></section>
+  <section class="pn"><div class="kv"><span>Лига «${LEAGUES[lg][0]}»</span><span>Побед <b>${G.w}</b> · поражений <b>${G.l}</b></span></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» ещё ${nx[1] - G.tro} кубков. За новую лигу дают кейс «Про».` : 'Высшая лига достигнута.'}</p></section>
+  <section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3>${dailyReady() ? '<button class="btn" data-act="daily">Забрать</button>' : `<p class="sm mut">Следующий через ${Math.max(1, Math.ceil(left / 3600000))} ч.</p>`}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">Неоткрытых кейсов: ${packCount()}</button>` : ''}</div></div></section>
+  <p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек рассчитаны игрой, это не статистика HLTV. Фото игроков берутся из папки photos рядом с файлом игры: имя файла — ник маленькими буквами, например zywoo.png.</p>
+  <section class="plain">${askNew ? '<p class="sm">Коллекция и прогресс будут удалены. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
+}
+function vPacks() {
+  const inv = Object.keys(PACKS).filter(k => G.packs[k] > 0);
+  return `${inv.length ? `<section class="plain"><h3>Ваши кейсы</h3>${inv.map(k => `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${PACKS[k].n} <span class="num mut" style="font-size:15px">×${G.packs[k]}</span></h2><button class="btn pri" data-act="open" data-v="${k}">Открыть</button></div></div></div>`).join('')}</section>` : ''}
+  <section class="plain"><h3>Магазин</h3>${Object.keys(PACKS).map(k => { const P = PACKS[k]; return `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${P.n}</h2><p class="sm mut">${P.d}</p><div class="pill" style="align-self:flex-start"><i class="coin"></i>${nf(P.price)}</div></div></div><div class="odds">${P.odds.map((o, i) => `<span style="--rc:var(--r${i})">${o}%</span>`).join('')}</div><button class="btn" data-act="buy" data-v="${k}" ${G.coins < P.price ? 'disabled' : ''}>${G.coins < P.price ? 'Не хватает монет' : 'Купить и открыть'}</button></div>`; }).join('')}</section>
+  <p class="sm mut">В кейсе пять карточек. Проценты показывают шанс редкости каждой из них: ${RAR.map(x => x.toLowerCase()).join(', ')}. Внутри редкости реже выпадают игроки с высоким рейтингом и из команд выше в таблице. С шансом 7% вместо обычной версии выпадает «${SPN[1]}» (+3 к рейтингу), с шансом 12% вместо высшей редкости выпадает «${SPN[2]}».</p>`;
+}
+function colList() {
+  const q = colQ.trim().toLowerCase();
+  return ALL.filter(c => (colF === 'all' || (colF === 'mine' ? own(c.id) : colF === 'sp' ? c.sp : !c.sp && c.rar === +colF)) && (!q || c.nick.toLowerCase().includes(q) || c.team.toLowerCase().includes(q)));
+}
+function colGrid() {
+  const l = colList();
+  return `<p class="sm mut">Найдено: ${l.length}</p><div class="grid">${l.slice(0, colN).map(c => `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`).join('')}</div>${l.length > colN ? '<button class="btn" data-act="more">Показать ещё</button>' : ''}`;
+}
+function vCol() {
+  const have = Object.keys(G.cards).length, F = [['all', 'Все'], ['mine', 'Мои'], ['4', RAR[4]], ['3', RAR[3]], ['2', RAR[2]], ['1', RAR[1]], ['0', RAR[0]], ['sp', 'Особые']];
+  return `<section class="pn"><div class="kv"><span>Инвентарь</span><span><b>${have}</b> из ${ALL.length}</span></div><span class="bar"><i style="width:${have / ALL.length * 100}%"></i></span></section>
+  <input type="text" id="col-q" placeholder="Ник или команда" value="${esc(colQ)}" aria-label="Поиск по нику или команде">
+  <div class="chips">${F.map(([k, n]) => `<button class="chip" data-act="filter" data-v="${k}" aria-pressed="${colF === k}" style="${k === 'sp' ? '--rc:var(--sp)' : k >= '0' && k <= '4' ? `--rc:var(--r${k})` : ''}">${n}</button>`).join('')}</div>
+  <div class="plain" id="col-grid">${colGrid()}</div>`;
+}
+function vSquad() {
+  const sq = squadOf(G), info = squadInfo(sq);
+  return `<div class="stats"><div class="stat"><b>${info.rating.toFixed(1)}</b><span>рейтинг</span></div><div class="stat"><b>${info.atk.toFixed(1)}</b><span>сила в атаке</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>сила в защите</span></div></div>
+  <section class="plain">${G.squad.map((id, i) => { const c = CARDS[id], off = c.role !== i; return `<button class="slot" data-act="slot" data-v="${i}"><span>${ownH(id, 'xs')}</span><span style="min-width:0"><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 19px/1.1 var(--f-d);text-transform:uppercase;overflow-wrap:anywhere">${esc(c.nick)}</b><span class="sm mut">${esc(c.team)}</span>${off ? '<span class="warn" style="display:block">Не своя роль: −5 ко всем показателям</span>' : ''}</span><span class="sm mut">Сменить</span></button>`; }).join('')}</section>
+  <section class="pn"><h3>Химия ${info.chem} из 13</h3><p class="sm mut">Игроков из одной команды: ${info.mx}. Два дают +2, три +4, четыре +7, пять +10. ${info.onRole ? 'Все на своих ролях: +3.' : 'Если все пятеро на своих ролях, добавится ещё +3.'} Каждые 4 очка химии дают +1 к силе состава.</p><button class="btn" data-act="auto">Собрать лучший состав</button></section>
+  <section class="pn"><h3>Тактические карты</h3>${DECK.map(k => `<p class="sm"><b>${AC[k].n}</b> <span class="num mut">${AC[k].cost}</span> <span class="mut">— ${AC[k].d}</span></p>`).join('')}</section>`;
+}
+function vSheet() {
+  if (!sheet) return '';
+  if (sheet.t === 'slot') {
+    const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i).map(id => CARDS[id].nick));
+    const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((a, b) => (b.role === i) - (a.role === i) || (b.ovr + own(b.id).lv) - (a.ovr + own(a.id).lv)).slice(0, 60);
+    return `<div class="in"><div class="wrap col"><h2>${RNAME[i]}: кого поставить</h2><p class="sm mut">Сначала показаны игроки этой роли. Чужая роль даёт −5 ко всем показателям.</p><div class="list">${l.map(c => `<button class="prow" style="--rc:${glow(c)}" data-act="put" data-id="${c.id}" data-v="${i}"><span class="o" style="color:${glow(c)}">${c.ovr + own(c.id).lv - 1 - (c.role === i ? 0 : 5)}</span><span style="min-width:0"><b>${esc(c.nick)}</b>${c.sp ? ` <span class="sm" style="color:${glow(c)}">${SPN[c.sp]}</span>` : ''}<span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)}</span></span><span class="sm mut">${G.squad[i] === c.id ? 'в составе' : ''}</span></button>`).join('')}</div><button class="btn" data-act="close">Закрыть</button></div></div>`;
+  }
+  const c = CARDS[sheet.id], o = own(c.id), lv = o ? o.lv : 1, add = lv - 1;
+  let act = '';
+  if (o) {
+    if (o.lv < 5) { const need = UP_N[o.lv - 1], cost = upCost(c, o.lv); act += `<button class="btn pri" data-act="up" data-id="${c.id}" ${canUp(G, c.id) ? '' : 'disabled'}>Уровень ${o.lv + 1}: ${need} дубл. и ${nf(cost)} мон.</button><p class="sm mut">Дубликатов: ${o.n - 1}. Каждый уровень даёт +1 ко всем показателям.</p>`; }
+    else act += '<p class="sm">Максимальный уровень.</p>';
+    if (o.n > 1) act += `<div class="rowb"><button class="btn s" data-act="sell" data-id="${c.id}">Продать дубль за ${nf(sellVal(c))}</button><button class="btn s" data-act="sellAll" data-id="${c.id}">Продать все за ${nf(sellVal(c) * (o.n - 1))}</button></div>`;
+    act += G.squad.includes(c.id) ? '<p class="sm mut">Сейчас в составе.</p>' : `<button class="btn" data-act="put" data-id="${c.id}" data-v="${c.role}">Поставить в состав на роль «${RNAME[c.role]}»</button>`;
+  } else act = '<p class="sm mut">Этой карточки у вас пока нет. Она выпадает из кейсов.</p>';
+  const pic = `<div class="rowb"><label class="btn s" for="img-in" tabindex="0">${IMG[c.base] ? 'Заменить фото' : 'Добавить фото'}</label>${IMG[c.base] ? `<button class="btn s" data-act="imgDel" data-id="${c.base}">Убрать фото</button>` : ''}</div><input type="file" id="img-in" accept="image/*" data-base="${c.base}" hidden><p class="sm mut">${imgMsg || `Фото хранится в этом браузере. Чтобы оно было у всех версий игры, положите файл ${esc(slug(c.nick))}.png в папку photos.`}</p>`;
+  return `<div class="in"><div class="wrap col"><div class="insp"><div class="tilt">${cardH(c, { lv, pips: !!o, stats: true })}</div></div><div class="plain" style="text-align:center;gap:4px"><p class="eyebrow" style="color:${glow(c)}">${rarName(c)}</p><h2 style="overflow-wrap:anywhere">${esc(c.nick)}</h2><p class="sm mut">${RNAME[c.role]} · ${esc(c.team)}, место команды ${c.t + 1} · ${o ? 'копий ' + o.n + ', уровень ' + o.lv : 'нет в инвентаре'}</p></div>
+  <div class="plain" style="--rc:${glow(c)}">${SK.map(k => `<div class="attr"><span class="mut">${SN[k]}</span><span class="bar"><i style="width:${c.st[k] + add}%"></i></span><b>${c.st[k] + add}</b></div>`).join('')}</div>${act}${pic}<button class="btn" data-act="close">Закрыть</button></div></div>`;
+}
+
+/* ---------- Сцена за интерфейсом ---------- */
+function buildScene() {
+  const mk = (seed, far) => {
+    let s = seed, p = '', w2 = ''; const r = () => (s = s * 16807 % 2147483647) / 2147483647;
+    for (let d = 0; d < 4; d++) {
+      let x = d * 500 - 20; const end = d * 500 + 500;
+      while (x < end) {
+        const w = 34 + r() * 70, h = (far ? 110 : 46) + r() * (far ? 150 : 110), y = 300 - h;
+        if (d === 0) { p += `M${x} 300V${y}h${w}V300z`; if (r() < .4) p += `M${x + w * .2} ${y}a${w * .3} ${w * .3} 0 0 1 ${w * .6} 0z`; if (!far && r() < .6) w2 += `M${x + w * .3} ${y + 14}h${w * .16}v${w * .3}h-${w * .16}z`; }
+        else if (d === 1) { const n = 1 + Math.floor(r() * (far ? 5 : 3)); for (let k = 0; k < n; k++) p += `M${x + k % 2 * 8} ${300 - k * 34}v-32h${w + 24}v32z`; if (r() < .22) p += `M${x + 10} 300V${30 + r() * 40}h6V300zM${x - 50} 46h140v6h-140z`; x += 26; }
+        else if (d === 2) { p += `M${x} 300V${y + w / 2}a${w / 2} ${w / 2} 0 0 1 ${w} 0V300z`; if (r() < .5) p += `M${x + w - 2} ${y + 70}h46v9h-46z`; }
+        else { p += `M${x} 300V${y}h${w}V300z`; if (r() < .5) { const a = 30 + r() * 60; p += `M${x + w / 2 - 2} ${y}v-${a}h4v${a}z`; } if (!far && r() < .5) w2 += `M${x + 8} ${y + 10}h${w - 16}v4h-${w - 16}z`; }
+        x += w + 4 + r() * 22;
+      }
+    }
+    return `<svg viewBox="0 0 2000 300" preserveAspectRatio="none" aria-hidden="true"><path d="${p}" fill="${far ? '#232a33' : '#0a0c0f'}"/><path d="${w2}" fill="#f0a93a" opacity=".5"/></svg>`;
+  };
+  $('#pan-far').innerHTML = mk(7, true); $('#pan-near').innerHTML = mk(31, false);
+  let d = ''; for (let i = 0; i < 16; i++) d += `<i style="left:${ri(0, 100)}%;top:${ri(40, 100)}%;--dx:${ri(-60, 60)}px;animation-duration:${ri(9, 20)}s;animation-delay:-${ri(0, 18)}s"></i>`;
+  $('#dust').innerHTML = d;
+}
+function sceneTo(t) {
+  const i = Math.max(0, Object.keys(TABS).indexOf(t));
+  $('#scene').dataset.s = t; $('#pan-near').style.transform = `translate3d(${-i * 25}%,0,0)`; $('#pan-far').style.transform = `translate3d(${-i * 17}%,0,0)`;
+}
+
+/* ---------- Вскрытие кейса: пять лент, останавливаются по очереди ---------- */
+let FX = [], fxOn = false;
+function burst(col, n, el) {
+  const cv = $('#fx'); if (!cv || !el || !n || noMotion()) return;
+  const b = el.getBoundingClientRect(); cv.width = innerWidth; cv.height = innerHeight;
+  for (let i = 0; i < n; i++) { const a = R() * 6.283, s = rnd(2, 12); FX.push({ x: b.left + b.width / 2, y: b.top + b.height / 2, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 3, l: rnd(.6, 1.4), t: 0, c: R() < .25 ? '#ffffff' : col, z: rnd(2, 5) }); }
+  if (!fxOn) { fxOn = true; requestAnimationFrame(fxLoop); }
+}
+function fxLoop() {
+  const cv = $('#fx'); if (!cv) { FX = []; fxOn = false; return; }
+  const c = cv.getContext('2d'); c.clearRect(0, 0, cv.width, cv.height);
+  FX = FX.filter(p => p.t < p.l);
+  for (const p of FX) { p.t += 1 / 60; p.x += p.vx; p.y += p.vy; p.vy += .25; p.vx *= .985; c.globalAlpha = 1 - p.t / p.l; c.fillStyle = p.c; c.fillRect(p.x, p.y, p.z, p.z * 1.6); }
+  c.globalAlpha = 1; if (FX.length) requestAnimationFrame(fxLoop); else fxOn = false;
+}
+function flashNow() { if (noMotion()) return; const f = document.createElement('div'); f.className = 'flash'; $('#over').appendChild(f); setTimeout(() => f.remove(), 600); }
+function startPack(type) {
+  const cards = openPack(type).map(c => ({ c, isNew: addCard(G, c.id) })).sort((a, b) => (a.c.rar + (a.c.sp ? .5 : 0)) - (b.c.rar + (b.c.sp ? .5 : 0)) || a.c.ovr - b.c.ovr);
+  OV = { t: 'pack', type, cards, phase: 'case', built: false, left: 5 }; save();
+}
+function packBuild() {
+  const o = $('#over');
+  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Нажмите на кейс, чтобы открыть</span></div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать сразу</button></div></div>`;
+  o.hidden = false; o.scrollTop = 0; OV.built = true;
+}
+function reelsBuild() {
+  const P = PACKS[OV.type], st = $('#po-stage'), W = st.clientWidth, tw = W < 340 ? 52 : 62, step = tw + 6, HIT = 24, N = 29, me = OV;
+  st.innerHTML = OV.cards.map((x, i) => { let h = ''; for (let k = 0; k < N; k++) h += `<div class="${k === HIT ? 'hit' : ''}">${cardH(k === HIT ? x.c : pick(POOL[rollRar(P.odds)]), { cls: 'xs' })}</div>`; return `<div class="reel" id="reel${i}" style="--tw:${tw}px;--gl:${glow(x.c)}"><div class="strip">${h}</div></div>`; }).join('');
+  $('#po-name').innerHTML = '<span class="mut">Ленты останавливаются по очереди</span>';
+  OV.phase = 'spin';
+  const tk = setInterval(() => { if (OV !== me || OV.phase !== 'spin') clearInterval(tk); else SFX.tick(); }, 95);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (OV !== me) return;
+    OV.cards.forEach((x, i) => {
+      const s = $('#reel' + i + ' .strip'), dur = noMotion() ? 0 : 2000 + i * 620;
+      s.style.transition = `transform ${dur}ms cubic-bezier(.12,.62,.1,1)`;
+      s.style.transform = `translate3d(${W / 2 - (HIT * step + tw / 2) - rnd(-.34, .34) * tw}px,0,0)`;
+      setTimeout(() => { if (OV === me && OV.phase === 'spin') reelStop(i); }, dur + 60);
+    });
+  }));
+}
+function reelStop(i) {
+  const x = OV.cards[i], r = x.c.sp ? Math.max(3, x.c.rar) : x.c.rar, el = $('#reel' + i);
+  el.classList.add('stop'); SFX.stop(r); burst(glow(x.c), [0, 10, 26, 70, 140][r], el.querySelector('.hit'));
+  if (r >= 3) flashNow();
+  $('#po-bg').style.setProperty('--gl', glow(x.c));
+  $('#po-name').innerHTML = `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${rarName(x.c)} · ${esc(x.c.team)} · <span class="bdg ${x.isNew ? 'new' : 'dup'}">${x.isNew ? 'новая' : 'дубль'}</span></span>`;
+  if (--OV.left <= 0) { OV.phase = 'stopped'; $('#po-btn').innerHTML = '<button class="btn pri" data-act="poSkip">Показать карточки</button>'; }
+}
+function poTap() {
+  if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
+  OV.phase = 'busy'; const me = OV, p = $('.po-pk .pk'); SFX.open();
+  if (p) { p.classList.add('shake'); setTimeout(() => p.classList.add('open'), noMotion() ? 0 : 380); }
+  setTimeout(() => { if (OV === me && OV.phase === 'busy') { flashNow(); reelsBuild(); } }, noMotion() ? 0 : 950);
+}
+function poDone() {
+  OV.phase = 'done';
+  const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0];
+  $('#po-bg').style.setProperty('--gl', glow(top.c));
+  $('#po-stage').innerHTML = `<div class="grid" style="width:100%">${l.map((x, i) => `<div class="plain big" style="gap:4px;animation-delay:${i * 70}ms"><button data-act="card" data-id="${x.c.id}" aria-label="${esc(x.c.nick)}">${cardH(x.c, { lv: own(x.c.id).lv, pips: true })}</button><span class="bdg ${x.isNew ? 'new' : 'dup'}" style="align-self:flex-start">${x.isNew ? 'новая' : 'дубль'}</span></div>`).join('')}</div>`;
+  $('#po-name').innerHTML = `<b style="color:${glow(top.c)}">Лучшая: ${esc(top.c.nick)}</b><span class="sm mut">Новых карточек: ${l.filter(x => x.isNew).length} из 5</span>`;
+  $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose">Забрать</button>';
+}
+function addImage(file, base) {
+  const rd = new FileReader();
+  rd.onload = () => { const im = new Image(); im.onload = () => {
+    const W = 300, H = 360, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const s = Math.max(W / im.width, H / im.height), w = im.width * s, h = im.height * s;
+    cv.getContext('2d').drawImage(im, (W - w) / 2, (H - h) * .15, w, h);
+    IMG[base] = cv.toDataURL('image/jpeg', .82);
+    try { localStorage.setItem(IKEY, JSON.stringify(IMG)); imgMsg = ''; } catch (e) { imgMsg = 'Фото показано, но не сохранится: хранилище браузера заполнено или недоступно.'; }
+    render();
+  }; im.onerror = () => { imgMsg = 'Не удалось прочитать файл. Подойдёт JPG или PNG.'; render(); }; im.src = rd.result; };
+  rd.readAsDataURL(file);
+}
+
+/* ---------- Матч: заставка, бан карты, раунды в реальном времени, итог ---------- */
+const T_BUY = 2200, T_BUY1 = 4200, T_KILL = 160, T_END = 800, T_HALF = 1700;
+let LV = null;
+const sideName = s => s === 'A' ? 'в атаке' : 'в защите', other = s => s === 'A' ? 'D' : 'A';
+const later = (ms, fn) => { const me = OV; setTimeout(() => { if (OV === me) fn(); }, noMotion() ? Math.min(ms, 200) : ms); };
+function matchBuild() {
+  const o = $('#over'), m = OV.m;
+  o.innerHTML = `<div class="mt"><div class="mt-bg"></div><div class="wrap mt-in" id="mt"><div class="splash"><h1>Матч найден</h1><div class="vs"><p class="eyebrow">${esc(m.b.name)} · рейтинг ${m.b.info.rating.toFixed(1)}</p><div class="grid g5 op">${m.b.sq.map(x => cardH(x.c, { cls: 'xs' })).join('')}</div><span class="x">VS</span><div class="grid g5">${m.a.sq.map(x => cardH(x.c, { cls: 'xs', lv: x.lv })).join('')}</div><p class="eyebrow">Вы · рейтинг ${m.a.info.rating.toFixed(1)}</p></div></div></div></div>`;
+  o.hidden = false; o.scrollTop = 0; OV.built = true; SFX.found();
+  later(1900, vetoBuild);
+}
+function vetoBuild() {
+  OV.st = 'veto';
+  $('#mt').innerHTML = `<div class="splash"><p class="eyebrow">Выбор карты</p><h2 id="veto-t">Забаньте одну карту</h2><div class="maps">${OV.maps.map((x, i) => `<button class="map" id="map${i}" data-act="ban" data-v="${i}" style="--h:${x.hue}"><b>${x.n}</b><span>${x.d}</span></button>`).join('')}</div><p class="sm mut" id="veto-d">Соперник ${STYLES[OV.m.style].n}: ${STYLES[OV.m.style].d}.</p></div>`;
+}
+function vetoBan(i) {
+  if (OV.st !== 'veto' || OV.ban.length) return;
+  OV.ban.push(i); $('#map' + i).classList.add('ban'); SFX.tap(); $('#veto-t').textContent = 'Соперник банит…';
+  later(700, () => {
+    const rest = [0, 1, 2].filter(k => k !== i), b = pick(rest), p = rest.find(k => k !== b), m = OV.m;
+    $('#map' + b).classList.add('ban'); SFX.tap();
+    later(600, () => { m.map = OV.maps[p]; $('#map' + p).classList.add('pick'); $('#veto-t').textContent = 'Играем ' + m.map.n; $('#veto-d').textContent = `Вы начинаете ${sideName(m.sideA)}. Игра до 13 побед, смена сторон после 12 раунда.`; SFX.win(); later(1500, liveBuild); });
+  });
+}
+const chipH = (x, id) => `<div class="chipp" id="${id}"><div class="f">${faceH(x.c).replace('class="art"', '')}<span class="k">0</span></div><span class="n">${esc(x.c.nick)}</span></div>`;
+function liveBuild() {
+  const m = OV.m; OV.st = 'live';
+  document.querySelector('.mt').style.setProperty('--mh', m.map.hue);
+  $('#mt').innerHTML = `<div class="sbar"><div class="t" id="tA"><b>Вы</b><span id="monA"></span></div><div class="c"><b id="scA">0</b><div><span id="rn"></span><span>${m.map.n}</span></div><b id="scB">0</b></div><div class="t r" id="tB"><b>${esc(m.b.name)}</b><span id="monB"></span></div></div>
+  <div class="hist" id="hist"></div>
+  <div class="arena"><div class="trow" id="rowB">${m.b.info.e.map((x, i) => chipH(x, 'cB' + i)).join('')}</div><div class="mid"><div class="played" id="played"></div><div class="feed" id="feed" aria-live="off"></div><div id="bn"></div></div><div class="trow" id="rowA">${m.a.info.e.map((x, i) => chipH(x, 'cA' + i)).join('')}</div></div>
+  <div class="phase"><b id="phl"></b><span class="bar"><i id="phb"></i></span><span id="buyl"></span></div>
+  <div class="en" id="en"></div><div class="hand" id="hand"></div><div class="rowb" id="mbtn"></div>`;
+  LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] } };
+  lvBuy(true); lvBtns(); requestAnimationFrame(lvTick);
+}
+function lvBtns() { $('#mbtn').innerHTML = OV.askQuit ? '<button class="btn dan s" data-act="quitYes">Сдаться, засчитать поражение</button><button class="btn s" data-act="quitNo">Играть дальше</button>' : `<button class="btn s" data-act="pause">${LV.paused ? 'Продолжить' : 'Пауза'}</button><button class="btn s" data-act="quitAsk">Сдаться</button>`; }
+function lvHud() {
+  const m = OV.m, a = m.a, b = m.b;
+  $('#rn').textContent = m.over ? 'Финал' : m.decider ? 'Решающий' : 'Раунд ' + m.round;
+  $('#tA').className = 't sd-' + m.sideA; $('#rowA').className = 'trow sd-' + m.sideA; $('#tB').className = 't r sd-' + other(m.sideA); $('#rowB').className = 'trow sd-' + other(m.sideA);
+  const sn = s => s === 'A' ? 'T' : 'CT'; $('#monA').textContent = '$' + nf(a.money) + ' · ' + sn(m.sideA); $('#monB').textContent = sn(other(m.sideA)) + ' · $' + nf(b.money);
+  $('#scA').textContent = a.score; $('#scB').textContent = b.score;
+  let h = ''; for (let i = 0; i < 24; i++) { if (i === 12) h += '<i class="h"></i>'; const x = m.hist[i]; h += `<i class="${x ? (x.win ? 'w' : 'l') : ''}"></i>`; } $('#hist').innerHTML = h;
+}
+function handDraw() {
+  const m = OV.m, a = m.a, hd = $('#hand'), en = $('#en');
+  if (m.over) { hd.innerHTML = ''; en.innerHTML = ''; $('#buyl').textContent = ''; return; }
+  OV.sel = OV.sel.filter(k => a.hand.includes(k)); if (!m.canPlay(a, OV.sel)) OV.sel = [];
+  const cost = OV.sel.reduce((s, k) => s + AC[k].cost, 0), ctx = { side: m.sideA, behind: a.score < b_score(m) };
+  en.innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i class="${i <= a.en - cost ? 'on' : i <= a.en ? 'use' : ''}"></i>`).join('') + `<span>${a.en - cost}/8</span>`;
+  en.setAttribute('aria-label', `Энергия ${a.en - cost} из 8`);
+  hd.innerHTML = a.hand.map(k => { const on = OV.sel.includes(k), v = acVal(k, a, ctx), dis = !on && (OV.sel.length >= 2 || cost + AC[k].cost > a.en); return `<button class="ac ${dis ? 'dis' : ''}" data-act="sel" data-v="${k}" aria-pressed="${on}" ${dis ? 'aria-disabled="true"' : ''}><span class="h"><span class="n">${AC[k].n}</span><span class="c" aria-label="Стоит ${AC[k].cost} энергии">${AC[k].cost}</span></span>${k === 'fake' || k === 'eco' ? '' : `<span class="v ${v < 0 ? 'neg' : 'pos'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</span>`}<span class="d">${AC[k].d}</span></button>`; }).join('');
+  $('#buyl').textContent = m.decider ? 'Полная закупка' : BUY[m.buyOf(a, OV.sel)].n;
+}
+const b_score = m => m.b.score;
+function lvBuy(first) {
+  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY;
+  document.querySelectorAll('.chipp').forEach(c => c.classList.remove('dead', 'hit'));
+  $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#played').innerHTML = `<span>${m.isPistol() ? 'Пистолетный раунд' : m.decider ? 'Счёт 12:12 — решающий раунд' : m.a.ws >= 2 ? 'Серия побед: +1,5 к силе' : ''}</span><span>${m.decider || m.isPistol() ? '' : 'Соперник: ' + BUY[m.buyOf(m.b, [])].n.toLowerCase()}</span>`;
+  $('#phl').textContent = 'Закупка'; lvHud(); handDraw();
+}
+function lvPlay() {
+  const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [], L = m.play(sel);
+  OV.sel = []; LV.last = L; LV.q = [...L.kills]; LV.ph = 'kills'; LV.t = 340;
+  const tg = (pl, vals, cut) => pl.length ? pl.map(k => { const v = vals.find(x => x.k === k); return k === cut ? `<s>${AC[k].n}</s>` : `<b>${AC[k].n}${v && k !== 'fake' ? ' ' + (v.v >= 0 ? '+' : '−') + Math.abs(v.v).toFixed(1) : ''}</b>`; }).join(', ') : 'без карт';
+  $('#played').innerHTML = `<span>Вы: ${tg(L.mine, L.va, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.vb, L.cutB)}</span>`;
+  $('#phl').textContent = 'Раунд идёт'; $('#phb').style.width = '0%'; $('#buyl').textContent = `шанс ${Math.round(L.p * 100)}%`;
+  handDraw();
+}
+function lvKill(k) {
+  const L = LV.last, kt = k.byA ? 'A' : 'B', vt = k.byA ? 'B' : 'A', m = OV.m, K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
+  const ks = k.byA ? L.sideA : other(L.sideA), col = s => s === 'D' ? 'var(--ct)' : 'var(--tt)', f = $('#feed');
+  f.insertAdjacentHTML('beforeend', `<div class="${k.byA ? '' : 'me'}"><span class="ka" style="--ka:${col(ks)}">${esc(K.info.e[k.k].c.nick)}</span><svg aria-hidden="true"><use href="#${k.awp ? 'awp' : 'gun'}"/></svg>${k.hs ? '<i class="hs"></i>' : ''}<span class="va" style="--vc:${col(other(ks))}">${esc(V.info.e[k.v].c.nick)}</span></div>`);
+  while (f.children.length > 4) f.firstChild.remove();
+  $('#c' + vt + k.v).classList.add('dead');
+  const kc = $('#c' + kt + k.k); kc.classList.remove('hit'); void kc.offsetWidth; kc.classList.add('hit'); kc.querySelector('.k').textContent = ++LV.kc[kt][k.k];
+  SFX.kill();
+}
+function lvEnd() {
+  const L = LV.last; LV.ph = 'end'; LV.t = T_END;
+  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span></div>`;
+  lvHud(); (L.win ? SFX.win : SFX.lose)();
+}
+function lvNext() {
+  const m = OV.m, L = LV.last;
+  if (m.over) { OV.st = 'end'; OV.reward = applyResult(G, m.won); save(); endBuild(); return; }
+  if (LV.ph === 'end' && L.swap) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = `<div class="banner n"><b>Смена сторон</b><span>Вы теперь ${sideName(m.sideA)} · деньги сброшены</span></div>`; lvHud(); return; }
+  if (LV.ph === 'end' && m.decider) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = '<div class="banner n"><b>12:12</b><span>Решающий раунд, полная закупка у обеих команд</span></div>'; return; }
+  lvBuy(false);
+}
+function lvTick(ts) {
+  if (!OV || OV.t !== 'match' || OV.st !== 'live' || !LV) return;
+  const dt = Math.min(100, ts - (LV.ts || ts)); LV.ts = ts;
+  if (!LV.paused) {
+    LV.t -= dt;
+    if (LV.ph === 'buy') { $('#phb').style.width = (100 * Math.max(0, LV.t) / LV.T) + '%'; if (LV.t <= 0) lvPlay(); }
+    else if (LV.ph === 'kills') { if (LV.t <= 0) { if (LV.q.length) { lvKill(LV.q.shift()); LV.t = T_KILL; } else lvEnd(); } }
+    else if (LV.t <= 0) lvNext();
+  }
+  requestAnimationFrame(lvTick);
+}
+function endBuild() {
+  const m = OV.m, r = OV.reward, mv = m.mvp();
+  const tb = (s, side) => `<table class="tbl sd-${side}"><tr><th>${esc(s.name)}</th><th>У</th><th>С</th></tr>${s.info.e.map((x, i) => ({ x, k: s.k[i], d: s.d[i] })).sort((p, q) => q.k - p.k).map(p => `<tr class="${p.x.c.nick === mv.nick && (s === m.a) === mv.mine ? 'star' : ''}"><td>${esc(p.x.c.nick)}</td><td>${p.k}</td><td>${p.d}</td></tr>`).join('')}</table>`;
+  $('#mt').innerHTML = `<p class="res-t ${m.won ? 'w' : 'l'}">${m.won ? 'Победа' : 'Поражение'}</p><p class="eyebrow" style="text-align:center">${m.a.score}:${m.b.score} · ${m.map.n} · лучший игрок ${esc(mv.nick)}, ${mv.k} уб.</p>
+  <div class="stats"><div class="stat"><b>${r.tro >= 0 ? '+' : '−'}${Math.abs(r.tro)}</b><span>кубки</span></div><div class="stat"><b>+${r.coins}</b><span>монеты</span></div><div class="stat"><b>+${r.xp}</b><span>опыт</span></div></div>${r.packs.map(p => `<p class="sm">Награда: ${p}.</p>`).join('')}
+  <div class="pn">${tb(m.a, m.sideA)}</div><div class="pn">${tb(m.b, other(m.sideA))}</div><p class="sm mut">У — убийства, С — смерти.</p><button class="btn pri" data-act="ovClose">Продолжить</button>`;
+  $('#over').scrollTop = 0; (m.won ? SFX.win : SFX.lose)();
+}
+
+const TABS = {
+  home: ['Лобби', vHome, '<path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/>'],
+  packs: ['Кейсы', vPacks, '<path d="M3 9h18v11H3zM5 9l2-4h10l2 4M12 9v4"/><path d="M10 13h4"/>'],
+  col: ['Инвентарь', vCol, '<rect x="3" y="7" width="11" height="14"/><path d="M8 3h13v14"/>'],
+  squad: ['Состав', vSquad, '<circle cx="12" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/>']
+};
+function render() {
+  if (!G) return;
+  $('#hud .wrap').innerHTML = hudH();
+  const app = $('#app'); app.innerHTML = TABS[tab][1]();
+  if (tab !== lastTab) {
+    const ks = Object.keys(TABS), i = ks.indexOf(tab), j = ks.indexOf(lastTab);
+    app.style.setProperty('--dir', j < 0 || i >= j ? 1 : -1); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
+    sceneTo(tab); lastTab = tab;
+  } else app.classList.remove('enter');
+  $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${k === 'packs' && (packCount() || dailyReady()) ? '<span class="dot"></span>' : ''}</button>`).join('');
+  const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
+  const ov = $('#over');
+  if (!OV) { ov.innerHTML = ''; ov.hidden = true; }
+  else if (!OV.built) { if (OV.t === 'pack') packBuild(); else matchBuild(); }
+}
+function autoSquad() {
+  const used = new Set();
+  for (let i = 0; i < 5; i++) {
+    const c = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((x, y) => (y.ovr + own(y.id).lv - (y.role === i ? 0 : 5)) - (x.ovr + own(x.id).lv - (x.role === i ? 0 : 5)))[0];
+    G.squad[i] = c.id; used.add(c.nick);
+  }
+}
+const ACT = {
+  tab(v) { tab = v; colN = 45; window.scrollTo(0, 0); },
+  mute() { mute = !mute; try { localStorage.setItem(SKEY, mute ? '1' : '0'); } catch (e) { /* не сохранится */ } },
+  close() { sheet = null; imgMsg = ''; },
+  card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; },
+  slot(v) { sheet = { t: 'slot', slot: +v }; },
+  put(v, d) { const id = +d.id, i = +v, c = CARDS[id], j = G.squad.findIndex(x => CARDS[x].nick === c.nick); if (j >= 0 && j !== i) G.squad[j] = G.squad[i]; G.squad[i] = id; sheet = null; },
+  auto() { autoSquad(); },
+  up(v, d) { doUp(G, +d.id); },
+  sell(v, d) { sellDupes(G, +d.id, false); }, sellAll(v, d) { sellDupes(G, +d.id, true); },
+  imgDel(v, d) { delete IMG[d.id]; try { localStorage.setItem(IKEY, JSON.stringify(IMG)); } catch (e) { /* хранилище недоступно */ } },
+  filter(v) { colF = v; colN = 45; }, more() { colN += 45; },
+  daily() { if (dailyReady()) { G.daily = Date.now(); G.packs.basic++; tab = 'packs'; } },
+  open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
+  buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
+  poTap() { poTap(); return false; },
+  poSkip() { if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
+  ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
+  fight() { const sq = squadOf(G); OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, squadInfo(sq).rating), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], reward: null, askQuit: false, built: false }; },
+  ban(v) { vetoBan(+v); return false; },
+  sel(v) { if (!OV || OV.st !== 'live') return false; const m = OV.m, i = OV.sel.indexOf(v); if (i >= 0) OV.sel.splice(i, 1); else if (OV.sel.length < 2 && m.canPlay(m.a, OV.sel.concat(v))) OV.sel.push(v); else return false; SFX.tap(); handDraw(); return false; },
+  pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
+  quitAsk() { OV.askQuit = true; lvBtns(); return false; }, quitNo() { OV.askQuit = false; lvBtns(); return false; },
+  quitYes() { applyResult(G, false); OV = null; LV = null; },
+  newAsk() { askNew = true; }, newNo() { askNew = false; },
+  newYes() { askNew = false; G = newGame(); tab = 'home'; }
+};
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) { if (e.target.id === 'sheet') { sheet = null; render(); } return; }
+  if (b.disabled) return;
+  const fn = ACT[b.dataset.act]; if (!fn) return;
+  if (fn(b.dataset.v, b.dataset) === false) return;
+  if (b.dataset.act === 'tab') SFX.tap();
+  save(); render();
+});
+document.addEventListener('input', e => { if (e.target.id === 'col-q') { colQ = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); } });
+document.addEventListener('change', e => { if (e.target.id === 'img-in' && e.target.files && e.target.files[0]) addImage(e.target.files[0], +e.target.dataset.base); });
+/* Осмотр карточки: наклон и блик за пальцем */
+document.addEventListener('pointermove', e => {
+  const t = e.target.closest && e.target.closest('.tilt'); if (!t || noMotion()) return;
+  const b = t.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height;
+  t.style.setProperty('--ry', ((x - .5) * 28).toFixed(1) + 'deg'); t.style.setProperty('--rx', ((.5 - y) * 22).toFixed(1) + 'deg');
+  t.style.setProperty('--gx', (x * 100).toFixed(0) + '%'); t.style.setProperty('--gy', (y * 100).toFixed(0) + '%');
+});
+document.addEventListener('pointerout', e => { const t = e.target.closest && e.target.closest('.tilt'); if (t && !t.contains(e.relatedTarget)) { t.style.setProperty('--rx', '0deg'); t.style.setProperty('--ry', '0deg'); } });
+function start() { if (!load()) { G = newGame(); save(); } buildScene(); render(); }
+try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
+})();
+</script>
+</body></html>

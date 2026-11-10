@@ -1,0 +1,1009 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Клатч Менеджер</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+/* Layout: один столбец под телефон с нижними вкладками; матч открывается полноэкранным слоем — карта сверху, пульт тренера под ней */
+:root{
+  --bg:#0f1420;--panel:#171e2e;--panel2:#212b3f;--line:#2e3a53;--lane:#27324b;
+  --fg:#e9edf5;--mut:#909cb5;
+  --atk:#f0a63a;--def:#5aabff;--accent:#a3adff;--on-accent:#0f1330;
+  --good:#3fcf8e;--warn:#e9c04a;--bad:#ff7474;
+  --f-d:'Unbounded','Arial Black',system-ui,sans-serif;
+  --f-b:'Golos Text',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-m:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#edf0f6;--panel:#ffffff;--panel2:#f1f4f9;--line:#d3dae6;--lane:#dde3ee;
+  --fg:#131a2a;--mut:#5a667e;
+  --atk:#b46a00;--def:#1766c4;--accent:#4450d0;--on-accent:#ffffff;
+  --good:#11854f;--warn:#8a6a00;--bad:#c73535;color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#edf0f6;--panel:#ffffff;--panel2:#f1f4f9;--line:#d3dae6;--lane:#dde3ee;
+  --fg:#131a2a;--mut:#5a667e;
+  --atk:#b46a00;--def:#1766c4;--accent:#4450d0;--on-accent:#ffffff;
+  --good:#11854f;--warn:#8a6a00;--bad:#c73535;color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--f-b);-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+.wrap{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#app{padding-block:14px 96px;display:flex;flex-direction:column;gap:14px}
+.num{font-family:var(--f-m);font-variant-numeric:tabular-nums}
+.mut{color:var(--mut)}.sm{font-size:13px}
+.eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);font-weight:600}
+h2{font:700 19px/1.2 var(--f-d);text-wrap:balance}
+h3{font:600 12px/1.2 var(--f-b);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.top .name{font:700 20px/1.15 var(--f-d);display:block;overflow-wrap:anywhere}
+.top .cash{font:700 18px var(--f-m);text-align:right;white-space:nowrap}
+.cash.neg{color:var(--bad)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.plain{display:flex;flex-direction:column;gap:8px}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.vs b{font:700 22px var(--f-d)}.vs .r{text-align:right}.vs .x{color:var(--mut);font:500 12px var(--f-m)}
+.vs small{display:block;color:var(--mut);font-size:12px;overflow-wrap:anywhere}
+.str{display:grid;grid-template-columns:76px 1fr 44px;gap:8px;align-items:center;font-size:13px}
+.bar{display:block;height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;min-width:0}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.bar.t i{background:var(--atk)}.bar.c i{background:var(--def)}.bar.good i{background:var(--good)}.bar.warn i{background:var(--warn)}.bar.bad i{background:var(--bad)}
+.btn{display:flex;align-items:center;justify-content:center;min-height:46px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);font-weight:600;text-align:center}
+.btn.pri{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.dan{color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.s{min-height:38px;padding:6px 12px;font-size:13px}
+.rowb{display:flex;gap:8px;flex-wrap:wrap}.rowb>*{flex:1 1 120px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.stat b{display:block;font:700 17px var(--f-m)}
+.stat span{font-size:12px;color:var(--mut)}
+.stat.bad b{color:var(--bad)}.stat.warn b{color:var(--warn)}.stat.good b{color:var(--good)}
+.news{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.news li{padding:9px 0;border-top:1px solid var(--line);font-size:14px;display:grid;grid-template-columns:52px 1fr;gap:8px}
+.news li:first-child{border-top:0}
+.news time{color:var(--mut);font:500 11px/1.9 var(--f-m)}
+
+.list{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.prow{display:grid;grid-template-columns:34px 1fr 54px 34px;gap:10px;align-items:center;padding:11px 14px;border-top:1px solid var(--line);width:100%}
+.prow:first-child{border-top:0}
+.prow .nick{font-weight:600;display:block;overflow-wrap:anywhere}
+.prow small{color:var(--mut);font-size:12px;display:block}
+.prow .o{font:700 16px var(--f-m);text-align:right}
+.role{display:inline-flex;align-items:center;justify-content:center;width:34px;height:24px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);font:700 10px var(--f-m);letter-spacing:.03em}
+.prow.mk{grid-template-columns:34px 1fr auto 34px}
+.price{font:500 13px var(--f-m);white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-height:38px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);font-size:13px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.chip:disabled{opacity:.4}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font:600 11px var(--f-b);letter-spacing:.07em;text-transform:uppercase;color:var(--mut);text-align:right;padding:8px 6px}
+td{padding:8px 6px;border-top:1px solid var(--line);text-align:right;font-family:var(--f-m);font-variant-numeric:tabular-nums}
+th:nth-child(2),td:nth-child(2){text-align:left;font-family:var(--f-b)}
+td:first-child,th:first-child{text-align:left;width:28px;color:var(--mut)}
+tr.me td{color:var(--accent);font-weight:700}
+tr.cut td{border-top:2px solid var(--accent)}
+.res{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;font:500 13px var(--f-m);padding:5px 0}
+.res span:last-child{text-align:right}.res.me{color:var(--accent);font-weight:700}
+
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+#tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+#tabs button{min-height:54px;font-size:11.5px;font-weight:600;color:var(--mut);text-align:center;border-top:2px solid transparent}
+#tabs button[aria-current="page"]{color:var(--fg);border-top-color:var(--accent)}
+
+#sheet{position:fixed;inset:0;z-index:30;background:rgb(0 0 0 / .55);display:flex;align-items:flex-end}
+#sheet .in{background:var(--panel);border-radius:18px 18px 0 0;border-top:1px solid var(--line);width:100%;max-height:88%;overflow:auto;padding-block:18px calc(18px + env(safe-area-inset-bottom,0px))}
+#sheet .col{display:flex;flex-direction:column;gap:14px}
+.attr{display:grid;grid-template-columns:104px 1fr 30px;gap:10px;align-items:center;font-size:13px}
+.attr b{font:700 13px var(--f-m);text-align:right}
+.kv{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+input[type=text]{width:100%;min-height:46px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font:inherit;padding:8px 12px}
+label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:6px}
+label.chk{flex-direction:row;align-items:center;gap:8px;color:var(--fg)}
+
+#match{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.mv{display:flex;flex-direction:column;gap:10px;padding-block:10px 24px}
+.sb{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.sb b{font:700 17px var(--f-d)}
+.sb .tm{display:flex;flex-direction:column;gap:2px;min-width:0}.sb .tm.r{align-items:flex-end;text-align:right}
+.sb .sc{font:700 30px/1 var(--f-m)}
+.side{font:700 10px var(--f-m);letter-spacing:.08em;text-transform:uppercase}
+.side.T{color:var(--atk)}.side.CT{color:var(--def)}
+.mvsub{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+.hist{display:flex;gap:3px;flex-wrap:wrap;min-height:10px}
+.hist i{width:10px;height:10px;border-radius:2px;border:1.5px solid var(--mut)}
+.hist i.T{border-color:var(--atk)}.hist i.CT{border-color:var(--def)}
+.hist i.me.T{background:var(--atk)}.hist i.me.CT{background:var(--def)}
+.hist i.gap{border:0;width:4px}
+.cvw{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#mv-cv{display:block;width:100%}
+.banner{position:absolute;left:10px;right:10px;top:10px;padding:9px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line);font-weight:600;font-size:14px;text-align:center}
+.banner.w{border-color:var(--good)}.banner.l{border-color:var(--bad)}
+.feed{min-height:40px;font:500 12px/1.65 var(--f-m);color:var(--mut)}
+.feed .T{color:var(--atk)}.feed .CT{color:var(--def)}.feed s{opacity:.7}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{min-width:42px;min-height:46px;text-align:center;font:700 13px var(--f-m);background:var(--panel2)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.pan{display:flex;flex-direction:column;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.pan .hint{font-size:12.5px;color:var(--mut)}
+.econ{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px}
+.econ b{display:block;font:700 14px var(--f-m)}
+.kd{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12.5px}
+.kd div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.kd p{display:flex;justify-content:space-between;gap:6px}.kd p span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+<div id="app" class="wrap"><p class="mut" style="padding-block:24px">Загружаем игру…</p></div>
+<nav id="tabs" aria-label="Разделы"><div class="wrap"></div></nav>
+<div id="sheet" hidden></div>
+<div id="match" hidden></div>
+<script>
+window.__cmErr = function (m) { var a = document.getElementById('app'); if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Скопируйте этот текст и отправьте в чат:</p><p class="num sm" style="overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</p></div>'; };
+window.addEventListener('error', function (e) { window.__cmErr((e.message || 'ошибка') + ' · строка ' + (e.lineno || '?')); });
+</script>
+<script>
+(function () {
+'use strict';
+/* ===== Утилиты ===== */
+const R = Math.random;
+const rnd = (a, b) => a + R() * (b - a);
+const ri = (a, b) => Math.floor(rnd(a, b + 1));
+const pick = a => a[Math.floor(R() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function wpick(o) { let t = 0; for (const k in o) t += o[k]; let r = R() * t; for (const k in o) { r -= o[k]; if (r <= 0) return k; } return Object.keys(o)[0]; }
+const avgA = (five, k) => five.reduce((s, p) => s + p.a[k], 0) / five.length;
+
+/* ===== Справочники ===== */
+const ROLES = { awp: 'Снайпер', entry: 'Энтри', sup: 'Саппорт', lurk: 'Люркер', igl: 'Капитан' };
+const ATTR = { aim: 'Стрельба', ref: 'Реакция', util: 'Гранаты', pos: 'Позиция', clu: 'Клатч', team: 'Командность' };
+const PLAN_N = { rush: 'Раш', exec: 'Выход', fake: 'Фейк', def: 'Дефолт' };
+const SETUP_N = { standard: 'Стандарт 2-1-2', stackA: 'Стек A', stackB: 'Стек B', aggro: 'Агрессия в мид', retake: 'Игра на ретейк' };
+const BUY_N = { pistol: 'Пистолеты', eco: 'Эко', force: 'Форс', full: 'Закуп' };
+const WHY_N = { elim: 'команда соперника уничтожена', bomb: 'бомба взорвана', defuse: 'бомба обезврежена', time: 'время вышло' };
+
+function ovr(p) { const a = p.a; return .3 * a.aim + .18 * a.ref + .14 * a.util + .18 * a.pos + .08 * a.clu + .12 * a.team; }
+function perf(p) { return (0.88 + 0.12 * p.energy / 100) * (0.94 + 0.08 * p.morale / 100) * (1 + p.form / 100); }
+
+/* ===== Карты: граф зон ===== */
+function prepMap(m) {
+  m.adj = {}; for (const k in m.zones) m.adj[k] = [];
+  for (const [a, b] of m.edges) { m.adj[a].push(b); m.adj[b].push(a); }
+  m.tban = new Set(Object.keys(m.zones).filter(k => m.zones[k].site || m.zones[k].ct));
+  return m;
+}
+const MAPS = {
+  pier: prepMap({
+    id: 'pier', name: 'Пристань', note: 'Ровная карта с быстрыми ротациями защиты',
+    zones: {
+      TS: { n: 'База атаки', x: 50, y: 110, s: 'M' }, AL: { n: 'Длина A', x: 16, y: 86, s: 'A' }, AM: { n: 'Подход A', x: 16, y: 56, s: 'A' },
+      A: { n: 'A', x: 22, y: 27, s: 'A', site: 1 }, MID: { n: 'Мид', x: 50, y: 80, s: 'M' }, MT: { n: 'Коннектор', x: 50, y: 50, s: 'M' },
+      BL: { n: 'Тоннель B', x: 84, y: 86, s: 'B' }, BM: { n: 'Подход B', x: 84, y: 56, s: 'B' }, B: { n: 'B', x: 78, y: 27, s: 'B', site: 1 },
+      CTS: { n: 'База защиты', x: 50, y: 11, s: 'M', ct: 1 }
+    },
+    edges: [['TS', 'AL'], ['TS', 'MID'], ['TS', 'BL'], ['AL', 'AM'], ['AM', 'A'], ['MID', 'MT'], ['MT', 'A'], ['MT', 'B'], ['BL', 'BM'], ['BM', 'B'], ['A', 'CTS'], ['B', 'CTS'], ['MT', 'CTS']],
+    routes: { A: [['AL', 'AM', 'A'], ['MID', 'MT', 'A']], B: [['BL', 'BM', 'B'], ['MID', 'MT', 'B']] },
+    ct: { A: 'A', B: 'B', mid: 'MT', back: 'CTS', push: 'MID' }
+  }),
+  quarry: prepMap({
+    id: 'quarry', name: 'Карьер', note: 'Точка B далеко от базы защиты, удобна для атаки',
+    zones: {
+      TS: { n: 'База атаки', x: 50, y: 110, s: 'M' }, AL: { n: 'Спуск A', x: 16, y: 86, s: 'A' }, AM: { n: 'Подход A', x: 16, y: 56, s: 'A' },
+      A: { n: 'A', x: 22, y: 27, s: 'A', site: 1 }, MID: { n: 'Мид', x: 50, y: 78, s: 'M' }, MT: { n: 'Окно', x: 44, y: 48, s: 'M' },
+      BL: { n: 'Штольня', x: 84, y: 90, s: 'B' }, BM: { n: 'Подход B', x: 80, y: 62, s: 'B' }, B: { n: 'B', x: 82, y: 34, s: 'B', site: 1 },
+      CTS: { n: 'База защиты', x: 36, y: 10, s: 'M', ct: 1 }, CR: { n: 'Мост', x: 68, y: 12, s: 'M', ct: 1 }
+    },
+    edges: [['TS', 'AL'], ['TS', 'MID'], ['TS', 'BL'], ['AL', 'AM'], ['AM', 'A'], ['MID', 'MT'], ['MT', 'A'], ['MID', 'BM'], ['BL', 'BM'], ['BM', 'B'], ['A', 'CTS'], ['MT', 'CTS'], ['CTS', 'CR'], ['CR', 'B']],
+    routes: { A: [['AL', 'AM', 'A'], ['MID', 'MT', 'A']], B: [['BL', 'BM', 'B'], ['MID', 'BM', 'B']] },
+    ct: { A: 'A', B: 'B', mid: 'MT', back: 'CTS', push: 'MID' }
+  }),
+  observatory: prepMap({
+    id: 'observatory', name: 'Обсерватория', note: 'Длинные подходы к точкам, карта защиты',
+    zones: {
+      TS: { n: 'База атаки', x: 50, y: 112, s: 'M' }, AL: { n: 'Аллея', x: 14, y: 98, s: 'A' }, AX: { n: 'Арка', x: 14, y: 76, s: 'A' }, AM: { n: 'Подход A', x: 16, y: 53, s: 'A' },
+      A: { n: 'A', x: 24, y: 28, s: 'A', site: 1 }, MID: { n: 'Мид', x: 50, y: 84, s: 'M' }, MT: { n: 'Купол', x: 50, y: 54, s: 'M' },
+      BL: { n: 'Склад', x: 86, y: 98, s: 'B' }, BX: { n: 'Лестница', x: 86, y: 76, s: 'B' }, BM: { n: 'Подход B', x: 84, y: 53, s: 'B' }, B: { n: 'B', x: 76, y: 28, s: 'B', site: 1 },
+      CTS: { n: 'База защиты', x: 50, y: 11, s: 'M', ct: 1 }
+    },
+    edges: [['TS', 'AL'], ['TS', 'MID'], ['TS', 'BL'], ['AL', 'AX'], ['AX', 'AM'], ['AM', 'A'], ['MID', 'MT'], ['MT', 'A'], ['MT', 'B'], ['BL', 'BX'], ['BX', 'BM'], ['BM', 'B'], ['A', 'CTS'], ['B', 'CTS'], ['MT', 'CTS']],
+    routes: { A: [['AL', 'AX', 'AM', 'A'], ['MID', 'MT', 'A']], B: [['BL', 'BX', 'BM', 'B'], ['MID', 'MT', 'B']] },
+    ct: { A: 'A', B: 'B', mid: 'MT', back: 'CTS', push: 'MID' }
+  })
+};
+const MAP_ORDER = ['pier', 'quarry', 'observatory'];
+function bfs(m, from, to, ban) {
+  if (from === to) return [];
+  const prev = { [from]: null }, q = [from];
+  while (q.length) {
+    const c = q.shift();
+    for (const n of m.adj[c]) {
+      if (n in prev) continue;
+      if (ban && ban.has(n) && n !== to) continue;
+      prev[n] = c;
+      if (n === to) { const p = []; let x = n; while (x !== from) { p.unshift(x); x = prev[x]; } return p; }
+      q.push(n);
+    }
+  }
+  return [];
+}
+
+/* ===== Раунд: потактовая симуляция по зонам ===== */
+const K = 1.5;                      // чувствительность дуэли к разнице навыка
+const WPN = { pistol: .8, eco: .68, force: .88, full: 1 };
+const mv = p => .5 * p.a.aim + .3 * p.a.ref + .2 * p.a.pos;      // атакующий в дуэли
+const hd = p => .4 * p.a.aim + .2 * p.a.ref + .4 * p.a.pos;      // держащий позицию
+
+class Round {
+  constructor(map, T, CT) {
+    this.map = map; this.T = T; this.CT = CT;
+    this.tick = 0; this.over = null; this.feed = [];
+    this.planted = false; this.bombZ = null; this.bombT = 0; this.plantP = 0; this.plantZ = null; this.defP = 0; this.retGo = false;
+    this.plan = { ...T.plan }; this.plan0 = { ...T.plan }; this.setup = CT.setup;
+    this.units = []; this.seen = { A: new Set(), B: new Set() };
+    this.rotTo = null; this.rotN = 0; this.pend = null; this.lock = 0; this.lastKiller = null; this.switched = false; this.noised = false;
+    const mk = (pl, side, ctx, i) => ({ id: side + i, pl, side, z: null, alive: true, path: [], wait: 0, cd: 0, k: 0, eff: perf(pl) * WPN[ctx.buy] * (ctx.boost || 1), awp: pl.role === 'awp' && ctx.buy === 'full', anchor: null, passive: false, faker: false, late: false });
+    const z = map.zones, rt = map.routes, P = this.plan, o = P.site === 'A' ? 'B' : 'A';
+    const ord = { entry: 0, igl: 1, sup: 2, awp: 3, lurk: 4 };
+    const tf = [...T.five].sort((a, b) => ord[a.role] - ord[b.role]);
+    const tu = tf.map((pl, i) => { const u = mk(pl, 'T', T, i); u.z = 'TS'; return u; });
+    this.spdT = P.type === 'rush' ? 3 : 4;
+    this.uf = { rush: .35, exec: 1, fake: .8, def: .7 }[P.type];
+    this.go = P.type === 'rush'; this.goTick = { rush: 0, exec: 20, fake: 28, def: 26 }[P.type];
+    this.called = P.type === 'rush' || P.type === 'exec';
+    tu.forEach((u, i) => {
+      if (P.type === 'rush') u.path = [...rt[P.site][i < 4 ? 0 : 1]];
+      else if (P.type === 'exec') u.path = [...rt[P.site][i < 3 ? 0 : 1]];
+      else if (P.type === 'fake') { if (i < 3) u.path = [...rt[P.site][0]]; else { u.path = rt[o][0].slice(0, -1); u.faker = u.late = true; } }
+      else u.path = i < 2 ? rt.A[0].slice(0, -1) : i === 2 ? [rt.A[1][0]] : rt.B[0].slice(0, -1);
+    });
+    const lay = { standard: ['A', 'A', 'mid', 'B', 'B'], stackA: ['A', 'A', 'A', 'mid', 'B'], stackB: ['A', 'mid', 'B', 'B', 'B'], aggro: ['A', 'mid', 'mid', 'B', 'B'], retake: ['A', 'back', 'back', 'back', 'B'] }[this.setup];
+    const cf = shuffle([...CT.five]); const got = {};
+    const cu = cf.map((pl, i) => {
+      const u = mk(pl, 'CT', CT, i), slot = lay[i]; u.z = map.ct[slot];
+      if ((slot === 'A' || slot === 'B') && !got[slot]) { got[slot] = 1; u.anchor = slot; if (this.setup === 'retake') u.passive = true; }
+      if (this.setup === 'aggro' && slot === 'mid') { u.path = [map.ct.push]; u.wait = 3; }
+      return u;
+    });
+    this.units = tu.concat(cu);
+    const ct = avgA(CT.five, 'team');
+    this.rotDelay = 4 + Math.round((100 - ct) / 12);
+    this.ctReads = P.type === 'fake' && R() < clamp(.42 + (ct - avgA(T.five, 'util')) / 100, .15, .75);
+  }
+  alive(s) { return this.units.filter(u => u.alive && u.side === s); }
+  in(zn, s) { return this.units.filter(u => u.alive && u.side === s && u.z === zn); }
+  tpath(from, to) { return bfs(this.map, from, to, this.map.tban); }
+  end(win, why) { this.over = { win, why }; }
+
+  step() {
+    if (this.over) return;
+    this.tick++; const t = this.tick;
+    if (!this.planted) {
+      if (!this.called && t >= this.goTick) { this.called = true; this.call(); }
+      if (!this.go && this.called && t >= this.goTick) {
+        const al = this.alive('T').filter(u => !u.late);
+        if (al.every(u => u.path.length <= 1) || t >= this.goTick + 22) this.go = true;
+      }
+      if (this.plan0.type === 'fake' && !this.noised && t >= 8) {
+        const f = this.units.find(u => u.faker && u.alive && !u.path.length);
+        if (f) { this.noised = true; for (const u of this.alive('T')) if (u.faker) { u.path = this.tpath(u.z, this.plan.site); u.late = false; } if (!this.ctReads) { const fs = this.plan0.site === 'A' ? 'B' : 'A'; ['f1', 'f2'].forEach(x => this.seen[fs].add(x)); } }
+      }
+      this.ctThink();
+    }
+    const tf = t % 2 === 1;
+    const list = this.units.filter(u => u.alive).sort((a, b) => (a.side === b.side ? 0 : (a.side === 'T') === tf ? -1 : 1));
+    for (const u of list) if (u.alive) this.move(u);
+    this.fights();
+    this.objectives();
+  }
+  run() { while (!this.over) this.step(); return this.over; }
+
+  call() {
+    const P = this.plan;
+    if (P.type === 'fake') { for (const u of this.alive('T')) if (u.faker && u.late) { u.path = this.tpath(u.z, P.site); u.late = false; } return; }
+    const z = this.map.zones; let nA = ri(-1, 1), nB = ri(-1, 1);
+    for (const u of this.alive('CT')) { if (z[u.z].s === 'A') nA++; else if (z[u.z].s === 'B') nB++; }
+    P.site = nA < nB ? 'A' : nB < nA ? 'B' : pick(['A', 'B']);
+    for (const u of this.alive('T')) u.path = this.tpath(u.z, P.site);
+  }
+  reveal(u) {
+    if (u.side !== 'T') return;
+    if (u.faker && this.ctReads && !this.go) return;
+    const s = this.map.zones[u.z].s; if (s === 'M') return;
+    if (this.in(u.z, 'CT').length) { this.seen[s].add(u.id); return; }
+    if (R() < .3 && this.map.adj[u.z].some(n => this.in(n, 'CT').length)) this.seen[s].add(u.id);
+  }
+  ctThink() {
+    if (this.setup === 'retake' || this.lock > this.tick) { if (this.lock > this.tick) return; if (this.setup === 'retake') return; }
+    for (const X of ['A', 'B']) {
+      const n = this.seen[X].size, m = this.seen[X === 'A' ? 'B' : 'A'].size;
+      if (this.rotTo !== X && this.rotN < 2 && ((n >= 3 && n > m) || (n >= 2 && m === 0 && this.tick > 18))) {
+        this.pend = { X, at: this.tick + this.rotDelay }; this.rotTo = X; this.rotN++;
+      }
+    }
+    if (this.pend && this.tick >= this.pend.at) { this.rotate(this.pend.X); this.pend = null; }
+  }
+  rotate(X) {
+    const site = this.map.ct[X], z = this.map.zones;
+    for (const u of this.alive('CT')) {
+      if (u.z === site) continue;
+      if (u.anchor && u.anchor !== X) continue;
+      u.path = bfs(this.map, u.z, site); u.passive = false; u.wait = 0;
+    }
+  }
+  cmd(side, c) {
+    if (this.over || this.planted) return false;
+    if (side === 'T') {
+      if (this.switched) return false;
+      this.switched = true; this.plan.site = this.plan.site === 'A' ? 'B' : 'A';
+      for (const u of this.alive('T')) { u.path = this.tpath(u.z, this.plan.site); u.faker = u.late = false; }
+      this.go = false; this.called = true; this.goTick = this.tick + 4; this.uf = Math.min(this.uf, .7);
+      return true;
+    }
+    this.rotate(c); this.lock = this.tick + 18; this.rotTo = c; this.pend = null;
+    return true;
+  }
+  move(u) {
+    if (u.wait > 0) { u.wait--; return; }
+    if (u.cd > 0) { u.cd--; return; }
+    if (!u.path.length) return;
+    const nx = u.path[0], zs = this.map.zones;
+    if (u.side === 'T' && !this.planted && !this.go && u.path.length === 1 && zs[nx].site) return;
+    if (u.side === 'CT' && this.planted && !this.retGo && u.path.length === 1 && nx === this.bombZ) return;
+    const other = u.side === 'T' ? 'CT' : 'T';
+    let foes = this.in(nx, other);
+    if (foes.length && u.side === 'T' && !this.planted) {
+      for (const f of foes) if (f.passive && R() < .75) { const b = bfs(this.map, f.z, this.map.ct.back); if (b.length) f.z = b[0]; f.path = []; }
+      foes = this.in(nx, other);
+    }
+    if (foes.length) {
+      const lk = this.lastKiller; const trade = lk && lk.t === this.tick && foes.includes(lk.u) && R() < .7;
+      const h = trade ? lk.u : pick(foes);
+      this.duel(u, h, { entry: true, trade, to: nx });
+      if (!u.alive) return;
+    }
+    u.z = nx; u.path.shift(); u.cd = (u.side === 'T' ? this.spdT : 3) - 1; this.reveal(u);
+  }
+  duel(a, b, o) {
+    let ra = (o.entry ? mv(a.pl) : hd(a.pl)) * a.eff * (o.ma || 1), rb = hd(b.pl) * b.eff * (o.mb || 1);
+    const tu = this.T.util, cu = this.CT.util;
+    if (o.entry) {
+      rb *= (b.side === 'CT' ? 1.24 : 1.15) * (1 + .06 * (this.in(b.z, b.side).length - 1)); if (b.awp) rb *= 1.08; if (a.awp) ra *= .96; if (a.pl.role === 'entry') ra *= 1.05;
+      if (a.side === 'T' && !this.planted && this.map.zones[o.to].site) ra *= 1 + this.uf * .30 * tu / (tu + cu);
+      if (a.side === 'CT' && this.planted) ra *= (1 + .2 * cu / (tu + cu)) * (this.setup === 'retake' ? 1.2 : 1);
+      if (o.trade) ra *= 1.1 + a.pl.a.team / 600;
+      if (a.side === 'CT' && !this.planted && this.setup === 'aggro' && this.tick < 16) ra *= 1.3;
+    }
+    if (this.alive(a.side).length === 1) ra *= 1 + (a.pl.a.clu - 60) / 300;
+    if (this.alive(b.side).length === 1) rb *= 1 + (b.pl.a.clu - 60) / 300;
+    const p = ra ** K / (ra ** K + rb ** K);
+    const [w, l] = R() < p ? [a, b] : [b, a];
+    l.alive = false; w.k++;
+    this.lastKiller = { u: w, t: this.tick };
+    this.feed.push({ t: this.tick, wn: w.pl.nick, ln: l.pl.nick, ws: w.side });
+    const tU = a.side === 'T' ? a : b, s = this.map.zones[o.to || tU.z].s;
+    if (s !== 'M' && !(tU.faker && this.ctReads && !this.go)) this.seen[s].add(tU.id);
+  }
+  fights() {
+    for (const zn in this.map.zones) {
+      const a = this.in(zn, 'T'), b = this.in(zn, 'CT');
+      if (!a.length || !b.length) continue;
+      shuffle(a); shuffle(b);
+      const n = Math.min(a.length, b.length), d = a.length - b.length, site = this.map.zones[zn].site;
+      for (let i = 0; i < n; i++) {
+        if (!a[i].alive || !b[i].alive || R() > .6) continue;
+        let ma = 1 + Math.max(0, d) * .05, mb = 1 + Math.max(0, -d) * .05;
+        if (site) { if (this.planted) ma *= 1.05; else mb *= 1.05; }
+        this.duel(a[i], b[i], { ma, mb });
+      }
+    }
+  }
+  objectives() {
+    const T = this.alive('T'), C = this.alive('CT'), zs = this.map.zones;
+    if (!this.planted) {
+      if (!C.length) return this.end('T', 'elim');
+      if (!T.length) return this.end('CT', 'elim');
+      let pz = null;
+      for (const u of T) if (zs[u.z].site && !this.in(u.z, 'CT').length) { pz = u.z; break; }
+      if (pz) { if (this.plantZ === pz) this.plantP++; else { this.plantZ = pz; this.plantP = 1; } if (this.plantP >= 3) this.plant(pz); }
+      else { this.plantP = 0; this.plantZ = null; }
+      if (this.tick >= 100 && !this.planted) return this.end('CT', 'time');
+    } else {
+      this.bombT--;
+      if (!C.length) return this.end('T', 'elim');
+      const c = this.in(this.bombZ, 'CT').length, t = this.in(this.bombZ, 'T').length;
+      if (c && !t) { this.defP++; if (this.defP >= 7) return this.end('CT', 'defuse'); } else this.defP = 0;
+      if (this.bombT <= 0) return this.end('T', 'bomb');
+      if (!this.retGo && (C.every(u => u.path.length <= 1) || this.bombT <= 14)) this.retGo = true;
+    }
+  }
+  plant(zn) {
+    this.planted = true; this.bombZ = zn; this.bombT = 35; this.go = true;
+    this.feed.push({ t: this.tick, plant: zn });
+    for (const u of this.alive('CT')) { u.path = bfs(this.map, u.z, zn); u.passive = false; u.wait = 0; }
+    for (const u of this.alive('T')) if (u.z !== zn) u.path = this.tpath(u.z, zn);
+  }
+}
+
+/* ===== Матч: экономика, стороны, овертаймы, ИИ-тактика ===== */
+const COST = { pistol: 3500, eco: 2500, force: 11000, full: 21000 };
+const UTILB = { pistol: .6, eco: .45, force: .8, full: 1 };
+function genTend() {
+  return { rush: rnd(.6, 1.6), exec: rnd(.8, 1.8), fake: rnd(.3, 1), def: rnd(.6, 1.4), pA: rnd(.35, .65),
+    ct: { standard: rnd(1.2, 2.2), stackA: rnd(.3, .9), stackB: rnd(.3, .9), aggro: rnd(.3, 1), retake: rnd(.3, 1) } };
+}
+class Match {
+  constructor(map, ta, tb, opt = {}) {
+    this.map = map; this.opt = opt;
+    const mk = t => { const c = { team: t, five: t.five.map(id => t.players.find(p => p.id === id)), score: 0, money: 4000, loss: 0, tilt: 0, to: 3, boostR: 0, hT: [], hC: [], keep: 0, wonLast: false, st: {}, buy: 'pistol', side: null, boost: 1, util: 60 }; c.five.forEach(p => c.st[p.id] = { k: 0, d: 0 }); return c; };
+    this.a = mk(ta); this.b = mk(tb);
+    this.a.side = R() < .5 ? 'T' : 'CT'; this.b.side = this.a.side === 'T' ? 'CT' : 'T';
+    this.rn = 0; this.ot = 0; this.otStart = 0; this.over = false; this.winner = null; this.round = null; this.log = []; this.msg = [];
+  }
+  get T() { return this.a.side === 'T' ? this.a : this.b; }
+  get CT() { return this.a.side === 'CT' ? this.a : this.b; }
+  isPistol() { return this.ot === 0 && (this.rn === 1 || this.rn === 13); }
+  lastOfHalf() { return this.ot === 0 ? (this.rn === 12) : ((this.rn - this.otStart) % 3 === 0); }
+  autoBuy(c, opp) {
+    if (this.isPistol()) return 'pistol';
+    const m = c.money;
+    if (m >= COST.full * (1 - .16 * c.keep)) return 'full';
+    if (this.lastOfHalf() || opp.score >= 13 + 3 * this.ot - 1) return m >= 7000 ? 'force' : 'eco';
+    if (m >= COST.force && (c.loss >= 2 || c.wonLast)) return 'force';
+    return 'eco';
+  }
+  timeout(c) { if (c.to <= 0) return false; c.to--; c.boostR = 3; c.tilt = 0; return true; }
+  startRound() {
+    this.rn++; const T = this.T, CT = this.CT, ut = this.opt.tactics;
+    for (const c of [T, CT]) {
+      const opp = c === T ? CT : T; let want = this.autoBuy(c, opp);
+      if (c.team.user && ut && ut.buy !== 'auto' && !this.isPistol()) {
+        want = ut.buy; if (want === 'full' && c.money < 15000) want = 'force'; if (want === 'force' && c.money < 7000) want = 'eco';
+      }
+      c.buy = want;
+      c.money -= Math.min(c.money, Math.round(COST[want] * (1 - .16 * (want === 'full' || want === 'force' ? c.keep : 0))));
+      c.boost = 1 + (c.boostR > 0 ? .04 : 0) - Math.min(.06, .02 * Math.max(0, c.tilt - 2));
+      if (c.boostR > 0) c.boostR--;
+      c.util = avgA(c.five, 'util') * UTILB[want];
+    }
+    T.plan = T.team.user && ut ? { ...ut.T } : this.aiT(T, CT);
+    CT.setup = CT.team.user && ut ? ut.CT : this.aiCT(CT, T);
+    this.round = new Round(this.map, T, CT);
+    return this.round;
+  }
+  aiT(c, opp) {
+    const td = c.team.tend, w = { rush: td.rush, exec: td.exec, fake: td.fake, def: td.def }; let pA = td.pA;
+    if (c.buy === 'eco' || c.buy === 'pistol') w.rush *= 2;
+    const h = opp.hC.slice(-2);
+    if (h.length === 2 && h[0] === h[1]) {
+      if (h[0] === 'stackA') pA *= .35; if (h[0] === 'stackB') pA = 1 - (1 - pA) * .35;
+      if (h[0] === 'retake') w.rush *= 1.8; if (h[0] === 'aggro') { w.exec *= 1.5; w.def *= .6; }
+    }
+    return { type: wpick(w), site: R() < pA ? 'A' : 'B' };
+  }
+  aiCT(c, opp) {
+    const w = { ...c.team.tend.ct }, h = opp.hT.slice(-4), nA = h.filter(x => x.site === 'A').length, nB = h.length - nA;
+    if (h.length >= 3) { if (nA >= 3) w.stackA *= 2.5; if (nB >= 3) w.stackB *= 2.5; }
+    if (opp.buy === 'eco') w.aggro *= 1.6;
+    if (opp.hT.slice(-3).filter(x => x.type === 'rush').length >= 2) { w.retake *= .4; w.standard *= 1.4; }
+    return wpick(w);
+  }
+  swap() { [this.a.side, this.b.side] = [this.b.side, this.a.side]; for (const c of [this.a, this.b]) { c.loss = 0; c.keep = 0; c.wonLast = false; } }
+  endRound() {
+    const r = this.round, w = r.over.win, T = this.T, CT = this.CT, W = w === 'T' ? T : CT, L = w === 'T' ? CT : T;
+    W.score++;
+    for (const u of r.units) { const c = u.side === 'T' ? T : CT, s = c.st[u.pl.id]; s.k += u.k; if (!u.alive) s.d++; c.money += u.k * 300; }
+    W.money += 16000; W.loss = 0; W.tilt = 0; W.wonLast = true; W.keep = (W.buy === 'full' || W.buy === 'force') ? r.alive(W.side).length : 0;
+    L.loss++; L.tilt++; L.wonLast = false; L.keep = 0; L.money += 7000 + 2500 * Math.min(L.loss - 1, 4) + (L === T && r.planted ? 4000 : 0);
+    T.hT.push({ type: r.plan0.type, site: r.plan.site }); CT.hC.push(r.setup);
+    for (const c of [this.a, this.b]) c.money = Math.min(c.money, 60000);
+    this.log.push({ rn: this.rn, win: W === this.a ? 'a' : 'b', side: w, why: r.over.why });
+    if (!L.team.user && L.tilt >= 4 && L.to > 0) { this.timeout(L); this.msg.push(L.team.tag + ' берут тайм-аут'); }
+    const tgt = 13 + 3 * this.ot, a = this.a, b = this.b;
+    if (Math.max(a.score, b.score) >= tgt) { this.over = true; this.winner = a.score > b.score ? a : b; return; }
+    if (this.ot === 0 && this.rn === 12) { this.swap(); a.money = b.money = 4000; this.msg.push('Смена сторон'); }
+    else if (a.score === b.score && a.score === 12 + 3 * this.ot) { this.ot++; this.otStart = this.rn; a.money = b.money = 50000; a.loss = b.loss = 0; this.msg.push('Овертайм ' + this.ot); }
+    else if (this.ot > 0 && this.rn - this.otStart === 3) { this.swap(); a.money = b.money = 50000; this.msg.push('Смена сторон'); }
+  }
+  playAll() { while (!this.over) { this.startRound().run(); this.endRound(); } return this; }
+}
+
+/* Быстрый расчёт чужих матчей без раундовой симуляции */
+function teamStr(t) { const f = t.five.map(id => t.players.find(p => p.id === id)); return f.reduce((s, p) => s + ovr(p) * perf(p), 0) / f.length; }
+const QE = 4.5;
+function quickMatch(ta, tb) {
+  const sa = teamStr(ta) ** QE, sb = teamStr(tb) ** QE, p = sa / (sa + sb); let a = 0, b = 0, tgt = 13;
+  for (;;) { if (R() < p) a++; else b++; if (a >= tgt || b >= tgt) break; if (a === b && a === tgt - 1) tgt += 3; }
+  return [a, b];
+}
+
+/* ===== Карьера ===== */
+const FN = ['Артём', 'Ilya', 'Marek', 'Jonas', 'Тимур', 'Luca', 'Emre', 'Данил', 'Oskar', 'Rafael', 'Никита', 'Mateus', 'Kai', 'Егор', 'Viktor', 'Anton', 'Hugo', 'Руслан', 'Felix', 'Diego', 'Миша', 'Pavel', 'Noel', 'Айдар', 'Leo', 'Tomas'];
+const LN = ['Саблин', 'Kowal', 'Lindqvist', 'Ахметов', 'Moretti', 'Yilmaz', 'Громов', 'Berg', 'Costa', 'Лаптев', 'Novak', 'Haas', 'Орлов', 'Petrov', 'Silva', 'Крюков', 'Dubois', 'Weiss', 'Ткач', 'Jensen', 'Rocha', 'Зимин', 'Vega', 'Holm', 'Усманов', 'Marin'];
+const NA = ['zy', 'kra', 'vex', 'no', 'ri', 'ta', 'mo', 'sha', 'el', 'dro', 'fi', 'ky', 'lu', 'ar', 'su', 'ne', 'ba', 'ox', 'ju', 'ha', 'qu', 'te', 'wi', 'ce'];
+const NB = ['x', 'ko', 'rn', 'ler', 'zz', 'dar', 'mi', 'to', 'ven', 'sh', 'ro', 'lix', 'n1k', 'ser', 'ty', 'ga', 'ps', 'mo', 'rex', 'vy'];
+let PID = 1; const NICKS = new Set();
+function genNick() { for (let i = 0; i < 50; i++) { let n = pick(NA) + pick(NB); if (R() < .3) n = pick(NA) + n; if (!NICKS.has(n)) { NICKS.add(n); return n; } } const n = pick(NA) + pick(NB) + ri(2, 99); NICKS.add(n); return n; }
+function salary(p) { return Math.round(Math.pow(Math.max(ovr(p) - 40, 5), 2) * 4 / 50) * 50; }
+function value(p) {
+  const o = ovr(p); let v = Math.pow(Math.max(o - 40, 5), 2.2) * 40;
+  v *= p.age < 22 ? 1.25 : p.age > 29 ? .55 : p.age > 27 ? .8 : 1; v *= 1 + Math.max(0, p.pot - o) / 60;
+  return Math.max(2000, Math.round(v / 500) * 500);
+}
+function genPlayer(t, role, ageMin = 17, ageMax = 31) {
+  const j = () => clamp(t + rnd(-7, 7), 30, 97);
+  const a = { aim: j(), ref: j(), util: j(), pos: j(), clu: j(), team: j() };
+  const tw = { awp: { aim: 4, pos: 3 }, entry: { ref: 6, aim: 2 }, sup: { util: 8, team: 3 }, lurk: { pos: 4, clu: 6 }, igl: { team: 9, util: 3, aim: -5 } }[role];
+  for (const k in tw) a[k] = clamp(a[k] + tw[k], 30, 97);
+  const p = { id: PID++, name: pick(FN) + ' ' + pick(LN), nick: genNick(), age: ri(ageMin, ageMax), role, a, pot: 0, energy: ri(80, 100), morale: ri(60, 85), form: 0, sal: 0, k: 0, d: 0, m: 0 };
+  const o = ovr(p); p.pot = Math.min(96, o + (p.age < 23 ? ri(4, 16) : p.age < 27 ? ri(0, 6) : 0)); p.sal = salary(p);
+  return p;
+}
+const RL = ['awp', 'entry', 'sup', 'lurk', 'igl'];
+function genTeam(id, name, tag, t) {
+  const players = RL.map(r => genPlayer(t, r)); players.push(genPlayer(t - 6, pick(RL), 17, 22));
+  return { id, name, tag, players, five: players.slice(0, 5).map(p => p.id), tend: genTend(), w: 0, l: 0, rd: 0, user: false };
+}
+const AI_TEAMS = [['Polar Foxes', 'PLF', 82], ['Iron Lynx', 'LNX', 79], ['Night Heron', 'NHR', 77], ['Red Quarry', 'RQ', 75], ['Steppe Riders', 'STR', 73], ['Glass Cannon', 'GLC', 71], ['Salt Harbor', 'SLT', 70], ['Ninth Gate', 'N9', 68], ['Copper Owls', 'OWL', 66], ['Low Orbit', 'LOW', 64], ['Tundra Five', 'TN5', 62]];
+function makeSchedule(n) {
+  const ids = [...Array(n).keys()], rounds = [];
+  for (let r = 0; r < n - 1; r++) {
+    const wk = []; for (let i = 0; i < n / 2; i++) wk.push(r % 2 ? [ids[n - 1 - i], ids[i]] : [ids[i], ids[n - 1 - i]]);
+    rounds.push(wk); ids.splice(1, 0, ids.pop());
+  }
+  return rounds;
+}
+function genMarket(n) { const m = []; for (let i = 0; i < n; i++) m.push(genPlayer(rnd(58, 80), pick(RL), 17, 30)); return m; }
+function newCareer(name = 'First Light', tag = 'FL') {
+  PID = 1; NICKS.clear();
+  const teams = AI_TEAMS.map((t, i) => genTeam(i, t[0], t[1], t[2]));
+  const u = genTeam(11, name, tag, 67); u.user = true; teams.push(u);
+  const S = { v: 1, season: 1, week: 0, phase: 'league', teams, userId: 11, money: 140000, fans: 100, market: genMarket(16), training: { focus: 'aim', intensity: 'normal' }, staff: { coach: 0, analyst: 0 },
+    schedule: shuffle(makeSchedule(12)), lastResults: [], news: [], playoff: null, tactics: { T: { type: 'exec', site: 'A' }, CT: 'standard', buy: 'auto' }, pid: 0, champion: null, lastFin: null };
+  addNews(S, 'Сезон 1 начался. Цель: попасть в четвёрку лучших и выйти в плей-офф.');
+  S.pid = PID; return S;
+}
+function addNews(S, t) { S.news.unshift({ w: S.week + 1, s: S.season, t }); if (S.news.length > 30) S.news.pop(); }
+const userTeam = S => S.teams[S.userId];
+const fiveOf = t => t.five.map(id => t.players.find(p => p.id === id));
+function standings(S) { return [...S.teams].sort((a, b) => b.w - a.w || b.rd - a.rd || a.id - b.id); }
+function nextMatch(S) {
+  const u = S.userId;
+  if (S.phase === 'league') { const m = S.schedule[S.week].find(x => x.includes(u)); return { opp: S.teams[m[0] === u ? m[1] : m[0]], map: MAPS[MAP_ORDER[S.week % 3]], stage: 'Тур ' + (S.week + 1) + ' из 11' }; }
+  if (S.phase === 'semi') { const m = S.playoff.semis.find(x => x.includes(u)); return m ? { opp: S.teams[m[0] === u ? m[1] : m[0]], map: MAPS[MAP_ORDER[S.season % 3]], stage: 'Полуфинал' } : null; }
+  if (S.phase === 'final') { const m = S.playoff.final; return m.includes(u) ? { opp: S.teams[m[0] === u ? m[1] : m[0]], map: MAPS[MAP_ORDER[(S.season + 1) % 3]], stage: 'Финал' } : null; }
+  return null;
+}
+function applyResult(ta, tb, sa, sb) { const W = sa > sb ? ta : tb, L = sa > sb ? tb : ta; W.w++; L.l++; ta.rd += sa - sb; tb.rd += sb - sa; return W; }
+function trainWeek(S) {
+  const { focus, intensity } = S.training, I = { light: .6, normal: 1, hard: 1.5 }[intensity], coach = 1 + .15 * S.staff.coach, u = userTeam(S);
+  const keys = { aim: ['aim', 'ref'], util: ['util'], pos: ['pos', 'clu'], team: ['team'] }[focus];
+  for (const p of u.players) {
+    const st = u.five.includes(p.id);
+    p.energy += 10 - (st ? 8 : 0); if (!st) p.morale -= 1;
+    if (focus === 'rest') { p.energy += 26; p.morale += 4; }
+    else {
+      const room = clamp((p.pot - ovr(p)) / 12, .05, 1.2), ageF = p.age <= 21 ? 1.3 : p.age <= 25 ? 1 : p.age <= 29 ? .6 : .3;
+      const g = I * coach * room * ageF * rnd(.4, 1) * (p.energy < 35 ? .4 : 1);
+      for (const k of keys) p.a[k] = clamp(p.a[k] + g * (keys.length > 1 ? .6 : 1), 30, 99);
+      p.energy -= { light: 1, normal: 5, hard: 11 }[intensity]; if (intensity === 'hard') p.morale -= 1.5;
+    }
+    if (p.age >= 30) p.a.ref = Math.max(30, p.a.ref - .15);
+    p.form = clamp(p.form * .6 + rnd(-3, 3), -5, 5);
+    p.energy = clamp(p.energy, 5, 100); p.morale = clamp(p.morale, 5, 100);
+  }
+  for (const t of S.teams) if (!t.user) for (const p of t.players) {
+    if (p.pot > ovr(p) && R() < .5) { const k = pick(Object.keys(p.a)); p.a[k] = clamp(p.a[k] + rnd(0, .7) * (p.age <= 23 ? 1.2 : .6), 30, 99); }
+    p.form = clamp(p.form * .6 + rnd(-3, 3), -5, 5); p.energy = ri(78, 96);
+  }
+}
+/* Итог матча пользователя: m — завершённый Match, где a = команда пользователя */
+function finishUserMatch(S, m) {
+  const u = userTeam(S), opp = m.b.team, won = m.winner === m.a, sa = m.a.score, sb = m.b.score;
+  for (const c of [m.a, m.b]) for (const p of c.five) { const s = c.st[p.id]; p.k += s.k; p.d += s.d; p.m++; if (c.team.user) { p.morale = clamp(p.morale + (won ? 4 : -3), 5, 100); p.form = clamp(p.form + (s.k > s.d ? 1 : -1), -5, 5); } }
+  const res = { won, sa, sb, opp: opp.name, lines: [] };
+  if (S.phase === 'league') {
+    applyResult(u, opp, sa, sb);
+    const out = [{ a: u.tag, b: opp.tag, sa, sb, user: true }];
+    for (const [x, y] of S.schedule[S.week]) { if (x === S.userId || y === S.userId) continue; const [qa, qb] = quickMatch(S.teams[x], S.teams[y]); applyResult(S.teams[x], S.teams[y], qa, qb); out.push({ a: S.teams[x].tag, b: S.teams[y].tag, sa: qa, sb: qb }); }
+    S.lastResults = out;
+  } else if (S.phase === 'semi') {
+    S.playoff.sres = []; const fin = [];
+    for (const [x, y] of S.playoff.semis) { let r; if (x === S.userId || y === S.userId) r = x === S.userId ? [sa, sb] : [sb, sa]; else r = quickMatch(S.teams[x], S.teams[y]); S.playoff.sres.push(r); fin.push(r[0] > r[1] ? x : y); }
+    S.playoff.final = fin;
+  } else if (S.phase === 'final') { S.playoff.fres = S.playoff.final[0] === S.userId ? [sa, sb] : [sb, sa]; S.champion = won ? S.userId : opp.id; }
+  addNews(S, (won ? 'Победа над ' : 'Поражение от ') + opp.name + ' ' + sa + ':' + sb);
+  endWeek(S, res, won);
+  return res;
+}
+function endWeek(S, res, won) {
+  const u = userTeam(S);
+  S.fans = Math.max(20, S.fans + (won === true ? 12 : won === false ? -3 : 0));
+  const sponsor = 14000 + S.fans * 40, prize = won === true ? 6000 : won === false ? 1500 : 0;
+  const sal = u.players.reduce((s, p) => s + p.sal, 0), staff = 1500 * (S.staff.coach + S.staff.analyst);
+  S.money += sponsor + prize - sal - staff;
+  S.lastFin = { sponsor, prize, sal, staff, net: sponsor + prize - sal - staff };
+  if (res) res.fin = S.lastFin;
+  trainWeek(S);
+  if (S.money < 0) { for (const p of u.players) p.morale = clamp(p.morale - 3, 5, 100); addNews(S, 'Бюджет в минусе: игроки недовольны задержкой зарплат.'); }
+  for (let i = 0; i < 3; i++) S.market[ri(0, S.market.length - 1)] = genPlayer(rnd(58, 80), pick(RL), 17, 30);
+  const tired = u.players.filter(p => u.five.includes(p.id) && p.energy < 40).length;
+  if (tired) addNews(S, 'Усталость в основе: ' + tired + ' игрок(а) ниже 40% энергии. Нужен отдых или замена.');
+  if (S.phase === 'league') {
+    S.week++;
+    if (S.week >= S.schedule.length) {
+      const st = standings(S).slice(0, 4).map(t => t.id);
+      S.playoff = { semis: [[st[0], st[3]], [st[1], st[2]]], final: null, sres: null, fres: null }; S.phase = 'semi';
+      addNews(S, st.includes(S.userId) ? 'Регулярный сезон окончен. Вы в плей-офф!' : 'Регулярный сезон окончен. В плей-офф попасть не удалось.');
+    }
+  } else if (S.phase === 'semi') S.phase = 'final';
+  else if (S.phase === 'final') seasonEnd(S);
+  S.pid = PID;
+}
+/* Неделя плей-офф без участия пользователя */
+function simPlayoffWeek(S) {
+  if (S.phase === 'semi') { S.playoff.sres = []; S.playoff.final = S.playoff.semis.map(([x, y]) => { const r = quickMatch(S.teams[x], S.teams[y]); S.playoff.sres.push(r); return r[0] > r[1] ? x : y; }); }
+  else if (S.phase === 'final') { const [x, y] = S.playoff.final, r = quickMatch(S.teams[x], S.teams[y]); S.playoff.fres = r; S.champion = r[0] > r[1] ? x : y; }
+  endWeek(S, null, null);
+}
+function seasonEnd(S) {
+  const st = standings(S), place = st.findIndex(t => t.user) + 1, fin = S.playoff.final, semi = S.playoff.semis.flat();
+  let prize = place <= 4 ? 0 : place <= 8 ? 30000 : 15000, title = place + '-е место в лиге';
+  if (S.champion === S.userId) { prize = 200000; title = 'Чемпион сезона'; }
+  else if (fin.includes(S.userId)) { prize = 110000; title = 'Финалист'; }
+  else if (semi.includes(S.userId)) { prize = 60000; title = 'Полуфиналист'; }
+  S.money += prize; S.phase = 'end';
+  S.summary = { season: S.season, place, title, prize, champ: S.teams[S.champion].name, w: userTeam(S).w, l: userTeam(S).l };
+  addNews(S, 'Итог сезона: ' + title + '. Призовые $' + prize.toLocaleString('ru-RU') + '. Чемпион: ' + S.summary.champ + '.');
+}
+function nextSeason(S) {
+  S.season++; S.week = 0; S.phase = 'league'; S.playoff = null; S.champion = null; S.lastResults = []; S.summary = null;
+  PID = S.pid;
+  for (const t of S.teams) {
+    t.w = t.l = t.rd = 0;
+    for (const p of t.players) { p.age++; p.energy = 100; p.morale = clamp(p.morale + 10, 5, 100); p.k = p.d = p.m = 0; if (p.age >= 31) for (const k in p.a) p.a[k] = Math.max(30, p.a[k] - rnd(.5, 2)); p.sal = Math.max(p.sal, salary(p)); }
+    if (!t.user) { t.players = t.players.map(p => p.age > 32 ? Object.assign(genPlayer(ovr(p) + 2, p.role, 18, 22), {}) : p); t.five = t.players.slice(0, 5).map(p => p.id); t.tend = genTend(); }
+  }
+  S.schedule = shuffle(makeSchedule(12)); S.market = genMarket(16); S.pid = PID;
+  addNews(S, 'Сезон ' + S.season + ' начался. Контракты пересмотрены, игроки отдохнули.');
+}
+
+if (typeof module !== 'undefined') module.exports = { MAPS, MAP_ORDER, Round, Match, quickMatch, newCareer, nextMatch, finishUserMatch, simPlayoffWeek, nextSeason, standings, userTeam, fiveOf, genTeam, genPlayer, ovr, teamStr, value, salary, avgA, UTILB };
+/* ===== Интерфейс ===== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const cash = n => (n < 0 ? '−' : '') + '$' + Math.abs(Math.round(n)).toLocaleString('ru-RU');
+const bar = (v, cls = '') => `<span class="bar ${cls}"><i style="width:${clamp(v, 0, 100)}%"></i></span>`;
+const eCls = e => e < 40 ? 'bad' : e < 60 ? 'warn' : 'good';
+const RS = { awp: 'AWP', entry: 'ENT', sup: 'SUP', lurk: 'LRK', igl: 'IGL' };
+const KEY = 'clutch-manager-v1';
+let S, tab = 'club', sheet = null, MV = null, flash = null, askNew = false;
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* без сохранения игра всё равно работает */ } }
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(KEY));
+    if (d && d.v === 1 && d.teams) { S = d; PID = S.pid; for (const t of S.teams) for (const p of t.players) NICKS.add(p.nick); return true; }
+  } catch (e) { /* пустое или недоступное хранилище */ }
+  return false;
+}
+
+const PLAN_D = { rush: 'Все бегут на точку без подготовки. Опережает ротации и наказывает игру на ретейк.', exec: 'Собираемся у точки и выходим под гранаты. Сильнее всего при хороших саппортах.', fake: 'Двое шумят на другой точке, затем команда бьёт в настоящую цель. Работает против быстрых ротаций.', def: 'Расходимся по карте, ищем размен и идём туда, где защитников меньше.' };
+const SETUP_D = { standard: 'Двое на A, один в центре, двое на B. Без слабых мест и без сюрпризов.', stackA: 'Трое на A. Отлично, если угадали, плохо, если атака пошла на B.', stackB: 'Трое на B. Отлично, если угадали, плохо, если атака пошла на A.', aggro: 'Двое выходят в мид за ранним разменом. Риск ради информации и перевеса.', retake: 'По одному на точках, трое в запасе. Отдаём установку и отбиваем точку вместе.' };
+
+/* ---------- Экраны ---------- */
+function vTop() {
+  const u = userTeam(S);
+  const st = S.phase === 'league' ? 'тур ' + (S.week + 1) + ' из 11' : S.phase === 'semi' ? 'полуфиналы' : S.phase === 'final' ? 'финал' : 'межсезонье';
+  return `<header class="top"><div><p class="eyebrow">Сезон ${S.season} · ${st}</p><button class="name" data-act="rename" aria-label="Переименовать клуб">${esc(u.name)}</button></div><div class="cash ${S.money < 0 ? 'neg' : ''}">${cash(S.money)}</div></header>`;
+}
+function analyst(opp) {
+  const l = S.staff.analyst, t = opp.tend;
+  if (!l) return 'Аналитика нет. Наймите его в разделе «Тренировки», чтобы видеть привычки соперника.';
+  let s = `В атаке чаще идут на ${t.pA >= .5 ? 'A' : 'B'} (${Math.round(Math.max(t.pA, 1 - t.pA) * 100)}%).`;
+  if (l >= 2) { const pl = Object.entries({ rush: t.rush, exec: t.exec, fake: t.fake, def: t.def }).sort((a, b) => b[1] - a[1])[0][0]; s += ` Любимый план: ${PLAN_N[pl].toLowerCase()}.`; }
+  if (l >= 3) { const cs = Object.entries(t.ct).sort((a, b) => b[1] - a[1]); s += ` В защите: ${SETUP_N[cs[0][0]].toLowerCase()}, запасной вариант: ${SETUP_N[cs[1][0]].toLowerCase()}.`; }
+  return s;
+}
+function vClub() {
+  const u = userTeam(S), st = standings(S), pos = st.findIndex(t => t.user) + 1, five = fiveOf(u);
+  const avgE = Math.round(five.reduce((s, p) => s + p.energy, 0) / 5), sal = u.players.reduce((s, p) => s + p.sal, 0), net = 14000 + S.fans * 40 - sal - 1500 * (S.staff.coach + S.staff.analyst);
+  let main = '';
+  if (flash) {
+    main += `<section class="card"><p class="eyebrow">Итог матча</p><h2>${flash.won ? 'Победа' : 'Поражение'} ${flash.sa}:${flash.sb}</h2><p class="mut sm">Соперник: ${esc(flash.opp)}. За неделю: спонсоры ${cash(flash.fin.sponsor)}, призовые ${cash(flash.fin.prize)}, зарплаты и штаб −${cash(flash.fin.sal + flash.fin.staff)}. Итого ${flash.fin.net >= 0 ? '+' : ''}${cash(flash.fin.net)}.</p></section>`;
+  }
+  if (S.phase === 'end') {
+    const x = S.summary;
+    main += `<section class="card"><p class="eyebrow">Сезон ${x.season} завершён</p><h2>${x.title}</h2><p class="mut sm">В лиге ${x.w} побед и ${x.l} поражений, ${x.place}-е место. Чемпион: ${esc(x.champ)}.</p><p class="num" style="font-size:22px;font-weight:700">${cash(x.prize)} <span class="mut sm" style="font-family:var(--f-b);font-weight:400">призовых</span></p><button class="btn pri" data-act="nextSeason">Начать сезон ${x.season + 1}</button></section>`;
+  } else {
+    const nm = nextMatch(S);
+    if (!nm) {
+      const pairs = S.phase === 'semi' ? S.playoff.semis : [S.playoff.final];
+      main += `<section class="card"><p class="eyebrow">${S.phase === 'semi' ? 'Полуфиналы' : 'Финал'} без вашей команды</p><h2>Плей-офф продолжается</h2><div>${pairs.map(([a, b]) => `<p class="res"><span>${esc(S.teams[a].name)}</span><span class="mut">против</span><span>${esc(S.teams[b].name)}</span></p>`).join('')}</div><p class="mut sm">Неделя пройдёт как обычно: тренировки, зарплаты и спонсорские выплаты.</p><button class="btn pri" data-act="simPO">Узнать результаты</button></section>`;
+    } else {
+      const su = teamStr(u), so = teamStr(nm.opp), w = v => (v - 45) / 45 * 100;
+      main += `<section class="card"><p class="eyebrow">${nm.stage} · следующий матч</p>
+      <div class="vs"><div><b>${esc(u.tag)}</b><small>${esc(u.name)}</small></div><span class="x">VS</span><div class="r"><b>${esc(nm.opp.tag)}</b><small>${esc(nm.opp.name)} · ${nm.opp.w}-${nm.opp.l}</small></div></div>
+      <div class="plain"><div class="str"><span class="mut">Наша сила</span>${bar(w(su))}<b class="num">${su.toFixed(1)}</b></div><div class="str"><span class="mut">Соперник</span>${bar(w(so), 'bad')}<b class="num">${so.toFixed(1)}</b></div></div>
+      <p class="sm"><b>Карта: ${nm.map.name}.</b> <span class="mut">${nm.map.note}. Формат: до 13 раундов.</span></p>
+      <p class="sm mut">${analyst(nm.opp)}</p>
+      <button class="btn pri" data-act="play">Играть матч</button></section>`;
+    }
+  }
+  return vTop() + main + `
+  <div class="stats"><div class="stat"><b>${pos}<span style="font-size:12px"> из 12</span></b><span>место · ${u.w}-${u.l}</span></div><div class="stat ${eCls(avgE)}"><b>${avgE}%</b><span>энергия основы</span></div><div class="stat ${net < 0 ? 'bad' : ''}"><b>${net >= 0 ? '+' : ''}${cash(net)}</b><span>неделя без призовых</span></div></div>
+  <section class="plain"><h3>Лента клуба</h3><div class="card" style="padding:4px 16px"><ul class="news">${S.news.slice(0, 7).map(n => `<li><time>С${n.s} Н${n.w}</time><span>${esc(n.t)}</span></li>`).join('')}</ul></div></section>
+  <section class="plain">${askNew ? `<p class="sm">Текущая карьера будет удалена. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>` : `<button class="btn s" data-act="newAsk">Новая карьера</button>`}</section>`;
+}
+function pRow(p, extra = '', cls = '') {
+  return `<button class="prow ${cls}" data-act="player" data-id="${p.id}" data-mk="${cls === 'mk' ? 1 : ''}"><span class="role">${RS[p.role]}</span><span style="min-width:0"><span class="nick">${esc(p.nick)}</span><small>${esc(p.name)} · ${p.age} лет</small></span>${extra}<span class="o">${Math.round(ovr(p))}</span></button>`;
+}
+function vRoster() {
+  const u = userTeam(S), five = fiveOf(u), bench = u.players.filter(p => !u.five.includes(p.id));
+  const e = p => `<span>${bar(p.energy, eCls(p.energy))}<small class="num" style="text-align:right">${Math.round(p.energy)}%</small></span>`;
+  return vTop() + `<section class="plain"><h3>Основа · сила ${teamStr(u).toFixed(1)}</h3><div class="list">${five.map(p => pRow(p, e(p))).join('')}</div></section>
+  <section class="plain"><h3>Запас · ${bench.length}</h3>${bench.length ? `<div class="list">${bench.map(p => pRow(p, e(p))).join('')}</div>` : '<p class="mut sm">Запасных нет. Без замены усталость основы придётся снимать неделей отдыха.</p>'}</section>
+  <p class="mut sm">Полоска показывает энергию. Ниже 40% игрок заметно хуже стреляет. Нажмите на игрока, чтобы увидеть навыки, поставить в основу или продать.</p>`;
+}
+function vTrain() {
+  const t = S.training, c = S.staff.coach, a = S.staff.analyst;
+  const F = { aim: 'Стрельба', util: 'Гранаты', pos: 'Позиции', team: 'Командная игра', rest: 'Отдых' }, I = { light: 'Лёгкая', normal: 'Обычная', hard: 'Тяжёлая' };
+  const FD = { aim: 'Растут стрельба и реакция.', util: 'Растут гранаты: сильнее выходы на точку и ретейки.', pos: 'Растут позиция и клатч: игроки лучше держат углы.', team: 'Растёт командность: быстрее ротации и размены.', rest: 'Навыки не растут. Энергия +26, мораль +4.' };
+  const ID = { light: 'Энергия −1 в неделю, рост ×0,6.', normal: 'Энергия −5 в неделю.', hard: 'Энергия −11 в неделю, рост ×1,5, мораль падает.' };
+  const up = (k, lvl, cost, name, desc) => `<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><b>${name}</b><span class="num mut sm">уровень ${lvl} из 3</span></div><p class="mut sm">${desc}</p>${lvl < 3 ? `<button class="btn s" data-act="staff" data-v="${k}" ${S.money < cost ? 'disabled' : ''}>Улучшить за ${cash(cost)}</button>` : '<p class="sm">Максимальный уровень.</p>'}</div>`;
+  return vTop() + `<section class="card"><h3>Упор на неделю</h3><div class="chips">${Object.keys(F).map(k => `<button class="chip" data-act="focus" data-v="${k}" aria-pressed="${t.focus === k}">${F[k]}</button>`).join('')}</div><p class="sm mut">${FD[t.focus]}</p>
+  ${t.focus !== 'rest' ? `<h3>Нагрузка</h3><div class="chips">${Object.keys(I).map(k => `<button class="chip" data-act="intensity" data-v="${k}" aria-pressed="${t.intensity === k}">${I[k]}</button>`).join('')}</div><p class="sm mut">${ID[t.intensity]}</p>` : ''}
+  <p class="sm mut">План применяется после каждого матча. Матч отнимает у основы 8 энергии, за неделю все восстанавливают 10. Быстрее всех растут игроки до 21 года с высоким потенциалом.</p></section>
+  <section class="plain"><h3>Штаб</h3>${up('coach', c, 40000 * (c + 1), 'Тренер', 'Каждый уровень ускоряет рост навыков на 15%. Зарплата $1 500 в неделю за уровень.')}${up('analyst', a, 30000 * (a + 1), 'Аналитик', 'Перед матчем показывает привычки соперника: точку, план атаки, расстановку в защите.')}</section>`;
+}
+function vMarket() {
+  const u = userTeam(S), list = [...S.market].sort((a, b) => ovr(b) - ovr(a));
+  return vTop() + `<section class="plain"><h3>Свободные агенты · ${list.length}</h3><p class="mut sm">В составе ${u.players.length} из 8. Каждую неделю трое игроков на рынке меняются.</p><div class="list">${list.map(p => pRow(p, `<span class="price ${value(p) > S.money ? 'mut' : ''}">${cash(value(p))}</span>`, 'mk')).join('')}</div></section>`;
+}
+function vLeague() {
+  const st = standings(S), po = S.playoff;
+  const nm = id => esc(S.teams[id].name), me = (a, b) => (a === S.userId || b === S.userId) ? 'me' : '';
+  let pf = '';
+  if (po) {
+    pf = `<section class="plain"><h3>Плей-офф</h3><div class="card" style="gap:4px">${po.semis.map(([a, b], i) => `<p class="res ${me(a, b)}"><span>${nm(a)}</span><span>${po.sres ? po.sres[i].join(':') : 'полуфинал'}</span><span>${nm(b)}</span></p>`).join('')}${po.final ? `<p class="res ${me(...po.final)}"><span>${nm(po.final[0])}</span><span>${po.fres ? po.fres.join(':') : 'финал'}</span><span>${nm(po.final[1])}</span></p>` : ''}</div></section>`;
+  }
+  return vTop() + pf + `<section class="plain"><h3>Таблица лиги</h3><div class="card" style="padding:6px 10px"><table><thead><tr><th>#</th><th>Команда</th><th>В</th><th>П</th><th>± раунды</th></tr></thead><tbody>${st.map((t, i) => `<tr class="${t.user ? 'me' : ''} ${i === 4 ? 'cut' : ''}"><td>${i + 1}</td><td>${esc(t.name)}</td><td>${t.w}</td><td>${t.l}</td><td>${t.rd > 0 ? '+' : ''}${t.rd}</td></tr>`).join('')}</tbody></table></div><p class="mut sm">Четыре лучшие команды выходят в плей-офф. Призовые: чемпион $200 000, финалист $110 000, полуфиналист $60 000.</p></section>
+  ${S.lastResults.length ? `<section class="plain"><h3>Последний тур</h3><div class="card" style="gap:0">${S.lastResults.map(r => `<p class="res ${r.user ? 'me' : ''}"><span>${r.a}</span><span>${r.sa}:${r.sb}</span><span>${r.b}</span></p>`).join('')}</div></section>` : ''}`;
+}
+function vSheet() {
+  if (!sheet) return '';
+  const u = userTeam(S);
+  if (sheet.t === 'name') return `<div class="in"><form class="wrap col" id="f-name"><h2>Название клуба</h2><label for="in-name">Полное название<input type="text" id="in-name" maxlength="22" value="${esc(u.name)}"></label><label for="in-tag">Тег, до 4 символов<input type="text" id="in-tag" maxlength="4" value="${esc(u.tag)}"></label><div class="rowb"><button class="btn pri" type="submit">Сохранить</button><button class="btn" type="button" data-act="close">Отмена</button></div></form></div>`;
+  const mk = sheet.t === 'market', p = (mk ? S.market : u.players).find(x => x.id === sheet.id);
+  if (!p) { sheet = null; return ''; }
+  const o = ovr(p), gap = p.pot - o, pot = gap >= 8 ? 'высокий' : gap >= 3 ? 'средний' : 'раскрыт', v = value(p), st = u.five.includes(p.id);
+  let act = '';
+  if (mk) {
+    const full = u.players.length >= 8, poor = S.money < v;
+    act = `<button class="btn pri" data-act="buy" data-id="${p.id}" ${full || poor ? 'disabled' : ''}>Подписать за ${cash(v)}</button>${full ? '<p class="sm mut">В составе уже 8 игроков. Сначала продайте кого-нибудь.</p>' : poor ? '<p class="sm mut">Не хватает денег.</p>' : `<p class="sm mut">Зарплата ${cash(salary(p))} в неделю.</p>`}`;
+  } else {
+    if (!st) act += `<h3>Поставить в основу вместо</h3><div class="chips">${fiveOf(u).map(q => `<button class="chip" data-act="swap" data-id="${p.id}" data-v="${q.id}">${esc(q.nick)} · ${RS[q.role]}</button>`).join('')}</div>`;
+    else act += '<p class="sm mut">Играет в основе. Чтобы заменить, откройте запасного игрока.</p>';
+    act += `<button class="btn dan" data-act="sell" data-id="${p.id}" ${u.players.length <= 5 ? 'disabled' : ''}>Продать за ${cash(v * .6)}</button>${u.players.length <= 5 ? '<p class="sm mut">В команде должно остаться пять игроков.</p>' : ''}`;
+  }
+  return `<div class="in"><div class="wrap col"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><p class="eyebrow">${ROLES[p.role]} · ${p.age} лет</p><h2>${esc(p.nick)}</h2><p class="mut sm">${esc(p.name)}</p></div><div style="text-align:right"><div class="num" style="font-size:30px;font-weight:700;line-height:1">${Math.round(o)}</div><span class="mut sm">общий</span></div></div>
+  <div class="plain">${Object.keys(ATTR).map(k => `<div class="attr"><span class="mut">${ATTR[k]}</span>${bar(p.a[k])}<b>${Math.round(p.a[k])}</b></div>`).join('')}</div>
+  <div class="kv"><div class="stat"><b>${pot}</b><span>потенциал</span></div><div class="stat"><b>${cash(mk ? salary(p) : p.sal)}</b><span>зарплата в неделю</span></div>${mk ? '' : `<div class="stat ${eCls(p.energy)}"><b>${Math.round(p.energy)}%</b><span>энергия</span></div><div class="stat"><b>${Math.round(p.morale)}%</b><span>мораль</span></div><div class="stat"><b>${p.k}/${p.d}</b><span>убийства/смерти за сезон</span></div><div class="stat"><b>${p.form > 1.5 ? 'в ударе' : p.form < -1.5 ? 'спад' : 'ровная'}</b><span>форма</span></div>`}</div>
+  ${act}<button class="btn" data-act="close">Закрыть</button></div></div>`;
+}
+function render() {
+  if (!S) return;
+  const T = { club: ['Клуб', vClub], roster: ['Состав', vRoster], train: ['Тренировки', vTrain], market: ['Рынок', vMarket], league: ['Турнир', vLeague] };
+  $('#app').innerHTML = T[tab][1]();
+  $('#tabs .wrap').innerHTML = Object.keys(T).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}>${T[k][0]}</button>`).join('');
+  const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
+}
+
+/* ---------- Матч ---------- */
+function startMatchView() {
+  const nm = nextMatch(S); if (!nm) return;
+  const u = userTeam(S), m = new Match(nm.map, u, nm.opp, { tactics: S.tactics });
+  MV = { mine: new Set(u.five), m, nm, speed: 1, paused: true, acc: 0, last: 0, phase: 'pre', pos: {}, hold: false, stopEach: false, feedN: -1, postAt: 0, col: null };
+  const el = $('#match');
+  el.innerHTML = `<div class="mv wrap">
+  <div class="sb"><div class="tm"><b>${esc(u.tag)}</b><span class="side" id="mv-sa"></span></div><div class="sc"><span id="mv-a">0</span>:<span id="mv-b">0</span></div><div class="tm r"><b>${esc(nm.opp.tag)}</b><span class="side" id="mv-sb"></span></div></div>
+  <div class="mvsub"><span id="mv-rn"></span><span class="num" id="mv-clock"></span></div>
+  <div class="hist" id="mv-hist" aria-label="История раундов"></div>
+  <div class="cvw"><canvas id="mv-cv" aria-label="Карта ${nm.map.name}, вид сверху"></canvas><div class="banner" id="mv-banner" hidden></div></div>
+  <div class="feed" id="mv-feed"></div>
+  <div class="ctl"><button class="btn pri" id="mv-main" data-act="mvMain"></button><div class="seg" role="group" aria-label="Скорость">${[1, 2, 4].map(s => `<button data-act="mvSpeed" data-v="${s}" aria-pressed="${s === 1}">${s}×</button>`).join('')}</div></div>
+  <div class="pan" id="mv-pan"></div><div class="pan" id="mv-kd"></div></div>`;
+  el.hidden = false; el.scrollTop = 0;
+  mvSize(); mvHead(); mvPanel(); mvKD();
+  $('#mv-feed').textContent = nm.stage + '. ' + nm.map.name + ': ' + nm.map.note.toLowerCase() + '. Выберите план и начинайте.';
+  requestAnimationFrame(mvLoop);
+}
+function mvSize() {
+  const cv = $('#mv-cv'); if (!cv) return;
+  const w = cv.parentElement.clientWidth, hh = Math.round(w * .98), d = Math.min(window.devicePixelRatio || 1, 2);
+  cv.style.height = hh + 'px'; cv.width = Math.round(w * d); cv.height = Math.round(hh * d);
+  MV.w = w; MV.h = hh; MV.d = d;
+  const cs = getComputedStyle(document.documentElement), g = k => cs.getPropertyValue(k).trim();
+  MV.col = { panel: g('--panel'), panel2: g('--panel2'), line: g('--line'), lane: g('--lane'), fg: g('--fg'), mut: g('--mut'), T: g('--atk'), CT: g('--def'), bad: g('--bad'), accent: g('--accent') };
+}
+function mvHead() {
+  const m = MV.m, a = m.a, b = m.b, SN = { T: 'Атака', CT: 'Защита' };
+  $('#mv-a').textContent = a.score; $('#mv-b').textContent = b.score;
+  const sa = $('#mv-sa'), sb = $('#mv-sb'); sa.textContent = SN[a.side]; sa.className = 'side ' + a.side; sb.textContent = SN[b.side]; sb.className = 'side ' + b.side;
+  $('#mv-rn').textContent = m.over ? 'Матч окончен' : (m.ot ? 'Овертайм ' + m.ot + ' · ' : '') + 'Раунд ' + (MV.phase === 'live' ? m.rn : m.rn + 1);
+  $('#mv-hist').innerHTML = m.log.map((l, i) => (i === 12 || (i >= 24 && (i - 24) % 3 === 0) ? '<i class="gap"></i>' : '') + `<i class="${l.side} ${l.win === 'a' ? 'me' : ''}" title="Раунд ${l.rn}"></i>`).join('');
+  const mb = $('#mv-main');
+  mb.textContent = MV.phase === 'pre' ? 'Начать раунд ' + (m.rn + 1) : MV.phase === 'done' ? 'Завершить матч' : MV.phase === 'post' ? 'Следующий раунд…' : MV.paused ? 'Продолжить' : 'Пауза';
+  mb.disabled = MV.phase === 'post';
+}
+function mvPanel() {
+  const m = MV.m, a = m.a, b = m.b, t = S.tactics, live = MV.phase === 'live', r = m.round, ch = (act, v, on, txt, dis) => `<button class="chip" data-act="${act}" data-v="${v}" aria-pressed="${on}" ${dis ? 'disabled' : ''}>${txt}</button>`;
+  if (MV.phase === 'done') { $('#mv-pan').innerHTML = `<h2>${m.winner === a ? 'Победа' : 'Поражение'} ${a.score}:${b.score}</h2><p class="mut sm">Нажмите «Завершить матч», чтобы получить призовые и провести неделю тренировок.</p>`; return; }
+  let h = `<div class="econ"><div><span class="mut">Вы · ${live ? BUY_N[a.buy] : 'банк'}</span><b>${cash(a.money)}</b></div><div style="text-align:right"><span class="mut">${esc(b.team.tag)} · ${live ? BUY_N[b.buy] : 'банк'}</span><b>${cash(b.money)}</b></div></div>`;
+  if (a.side === 'T') {
+    h += `<h3>План атаки</h3><div class="chips">${Object.keys(PLAN_N).map(k => ch('mvPlan', k, t.T.type === k, PLAN_N[k])).join('')}</div>`;
+    if (t.T.type !== 'def') h += `<div class="chips">${['A', 'B'].map(k => ch('mvSite', k, t.T.site === k, (t.T.type === 'fake' ? 'Настоящая цель ' : 'Точка ') + k)).join('')}</div>`;
+    h += `<p class="hint">${PLAN_D[t.T.type]}</p>`;
+    if (live) h += `<button class="btn s" data-act="mvCmd" data-v="switch" ${r.switched || r.planted || r.over ? 'disabled' : ''}>Команда в раунде: сменить точку</button>`;
+  } else {
+    h += `<h3>Расстановка защиты</h3><div class="chips">${Object.keys(SETUP_N).map(k => ch('mvSetup', k, t.CT === k, SETUP_N[k])).join('')}</div><p class="hint">${SETUP_D[t.CT]}</p>`;
+    if (live) h += `<div class="rowb">${['A', 'B'].map(k => `<button class="btn s" data-act="mvCmd" data-v="${k}" ${r.planted || r.over ? 'disabled' : ''}>Ротация на ${k}</button>`).join('')}</div>`;
+  }
+  h += `<h3>Закуп</h3><div class="chips">${[['auto', 'Авто'], ['eco', 'Эко'], ['force', 'Форс'], ['full', 'Полный']].map(([k, n]) => ch('mvBuy', k, t.buy === k, n)).join('')}</div>`;
+  if (live) h += '<p class="hint">План и закуп меняются со следующего раунда. Команды в раунде действуют сразу.</p>';
+  h += `<div class="rowb"><button class="btn s" data-act="mvTO" ${live || a.to <= 0 ? 'disabled' : ''}>Тайм-аут · осталось ${a.to}</button><button class="btn s" data-act="mvRound">Раунд сразу</button><button class="btn s" data-act="mvAll">Матч сразу</button></div>
+  <label class="chk" for="mv-stop"><input type="checkbox" id="mv-stop" ${MV.stopEach ? 'checked' : ''}> Останавливаться перед каждым раундом</label>`;
+  if (a.boostR > 0) h += `<p class="hint">Тайм-аут действует: +4% к игре команды ещё ${a.boostR} раунд(а).</p>`;
+  $('#mv-pan').innerHTML = h;
+}
+function mvKD() {
+  const m = MV.m, col = c => `<div><h3>${esc(c.team.tag)}</h3>${[...c.five].sort((x, y) => c.st[y.id].k - c.st[x.id].k).map(p => `<p><span>${esc(p.nick)}</span><span class="num">${c.st[p.id].k}/${c.st[p.id].d}</span></p>`).join('')}</div>`;
+  $('#mv-kd').innerHTML = `<div class="kd">${col(m.a)}${col(m.b)}</div><p class="hint">Убийства и смерти за матч.</p>`;
+}
+function mvPlace(r) {
+  const cnt = {};
+  for (const u of r.units) {
+    if (!u.alive) continue;
+    const k = u.z + u.side, i = cnt[k] = (cnt[k] || 0) + 1, z = r.map.zones[u.z], p = MV.pos[u.id] || (MV.pos[u.id] = {}), s = u.side === 'T' ? 1 : -1;
+    p.x = z.x - 7 + ((i - 1) % 3) * 7 + (i > 3 ? 3.5 : 0); p.y = z.y + s * 7 + (i > 3 ? s * 6.5 : 0);
+    if (p.px == null) { p.px = p.x; p.py = p.y; }
+  }
+}
+function mvBegin() {
+  const m = MV.m, r = m.startRound();
+  MV.phase = 'live'; MV.paused = false; MV.acc = 0; MV.pos = {}; MV.feedN = -1; mvPlace(r);
+  $('#mv-banner').hidden = true; mvHead(); mvPanel(); mvFeed();
+}
+function mvFeed() {
+  const r = MV.m.round; if (!r || r.feed.length === MV.feedN) return;
+  MV.feedN = r.feed.length;
+  const T = MV.m.T, CT = MV.m.CT;
+  $('#mv-feed').innerHTML = r.feed.length ? r.feed.slice(-3).map(f => f.plant ? `<div><span class="T">Бомба установлена на ${f.plant}</span></div>` : `<div><span class="${f.ws}">${esc(f.wn)}</span> убил <s>${esc(f.ln)}</s></div>`).join('') : `<div>${esc(T.team.tag)}: ${BUY_N[T.buy].toLowerCase()} · ${esc(CT.team.tag)}: ${BUY_N[CT.buy].toLowerCase()}</div>`;
+}
+function mvRoundDone() {
+  const m = MV.m, r = m.round, won = r.over.win === m.a.side, why = r.over.why;
+  m.endRound();
+  const wt = why === 'elim' ? (won ? 'соперник уничтожен' : 'ваша пятёрка уничтожена') : WHY_N[why];
+  const msgs = m.msg.splice(0), bn = $('#mv-banner');
+  bn.textContent = (won ? 'Раунд ваш: ' : 'Раунд соперника: ') + wt + (msgs.length ? '. ' + msgs.join('. ') : '') + '.';
+  bn.className = 'banner ' + (won ? 'w' : 'l'); bn.hidden = false;
+  if (m.over) { MV.phase = 'done'; bn.textContent = (m.winner === m.a ? 'Победа ' : 'Поражение ') + m.a.score + ':' + m.b.score; bn.className = 'banner ' + (m.winner === m.a ? 'w' : 'l'); }
+  else { MV.phase = 'post'; MV.postAt = performance.now() + 1500 / Math.sqrt(MV.speed); MV.hold = MV.stopEach || msgs.some(x => x.startsWith('Смена') || x.startsWith('Овертайм')); }
+  mvHead(); mvPanel(); mvKD();
+}
+function mvStep() {
+  const r = MV.m.round;
+  for (const u of r.units) { const p = MV.pos[u.id]; if (p) { p.px = p.x; p.py = p.y; } }
+  r.step(); mvPlace(r); mvFeed();
+  if (r.over) mvRoundDone();
+  else if (r.planted !== MV.wasPl || r.switched !== MV.wasSw) { MV.wasPl = r.planted; MV.wasSw = r.switched; mvPanel(); }
+}
+function mvLoop(ts) {
+  if (!MV) return;
+  const dt = Math.min(ts - (MV.last || ts), 100); MV.last = ts;
+  const tickMs = { 1: 430, 2: 210, 4: 90 }[MV.speed];
+  if (MV.phase === 'live' && !MV.paused) { MV.acc += dt; if (MV.acc >= tickMs) { MV.acc = 0; mvStep(); } }
+  else if (MV.phase === 'post' && ts >= MV.postAt) { if (MV.hold) { MV.phase = 'pre'; mvHead(); mvPanel(); } else mvBegin(); }
+  if (MV) { mvDraw(MV.phase === 'live' && !MV.paused ? MV.acc / tickMs : 1); requestAnimationFrame(mvLoop); }
+}
+function mvDraw(f) {
+  const cv = $('#mv-cv'); if (!cv || !MV.col) return;
+  const c = cv.getContext('2d'), C = MV.col, map = MV.m.map, r = MV.m.round, sx = MV.w / 100, sy = MV.h / 124, zs = map.zones;
+  c.setTransform(MV.d, 0, 0, MV.d, 0, 0); c.clearRect(0, 0, MV.w, MV.h);
+  c.lineCap = 'round'; c.strokeStyle = C.lane; c.lineWidth = 9 * sx;
+  for (const [a, b] of map.edges) { c.beginPath(); c.moveTo(zs[a].x * sx, zs[a].y * sy); c.lineTo(zs[b].x * sx, zs[b].y * sy); c.stroke(); }
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  for (const k in zs) {
+    const z = zs[k], w = (z.site ? 22 : 26) * sx, h = (z.site ? 13 : 9) * sy, x = z.x * sx - w / 2, y = z.y * sy - h / 2;
+    c.beginPath(); if (c.roundRect) c.roundRect(x, y, w, h, 6); else c.rect(x, y, w, h); c.fillStyle = C.panel2; c.fill();
+    c.lineWidth = z.site ? 2 : 1; c.strokeStyle = z.site ? C.accent : C.line; c.stroke();
+    if (z.site) { c.fillStyle = C.accent; c.font = '700 ' + Math.round(15 * sx / 3.6) + 'px Unbounded, Arial Black, sans-serif'; }
+    else { c.fillStyle = C.mut; c.font = '500 ' + Math.max(9, Math.round(2.9 * sx)) + 'px "Golos Text", system-ui, sans-serif'; }
+    c.fillText(z.n, z.x * sx, z.y * sy + 1);
+  }
+  if (!r) return;
+  if (r.planted) {
+    const z = zs[r.bombZ], t = (performance.now() % 900) / 900;
+    c.beginPath(); c.arc(z.x * sx, z.y * sy, (8 + 6 * t) * sx, 0, 7); c.strokeStyle = C.bad; c.globalAlpha = 1 - t; c.lineWidth = 2; c.stroke(); c.globalAlpha = 1;
+  }
+  const rad = 2.5 * sx;
+  for (const u of r.units) {
+    const p = MV.pos[u.id]; if (!p) continue;
+    const x = (p.px + (p.x - p.px) * f) * sx, y = (p.py + (p.y - p.py) * f) * sy;
+    if (!u.alive) { c.globalAlpha = .4; c.strokeStyle = C[u.side]; c.lineWidth = 2; c.beginPath(); c.moveTo(x - rad * .7, y - rad * .7); c.lineTo(x + rad * .7, y + rad * .7); c.moveTo(x + rad * .7, y - rad * .7); c.lineTo(x - rad * .7, y + rad * .7); c.stroke(); c.globalAlpha = 1; continue; }
+    c.beginPath(); c.arc(x, y, rad, 0, 7); c.fillStyle = C[u.side]; c.fill();
+    if (u.pl && MV.mine.has(u.pl.id)) { c.lineWidth = 2; c.strokeStyle = C.fg; c.stroke(); }
+  }
+  const cl = $('#mv-clock');
+  const txt = r.over ? '' : r.planted ? 'Бомба: ' + Math.max(0, Math.ceil(r.bombT * 1.15)) + ' с' + (r.defP ? ' · разминирование' : '') : (() => { const s = Math.max(0, Math.round(115 - r.tick * 1.15)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') + (r.plantP ? ' · установка' : ''); })();
+  if (cl.textContent !== txt) cl.textContent = txt;
+}
+function mvSimRound() { const m = MV.m; if (MV.phase === 'pre' || MV.phase === 'post') mvBegin(); if (MV.phase !== 'live') return; m.round.run(); for (const u of m.round.units) { const p = MV.pos[u.id]; if (p) { p.px = p.x; p.py = p.y; } } mvPlace(m.round); mvFeed(); mvRoundDone(); }
+function mvSimAll() { let g = 0; while (MV.phase !== 'done' && g++ < 80) { mvSimRound(); } }
+function mvClose() {
+  const m = MV.m; MV = null; $('#match').hidden = true; $('#match').innerHTML = '';
+  flash = finishUserMatch(S, m); save(); tab = 'club'; render(); window.scrollTo(0, 0);
+}
+
+/* ---------- Действия ---------- */
+const ACT = {
+  tab(v) { tab = v; flash = tab === 'club' ? flash : null; window.scrollTo(0, 0); },
+  player(v, d) { sheet = { t: d.mk ? 'market' : 'own', id: +d.id }; },
+  close() { sheet = null; },
+  rename() { sheet = { t: 'name' }; },
+  swap(v, d) { const u = userTeam(S), i = u.five.indexOf(+v); if (i >= 0) u.five[i] = +d.id; sheet = null; },
+  sell(v, d) {
+    const u = userTeam(S), p = u.players.find(x => x.id === +d.id); if (!p || u.players.length <= 5) return;
+    u.players = u.players.filter(x => x !== p); S.money += value(p) * .6;
+    const i = u.five.indexOf(p.id); if (i >= 0) u.five[i] = u.players.find(x => !u.five.includes(x.id)).id;
+    addNews(S, p.nick + ' покинул клуб за ' + cash(value(p) * .6) + '.'); sheet = null;
+  },
+  buy(v, d) {
+    const u = userTeam(S), p = S.market.find(x => x.id === +d.id), c = p && value(p); if (!p || S.money < c || u.players.length >= 8) return;
+    S.money -= c; p.sal = salary(p); p.energy = 95; p.morale = 80; S.market = S.market.filter(x => x !== p); u.players.push(p);
+    addNews(S, 'Подписан ' + p.nick + ' (' + ROLES[p.role].toLowerCase() + ') за ' + cash(c) + '.'); sheet = { t: 'own', id: p.id }; tab = 'roster';
+  },
+  focus(v) { S.training.focus = v; }, intensity(v) { S.training.intensity = v; },
+  staff(v) { const l = S.staff[v], c = (v === 'coach' ? 40000 : 30000) * (l + 1); if (l >= 3 || S.money < c) return; S.money -= c; S.staff[v]++; addNews(S, (v === 'coach' ? 'Тренер' : 'Аналитик') + ' повышен до уровня ' + S.staff[v] + '.'); },
+  play() { flash = null; MV = null; startMatchView(); return false; },
+  simPO() { simPlayoffWeek(S); flash = null; },
+  nextSeason() { nextSeason(S); flash = null; },
+  newAsk() { askNew = true; }, newNo() { askNew = false; },
+  newYes() { askNew = false; flash = null; S = newCareer(); tab = 'club'; },
+  mvMain() { if (MV.phase === 'pre') mvBegin(); else if (MV.phase === 'live') { MV.paused = !MV.paused; mvHead(); } else if (MV.phase === 'done') mvClose(); return false; },
+  mvSpeed(v) { MV.speed = +v; document.querySelectorAll('#match .seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v)); return false; },
+  mvPlan(v) { S.tactics.T.type = v; mvPanel(); return false; },
+  mvSite(v) { S.tactics.T.site = v; mvPanel(); return false; },
+  mvSetup(v) { S.tactics.CT = v; mvPanel(); return false; },
+  mvBuy(v) { S.tactics.buy = v; mvPanel(); return false; },
+  mvCmd(v) { const m = MV.m; if (MV.phase === 'live') { m.round.cmd(m.a.side, v); mvPanel(); } return false; },
+  mvTO() { const m = MV.m; if (MV.phase !== 'live' && m.timeout(m.a)) { if (MV.phase === 'post') MV.hold = true; mvPanel(); } return false; },
+  mvRound() { mvSimRound(); return false; },
+  mvAll() { mvSimAll(); return false; }
+};
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) { if (e.target.id === 'sheet') { sheet = null; render(); } return; }
+  if (b.disabled) return;
+  const fn = ACT[b.dataset.act]; if (!fn) return;
+  if (fn(b.dataset.v, b.dataset) === false) return;
+  save(); render();
+});
+document.addEventListener('change', e => { if (e.target.id === 'mv-stop' && MV) MV.stopEach = e.target.checked; });
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  if (e.target.id !== 'f-name') return;
+  const u = userTeam(S), n = $('#in-name').value.trim(), t = $('#in-tag').value.trim().toUpperCase();
+  if (n) u.name = n; if (t) u.tag = t; sheet = null; save(); render();
+});
+window.addEventListener('resize', () => { if (MV) mvSize(); });
+try { const mq = matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener('change', () => { if (MV) mvSize(); }); } catch (e) { /* старый браузер */ }
+
+function start() { if (!load()) { S = newCareer(); save(); } render(); }
+try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
+})();
+</script>
+</body></html>

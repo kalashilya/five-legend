@@ -1,0 +1,509 @@
+Фото игроков для карточек
+=========================
+
+Положите в эту папку фото игрока и назовите файл так, как указано ниже.
+Подходят PNG (лучше всего — с прозрачным фоном), JPG и WEBP, например zywoo.png или zywoo.jpg.
+Лицо должно быть в верхней части кадра, пропорции близки к 5:6 (например 500 на 600 точек).
+Игра подхватит фото сама при следующем открытии. Если файла нет, на карточке остаётся силуэт.
+
+Имя файла            Ник                  Команда
+zywoo                ZywOo                Vitality
+donk                 donk                 Spirit
+spinx                Spinx                MOUZ
+torzsi               torzsi               MOUZ
+kscerato             KSCERATO             FURIA
+molodoy              molodoy              FURIA
+yuurih               yuurih               FURIA
+xertion              xertioN              MOUZ
+flamez               flameZ               Vitality
+m0nesy               m0NESY               Falcons
+jl                   jL                   Vitality
+ropz                 ropz                 Vitality
+yekindar             YEKINDAR             FURIA
+xantares             XANTARES             Aurora
+jimpphat             Jimpphat             Aurora
+woxic                woxic                Aurora
+sh1ro                sh1ro                Spirit
+mezii                mezii                Vitality
+fallen               FalleN               FURIA
+zont1x               zont1x               Spirit
+magnojez             Magnojez             BETBOOM
+niko                 NiKo                 Falcons
+wicadia              Wicadia              Aurora
+s1ren                S1ren                BETBOOM
+zorte                zorte                BETBOOM
+kyousuke             kyousuke             Falcons
+pr                   PR                   MOUZ
+tn1r                 tN1R                 Spirit
+try                  try                  Legacy
+heavygod             HeavyGod             G2
+twistzz              Twistzz              FaZe
+xelex                xelex                MOUZ
+d1ledez              d1Ledez              BETBOOM
+karrigan             karrigan             Falcons
+krabeni              Krabeni              FUT
+kair0n-              KaiR0N-              Nemiga
+ax1le                Ax1Le                1win
+w0nderful            w0nderful            Natus Vincere
+dem0n                dem0n                FUT
+dziugss              dziugss              FUT
+xfl0ud               xfl0ud               FUT
+dumau                dumau                Legacy
+latto                latto                Legacy
+zweih                zweih                PARIVISION
+910                  910                  The MongolZ
+device               device               100 Thieves
+teses                TeSeS                Falcons
+n1ssim               n1ssim               Legacy
+staehr               Staehr               Astralis
+stavn                stavn                Ninjas in Pyjamas
+insani               insani               MIBR
+elige                EliGE                Liquid
+malbsmd              malbsMd              Liquid
+rain                 rain                 100 Thieves
+s1mple               s1mple               BC.Game
+cmtry                cmtry                FUT
+hunter-              huNter-              G2
+b1t                  b1t                  Natus Vincere
+im                   iM                   Natus Vincere
+frozen               frozen               FaZe
+kyxsan               kyxsan               Aurora
+magixx               magixx               Spirit
+xant3r               Xant3r               Nemiga
+matys                MATYS                G2
+nertz                NertZ                G2
+r1nkle               r1nkle               G2
+fame                 fame                 1win
+aleksib              Aleksib              Natus Vincere
+makazze              makazze              Natus Vincere
+krimbo               Krimbo               Ninjas in Pyjamas
+jame                 Jame                 PARIVISION
+brollan              Brollan              HEROIC
+naf                  NAF                  Liquid
+boombl4              Boombl4              BETBOOM
+art                  arT                  Legacy
+khan                 khaN                 Nemiga
+robo                 robo                 Nemiga
+artfr0st             ArtFr0st             1win
+belchonokk           BELCHONOKK           1win
+jabbi                jabbi                Astralis
+xkacpersky           xKacpersky           Ninjas in Pyjamas
+fl1t                 FL1T                 PARIVISION
+techno               Techno               The MongolZ
+martinezsa           MartinezSa           HEROIC
+tomaszin             tomaszin             MIBR
+blamef               blameF               BIG
+mzinho               mzinho               BC.Game
+syph0                syph0                Nemiga
+adamb                adamb                Ninjas in Pyjamas
+hobbit               HObbit               PARIVISION
+xielo                xiELO                PARIVISION
+blitz                bLitz                The MongolZ
+nin9                 nin9                 The MongolZ
+nilo                 nilo                 HEROIC
+lnz                  LNZ                  MIBR
+venomzera            venomzera            MIBR
+jorko                Jorko                Liquid
+jottaaa              jottAAA              Eternal Fire
+mizu                 mizu                 HOTU
+n0rb3r7              n0rb3r7              HOTU
+nafany               nafany               1win
+phzy                 phzy                 Astralis
+ryu                  ryu                  Astralis
+sjuush               sjuush               Ninjas in Pyjamas
+chr1zn               Chr1zN               HEROIC
+regali               regali               Eternal Fire
+dgt                  dgt                  9z
+meyern               meyern               9z
+lake                 Lake                 M80
+dwushka              dwushka              HOTU
+cairne               cairne               fnatic
+esenthial            esenthial            B8
+jdc                  JDC                  BIG
+rez                  REZ                  GamerLegion
+senzu                Senzu                BC.Game
+nitr0                nitr0                NRG
+saffee               saffee               paiN
+siuhy                siuhy                Astralis
+cobrazera            cobrazera            The MongolZ
+jcobbb               jcobbb               FaZe
+neityu               Neityu               FaZe
+poiii                poiii                100 Thieves
+frontales            frontales            HOTU
+jackasmo             jackasmo             fnatic
+kensizor             kensizor             B8
+doc                  doc                  DENDELE
+koala                koala                DENDELE
+rdnzao               rdnzao               DENDELE
+onic                 onic                 Inner Circle
+zerrofix             zeRRoFIX             Inner Circle
+xeedo                xeedo                K27
+saadzin              saadzin              Imperial
+lux                  lux                  Luminosity
+grim                 Grim                 NRG
+jks                  jks                  FlyQuest
+nqz                  nqz                  MIBR
+jboen                JBOEN                FaZe
+jt                   JT                   Liquid
+kvem                 Kvem                 Eternal Fire
+mistem               MisteM               Eternal Fire
+gizmy                Gizmy                100 Thieves
+huasopeek            HUASOPEEK            9z
+luchov               luchov               9z
+jba                  JBa                  M80
+slaxz-               slaxz-               M80
+swisher              Swisher              M80
+fear                 fEAR                 fnatic
+npl                  npl                  B8
+gafolo               gafolo               DENDELE
+b1st                 b1st                 Virtus.pro
+mir                  mir                  Virtus.pro
+patsi                Patsi                Virtus.pro
+tabsen               tabseN               BIG
+beastik              beastik              SINNERS
+stressarn            stressarN            SINNERS
+kashl1d              kashl1d              K27
+vini                 VINI                 Imperial
+bibu                 Bibu                 JiJieHao
+cacanito             CacaNito             JiJieHao
+m1n1                 m1N1                 JiJieHao
+hypex                hypex                GamerLegion
+fr3nd                fr3nd                Wildcard
+reck                 reck                 Wildcard
+r3salt               r3salt               Nemesis
+lattykk              lattykk              magic
+salazar              salazar              BBL
+adams                adamS                Sangal
+magisk               Magisk               BC.Game
+jw                   JW                   EYEBALLERS
+susp                 susp                 HEROIC
+sirah                sirah                100 Thieves
+kade0                kade0                HOTU
+jambo                jambo                fnatic
+alex666              alex666              B8
+s1zzi                s1zzi                B8
+faven                faveN                BIG
+shock                SHOCK                SINNERS
+clax                 clax                 K27
+chelo                chelo                Imperial
+hext                 HexT                 Wildcard
+azuwu                AZUWU                Luminosity
+aw                   AW                   magic
+maka                 Maka                 Envy
+h4san4tor            H4SAN4TOR            PRIVATE
+hallzerk             hallzerk             NRG
+sonic                Sonic                NRG
+biguzera             biguzera             paiN
+krimz                KRIMZ                EYEBALLERS
+soulfly              soulfly              Eternal Fire
+mazay                mazay                fnatic
+cptkurtka023         cptkurtka023         Inner Circle
+headtr1ck            headtr1ck            Inner Circle
+to0ro                tO0RO                Virtus.pro
+gr1ks                gr1ks                BIG
+modo                 MoDo                 SINNERS
+noway                noway                Imperial
+sinnopsyy            sinnopsyy            JiJieHao
+nemanha              nEMANHA              Wildcard
+tex1y                tex1y                Nemesis
+tenzy                tenzy                magic
+leakz                leakz                BBL
+sowalio              sowalio              PRIVATE
+jeorge               Jeorge               NRG
+drop                 drop                 BESTIA
+jocab                jocab                FOKUS
+podi                 podi                 FOKUS
+mopoz                mopoz                Iberian Soul
+max                  max                  9z
+s1n                  s1n                  M80
+qw1nk1               qw1nk1               K27
+x5g7v                X5G7V                K27
+decenty              decenty              Imperial
+fl4mus               FL4MUS               GamerLegion
+shalfey              shalfey              GamerLegion
+tauson               Tauson               GamerLegion
+cxzi                 Cxzi                 Wildcard
+mag1k3y              mag1k3Y              Nemesis
+sdaim                Sdaim                Nemesis
+afro                 afro                 Luminosity
+masval               MaSvAl               magic
+sfade8               sFade8               magic
+iceberg              IceBerg              BBL
+nickyb               NickyB               BBL
+graviti              Graviti              Envy
+lucky                Lucky                Envy
+misutaaa             misutaaa             Envy
+joey                 Joey                 Sangal
+asap                 asap                 BC.Game
+sh1nejezzz           sh1nejezzz           PRIVATE
+nettik               nettik               FlyQuest
+timo                 timo                 BESTIA
+demho                Demho                Betclic
+prism                Prism                Betclic
+banjo                Banjo                FOKUS
+twist                twist                Alliance
+snow                 snow                 paiN
+fury5k               fury5k               Chinggis Warriors
+roux                 ROUX                 Chinggis Warriors
+plopski              Plopski              Metizport
+jamyoung             JamYoung             TYLOO
+zevy                 zevy                 Fluxo
+maxxkor              maxxkor              DENDELE
+dawy                 Dawy                 Inner Circle
+0samas               0SAMAS               JiJieHao
+sellter              SELLTER              Nemesis
+rainwaker            Rainwaker            Luminosity
+yxngstxr             yxngstxr             Luminosity
+mistr                MistR                BBL
+kursy                Kursy                Envy
+bnox                 bnox                 Sangal
+puuha                puuha                Sangal
+r4dyx                R4DYX                Sangal
+z1k4                 z1k4                 PRIVATE
+alistair             aliStair             FlyQuest
+qlocuu               Qlocuu               Betclic
+avid                 avid                 Alliance
+bobeksde             bobeksde             Alliance
+eraa                 eraa                 Alliance
+alex                 alex                 Iberian Soul
+emiliaqaq            EmiliaQAQ            Lynn Vision
+forsyy               forsyy               Metizport
+mail09               MaiL09               Metizport
+zhoking              zhokiNg              TYLOO
+kylar                Kylar                Phantom
+nicoodoz             nicoodoz             Phantom
+krazy                krazy                SAW
+kwertzz              KWERTZZ              UNiTY
+m1key                M1key                UNiTY
+cerq                 CeRq                 Without a Roof
+aquars               AquaRS               Virtus.pro
+kisserek             kisserek             SINNERS
+vexite               Vexite               FlyQuest
+buda                 buda                 BESTIA
+cass1n               cass1n               BESTIA
+ex1st                ex1st                Betclic
+ztr                  ztr                  FOKUS
+rkzinho              Rkzinho              paiN
+ag1l                 Ag1l                 Iberian Soul
+dav1g                dav1g                Iberian Soul
+cool4st              cool4st              Chinggis Warriors
+sk0r                 sk0R                 Chinggis Warriors
+starry               Starry               Lynn Vision
+z4kr                 z4KR                 Lynn Vision
+f1ku                 F1KU                 Metizport
+djon8                Djon8                Nuclear TigeRES
+flouzer              flouzer              Nuclear TigeRES
+senka                senka                Nuclear TigeRES
+mercury              Mercury              TYLOO
+dav1deus             dav1deuS             Fluxo
+kye                  kye                  Fluxo
+ltz                  Ltz                  Fluxo
+kunai                Kunai                Phantom
+nopeej               NOPEEj               SAW
+dex                  dex                  EYEBALLERS
+andu                 aNdu                 PURE
+tein                 tein                 PURE
+autimatic            autimatic            Without a Roof
+stewie2k             Stewie2K             Without a Roof
+1eer                 1eeR                 PRIVATE
+ultimate             ultimate             Betclic
+matheos              Matheos              FOKUS
+tatu                 Tatu                 paiN
+c4llm3su3            C4LLM3SU3            Lynn Vision
+westmelon            Westmelon            Lynn Vision
+ayuki                ayuki                Nuclear TigeRES
+story                story                SAW
+maxster              maxster              EYEBALLERS
+nexius               Nexius               Nexus
+shield               shield               Nexus
+polbandana           Polbandana           PURE
+tak                  tAk                  BRUTE
+scrunk               ScrunK               INFINITE
+volt                 volt                 INFINITE
+ins                  INS                  FlyQuest
+kauez                kauez                BESTIA
+upe                  upE                  Alliance
+tikuak               tikuak               Chinggis Warriors
+moseyuh              Moseyuh              TYLOO
+zero                 Zero                 TYLOO
+kei                  KEi                  Phantom
+ewjerkz              ewjerkz              SAW
+ro1f                 Ro1f                 EYEBALLERS
+2high                2high                UNiTY
+polo                 POLO                 PURE
+hoolig4n             hoolig4n             5star
+neuz                 NEUZ                 5star
+s4ltovsk1yy          s4ltovsk1yy          WBT
+smash                Smash                WBT
+miq                  MiQ                  NEXVOID
+gehji                gehji                QUAZAR
+newt                 newt                 QUAZAR
+divine               divine               BARCA
+happ                 happ                 BARCA
+oz1k                 oz1k                 Color
+junior               junior               Voca
+sausol               sausol               Iberian Soul
+stanislaw            stanislaw            Metizport
+tronic               tronic               Nuclear TigeRES
+sn0w                 Sn0w                 UNiTY
+fnk                  fNk                  Nexus
+holy                 HOLY                 Nexus
+s0und                s0und                Nexus
+keen                 keen                 PURE
+aidkit               aidKiT               BRUTE
+ariucle              ariucle              5star
+consti               consti               SportsBetExpert
+infinite             Infinite             SportsBetExpert
+motm                 motm                 SportsBetExpert
+demqq                DemQQ                WBT
+xerolte              xerolte              NEXVOID
+sl3nd                sl3nd                INFINITE
+redstar              REDSTAR              Acend
+spellan              SPELLAN              Acend
+kaiori               kaiori               QUAZAR
+pancc                pancc                BARCA
+reyoz                reyoz                Color
+cjoffo               Cjoffo               ex-Zero Tenacity
+kind0                Kind0                ex-Zero Tenacity
+guty                 guty                 ShindeN
+tw1sterzaza          tw1sterzaza          UPGRADE
+kusme                KusMe                FORZE Reload
+brehze               Brehze               Without a Roof
+exit                 exit                 Fluxo
+tmb                  TMB                  Phantom
+mutiris              MUTiRiS              SAW
+dytor                Dytor                UNiTY
+nbqq                 nbqq                 BRUTE
+oontoma              oontoma              BRUTE
+clouden              clouden              5star
+rate                 rate                 5star
+peeping              Peeping              SportsBetExpert
+shane                shane                SportsBetExpert
+psycho               Psycho               WBT
+tyr1k                tyr1k                WBT
+accuracytg           AccuracyTG           NEXVOID
+zesta                Zesta                NEXVOID
+awayken              AwaykeN              Acend
+ne1xxx               Ne1XXX               QUAZAR
+zmb                  zmb                  BARCA
+brutmonster          brutmonster          ex-Zero Tenacity
+topo                 topo                 Black Phoenix
+marke                MarKE                Voca
+skizzyee             skizzyee             NAVI Junior
+yoki                 yoki                 NAVI Junior
+n0rths               n0rths               Lazer Cats
+nikitea              nikitea              Lazer Cats
+naz                  naz                  ShindeN
+tom1jed              tom1jed              ShindeN
+pleynnn              pleynnn              UPGRADE
+squezxc              SquEzxc              UPGRADE
+relaxxie             relaxxie             FORZE Reload
+aragornn             aragornN             RBLS
+gbb                  gbb                  Galorys
+tomate               tomate               Galorys
+ta9z                 ta9z                 NT
+el1an                El1an                ex-INOX
+adex                 adeX                 Alter Ego
+zedko                ZEDKO                BRUTE
+kyuubii              kyuubii              INFINITE
+shipz                SHiPZ                Acend
+skrimo               Skrimo               Acend
+alisson              Alisson              BARCA
+cronuss              cronuss              Color
+dragon               Dragon               ex-Zero Tenacity
+4x1s                 4X1s                 Black Phoenix
+dare                 dare                 Voca
+fazery               FAZERY               NAVI Junior
+mahar                MahaR                NAVI Junior
+maggent              maggent              BASEMENT BOYS
+tr0uble              Tr0ublE              BASEMENT BOYS
+kiy0o                Kiy0o                Lazer Cats
+tripex17             tripex17             Lazer Cats
+synyx                synyx                UPGRADE
+icarus               Icarus               RBLS
+stadodo              stadodo              RBLS
+wazz                 waZz                 aimclub
+fakerealityy         fakerealityy         NT
+m4d4ra               m4d4ra               NT
+adai                 adai                 Omega
+botpa1               Botpa1               Omega
+def1zer              def1zer              Omega
+ponter               ponter               Bounty Hunters
+alkaren              Alkaren              CYBERSHOKE
+whisper              whisper              BAKS
+blytz                Blytz                INFINITE
+porya                Porya                QUAZAR
+vldn                 VLDN                 ex-Zero Tenacity
+karnez               karnez               Black Phoenix
+snav                 snav                 Voca
+kodak                kodak                NAVI Junior
+kalash               kAlash               BASEMENT BOYS
+abizz                abizz                ShindeN
+rentu                reNTU                ShindeN
+lack1                Lack1                FORZE Reload
+yumsan               YumsaN               FORZE Reload
+arrozdoce            arrozdoce            RBLS
+shr                  Shr                  RBLS
+laxiee               laxiee               Alter Ego
+dan4o                dan4o                Omega
+pepe                 pepe                 Bounty Hunters
+zock                 zock                 Bounty Hunters
+alpha                alpha                CYBERSHOKE
+nota                 nota                 CYBERSHOKE
+norwi                Norwi                BAKS
+k0gass               k0gaSs               Spirit Academy
+netrix               Netrix               Spirit Academy
+executor             executor             BET-M
+raijin               Raijin               BET-M
+neqy                 Neqy                 ASTRAL
+kraghen              kraghen              9INE
+erkast               erkaSt               NEXVOID
+owner                OWNER                BASEMENT BOYS
+destiny              destiny              Galorys
+pkl                  PKL                  Galorys
+ragga                ragga                aimclub
+xellow               XELLOW               aimclub
+zewts                zewts                aimclub
+ryuzak1              Ryuzak1              NT
+finw                 finW                 ex-INOX
+gooddeph             gooddeph             ex-INOX
+m1quse               m1QUSE               ex-INOX
+bloody               Bloody               Alter Ego
+shadiy               shadiy               Alter Ego
+urban0               urban0               Bounty Hunters
+danistzz             danistzz             BAKS
+s1nside              s1nside              Spirit Academy
+bluewh1te            bluewh1te            BET-M
+b1elany              b1elany              9INE
+mrcreed              MRcreed              Black Phoenix
+nosrac               nosraC               Voca
+fang                 FaNg                 Without a Roof
+aldikon              Aldikon              Omega
+kaiser               KAISER               Bounty Hunters
+glowiing             glowiing             BAKS
+vilby                VILBy                Spirit Academy
+z1nny                z1Nny                BET-M
+ray5ive              RaY5ive              ASTRAL
+swiz                 swiz                 ASTRAL
+raalz                raalz                9INE
+bwills               Bwills               LAG
+kr1vda               kr1vda               BASEMENT BOYS
+magic                Magic                Lazer Cats
+dan9armatura         DAN9ARMATURA         UPGRADE
+heckbnk              HeCkBNk              FORZE Reload
+detr0ittj            detr0ittJ            Galorys
+k1slll               k1slll               ex-INOX
+pokemon              PokemoN              Alter Ego
+turbo                turbo                BAKS
+kiryasoo             Kiryasoo             Spirit Academy
+gxx-                 gxx-                 ASTRAL
+meowpop              meowpop              ASTRAL
+flayy                flayy                9INE
+rigon                rigoN                9INE
+cryptic              Cryptic              LAG
+sandman              Sandman              LAG
+mhn1                 mhN1                 aimclub
+woro2k               Woro2k               NT
+mokuj1n              Mokuj1n              CYBERSHOKE
+djay                 djay                 LAG
+slight               SLIGHT               LAG

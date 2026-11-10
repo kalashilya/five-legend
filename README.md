@@ -14,8 +14,9 @@ pyaterka-legend/  — «Пятёрка Легенд», коллекционна�
   ui.js       интерфейс: лобби, вскрытие кейса, матч в реальном времени, звук
   gen.js      генератор data.js из teams.txt и hltv-data.json (node gen.js)
   teams.txt   топ-101 команд из рейтинга Valve от 2 ноября 2026
-  hltv-data.json проверенный снимок HLTV за 12 и 3 месяца (пока 10 игроков)
+  hltv-data.json проверенный снимок HLTV за 12 и 3 месяца (пока 15 игроков)
   test.js     проверка игровой логики и баланса (bash build.sh && node test.js)
+  browser-smoke.js headless-проверка запуска HTML в Chromium на мобильном viewport
   build.sh    сборка одного HTML-файла из head.html, data.js, core.js, meta.js, ui.js (bash build.sh)
 
   После правок в head.html, data.js, core.js, meta.js или ui.js нужно запустить build.sh,
@@ -30,6 +31,6 @@ klatch-manager/  — «Клатч Менеджер», менеджер кома�
 
 Для запуска игр ничего устанавливать не нужно.
 Для gen.js, test.js и build.sh нужны Node.js и bash.
-10 карточек используют проверенные показатели HLTV; остальные пока предварительные. Методика: docs/HLTV_DATA_PIPELINE.md.
+15 карточек используют проверенные показатели HLTV; остальные пока предварительные. Методика: docs/HLTV_DATA_PIPELINE.md. Методика: docs/HLTV_DATA_PIPELINE.md.
 Игра работает без сервера: прогресс хранится в браузере игрока.
 ```

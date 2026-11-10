@@ -33,10 +33,17 @@ jobs:
           node --check meta.js
           node --check ui.js
           node --check test.js
+          node --check browser-smoke.js
       - name: Build offline game and run logic tests
         working-directory: pyaterka-legend
         run: |
           bash build.sh
           node test.js
+      - name: Headless browser smoke test
+        working-directory: pyaterka-legend
+        run: |
+          npm install --no-save playwright@1.56.0
+          npx playwright install --with-deps chromium
+          node browser-smoke.js
       - name: Verify offline build is up to date
         run: git diff --exit-code -- pyaterka-legend/pyaterka-legend-offline.html

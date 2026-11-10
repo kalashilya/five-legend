@@ -115,6 +115,12 @@ ok('капитан: только IGL, рекомендация, три сост�
   g.sqi = 1; assert.strictEqual(E.captSlot(g), 4); assert.notStrictEqual(g.squads[0][4], g.squads[1][4]);
 });
 
+ok('Trade-Up безопасно обрабатывает пустой, неверный и неизвестный ввод', () => {
+  const g = E.newProfile(NOW);
+  assert.strictEqual(E.tuInfo(g, null).ok, false);
+  assert.strictEqual(E.tuInfo(g, []).ok, false);
+  assert.strictEqual(E.tuInfo(g, [987654]).ok, false);
+});
 console.log('5. Контракт');
 ok('10 обычных карточек одной редкости дают одну карточку той же или следующей редкости', () => {
   const g = E.newProfile(NOW), pool = E.POOL[0].slice(0, 6); pool.forEach(c => { g.cards[c.id] = { n: 2, lv: 1 }; });

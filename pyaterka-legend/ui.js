@@ -361,15 +361,114 @@ function walkSceneH(x) {
   const c=x.c, kind=c.role===4?'igl':c.role===0?'awp':'rifle';
   return `<div class="walk-scene"><div class="walk-card">${cardH(c,{stats:true})}</div><div class="operator op-${kind}">${actorH(c)}</div><div class="walk-caption">${kind==='igl'?'КАПИТАН · ТАКТИЧЕСКИЙ РАЗБОР':kind==='awp'?'СНАЙПЕР · КОНТРОЛЬ ДИСТАНЦИИ':'БОЕЦ · ПРОВЕРКА ПОЗИЦИЙ'}</div></div>`;
 }
+
+/* ---------- 3D-презентация редкой карточки в открытии кейса ---------- */
+let CASE3D_RUN = 0;
+async function showCase3D(x, showAll = false) {
+  const token = ++CASE3D_RUN, c = x.c, stage = $('#po-stage');
+  if (!stage || c.ovr < 87) return false;
+  const allHtml = showAll ? `<div class="case3d-all">${OV.cards.map((v,i)=>`<div class="case3d-mini">${cardH(v.c,{cls:'xs'})}<span>${esc(v.c.nick)}</span></div>`).join('')}</div>` : '';
+  stage.innerHTML = `<div class="case3d-wrap" style="position:relative;width:100%;height:${showAll?'min(54vh,430px)':'min(58vh,470px)'};min-height:300px;overflow:hidden;border-radius:14px;background:radial-gradient(ellipse at 50% 75%,#263544 0,#111923 48%,#070b11 100%);isolation:isolate">
+    <canvas id="case3d-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+    <div style="position:absolute;z-index:2;left:16px;top:15px;pointer-events:none;text-shadow:0 2px 12px #000">
+      <div style="font:700 10px/1.2 var(--f-m);letter-spacing:.2em;color:#d8b16d">FIVE LEGENDS · ${c.ovr>=91?'ELITE INTRO':'CINEMATIC 3D'}</div>
+      <div style="font:700 clamp(18px,4vw,27px)/1.05 var(--f-d);letter-spacing:.05em;color:#f4f1e9;margin-top:5px">${esc(c.nick)}</div>
+      <div style="font:600 10px/1.3 var(--f-m);letter-spacing:.12em;color:#aebdca;margin-top:4px">${esc(RNAME[c.role])} · ${esc(c.team)} · OVR ${c.ovr}</div>
+    </div>
+    ${c.ovr>=91?'<div style="position:absolute;z-index:2;right:14px;top:14px;border:1px solid #d6ad6280;background:#15130dcc;color:#e8c37c;padding:7px 9px;font:700 9px var(--f-m);letter-spacing:.12em">ELITE PLAYER</div>':''}
+    ${allHtml}
+  </div>`;
+  let THREE;
+  try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js'); }
+  catch (err) { if (token === CASE3D_RUN && $('#po-stage')) $('#po-stage').innerHTML = showAll ? `<div class="all-reveal">${walkSceneH(x)}<div class="all-cards">${OV.cards.map((v,i)=>`<div class="all-card" style="--delay:${i*130}ms">${cardH(v.c,{cls:'xs'})}<span>${esc(v.c.nick)}</span></div>`).join('')}</div></div>` : walkSceneH(x); return false; }
+  const canvas = $('#case3d-canvas');
+  if (token !== CASE3D_RUN || !canvas || !canvas.isConnected) return false;
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.6));
+    renderer.setSize(canvas.clientWidth||stage.clientWidth,canvas.clientHeight||360,false);
+    renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.12;
+  } catch (err) { if (token === CASE3D_RUN) stage.innerHTML=walkSceneH(x); return false; }
+  const scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(0x090e16,.045);
+  const camera=new THREE.PerspectiveCamera(34,(canvas.clientWidth||360)/(canvas.clientHeight||360),.1,60);
+  camera.position.set(0,2.9,9.8);
+  scene.add(new THREE.HemisphereLight(0xa9c4df,0x17131b,1.5));
+  const key=new THREE.DirectionalLight(0xffdfb0,3.1); key.position.set(-4,7,5); key.castShadow=true; key.shadow.mapSize.set(1024,1024); scene.add(key);
+  const rim=new THREE.SpotLight(0x5598dc,75,22,Math.PI/5,.55,1.2); rim.position.set(5,7,-3); rim.target.position.set(0,1,0); scene.add(rim,rim.target);
+  const warm=new THREE.SpotLight(0xffbd68,65,20,Math.PI/5,.6,1.3); warm.position.set(-5,6,2); warm.target.position.set(0,1,0); scene.add(warm,warm.target);
+  const mat=(color,rough=.7,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+  const cloth=mat(0x303c43,.9), cloth2=mat(0x46545a,.85), armor=mat(0x151e26,.48,.35), pants=mat(0x202a30,.95), boots=mat(0x0a0e12,.8), skin=mat(0x98745e,.8), visor=mat(0x101c28,.2,.7), gold=mat(0xc39a57,.4,.55), gun=mat(0x11171d,.3,.72), edge=mat(0x52606a,.35,.65);
+  const box=new THREE.BoxGeometry(1,1,1), sphere=new THREE.SphereGeometry(1,16,12);
+  const root=new THREE.Group(); scene.add(root);
+  const mesh=(g,ma,p,s)=>{const o=new THREE.Mesh(g,ma);o.position.set(...p);if(s)o.scale.set(...s);o.castShadow=true;o.receiveShadow=true;root.add(o);return o;};
+  const limb=(a,b,r,ma)=>{const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),v=B.clone().sub(A);const o=mesh(new THREE.CylinderGeometry(r*.78,r,v.length(),10),ma,A.clone().add(B).multiplyScalar(.5).toArray());o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());return o;};
+  // Full-body tactical operator built from lit 3D meshes; weapon/prop is role-specific.
+  mesh(new THREE.CapsuleGeometry(.34,.62,5,10),cloth,[0,1.55,0],[1.18,1.1,.78]);
+  mesh(box,armor,[0,1.55,.34],[.82,.78,.22]);
+  mesh(box,cloth2,[0,1.96,0],[.7,.18,.68]);
+  mesh(box,gold,[0,1.58,.465],[.13,.2,.025]);
+  for(const s of [-1,1]){mesh(sphere,armor,[s*.49,1.9,0],[.36,.25,.37]);mesh(box,cloth2,[s*.48,1.48,.45],[.2,.32,.07]);}
+  mesh(box,edge,[0,1.08,.02],[.9,.14,.6]); for(const s of [-1,1])mesh(box,armor,[s*.31,1.02,.31],[.2,.25,.16]);
+  mesh(new THREE.CylinderGeometry(.15,.15,.22,12),skin,[0,2.17,0]);
+  mesh(new THREE.SphereGeometry(.29,18,14),skin,[0,2.42,0],[1,1.22,.92]);
+  mesh(new THREE.SphereGeometry(.34,18,12,0,Math.PI*2,0,Math.PI*.54),armor,[0,2.5,0],[1.08,.83,1]);
+  mesh(box,visor,[0,2.45,.255],[.49,.11,.06]); mesh(box,gold,[0,2.72,.12],[.22,.045,.08]);
+  mesh(box,armor,[0,1.62,-.43],[.58,.72,.28]);
+  for(const s of [-1,1]){limb([s*.22,1.04,0],[s*.25,.49,.02],.16,pants);limb([s*.25,.49,.02],[s*.27,.14,.12],.13,boots);mesh(box,boots,[s*.27,.1,.22],[.32,.18,.52]);}
+  const role = c.role===0?'awp':c.role===4?'tablet':c.role===3?'grenade':'rifle';
+  limb([-.53,1.92,.02],[-.46,1.58,.48],.14,cloth); limb([-.46,1.58,.48],[-.18,1.55,.58],.1,cloth2);
+  limb([.53,1.92,.02],[.48,1.7,.42],.14,cloth); limb([.48,1.7,.42],[.22,1.55,.58],.1,cloth2);
+  mesh(sphere,skin,[-.18,1.55,.58],[.12,.12,.12]); mesh(sphere,skin,[.22,1.55,.58],[.12,.12,.12]);
+  if(role==='tablet'){
+    mesh(box,armor,[.02,1.58,.72],[.58,.78,.08]);mesh(box,gold,[.02,1.58,.77],[.48,.64,.018]);mesh(box,gun,[.02,1.58,.785],[.4,.53,.012]);
+    for(let i=0;i<4;i++)mesh(box,gold,[-.12+i*.085,1.72-i*.08,.8],[.23,.012,.008]);
+  } else if(role==='grenade'){
+    mesh(new THREE.SphereGeometry(.2,16,12),mat(0x68734c,.6),[.22,1.58,.72],[.85,1.15,.85]);mesh(new THREE.CylinderGeometry(.09,.09,.12,10),edge,[.22,1.82,.72]);mesh(box,gold,[.24,1.9,.72],[.25,.07,.1]);
+  } else {
+    const awp=role==='awp';
+    mesh(box,gun,[.02,1.58,.72],[awp?1.65:1.2,.13,.16]);
+    mesh(box,edge,[awp?-.4:-.3,1.53,.72],[.35,.2,.18]);
+    mesh(box,gun,[.12,awp?1.77:1.69,.72],[awp?.12:.25,awp?.42:.22,.12]);
+    mesh(box,gun,[.1,1.84,.72],[awp?.78:.35,.07,.08]);
+    mesh(box,cloth2,[-.32,1.43,.72],[.24,.22,.18]);
+  }
+  const floor= new THREE.Mesh(new THREE.PlaneGeometry(40,40),mat(0x151d26,.9,.12));floor.rotation.x=-Math.PI/2;floor.position.y=-.035;floor.receiveShadow=true;scene.add(floor);
+  const disc=new THREE.Mesh(new THREE.CircleGeometry(2.5,64),new THREE.MeshBasicMaterial({color:c.ovr>=91?0xd3a75f:0x4c83ae,transparent:true,opacity:.12,side:THREE.DoubleSide}));disc.rotation.x=-Math.PI/2;disc.position.y=.006;scene.add(disc);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(2.35,.018,8,96),new THREE.MeshBasicMaterial({color:c.ovr>=91?0xe4bd76:0x79a9d0,transparent:true,opacity:.6}));ring.rotation.x=Math.PI/2;ring.position.y=.015;scene.add(ring);
+  if(c.ovr>=91){const aura=new THREE.PointLight(0xd5a75f,3.2,5);aura.position.set(0,2,0);root.add(aura);const halo=new THREE.Mesh(new THREE.TorusGeometry(.95,.02,8,64),new THREE.MeshBasicMaterial({color:0xe4b967,transparent:true,opacity:.45}));halo.rotation.x=Math.PI/2;halo.position.y=.03;scene.add(halo);}
+  const particlesN=100, pg=new THREE.BufferGeometry(), pp=new Float32Array(particlesN*3);
+  for(let i=0;i<particlesN;i++){pp[i*3]=(Math.random()-.5)*12;pp[i*3+1]=Math.random()*4;pp[i*3+2]=-2-Math.random()*8;}
+  pg.setAttribute('position',new THREE.BufferAttribute(pp,3));scene.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0xa9b8c8,size:.07,transparent:true,opacity:.24,depthWrite:false})));
+  const start=performance.now(), duration=noMotion()?0:2450, fromZ=-4.8;
+  let raf=0,disposed=false;
+  const resize=()=>{if(disposed||!canvas.isConnected)return;const w=canvas.clientWidth||360,h=canvas.clientHeight||360;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
+  const onResize=()=>resize(); window.addEventListener('resize',onResize);
+  const dispose=()=>{if(disposed)return;disposed=true;cancelAnimationFrame(raf);window.removeEventListener('resize',onResize);renderer.dispose();scene.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(v=>v.dispose());else o.material.dispose();}});};
+  const draw=()=>{
+    if(disposed)return;
+    if(token!==CASE3D_RUN||!canvas.isConnected){dispose();return;}
+    const t=performance.now()-start,q=duration?Math.min(1,t/duration):1,e=1-Math.pow(1-q,3);
+    root.position.z=THREE.MathUtils.lerp(fromZ,0,e);root.rotation.y=THREE.MathUtils.lerp(Math.PI,0,Math.min(1,q*1.25));
+    root.position.y=Math.sin(t*.002)*.018;
+    if(c.ovr>=91)root.rotation.y+=Math.sin(t*.001)*.025;
+    const a=pg.attributes.position;for(let i=0;i<particlesN;i++){a.array[i*3+1]+=.12/60;if(a.array[i*3+1]>4)a.array[i*3+1]=0;}a.needsUpdate=true;
+    camera.lookAt(0,1.25,0);renderer.render(scene,camera);
+    raf=requestAnimationFrame(draw);
+  };
+  resize(); draw();
+  return new Promise(resolve=>setTimeout(()=>resolve(true),showAll?2700:2550));
+}
+
 function rareSeq(i, done) {
   const x=OV.cards[i], c=x.c, k=hsh(c.nick)%4;
+  if (c.ovr < 87) { reveal(i); return; }
   const sc=$('#scan'); if(sc) sc.classList.add('glitch');
-  later(650,()=>{if(!OV||OV.phase!=='scan')return;$('#po-stage').innerHTML='';$('#po-name').innerHTML='';$('#po-bg').style.setProperty('--gl','#000000');
-    later(650,()=>{if(!OV||OV.phase!=='scan')return;sfx('rare');$('#po-stage').innerHTML=`<p class="rare-t" style="--gl:${glow(c)}">${c.sp===2?'ОБНАРУЖЕН MVP':c.sp===1?'ИГРОК НЕДЕЛИ':'РЕДКИЙ ИГРОК'}</p>`;
-      later(1050,()=>{if(!OV||OV.phase!=='scan')return;$('#arena').innerHTML=`<div class="arena a${k}" style="--tc:${teamCol(c)}"><i></i><i></i><i></i><b></b></div>`;$('#po-top').textContent=ARENAS[k];
-        $('#po-stage').innerHTML=walkSceneH(x);
-        later(2200,()=>{if(!OV||OV.phase!=='scan')return;flashNow();burst(glow(c),100,$('.walk-card'));sfx('stop',4);$('#po-name').innerHTML=nameH(x);if(done)later(900,done);else later(900,()=>afterOne(i));});
-      });
+  later(500,()=>{if(!OV||OV.phase!=='scan')return;$('#po-stage').innerHTML='';$('#po-name').innerHTML='';
+    later(500,()=>{if(!OV||OV.phase!=='scan')return;sfx('rare');$('#arena').innerHTML=`<div class="arena a${k}" style="--tc:${teamCol(c)}"><i></i><i></i><i></i><b></b></div>`;$('#po-top').textContent=ARENAS[k];
+      showCase3D(x,false).then(()=>{if(!OV||OV.phase!=='scan')return;flashNow();burst(glow(c),100,$('#po-stage'));sfx('stop',4);$('#po-name').innerHTML=nameH(x);later(500,()=>afterOne(i));});
     });
   });
 }
@@ -377,14 +476,15 @@ function poRevealAll() {
   if(!OV||OV.phase!=='scan')return;
   const rareIndex=OV.cards.length-1, rare=isRare(OV.type,OV.cards[rareIndex].c);
   $('#po-top').textContent='ПЯТЬ КАРТОЧЕК · ПОЛНОЕ ОТКРЫТИЕ';
-  $('#po-stage').innerHTML=`<div class="all-reveal">${rare?walkSceneH(OV.cards[rareIndex]):''}<div class="all-cards">${OV.cards.map((x,i)=>`<div class="all-card" style="--delay:${i*130}ms">${cardH(x.c,{cls:'xs'})}<span>${esc(x.c.nick)}</span></div>`).join('')}</div></div>`;
+  if(rare && OV.cards[rareIndex].c.ovr>=87) showCase3D(OV.cards[rareIndex],true);
+  else $('#po-stage').innerHTML=`<div class="all-reveal">${rare?walkSceneH(OV.cards[rareIndex]):''}<div class="all-cards">${OV.cards.map((x,i)=>`<div class="all-card" style="--delay:${i*130}ms">${cardH(x.c,{cls:'xs'})}<span>${esc(x.c.nick)}</span></div>`).join('')}</div></div>`;
   $('#po-bg').style.setProperty('--gl',glow(OV.cards[rareIndex].c));
   $('#po-name').innerHTML='<b>Все пять карточек открыты</b><span class="sm mut">Нажмите «Забрать», чтобы продолжить</span>';
   OV.phase='done';sfx(rare?'rare':'stop',rare?null:2);if(rare)flashNow();
   $('#po-btn').innerHTML='<button class="btn pri" data-act="ovClose" style="width:100%">Забрать карточки</button>';
 }
 function poDone() {
-  if (!OV || OV.t !== 'pack') return; OV.phase = 'done';
+  if (!OV || OV.t !== 'pack') return; CASE3D_RUN++; OV.phase = 'done';
   const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0];
   $('#arena').innerHTML = ''; $('#tray').innerHTML = ''; $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · 5 карточек`;
   $('#po-bg').style.setProperty('--gl', glow(top.c));

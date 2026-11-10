@@ -1,0 +1,33 @@
+name: Validate game
+
+on:
+  push:
+    branches:
+      - main
+      - "chatgpt/**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify generated player database
+        working-directory: pyaterka-legend
+        run: |
+          node gen.js
+          git diff --exit-code -- data.js ids.json
+      - name: Build offline game and run logic tests
+        working-directory: pyaterka-legend
+        run: |
+          bash build.sh
+          node test.js
+      - name: Verify offline build is up to date
+        run: git diff --exit-code -- pyaterka-legend/pyaterka-legend-offline.html

@@ -144,7 +144,12 @@ class Match {
     const mk = (name, sq, capt) => { const info = squadInfo(sq); return { name, sq, info, capt, score: 0, en: capt >= 0 ? 3 : 2, bonusEn: 0, deck: shuffle([...DECK]), hand: [], disc: [], money: START_MONEY, ls: 0, ws: 0, k: [0, 0, 0, 0, 0], d: [0, 0, 0, 0, 0], mv: [0, 0, 0, 0, 0], op: [0, 0, 0, 0, 0], spent: 0, buys: {} }; };
     this.a = mk('Вы', mySq, o.capt == null ? -1 : o.capt);
     const btro = Math.max(0, tro + ri(-100, 100)), t = .45 * clamp(64 + btro / 40, 64, 93) + .55 * myRating + rnd(-2, 2), osq = [];
-    for (let role = 0; role < 5; role++) { const c = [...ALL].filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick)).sort((x, y) => Math.abs(x.ovr - t) + R() * 3 - (Math.abs(y.ovr - t) + R() * 3))[0]; osq.push({ c, lv: 1 }); }
+    for (let role = 0; role < 5; role++) {
+      const candidates = ALL.filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick));
+      const c = candidates.map(x => ({ c: x, score: Math.abs(x.ovr - t) + R() * 3 })).sort((x, y) => x.score - y.score)[0]?.c;
+      if (!c) throw new Error('Не найдена обычная карточка для роли ' + role + ' при создании соперника.');
+      osq.push({ c, lv: 1 });
+    }
     this.b = mk(pick(ONAMES), osq, 4); this.style = pick(Object.keys(STYLES));
     this.opp = { name: this.b.name, tro: btro, lg: leagueOf(btro), rating: this.b.info.rating }; this.err = AI_ERR[this.opp.lg];
     this.fav = { A: pick(['A', 'B']), D: pick(['A', 'B']) };          // любимые точки соперника в атаке и в защите

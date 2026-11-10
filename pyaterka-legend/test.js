@@ -72,8 +72,8 @@ ok('миграция v1 переживает слот капитана с отс
   const g = E.migrate(v1, NOW); assert(g); assert.strictEqual(g.capts[0], null); assert.deepStrictEqual(g.squad, [5, null, null, null, null]);
 });
 ok('частично повреждённые поля заданий и сезона безопасно восстанавливаются', () => {
-  const g = E.migrate({ v: 2, coins: 25, cards: {}, squads: [[], [], []], capts: [], season: { m: -1 }, tasks: { day: 0, d: null, week: 0, w: 'bad' } }, NOW);
-  assert(g); assert(Array.isArray(g.season.goals)); assert(Array.isArray(g.season.hist));
+  const g = E.migrate({ v: 2, coins: 25, cards: { 987654: { n: 1, lv: 1 } }, orphans: 'broken', squads: [[], [], []], capts: [], season: { m: -1 }, tasks: { day: 0, d: null, week: 0, w: 'bad' } }, NOW);
+  assert(g); assert.strictEqual(typeof g.orphans, 'object'); assert(g.orphans[987654]); assert(Array.isArray(g.season.goals)); assert(Array.isArray(g.season.hist));
   assert(Array.isArray(g.tasks.d)); assert(Array.isArray(g.tasks.w)); assert.strictEqual(g.tasks.d.length, 4);
   assert.strictEqual(g.tasks.w.length, 5); assert(g.tasks.s);
 });

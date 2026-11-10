@@ -372,6 +372,7 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 <div id="sheet" hidden></div>
 <div id="over" hidden></div>
 
+
 <script>
 window.__cmErr = function (m) { var a = document.getElementById('app'); if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Скопируйте этот текст и отправьте в чат:</p><p class="num sm" style="overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</p></div>'; };
 window.addEventListener('error', function (e) { window.__cmErr((e.message || 'ошибка') + ' · строка ' + (e.lineno || '?')); });

@@ -86,11 +86,13 @@ ok('нормализация удаляет повреждённые задан�
   data.tasks.s = { k: 'bad', t: 'Без награды', n: 1, p: 0, r: {} };
   data.inbox = [{ t: 'Повреждённая награда', r: { pack: { nope: 1 } } }];
   data.picks = [[id], [id, id, id]];
+  data.best = -100; data.xp = -5; data.w = -3; data.season.hist = [null, { m: 2, lg: 99, tro: 10, place: 1 }, { m: 2, lg: 1, tro: 500, place: 2 }];
   const g = E.migrate(data, NOW);
   assert(g); assert.strictEqual(g.squads[0].filter(x => x === id).length, 1);
   assert.strictEqual(g.tasks.d.length, 1); assert.strictEqual(g.tasks.d[0].p, 1);
   assert.strictEqual(g.tasks.w.length, 0); assert.strictEqual(g.tasks.s, null);
   assert.strictEqual(g.inbox.length, 0); assert.strictEqual(g.picks.length, 1);
+  assert(g.best >= g.tro); assert.strictEqual(g.xp, 0); assert.strictEqual(g.w, 0); assert.strictEqual(g.season.hist.length, 1);
 });
 
 console.log('4. Карточки игрока: прокачка, продажа, состав');

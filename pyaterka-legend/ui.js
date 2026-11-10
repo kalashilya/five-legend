@@ -328,7 +328,8 @@ function afterOne(i) {
   trayPut(i); OV.index = i + 1;
   if (OV.index >= OV.cards.length) { later(420, poDone); return; }
   OV.phase = 'next';
-  $('#po-btn').innerHTML = `<button class="btn pri" data-act="poNext" style="width:100%">Следующая карточка · ${OV.index + 1} из 5</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`;
+  const replay = OV.last3D === i ? '<button class="btn s" data-act="poReplay" style="width:100%;margin-top:6px">Повторить 3D-выход</button>' : '';
+  $('#po-btn').innerHTML = `<button class="btn pri" data-act="poNext" style="width:100%">Следующая карточка · ${OV.index + 1} из 5</button>${replay}<button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`;
   $('#po-name').innerHTML += '<span class="sm mut">Нажмите, когда будете готовы</span>';
 }
 function reveal(i) {
@@ -367,7 +368,7 @@ let CASE3D_RUN = 0;
 async function showCase3D(x, showAll = false) {
   const token = ++CASE3D_RUN, c = x.c, stage = $('#po-stage');
   if (!stage || c.ovr < 87) return false;
-  const allHtml = showAll ? `<div class="case3d-all">${OV.cards.map((v,i)=>`<div class="case3d-mini">${cardH(v.c,{cls:'xs'})}<span>${esc(v.c.nick)}</span></div>`).join('')}</div>` : '';
+  const allHtml = showAll ? `<div class="case3d-all" style="position:absolute;z-index:3;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:#070b11c9;padding:6px;border:1px solid #ffffff20;border-radius:8px">${OV.cards.map((v,i)=>`<div class="case3d-mini" style="min-width:0;text-align:center;font-size:9px;color:#dce4ec">${cardH(v.c,{cls:'xs'})}<span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.c.nick)}</span></div>`).join('')}</div>` : '';
   stage.innerHTML = `<div class="case3d-wrap" style="position:relative;width:100%;height:${showAll?'min(54vh,430px)':'min(58vh,470px)'};min-height:300px;overflow:hidden;border-radius:14px;background:radial-gradient(ellipse at 50% 75%,#263544 0,#111923 48%,#070b11 100%);isolation:isolate">
     <canvas id="case3d-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
     <div style="position:absolute;z-index:2;left:16px;top:15px;pointer-events:none;text-shadow:0 2px 12px #000">
@@ -468,6 +469,7 @@ function rareSeq(i, done) {
   const sc=$('#scan'); if(sc) sc.classList.add('glitch');
   later(500,()=>{if(!OV||OV.phase!=='scan')return;$('#po-stage').innerHTML='';$('#po-name').innerHTML='';
     later(500,()=>{if(!OV||OV.phase!=='scan')return;sfx('rare');$('#arena').innerHTML=`<div class="arena a${k}" style="--tc:${teamCol(c)}"><i></i><i></i><i></i><b></b></div>`;$('#po-top').textContent=ARENAS[k];
+      OV.last3D=i;
       showCase3D(x,false).then(()=>{if(!OV||OV.phase!=='scan')return;flashNow();burst(glow(c),100,$('#po-stage'));sfx('stop',4);$('#po-name').innerHTML=nameH(x);later(500,()=>afterOne(i));});
     });
   });
@@ -715,6 +717,7 @@ const ACT = {
   open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
   buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
   poTap() { return poTap(); }, poAll() { return poAll(); }, poNext() { return poNext(); },
+  poReplay() { if (!OV || OV.t !== 'pack' || OV.phase !== 'next' || OV.last3D == null) return false; const i = OV.last3D; OV.phase = 'replay'; $('#po-btn').innerHTML = '<button class="btn s" disabled style="width:100%">Повтор анимации…</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>'; showCase3D(OV.cards[i],false).then(()=>{ if (OV && OV.phase === 'replay') { OV.phase = 'next'; $('#po-name').innerHTML = nameH(OV.cards[i]) + '<span class="sm mut">Анимацию можно повторить ещё раз или перейти дальше</span>'; $('#po-btn').innerHTML = `<button class="btn pri" data-act="poNext" style="width:100%">Следующая карточка · ${OV.index + 1} из 5</button><button class="btn s" data-act="poReplay" style="width:100%;margin-top:6px">Повторить 3D-выход</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`; } }); return false; },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
   fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1 }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },

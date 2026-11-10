@@ -711,17 +711,26 @@ function normalize(G, now) {
   num('coins', 0); num('tro', 0); num('best', G.tro); num('xp', 0); num('lvl', 1); num('daily', -1); num('w', 0); num('l', 0); num('tut', 3); num('frame', -1); num('sqi', 0);
   G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.lvl = Math.max(1, G.lvl); G.sqi = clamp(G.sqi | 0, 0, 2);
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs);
-  G.orphans = G.orphans || {};
+  G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
   for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !(o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
   delete G.squad;
   G.squads = [0, 1, 2].map(i => [0, 1, 2, 3, 4].map(k => { const id = G.squads[i] && G.squads[i][k]; return id != null && G.cards[id] ? +id : null; }));
-  if (!Array.isArray(G.capts)) G.capts = G.squads.map(s => s[4] != null && CARDS[s[4]].role === 4 ? s[4] : null);
+  if (!Array.isArray(G.capts)) G.capts = G.squads.map(s => { const id = s[4]; return id != null && G.cards[id] && CARDS[id] && CARDS[id].role === 4 ? +id : null; });
   G.capts = [0, 1, 2].map(i => { const id = G.capts[i]; return id != null && G.squads[i].includes(id) && CARDS[id].role === 4 ? id : null; });
   Object.defineProperty(G, 'squad', { get() { return this.squads[this.sqi]; }, set(v) { this.squads[this.sqi] = v; }, enumerable: false, configurable: true });
   G.inbox = Array.isArray(G.inbox) ? G.inbox : []; G.picks = Array.isArray(G.picks) ? G.picks.filter(p => Array.isArray(p) && p.every(id => CARDS[id])) : [];
-  G.season = G.season && typeof G.season === 'object' ? G.season : { m: -1, goals: [], hist: [] };
-  G.tasks = G.tasks && typeof G.tasks === 'object' ? G.tasks : { day: -1, d: [], week: -1, w: [], s: null, sStart: -99 };
+  G.season = G.season && typeof G.season === 'object' && !Array.isArray(G.season) ? G.season : {};
+  if (!Number.isInteger(G.season.m)) G.season.m = -1;
+  if (!Array.isArray(G.season.goals)) G.season.goals = [];
+  if (!Array.isArray(G.season.hist)) G.season.hist = [];
+  G.tasks = G.tasks && typeof G.tasks === 'object' && !Array.isArray(G.tasks) ? G.tasks : {};
+  if (!Number.isInteger(G.tasks.day)) G.tasks.day = -1;
+  if (!Array.isArray(G.tasks.d)) G.tasks.d = [];
+  if (!Number.isInteger(G.tasks.week)) G.tasks.week = -1;
+  if (!Array.isArray(G.tasks.w)) G.tasks.w = [];
+  if (!('s' in G.tasks)) G.tasks.s = null;
+  if (!Number.isInteger(G.tasks.sStart)) G.tasks.sStart = -99;
   if (now != null) refresh(G, now);
   return G;
 }
@@ -1423,7 +1432,7 @@ const ACT = {
   focus(v) { if (OV && OV.st === 'live') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; document.querySelectorAll('#rowA .chipp').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); } return false; },
   pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
   quitAsk() { OV.askQuit = true; lvBtns(); return false; }, quitNo() { OV.askQuit = false; lvBtns(); return false; },
-  quitYes() { applyResult(G, false, OV.m.a.score, WIN_N); delete G.live; OV = null; LV = null; },
+  quitYes() { applyResult(G, false, OV.m.a.score, OV.m.b.score); delete G.live; OV = null; LV = null; },
   newAsk() { askNew = true; }, newNo() { askNew = false; },
   newYes() { askNew = false; try { backup('-before-reset', localStorage.getItem(KEY) || ''); } catch (e) { /* копия не сохранилась */ } G = newProfile(now()); tab = 'home'; tuSel = []; }
 };
@@ -1454,7 +1463,7 @@ document.addEventListener('pointerout', e => { const t = e.target.closest && e.t
 function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
-  if (G.live) { applyResult(G, false, G.live.sa || 0, WIN_N); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
+  if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
   save(); buildScene(); render();
 }
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }

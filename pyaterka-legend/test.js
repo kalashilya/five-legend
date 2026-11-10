@@ -67,6 +67,10 @@ ok('повреждённые данные не принимаются, неиз�
   const g = E.migrate({ v: 2, coins: 'x', cards: { 5: { n: 1, lv: 9 }, 987654: { n: 2, lv: 1 } }, squads: [[5, 987654, null, null, null]] }, NOW);
   assert.strictEqual(g.coins, 0); assert.strictEqual(g.cards[5].lv, 5); assert(!g.cards[987654] && g.orphans[987654]); assert.deepStrictEqual(g.squad, [5, null, null, null, null]); assert.strictEqual(E.squadInfo(E.squadOf(g)), null);
 });
+ok('миграция v1 переживает слот капитана с отсутствующей карточкой', () => {
+  const v1 = { v: 1, coins: 10, cards: { 5: { n: 1, lv: 1 } }, squad: [5, null, null, null, 987654] };
+  const g = E.migrate(v1, NOW); assert(g); assert.strictEqual(g.capts[0], null); assert.deepStrictEqual(g.squad, [5, null, null, null, null]);
+});
 
 console.log('4. Карточки игрока: прокачка, продажа, состав');
 ok('прокачка до 5 уровня тратит дубликаты и монеты, выше 5 нельзя', () => {

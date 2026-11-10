@@ -736,7 +736,9 @@ function cleanTask(t) {
 function normalize(G, now) {
   const num = (k, v) => { if (typeof G[k] !== 'number' || !isFinite(G[k])) G[k] = v; };
   num('coins', 0); num('tro', 0); num('best', G.tro); num('xp', 0); num('lvl', 1); num('daily', -1); num('w', 0); num('l', 0); num('tut', 3); num('frame', -1); num('sqi', 0);
-  G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.best = Math.max(G.tro, Math.round(G.best)); G.xp = Math.max(0, Math.floor(G.xp)); G.w = Math.max(0, Math.floor(G.w)); G.l = Math.max(0, Math.floor(G.l)); G.lvl = Math.max(1, Math.floor(G.lvl)); G.tut = clamp(G.tut | 0, 0, 3); G.frame = clamp(G.frame | 0, -1, 6); G.sqi = clamp(G.sqi | 0, 0, 2);
+  G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.best = Math.max(G.tro, Math.round(G.best)); G.w = Math.max(0, Math.floor(G.w)); G.l = Math.max(0, Math.floor(G.l)); G.lvl = Math.max(1, Math.floor(G.lvl)); G.xp = Math.max(0, Math.min(100 * G.lvl - 1, Math.floor(G.xp))); G.tut = clamp(G.tut | 0, 0, 3); G.frame = clamp(G.frame | 0, -1, 6); G.sqi = clamp(G.sqi | 0, 0, 2);
+  G.streak = G.streak && typeof G.streak === 'object' && !Array.isArray(G.streak) ? G.streak : {};
+  G.streak.day = clamp(G.streak.day | 0, 0, 28); G.streak.last = Number.isInteger(G.streak.last) ? G.streak.last : -1; G.streak.reward = cleanReward(G.streak.reward);
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
@@ -819,6 +821,24 @@ function giveReward(G, r) {
   if (r.pick != null) { const pool = POOL[r.pick], ids = []; for (let i = 0; i < 3; i++) ids.push(pick(pool).id); G.picks.push(ids); }
 }
 const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object.keys(r.pack).map(k => 'кейс «' + PACKS[k].n + '»' + (r.pack[k] > 1 ? ' ×' + r.pack[k] : '')).join(', ') : '', r.pick != null ? 'карточка на выбор («' + RAR[r.pick] + '»)' : ''].filter(Boolean).join(' + ');
+/* Серия входов: 28 календарных дней по Москве. Пропуск дня сбрасывает цикл. */
+const STREAK_REWARDS = [
+  { coins: 40 }, { coins: 50 }, { coins: 60 }, { coins: 50 }, { coins: 75 }, { coins: 100 },
+  { coins: 150, pack: { basic: 1 } },
+  { coins: 50 }, { coins: 60 }, { coins: 70 }, { coins: 60 }, { coins: 80 }, { coins: 100 },
+  { coins: 200, pack: { pro: 1 } },
+  { coins: 60 }, { coins: 70 }, { coins: 80 }, { coins: 70 }, { coins: 100 }, { coins: 120 },
+  { coins: 250, pack: { pro: 1 } },
+  { coins: 80 }, { coins: 100 }, { coins: 120 }, { coins: 100 }, { coins: 125 }, { coins: 150 },
+  { coins: 400, pack: { elite: 1 } }
+];
+function updateStreak(G, now) {
+  const S = G.streak, today = mskDay(now);
+  if (S.last >= today) return false;
+  const day = S.last === today - 1 ? (S.day % 28) + 1 : 1, reward = STREAK_REWARDS[day - 1];
+  giveReward(G, reward); S.day = day; S.last = today; S.reward = reward;
+  return true;
+}
 function choosePick(G, i) { const p = G.picks[0]; if (!p || p[i] == null) return null; G.picks.shift(); const isNew = addCard(G, p[i]); return { c: CARDS[p[i]], isNew }; }
 
 /* ---------- Задания: 4 ежедневных, 5 недельных, 1 особое на 7 дней (цели и награды предложены, не утверждены) ---------- */
@@ -848,6 +868,7 @@ const taskDone = t => t.p >= t.n;
 function allTasks(G) { const T = G.tasks; return T.d.concat(T.w, T.s ? [T.s] : [], G.season.goals); }
 /* Смена суток, недели, особого задания и сезона. Выполненные, но не забранные награды уходят во «Входящие» и не сгорают */
 function refresh(G, now) {
+  updateStreak(G, now);
   const day = mskDay(now), wk = mskWeek(day), mo = mskMonth(now), T = G.tasks, stash = l => l.forEach(t => { if (t && taskDone(t) && !t.claimed) G.inbox.push({ t: t.t.replace('Главное: ', ''), r: t.r }); });
   if (G.season.m !== mo) {
     if (G.season.m >= 0) {
@@ -893,7 +914,7 @@ function lbTable(G, scope, now) {
 const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro).length + 1;
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, IFP, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
-  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText };
+  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak };
 /* ===== Интерфейс ===== */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -991,6 +1012,8 @@ function tasksH() {
 function vHome() {
   const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), low = lg > 0 && G.tro - LEAGUES[lg][1] < 30;
   const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100, st = G.tut;
+  const streak = G.streak || { day: 0, last: -1, reward: null }, streakReward = streak.last === mskDay(now()) && streak.reward ? rewardText(streak.reward) : '';
+  const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span style="display:grid;place-items:center;min-height:27px;border:1px solid ${milestone ? 'var(--gold)' : 'var(--line)'};border-radius:6px;background:${done ? 'var(--accent)' : 'var(--panel2)'};color:${done ? '#141414' : 'var(--mut)'};font:600 11px var(--f-m)">${d}</span>`; }).join('');
   const tut = st < 3 ? `<section class="pn"><h3>Первые шаги</h3><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk" style="margin-top:8px">Понятно</button></div>` : ''}${tut}
   <section class="lobby"><div class="kv"><span>Пятёрка ${G.sqi + 1}</span><span>Рейтинг <b>${info ? info.rating.toFixed(1) : '—'}</b></span></div>
@@ -998,6 +1021,7 @@ function vHome() {
   ${info ? '<button class="btn pri go" data-act="fight">Играть</button>' : '<button class="btn go" data-act="goSquad">Соберите пятёрку</button>'}
   ${info ? `<div class="stats"><div class="stat"><b>${info.atk.toFixed(1)}</b><span>атака</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>защита</span></div><div class="stat"><b>${info.chem}/13</b><span>химия</span></div></div>` : ''}</section>
   <section class="pn"><div class="kv"><span>Лига «${LEAGUES[lg][0]}»</span><span>Кубки <b>${G.tro}</b></span></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» ещё ${nx[1] - G.tro} кубков.` : 'Высшая лига достигнута.'}</p>${low ? `<p class="warn">До понижения в лигу «${LEAGUES[lg - 1][0]}» осталось ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}</section>
+  <section class="pn"><div class="kv"><span>Серия ежедневных входов</span><b>День ${streak.day} / 28</b></div><span class="bar"><i style="width:${streak.day / 28 * 100}%"></i></span><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:10px">${streakCells}</div><p class="sm mut" style="margin-top:10px">${streakReward ? 'Сегодня получено: ' + esc(streakReward) : 'Заходите каждый календарный день по Москве — пропуск сбрасывает серию.'}</p><p class="sm mut">Большие награды: день 7 — базовый кейс + 150 монет; 14 — кейс «Про» + 200; 21 — кейс «Про» + 250; 28 — элитный кейс + 400.</p></section>
   ${st === 3 ? tasksH() : ''}
   <section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3>${dailyReady(G, now()) ? '<button class="btn" data-act="daily">Забрать</button>' : '<p class="sm mut">Следующий — после 00:00 по Москве.</p>'}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">Неоткрытых кейсов: ${packCount()}</button>` : ''}</div></div></section>`;
 }

@@ -567,7 +567,7 @@ const ACT = {
   focus(v) { if (OV && OV.st === 'live') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; document.querySelectorAll('#rowA .chipp').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); } return false; },
   pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
   quitAsk() { OV.askQuit = true; lvBtns(); return false; }, quitNo() { OV.askQuit = false; lvBtns(); return false; },
-  quitYes() { applyResult(G, false, OV.m.a.score, WIN_N); delete G.live; OV = null; LV = null; },
+  quitYes() { applyResult(G, false, OV.m.a.score, OV.m.b.score); delete G.live; OV = null; LV = null; },
   newAsk() { askNew = true; }, newNo() { askNew = false; },
   newYes() { askNew = false; try { backup('-before-reset', localStorage.getItem(KEY) || ''); } catch (e) { /* копия не сохранилась */ } G = newProfile(now()); tab = 'home'; tuSel = []; }
 };
@@ -598,6 +598,6 @@ document.addEventListener('pointerout', e => { const t = e.target.closest && e.t
 function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
-  if (G.live) { applyResult(G, false, G.live.sa || 0, WIN_N); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
+  if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
   save(); buildScene(); render();
 }

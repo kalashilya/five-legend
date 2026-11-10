@@ -1,5 +1,4 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
-<title>Пятёрка Легенд</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Пятёрка Легенд</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0c0e11">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Oswald:wght@500;600;700&display=swap">
@@ -529,7 +528,12 @@ class Match {
     const mk = (name, sq, capt) => { const info = squadInfo(sq); return { name, sq, info, capt, score: 0, en: capt >= 0 ? 3 : 2, bonusEn: 0, deck: shuffle([...DECK]), hand: [], disc: [], money: START_MONEY, ls: 0, ws: 0, k: [0, 0, 0, 0, 0], d: [0, 0, 0, 0, 0], mv: [0, 0, 0, 0, 0], op: [0, 0, 0, 0, 0], spent: 0, buys: {} }; };
     this.a = mk('Вы', mySq, o.capt == null ? -1 : o.capt);
     const btro = Math.max(0, tro + ri(-100, 100)), t = .45 * clamp(64 + btro / 40, 64, 93) + .55 * myRating + rnd(-2, 2), osq = [];
-    for (let role = 0; role < 5; role++) { const c = [...ALL].filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick)).sort((x, y) => Math.abs(x.ovr - t) + R() * 3 - (Math.abs(y.ovr - t) + R() * 3))[0]; osq.push({ c, lv: 1 }); }
+    for (let role = 0; role < 5; role++) {
+      const candidates = ALL.filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick));
+      const c = candidates.map(x => ({ c: x, score: Math.abs(x.ovr - t) + R() * 3 })).sort((x, y) => x.score - y.score)[0]?.c;
+      if (!c) throw new Error('Не найдена обычная карточка для роли ' + role + ' при создании соперника.');
+      osq.push({ c, lv: 1 });
+    }
     this.b = mk(pick(ONAMES), osq, 4); this.style = pick(Object.keys(STYLES));
     this.opp = { name: this.b.name, tro: btro, lg: leagueOf(btro), rating: this.b.info.rating }; this.err = AI_ERR[this.opp.lg];
     this.fav = { A: pick(['A', 'B']), D: pick(['A', 'B']) };          // любимые точки соперника в атаке и в защите
@@ -791,7 +795,7 @@ const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object
 function choosePick(G, i) { const p = G.picks[0]; if (!p || p[i] == null) return null; G.picks.shift(); const isNew = addCard(G, p[i]); return { c: CARDS[p[i]], isNew }; }
 
 /* ---------- Задания: 4 ежедневных, 5 недельных, 1 особое на 7 дней (цели и награды предложены, не утверждены) ---------- */
-const T_DAILY = [['match', 'Сыграйте матчей: {n}', 2], ['rounds', 'Сыграйте раундов: {n}', 30], ['kills', 'Сделайте убийств: {n}', 40], ['cards', 'Отдайте приказов: {n}', 20], ['open', 'Выиграйте первых дуэлей: {n}', 12], ['rwin', 'Выиграйте раундов: {n}', 15]];
+const T_DAILY = [['match', 'Сыграйте матчей: {n}', 2], ['rounds', 'Сыграйте раундов: {n}', 30], ['kills', 'Сделайте убийств: {n}', 40], ['cards', 'Отдайте приказов: {n}', 20]];
 const T_WEEK = [['match', 'Сыграйте матчей: {n}', 12], ['kills', 'Сделайте убийств: {n}', 250], ['awpk', 'Сделайте убийств снайпером: {n}', 45], ['atkw', 'Выиграйте раундов в атаке: {n}', 50], ['winRole', 'Победите составом без штрафов за роль: {n}', 3], ['winCapt', 'Победите с капитаном: {n}', 3], ['open', 'Выиграйте первых дуэлей: {n}', 70]];
 const W_REW = [{ pack: { basic: 1 } }, { pack: { basic: 1 } }, { coins: 500 }, { pack: { pro: 1 } }];
 const ownsRole = (G, r) => Object.keys(G.cards).some(id => CARDS[id].role === r);
@@ -1467,6 +1471,4 @@ function start() {
   save(); buildScene(); render();
 }
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
-})();
-</script>
-</body></html>
+})();</script></body></html>

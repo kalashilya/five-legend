@@ -13,7 +13,7 @@ pyaterka-legend/  — «Пятёрка Легенд», коллекционна�
   ui.js       интерфейс: лобби, вскрытие кейса, матч в реальном времени, звук
   gen.js      генератор data.js из teams.txt (node gen.js)
   teams.txt   топ-101 команд из рейтинга Valve от 2 ноября 2026
-  test.js     проверка шансов кейсов и баланса (сначала: cat data.js core.js > _t.js, затем node test.js)
+  test.js     проверка игровой логики и баланса (bash build.sh && node test.js)
   build.sh    сборка одного HTML-файла из head.html, data.js, core.js, ui.js (bash build.sh)
 
   После правок в head.html, data.js, core.js или ui.js нужно запустить build.sh,

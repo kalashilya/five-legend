@@ -174,6 +174,14 @@ ok('матч безопасно отклоняет неизвестные кар
   const L = m.play([], { dir: 'invalid', tempo: 'invalid', focus: 99 });
   assert(L); assert.strictEqual(m.hist[0].dirA, 'S'); assert.strictEqual(m.hist[0].focus, -1);
 });
+ok('клатч может быть засчитан любому игроку, а не только первому слоту', () => {
+  let found = false;
+  for (let n = 0; n < 80 && !found; n++) {
+    const sq = mkSq(75), m = new E.Match(sq, 1200, E.squadInfo(sq).rating, { capt: 4 });
+    while (!m.over) { const L = m.play([], { dir: 'ASB'[Math.floor(Math.random() * 3)], tempo: 'norm' }); if (L.clutch && L.mvpI !== 0) found = true; }
+  }
+  assert(found, 'клатч не должен быть жёстко привязан к слоту AWP');
+});
 ok('слабый соперник ошибается чаще сильного', () => assert(E.AI_ERR[0] > E.AI_ERR[6] && E.AI_ERR.every((x, i) => i === 0 || x <= E.AI_ERR[i - 1])));
 ok('топовый соперник не непобедим, слабый не беспомощен', () => { assert(T[85].reader.win > 35 && T[85].reader.win < 80); assert(T[66].reader.win > 40 && T[66].reader.win < 85); });
 { const g = E.newProfile(NOW); g.tut = 3; E.refresh(g, NOW); let opened = 0, t = NOW; const open = k => { for (const c of E.openPack(k)) E.addCard(g, c.id); opened++; }; ['basic', 'pro', 'pro'].forEach(open);

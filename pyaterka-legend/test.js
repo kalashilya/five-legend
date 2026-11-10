@@ -77,6 +77,21 @@ ok('частично повреждённые поля заданий и сез�
   assert(Array.isArray(g.tasks.d)); assert(Array.isArray(g.tasks.w)); assert.strictEqual(g.tasks.d.length, 4);
   assert.strictEqual(g.tasks.w.length, 5); assert(g.tasks.s);
 });
+ok('нормализация удаляет повреждённые задания, награды и дубликаты игроков в составе', () => {
+  const base = E.newProfile(NOW), id = base.squad[0];
+  const data = JSON.parse(JSON.stringify(base));
+  data.squads[0] = [id, id, null, null, null];
+  data.tasks.d = [{ k: 'win', t: null, n: 2, p: 0, r: { coins: 50 } }, { k: 'match', t: 'Сыграйте матч: 2', n: 2, p: 1, r: { coins: 50 } }];
+  data.tasks.w = [{ k: 'bad', t: 'Повреждённое', n: 1, p: 0, r: { pick: 99 } }];
+  data.tasks.s = { k: 'bad', t: 'Без награды', n: 1, p: 0, r: {} };
+  data.inbox = [{ t: 'Повреждённая награда', r: { pack: { nope: 1 } } }];
+  data.picks = [[id], [id, id, id]];
+  const g = E.migrate(data, NOW);
+  assert(g); assert.strictEqual(g.squads[0].filter(x => x === id).length, 1);
+  assert.strictEqual(g.tasks.d.length, 1); assert.strictEqual(g.tasks.d[0].p, 1);
+  assert.strictEqual(g.tasks.w.length, 0); assert.strictEqual(g.tasks.s, null);
+  assert.strictEqual(g.inbox.length, 0); assert.strictEqual(g.picks.length, 1);
+});
 
 console.log('4. Карточки игрока: прокачка, продажа, состав');
 ok('прокачка до 5 уровня тратит дубликаты и монеты, выше 5 нельзя', () => {

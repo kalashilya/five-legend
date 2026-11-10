@@ -21,7 +21,7 @@ function normalize(G, now) {
   num('coins', 0); num('tro', 0); num('best', G.tro); num('xp', 0); num('lvl', 1); num('daily', -1); num('w', 0); num('l', 0); num('tut', 3); num('frame', -1); num('sqi', 0);
   G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.lvl = Math.max(1, G.lvl); G.sqi = clamp(G.sqi | 0, 0, 2);
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs);
-  G.orphans = G.orphans || {};
+  G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
   for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !(o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
   delete G.squad;

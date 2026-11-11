@@ -611,27 +611,6 @@ const ACT = {
   newYes() { askNew = false; try { backup('-before-reset', localStorage.getItem(KEY) || ''); } catch (e) { /* копия не сохранилась */ } G = newProfile(now()); tab = 'home'; tuSel = []; }
 };
 
-/* Pointer-driven depth on the lobby and player cards */
-(() => {
-  if (!window.matchMedia || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
-  let active = null;
-  const reset = el => { if (!el) return; el.style.setProperty('--tilt-x','0deg'); el.style.setProperty('--tilt-y','0deg'); el.style.setProperty('--shine-x','50%'); el.style.setProperty('--shine-y','50%'); };
-  document.addEventListener('pointermove', e => {
-    const card = e.target.closest('button:has(>.pc),.home-shortcut,.home-hero');
-    if (active && active !== card) reset(active);
-    active = card;
-    if (!card) return;
-    const r = card.getBoundingClientRect(), x = (e.clientX-r.left)/r.width, y = (e.clientY-r.top)/r.height;
-    card.style.setProperty('--tilt-x', ((x-.5)*10).toFixed(2)+'deg');
-    card.style.setProperty('--tilt-y', ((.5-y)*8).toFixed(2)+'deg');
-    card.style.setProperty('--shine-x', (x*100).toFixed(1)+'%');
-    card.style.setProperty('--shine-y', (y*100).toFixed(1)+'%');
-  }, {passive:true});
-  document.addEventListener('pointerout', e => {
-    if (active && !active.contains(e.relatedTarget)) { reset(active); active = null; }
-  }, {passive:true});
-})();
-
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (!b) { if (e.target.id === 'sheet') { sheet = null; askSell = null; render(); } return; }
@@ -648,17 +627,9 @@ document.addEventListener('change', e => {
   if (e.target.id === 'img-in' && e.target.files && e.target.files[0]) addImage(e.target.files[0], +e.target.dataset.base);
   if (e.target.dataset && e.target.dataset.f) { F[e.target.dataset.f] = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); }
 });
-/* Осмотр карточки: наклон и блик за пальцем */
-document.addEventListener('pointermove', e => {
-  const t = e.target.closest && e.target.closest('.tilt'); if (!t || noMotion()) return;
-  const b = t.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height;
-  t.style.setProperty('--ry', ((x - .5) * 28).toFixed(1) + 'deg'); t.style.setProperty('--rx', ((.5 - y) * 22).toFixed(1) + 'deg');
-  t.style.setProperty('--gx', (x * 100).toFixed(0) + '%'); t.style.setProperty('--gy', (y * 100).toFixed(0) + '%');
-});
-document.addEventListener('pointerout', e => { const t = e.target.closest && e.target.closest('.tilt'); if (t && !t.contains(e.relatedTarget)) { t.style.setProperty('--rx', '0deg'); t.style.setProperty('--ry', '0deg'); } });
 function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
-  save(); buildScene(); render();
+  save(); render();
 }

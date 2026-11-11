@@ -65,10 +65,14 @@ const { chromium } = require('playwright');
       const state = await page.evaluate(() => ({
         text: document.querySelector('#app')?.innerText?.trim() || '',
         scrollWidth: document.documentElement.scrollWidth,
-        width: innerWidth
+        width: innerWidth,
+        mastWidth: document.querySelector('#app .section-mast')?.getBoundingClientRect().width || 0,
+        strayCss: document.body.innerText.includes('/* ===== FINAL ART PASS')
       }));
       if (state.text.length < 20) throw new Error(section.label + ': экран пустой');
       if (state.scrollWidth > state.width + 1) throw new Error(section.label + ': горизонтальное переполнение');
+      if (state.mastWidth < state.width * .85) throw new Error(section.label + ': шапка раздела слишком узкая: ' + state.mastWidth + ' / ' + state.width);
+      if (state.strayCss) throw new Error(section.label + ': CSS-стили попали в видимую разметку');
       if (errors.length) throw new Error('JavaScript errors: ' + errors.join(' | '));
       await page.screenshot({ path: path.join(shotDir, section.tab + '-390.png'), fullPage: true });
     }

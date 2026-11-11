@@ -69,7 +69,7 @@ function faceH(c) {
     ? c.hltv.photo : IMG[c.base];
   if (!u && s && typeof PH[s] === 'string') u = PH[s];
   if (!u && s && PH[s] === undefined) { PH[s] = 0; probe(s, 0); }
-  if (u) return `<img class="ph" src="${u}" alt="${esc(c.nick)}" loading="lazy" referrerpolicy="no-referrer">`;
+  if (u) return `<img class="ph" src="${u}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML='<svg class=&quot;art&quot; viewBox=&quot;0 0 100 100&quot; aria-hidden=&quot;true&quot;><use href=&quot;#sil&quot;/></svg>'">`;
   return `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
 }
 function cardH(c, o = {}) {
@@ -286,9 +286,15 @@ function fxLoop() {
 function flashNow() { if (noMotion()) return; const f = document.createElement('div'); f.className = 'flash'; $('#over').appendChild(f); setTimeout(() => f.remove(), 600); }
 const later = (ms, fn) => { const me = OV; setTimeout(() => { if (OV === me) fn(); }, noMotion() ? Math.min(ms, 150) : ms); };
 
-/* ---------- Открытие кейса: голографический сканер; для редкой карточки — выход на арену ---------- */
-const ARENAS = ['Championship Arena', 'Cyber Arena', 'Underground Arena', 'World Finals'];
-const isRare = (type, c) => !!c.sp || PACKS[type].odds[c.rar] < 5;
+/* ---------- Открытие кейса ----------
+   Сначала показывается лучшая карточка кейса. Рейтинг 87+ — церемония: разлом кейса, рубашка цвета редкости,
+   затем страна, затем команда, затем карточка. Ниже 87 — карточка сразу целиком с лёгкой подсветкой.
+   После этого все пять карточек сеткой. Пропустить можно на любом шаге. */
+const WALK_OVR = 87;
+const topOf = l => l.reduce((b, x) => (x.c.ovr > b.c.ovr || (x.c.ovr === b.c.ovr && x.c.sp > b.c.sp) ? x : b), l[0]);
+const ccOf = c => c.hltv && /^[A-Z]{2}$/.test(c.hltv.countryCode || '') ? c.hltv.countryCode : '';
+const flagOf = cc => [...cc].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join('');
+const teamOf = c => !c.hist && c.hltv && c.hltv.team ? c.hltv.team : c.team;
 function startPack(type) {
   const cards = openPack(type).map(c => ({ c, isNew: addCard(G, c.id) })).sort((a, b) => (a.c.rar + (a.c.sp ? .5 : 0)) - (b.c.rar + (b.c.sp ? .5 : 0)) || a.c.ovr - b.c.ovr);
   if (G.tut === 0) G.tut = 1;
@@ -296,198 +302,69 @@ function startPack(type) {
 }
 function packBuild() {
   const o = $('#over');
-  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div id="arena"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Выберите способ открытия</span></div><div class="tray" id="tray">${OV.cards.map(() => '<div></div>').join('')}</div><div class="rowb" id="po-btn" style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn pri" data-act="poAll">Открыть все</button><button class="btn" data-act="poTap">По одной</button></div></div>`;
+  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Нажмите на кейс, чтобы открыть</span></div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать все сразу</button></div></div>`;
   o.hidden = false; o.scrollTop = 0; OV.built = true;
 }
-function poStart(mode) {
+const stageOk = () => OV && OV.t === 'pack' && OV.phase === 'show';
+function poTap() {
   if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return false;
-  OV.mode = mode; OV.phase = 'scan'; OV.index = 0;
-  const p = $('.po-pk .pk'); sfx('open');
-  if (p) { p.classList.add('shake'); setTimeout(() => p.classList.add('open'), noMotion() ? 0 : 420); }
+  OV.phase = 'show'; OV.top = topOf(OV.cards); sfx('open');
+  const p = $('.po-pk .pk'); if (p) { p.classList.add('shake'); setTimeout(() => p.classList.add('open'), noMotion() ? 0 : 380); }
   $('#po-name').innerHTML = '<span class="mut">Кейс открывается…</span>';
-  $('#po-btn').innerHTML = '<button class="btn s" data-act="poSkip" style="width:100%">Пропустить анимацию</button>';
-  if (mode === 'all') later(700, poRevealAll);
-  else later(720, () => scanStep(0));
+  $('#po-btn').innerHTML = '<button class="btn s" data-act="poSkip" style="width:100%">Пропустить</button>';
+  later(800, () => { if (stageOk()) (OV.top.c.ovr >= WALK_OVR ? walkout : simpleTop)(OV.top); });
   return false;
 }
-function poTap() { return poStart('single'); }
-function poAll() { return poStart('all'); }
-function poNext() {
-  if (!OV || OV.t !== 'pack' || OV.phase !== 'next') return false;
-  OV.phase = 'scan'; scanStep(OV.index); return false;
+function topDone(x) {
+  if (!stageOk()) return;
+  OV.phase = 'top'; $('#po-name').innerHTML = nameH(x);
+  $('#po-btn').innerHTML = '<button class="btn pri" data-act="poSkip" style="width:100%">Все карточки кейса</button>';
 }
-function scanStep(i) {
-  if (!OV || OV.phase !== 'scan') return;
-  $('#po-btn').innerHTML = '<span class="sm mut">Подготовка следующей карточки…</span>';
-  if (i >= OV.cards.length) { poDone(); return; }
-  const c = OV.cards[i].c, lines = ['РОЛЬ / ' + RNAME[c.role], 'КОМАНДА / ' + c.team, 'РЕЙТИНГ / ' + c.ovr];
-  $('#po-bg').style.setProperty('--gl', '#8fa3b8');
-  $('#po-stage').innerHTML = `<div class="scan" id="scan" style="--gl:#8fd8ff"><div class="scan-fr"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg><i class="scan-ln"></i><div class="scan-tx" id="scan-tx"></div></div></div>`;
-  $('#po-name').innerHTML = `<span class="mut">Сканирование ${i + 1} из ${OV.cards.length}</span>`;
-  lines.forEach((t, k) => later(180 + k * 190, () => { if (OV.phase !== 'scan') return; const x = $('#scan-tx'); if (x) { x.insertAdjacentHTML('beforeend', `<span>${esc(t)}</span>`); sfx('scan'); } }));
-  const rare = c.ovr >= 87 || (i === OV.cards.length - 1 && isRare(OV.type, c));
-  later(950, () => rare ? rareSeq(i) : reveal(i));
+/* Обычное открытие: карточка целиком, страна и команда уже на ней */
+function simpleTop(x) {
+  const c = x.c, r = c.sp ? Math.max(3, c.rar) : c.rar;
+  $('#po-bg').style.setProperty('--gl', glow(c));
+  $('#po-stage').innerHTML = `<div class="top1" style="--gl:${glow(c)}">${cardH(c, { stats: true })}</div>`;
+  sfx('stop', r); burst(glow(c), [10, 16, 28, 40, 60][r], $('.top1'));
+  later(700, () => topDone(x));
 }
-function trayPut(i) { const t = $('#tray'); if (t && t.children[i]) { t.children[i].className = 'on'; t.children[i].innerHTML = cardH(OV.cards[i].c, { cls: 'xs' }); } }
-const nameH = x => `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${rarName(x.c)} · ${esc(x.c.team)} · <span class="bdg ${x.isNew ? 'new' : 'dup'}">${x.isNew ? 'новая' : 'дубль'}</span></span>`;
-function afterOne(i) {
-  trayPut(i); OV.index = i + 1;
-  if (OV.index >= OV.cards.length) { later(420, poDone); return; }
-  OV.phase = 'next';
-  const stage = $('#po-stage');
-  if (stage) stage.insertAdjacentHTML('beforeend', '<button class="po-next-hit" data-act="poNext" aria-label="Открыть следующую карточку" title="Нажмите на карточку, чтобы открыть следующую"></button>');
-  const replay = OV.last3D === i ? '<button class="btn s" data-act="poReplay" style="width:100%;margin-top:6px">Повторить 3D-выход</button>' : '';
-  $('#po-btn').innerHTML = `${replay}<button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`;
-  $('#po-name').innerHTML += '<span class="sm mut">Нажмите на карточку, чтобы открыть следующую</span>';
-}
-function reveal(i) {
-  if (OV.phase !== 'scan') return;
-  const x = OV.cards[i], r = x.c.sp ? Math.max(3, x.c.rar) : x.c.rar;
-  $('#po-stage').innerHTML = `<div class="scan out" id="scan" style="--gl:${glow(x.c)}">${cardH(x.c, { stats: true })}</div>`;
-  $('#po-bg').style.setProperty('--gl', glow(x.c)); $('#po-name').innerHTML = nameH(x);
-  sfx('stop', r); burst(glow(x.c), [8, 14, 30, 70, 120][r], $('#scan')); if (r >= 3) flashNow();
-  later(1050, () => { if (OV && OV.phase === 'scan') afterOne(i); });
-}
-function actorH(c) {
-  const kind = c.role === 4 ? 'igl' : c.role === 0 ? 'awp' : 'rifle';
-  const weapon = kind === 'igl'
-    ? '<g class="prop"><path d="M126 174l44-8 8 66-44 8z" fill="#c9a66b" stroke="#33271c" stroke-width="5"/><path d="M134 185l32-6M137 198l30-6M140 211l30-6" stroke="#55422e" stroke-width="3"/><path d="M130 174l-8-12 44-8 7 12" fill="#e6d3a7" stroke="#33271c" stroke-width="4"/></g>'
-    : kind === 'awp'
-      ? '<g class="prop"><path d="M104 164l100-7 4 9-103 10z" fill="#252b30" stroke="#090b0d" stroke-width="4"/><path d="M160 160l4-17 25 0 3 17" fill="#3d4548" stroke="#090b0d" stroke-width="4"/><path d="M108 171l-7 24 22 2 9-25" fill="#6c5032" stroke="#090b0d" stroke-width="4"/><path d="M194 163l25-2" stroke="#aab3b8" stroke-width="3"/><path class="muzzle-flash" d="M219 159l12-8-4 10 9 5-14 0-6 7 1-9-8-3z" fill="#fff3b0"/></g>'
-      : '<g class="prop"><path d="M103 164l84-5 4 9-86 10z" fill="#283238" stroke="#090b0d" stroke-width="4"/><path d="M150 168l-3 27 13 3 8-27" fill="#795532" stroke="#090b0d" stroke-width="4"/><path d="M182 164l22-1 8 6-25 3" fill="#795532" stroke="#090b0d" stroke-width="4"/><path d="M120 164l-3-12 27-2 6 13" fill="#4b5558" stroke="#090b0d" stroke-width="3"/></g>';
-  return `<svg viewBox="0 0 240 340" role="img" aria-label="${kind === 'igl' ? 'Тактический капитан с блокнотом' : kind === 'awp' ? 'Снайпер с AWP' : 'Штурмовик с автоматом'}">
-    <defs><linearGradient id="suit" x2="1" y2="1"><stop stop-color="#68716d"/><stop offset=".5" stop-color="#303b39"/><stop offset="1" stop-color="#151c1c"/></linearGradient><linearGradient id="vest" x2="0" y2="1"><stop stop-color="#8b7956"/><stop offset="1" stop-color="#35372d"/></linearGradient></defs>
-    <ellipse cx="120" cy="326" rx="76" ry="10" fill="#000" opacity=".55"/>
-    <g class="actor-body"><path d="M88 224l-8 93 28 0 16-75 12 75 30 0-8-98" fill="#202729" stroke="#111719" stroke-width="7"/><path d="M81 309l-2 20 38 0 5-11-21-9M151 309l-1 20 40 0-1-12-24-9" fill="#101619" stroke="#07090a" stroke-width="5"/>
-    <path d="M82 116q38-28 77 0l24 106q-55 31-113 0z" fill="url(#suit)" stroke="#111719" stroke-width="7"/><path d="M91 132l28 10 28-10 20 86q-42 20-84 0z" fill="url(#vest)" stroke="#252a25" stroke-width="5"/><path d="M101 153h43v17h-43zM98 181h50v18H98z" fill="#252d2b" stroke="#9c8a60" stroke-width="3"/><path d="M115 111l2-20h25l4 21" fill="#9a775d" stroke="#1a1d1c" stroke-width="5"/>
-    <path d="M105 44q14-21 34 0l12 43-12 29h-34l-12-29z" fill="#c4a187" stroke="#111719" stroke-width="6"/><path d="M92 77q24-24 56 0l-5 28q-23 17-46 0z" fill="#1a2223"/><path d="M98 84h44l-4 12h-36z" fill="#77817c"/><path d="M91 54q-4-34 27-39 35 1 35 38l-12-12-40 2z" fill="#303a38" stroke="#111719" stroke-width="6"/><path d="M104 45h37" stroke="#a9b09d" stroke-width="4"/>
-    <path d="M83 128q-20 17-25 54l18 11 31-51M158 126q25 11 31 37l-19 15-28-34" fill="none" stroke="#303b39" stroke-width="20" stroke-linecap="round"/><path d="M59 180l-12 18 18 13 17-20M183 164l20 13-8 19-19-10" fill="#b28c6f" stroke="#111719" stroke-width="5"/>
-    ${weapon}
-    <path d="M83 229q39 19 88-1" fill="none" stroke="#c0a06b" stroke-width="5"/><path d="M105 218l-4 20 17 4 5-22M137 219l2 21 18-3-4-20" fill="#202a29" stroke="#111" stroke-width="3"/></g>
-  </svg>`;
-}
-function walkSceneH(x) {
-  const c=x.c, kind=c.role===4?'igl':c.role===0?'awp':'rifle';
-  return `<div class="walk-scene"><div class="walk-card">${cardH(c,{stats:true})}</div><div class="operator op-${kind}">${actorH(c)}</div><div class="walk-caption">${kind==='igl'?'КАПИТАН · ТАКТИЧЕСКИЙ РАЗБОР':kind==='awp'?'СНАЙПЕР · КОНТРОЛЬ ДИСТАНЦИИ':'БОЕЦ · ПРОВЕРКА ПОЗИЦИЙ'}</div></div>`;
-}
-
-/* ---------- 3D-презентация редкой карточки в открытии кейса ---------- */
-let CASE3D_RUN = 0;
-async function showCase3D(x, showAll = false) {
-  const token=++CASE3D_RUN,c=x.c,stage=$('#po-stage');
-  if(!stage)return false;
-  const elite=c.ovr>=91,accent=elite?'#e6bd75':'#8bc8ec';
-  const duration=noMotion()?0:(showAll?7200:(elite?6500:5200));
-  const lightning='<svg class="reveal-bolts" viewBox="0 0 600 520" preserveAspectRatio="none" aria-hidden="true"><path class="bolt bolt-a" d="M80 30 L190 130 L150 180 L270 260 L220 315 L345 430"/><path class="bolt bolt-b" d="M520 12 L405 110 L445 170 L330 245 L385 310 L260 470"/><path class="bolt bolt-c" d="M15 250 L115 270 L80 330 L190 375"/><path class="bolt bolt-d" d="M585 210 L485 245 L520 300 L410 360"/></svg>';
-  let cards;
-  if(showAll){
-    const ordered=OV.cards.slice();
-    const rareIndices=ordered.map((v,i)=>v.c.ovr>=87?i:-1).filter(i=>i>=0);
-    const finalIndex=rareIndices.length?rareIndices.reduce((best,i)=>ordered[i].c.ovr>ordered[best].c.ovr?i:best,rareIndices[0]):-1;
-    const sequence=ordered.filter((v,i)=>i!==finalIndex);
-    if(finalIndex>=0)sequence.push(ordered[finalIndex]);
-    cards=sequence.map((v,i)=>{
-      const finalRare=i===sequence.length-1&&v.c.ovr>=87;
-      const delay=i*650;
-      return finalRare
-        ? '<div class="reveal-card final-rare" style="--delay:'+delay+'ms;--accent:'+ (v.c.ovr>=91?'#e6bd75':'#8bc8ec') +'"><div class="card-suspension"><div class="card-halo"></div><div class="card-electric">'+lightning+'</div><div class="card-face">'+cardH(v.c,{stats:true})+'</div><div class="card-electric front">'+lightning+'</div></div><span class="reveal-nick">'+esc(v.c.nick)+'</span></div>'
-        : '<div class="reveal-card" style="--delay:'+delay+'ms">'+cardH(v.c,{cls:'xs'})+'<span class="reveal-nick">'+esc(v.c.nick)+'</span></div>';
-    }).join('');
-  }else{
-    cards='<div class="reveal-single" style="--accent:'+accent+'"><div class="card-suspension"><div class="card-halo"></div><div class="card-electric">'+lightning+'</div><div class="card-face">'+cardH(c,{stats:true})+'</div><div class="card-electric front">'+lightning+'</div></div></div>';
-  }
-  stage.innerHTML='<div class="cinematic-reveal '+(showAll?'multi':'single')+(elite?' legendary':'')+'" style="--accent:'+accent+'"><div class="reveal-bg"></div><div class="reveal-vignette"></div><div class="reveal-flash"></div><div class="reveal-lines"></div><div class="reveal-topline"><span>FIVE LEGENDS</span><span>'+(elite?'LEGENDARY PLAYER':'PLAYER REVEAL')+'</span></div><div class="reveal-caption">'+(showAll?'ПЯТЬ НОВЫХ КАРТОЧЕК':'ОБНАРУЖЕН ИГРОК')+'</div><div class="reveal-content">'+cards+'</div><div class="reveal-footer">'+(showAll?'СОСТАВ ОТКРЫТ':' '+esc(RNAME[c.role])+' · '+esc(c.team)+' · OVERALL '+c.ovr)+'</div></div>';
-  if(duration) await new Promise(resolve=>setTimeout(resolve,duration));
-  return token===CASE3D_RUN;
-}
-function rareSeq(i, done) {
-  const x=OV.cards[i], c=x.c, k=hsh(c.nick)%4;
-  if (c.ovr < 87) { reveal(i); return; }
-  const sc=$('#scan'); if(sc) sc.classList.add('glitch');
-  later(500,()=>{if(!OV||OV.phase!=='scan')return;$('#po-stage').innerHTML='';$('#po-name').innerHTML='';
-    later(500,()=>{if(!OV||OV.phase!=='scan')return;sfx('rare');$('#arena').innerHTML=`<div class="arena a${k}" style="--tc:${teamCol(c)}"><i></i><i></i><i></i><b></b></div>`;$('#po-top').textContent=ARENAS[k];
-      OV.last3D=i;
-      showCase3D(x,false).then(()=>{if(!OV||OV.phase!=='scan')return;flashNow();burst(glow(c),100,$('#po-stage'));sfx('stop',4);$('#po-name').innerHTML=nameH(x);later(500,()=>afterOne(i));});
-    });
+/* Церемония 87+: разлом → рубашка → страна → команда → карточка */
+function walkout(x) {
+  const c = x.c, cc = ccOf(c), col = glow(c), tc = teamCol(c), team = teamOf(c);
+  const st = $('#po-stage'); st.classList.add('wo-on'); $('#po-top').textContent = 'Редкий игрок';
+  $('#po-bg').style.setProperty('--gl', '#000');
+  st.innerHTML = `<div class="wo" id="wo" style="--rc:${col};--fc:#7d8794"><i class="wo-rays"></i><i class="wo-floor"></i>
+    <div class="wo-plate" id="wo-plate"></div>
+    <div class="wo-crack">${pkH(OV.type)}<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 50L8 6M50 50L96 14M50 50L92 88M50 50L12 94M50 50L50 0M50 50L0 54M50 50L100 58"/></svg></div>
+    <div class="wo-card" id="wo-card"></div></div>`;
+  $('#po-name').innerHTML = ''; sfx('rare');
+  const plate = html => { const p = $('#wo-plate'); p.className = 'wo-plate'; void p.offsetWidth; p.innerHTML = html; p.className = 'wo-plate in'; };
+  const floor = v => { const w = $('#wo'); w.style.setProperty('--fc', v); w.classList.remove('pulse'); void w.offsetWidth; w.classList.add('pulse'); };
+  const woCountry = () => { if (!stageOk()) return; floor(`hsl(${hsh(cc) % 360} 70% 52%)`);
+    plate(`<span class="wo-k">Страна</span><b><span class="wo-flag">${flagOf(cc)}</span>${esc(c.hltv.country || cc)}</b>`);
+    $('#wo-cc').textContent = flagOf(cc) + ' ' + cc; sfx('scan'); later(1500, woTeam); };
+  const woTeam = () => { if (!stageOk()) return; floor(tc);
+    plate(`<span class="wo-k">Команда</span><b>${esc(team)}</b>`);
+    const t = $('#wo-tm'); t.textContent = team; t.style.background = tc; sfx('scan'); later(1500, woCard); };
+  const woCard = () => { if (!stageOk()) return; floor(col); $('#wo-plate').className = 'wo-plate';
+    $('#wo-card').classList.add('rim');
+    later(450, () => { if (!stageOk()) return; flashNow();
+      $('#wo-card').innerHTML = `<div class="wo-face">${cardH(c, { stats: true })}</div>`; $('#wo').classList.add('done');
+      burst(col, 160, $('#wo-card')); sfx('stop', 4); later(900, () => topDone(x)); }); };
+  later(900, () => { if (!stageOk()) return; flashNow(); $('.wo-crack').classList.add('gone'); burst('#ffffff', 40, $('#wo'));
+    $('#wo-card').innerHTML = `<div class="wo-back pc r${c.rar} ${c.sp ? 'sp' + c.sp : ''}"><span class="wo-cc" id="wo-cc"></span><span class="wo-tm" id="wo-tm"></span></div>`;
+    later(1000, () => cc ? woCountry() : woTeam());
   });
 }
-function poRevealAll() {
-  if(!OV||OV.phase!=='scan')return;
-  const rare=OV.cards.some(x=>x.c.ovr>=87)||OV.cards.some(x=>isRare(OV.type,x.c));
-  const top=OV.cards.reduce((best,x)=>x.c.ovr>best.c.ovr?x:best,OV.cards[0]);
-  $('#po-top').textContent='ПЯТЬ КАРТОЧЕК · ПОЛНОЕ ОТКРЫТИЕ';
-  showCase3D(top,true);
-  $('#po-bg').style.setProperty('--gl',glow(top.c));
-  $('#po-name').innerHTML='<b>Все пять карточек открыты</b><span class="sm mut">Нажмите «Забрать», чтобы продолжить</span>';
-  OV.phase='done';sfx(rare?'rare':'stop',rare?null:2);if(rare)flashNow();
-  $('#po-btn').innerHTML='<button class="btn pri" data-act="ovClose" style="width:100%">Забрать карточки</button>';
-}
+const nameH = x => `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${rarName(x.c)} · ${esc(teamOf(x.c))} · <span class="bdg ${x.isNew ? 'new' : 'dup'}">${x.isNew ? 'новая' : 'дубль'}</span></span>`;
 function poDone() {
-  if (!OV || OV.t !== 'pack') return; CASE3D_RUN++; OV.phase = 'done';
-  const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0];
-  $('#arena').innerHTML = ''; $('#tray').innerHTML = ''; $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · 5 карточек`;
+  if (!OV || OV.t !== 'pack') return; OV.phase = 'done';
+  const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0], st = $('#po-stage');
+  st.classList.remove('wo-on'); $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · 5 карточек`;
   $('#po-bg').style.setProperty('--gl', glow(top.c));
-  $('#po-stage').innerHTML = `<div class="grid" style="width:100%">${l.map((x, i) => `<div class="plain big" style="gap:4px;animation-delay:${i * 90}ms"><button data-act="card" data-id="${x.c.id}" aria-label="${esc(x.c.nick)}">${cardH(x.c, { lv: own(x.c.id).lv, pips: true })}</button><span class="bdg ${x.isNew ? 'new' : 'dup'}" style="align-self:flex-start">${x.isNew ? 'новая' : 'дубль'}</span></div>`).join('')}</div>`;
+  st.innerHTML = `<div class="grid" style="width:100%">${l.map((x, i) => `<div class="plain big" style="gap:4px;animation-delay:${i * 90}ms"><button data-act="card" data-id="${x.c.id}" aria-label="${esc(x.c.nick)}">${cardH(x.c, { lv: own(x.c.id).lv, pips: true })}</button><span class="bdg ${x.isNew ? 'new' : 'dup'}" style="align-self:flex-start">${x.isNew ? 'новая' : 'дубль'}</span></div>`).join('')}</div>`;
   $('#po-name').innerHTML = `<b style="color:${glow(top.c)}">Лучшая: ${esc(top.c.nick)}</b><span class="sm mut">Новых карточек: ${l.filter(x => x.isNew).length} из 5</span>`;
   $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose">Забрать</button>';
-}
-/* Cinematic card-only reveal: no 3D character or external model loading */
-const revealStyleId='cinematic-reveal-style';
-if(!document.getElementById(revealStyleId)){
-  const st=document.createElement('style');st.id=revealStyleId;st.textContent=`
-  .cinematic-reveal{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:430px;height:min(68vh,620px);padding:22px 14px;background:#02040a;color:#f4f7fb;--accent:#8bc8ec}
-  .cinematic-reveal .reveal-bg{position:absolute;inset:-8%;z-index:-3;background:radial-gradient(ellipse at 50% 47%,color-mix(in srgb,var(--accent) 25%,#101c2c) 0%,#07101d 28%,#02040a 68%);transform:scale(1.12);animation:reveal-bg 6s ease-out both}
-  .cinematic-reveal .reveal-bg:before,.cinematic-reveal .reveal-bg:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 9%,#8bc8ec0a 9.2% 9.5%,transparent 10% 19%);opacity:.7}
-  .cinematic-reveal .reveal-vignette{position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at center,transparent 22%,#000b 100%),linear-gradient(0deg,#000b,transparent 24%,transparent 76%,#0008)}
-  .cinematic-reveal .reveal-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;animation:reveal-flash 5.2s ease-out both}
-  .cinematic-reveal .reveal-lines{position:absolute;left:-20%;right:-20%;top:48%;height:2px;background:var(--accent);box-shadow:0 0 18px 5px var(--accent);opacity:0;transform:scaleX(.1);animation:reveal-line 5.2s ease-out both}
-  .reveal-topline{position:absolute;top:20px;left:22px;right:22px;display:flex;justify-content:space-between;gap:12px;font:700 9px var(--f-m);letter-spacing:.22em;color:#c5d0dc;opacity:0;animation:reveal-text .6s .3s ease-out forwards}
-  .reveal-topline span:last-child{color:var(--accent)}
-  .reveal-caption{position:absolute;top:16%;font:800 clamp(11px,2vw,15px) var(--f-m);letter-spacing:.34em;color:var(--accent);opacity:0;transform:translateY(12px);animation:reveal-text .7s .65s ease-out forwards}
-  .reveal-content{width:min(100%,760px);display:flex;align-items:center;justify-content:center;gap:clamp(6px,2vw,18px);opacity:1;transform:none;animation:none;perspective:1100px}
-  .reveal-single{width:min(44vw,226px);max-width:226px;filter:drop-shadow(0 0 26px color-mix(in srgb,var(--accent) 42%,transparent)) drop-shadow(0 22px 34px #000)}
-  .card-suspension{position:relative;width:100%;isolation:isolate;transform-style:preserve-3d;animation:card-hover 4.2s ease-in-out infinite}
-  .card-halo{position:absolute;z-index:-2;inset:8% -23%;border-radius:50%;background:radial-gradient(ellipse, color-mix(in srgb,var(--accent) 30%,transparent),transparent 68%);filter:blur(18px);animation:halo-pulse 2.6s ease-in-out infinite alternate}
-  .card-face{position:relative;z-index:1;opacity:0;transform:translateY(46px) rotateX(14deg) scale(.78);clip-path:inset(48% 0 48% 0 round 12px);filter:brightness(.45) blur(5px);animation:card-materialize 2.25s .9s cubic-bezier(.16,1,.3,1) forwards}
-  .card-face .pc{width:100%;max-width:none;box-shadow:0 0 0 1px #ffffff22,0 18px 42px #000c}
-  .card-electric{position:absolute;z-index:2;inset:-12% -40%;pointer-events:none;opacity:0;filter:drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 11px var(--accent));animation:electric-strike 3.8s .35s ease-out infinite}
-  .card-electric.front{z-index:3;inset:-10% -35%;animation-delay:1.25s;mix-blend-mode:screen}
-  .reveal-bolts{width:100%;height:100%;overflow:visible}
-  .bolt{fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:520;stroke-dashoffset:520;opacity:0}
-  .bolt-a{animation:bolt-draw 3.8s .25s ease-out infinite}
-  .bolt-b{stroke:var(--accent);stroke-width:3.4;animation:bolt-draw 3.8s .48s ease-out infinite}
-  .bolt-c{stroke:#fff;stroke-width:1.8;animation:bolt-draw 3.8s .78s ease-out infinite}
-  .bolt-d{stroke:var(--accent);stroke-width:2;animation:bolt-draw 3.8s 1.05s ease-out infinite}
-  .reveal-card{width:19%;max-width:132px;min-width:0;opacity:0;transform:translateY(38px) rotateY(18deg) scale(.88);animation:reveal-multi .8s calc(1.1s + var(--delay)) cubic-bezier(.16,1,.3,1) forwards;filter:drop-shadow(0 8px 18px #000)}
-  .reveal-card.final-rare{position:relative;isolation:isolate;filter:drop-shadow(0 0 18px color-mix(in srgb,var(--accent) 55%,transparent)) drop-shadow(0 12px 24px #000)}
-  .reveal-card.final-rare .card-suspension{animation:card-hover 3.2s ease-in-out infinite}
-  .reveal-card.final-rare .card-halo{inset:5% -20%;filter:blur(12px)}
-  .reveal-card.final-rare .card-face{opacity:0;transform:translateY(25px) rotateX(14deg) scale(.82);clip-path:inset(48% 0 48% 0 round 9px);filter:brightness(.35) blur(5px);animation:card-materialize 2.1s calc(1.1s + var(--delay)) cubic-bezier(.16,1,.3,1) forwards}
-  .reveal-card.final-rare .card-face .pc{width:100%;max-width:none}
-  .reveal-card.final-rare .card-electric{inset:-12% -35%;animation:electric-strike 3.8s calc(1.1s + var(--delay)) ease-out infinite}
-  .reveal-card.final-rare .card-electric.front{animation-delay:calc(1.7s + var(--delay))}
-  .reveal-card.final-rare .bolt-a{animation-delay:calc(1.1s + var(--delay))}
-  .reveal-card.final-rare .bolt-b{animation-delay:calc(1.35s + var(--delay))}
-  .reveal-card.final-rare .bolt-c{animation-delay:calc(1.6s + var(--delay))}
-  .reveal-card.final-rare .bolt-d{animation-delay:calc(1.85s + var(--delay))}
-  .reveal-nick{display:block;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:700 10px var(--f-m);margin-top:7px;color:#f4f7fb}
-  .reveal-footer{position:absolute;bottom:22px;text-align:center;font:700 9px var(--f-m);letter-spacing:.2em;color:#aab8c6;opacity:0;animation:reveal-text .7s 2.15s ease-out forwards}
-  .cinematic-reveal.legendary .reveal-bg{background:radial-gradient(ellipse at 50% 47%,#574322 0%,#19140d 26%,#030407 70%)}
-  .cinematic-reveal.legendary .reveal-lines{box-shadow:0 0 24px 7px #e6bd75}
-  @keyframes reveal-bg{from{opacity:.15;transform:scale(1.25);filter:brightness(.25)}to{opacity:1;transform:scale(1);filter:brightness(1)}}
-  @keyframes reveal-flash{0%,20%,100%{opacity:0}8%{opacity:.85}13%{opacity:.08}16%{opacity:.5}}
-  @keyframes reveal-line{0%,22%,100%{opacity:0;transform:scaleX(.1)}29%{opacity:.9;transform:scaleX(1)}42%{opacity:.2;transform:scaleX(1)}}
-  @keyframes reveal-text{to{opacity:1;transform:translateY(0)}}
-  @keyframes card-hover{0%,100%{transform:translateY(0) rotateZ(-1.2deg) rotateY(-3deg)}50%{transform:translateY(-13px) rotateZ(1.2deg) rotateY(3deg)}}
-  @keyframes halo-pulse{from{opacity:.48;transform:scale(.88)}to{opacity:1;transform:scale(1.12)}}
-  @keyframes card-materialize{0%{opacity:0;clip-path:inset(48% 0 48% 0 round 12px);transform:translateY(46px) rotateX(14deg) scale(.78);filter:brightness(.35) blur(7px)}32%{opacity:1;clip-path:inset(35% 0 35% 0 round 12px);filter:brightness(.6) blur(3px)}68%{clip-path:inset(8% 0 8% 0 round 12px);filter:brightness(1.2) blur(0)}100%{opacity:1;clip-path:inset(0 0 0 0 round 12px);transform:translateY(0) rotateX(0) scale(1);filter:brightness(1) blur(0)}}
-  @keyframes bolt-draw{0%,100%{opacity:0;stroke-dashoffset:520}12%{opacity:1;stroke-dashoffset:0}22%{opacity:.85;stroke-dashoffset:-60}38%{opacity:0;stroke-dashoffset:-520}50%{opacity:0;stroke-dashoffset:520}}
-  @keyframes electric-strike{0%,8%,100%{opacity:0}12%,18%{opacity:.95}25%{opacity:.15}32%{opacity:.8}42%{opacity:0}}
-  @keyframes reveal-multi{to{opacity:1;transform:translateY(0) rotateY(0) scale(1)}}
-  @keyframes reveal-card-glow{from{filter:brightness(1)}to{filter:brightness(1.12)}}
-  @media(prefers-reduced-motion:reduce){.cinematic-reveal *{animation-duration:.01ms!important;animation-delay:0ms!important}}
-  @media(max-width:520px){.cinematic-reveal{min-height:370px;height:58vh}.reveal-topline{left:12px;right:12px;font-size:8px}.reveal-caption{top:14%;letter-spacing:.2em}.reveal-single{width:min(58vw,196px)}.card-electric{inset:-12% -34%}.card-electric.front{inset:-10% -30%}.reveal-card{width:19%}.reveal-card.final-rare .card-face .pc{width:100%}.reveal-nick{font-size:8px}.reveal-footer{font-size:8px;letter-spacing:.1em}}
-  `;document.head.appendChild(st);
 }
 /* Выбор карточки в награду: одна из трёх, пропустить нельзя */
 function pickBuild() {
@@ -711,8 +588,7 @@ const ACT = {
   daily() { if (dailyReady(G, now())) { G.daily = mskDay(now()); G.packs.basic++; tab = 'packs'; } },
   open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
   buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
-  poTap() { return poTap(); }, poAll() { return poAll(); }, poNext() { return poNext(); },
-  poReplay() { if (!OV || OV.t !== 'pack' || OV.phase !== 'next' || OV.last3D == null) return false; const i = OV.last3D; OV.phase = 'replay'; $('#po-btn').innerHTML = '<button class="btn s" disabled style="width:100%">Повтор анимации…</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>'; showCase3D(OV.cards[i],false).then(()=>{ if (OV && OV.phase === 'replay') { OV.phase = 'next'; const stage = $('#po-stage'); if (stage && !stage.querySelector('.po-next-hit')) stage.insertAdjacentHTML('beforeend', '<button class="po-next-hit" data-act="poNext" aria-label="Открыть следующую карточку" title="Нажмите на карточку, чтобы открыть следующую"></button>'); $('#po-name').innerHTML = nameH(OV.cards[i]) + '<span class="sm mut">Нажмите на карточку, чтобы открыть следующую</span>'; $('#po-btn').innerHTML = `<button class="btn s" data-act="poReplay" style="width:100%">Повторить 3D-выход</button><button class="btn s" data-act="poSkip" style="width:100%;margin-top:6px">Показать остальные</button>`; } }); return false; },
+  poTap() { return poTap(); },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
   fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1 }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },

@@ -3062,6 +3062,68 @@
       "countryCode": "UA",
       "team": "Inner Circle Academy",
       "verifiedAt": "2026-11-11"
+    },
+    "shane": {
+      "profileId": 19709,
+      "profileUrl": "https://www.hltv.org/player/19709/shane",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Ludens Gecko",
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/grQPtPRtQS7wET7B9loj9M.png?ixlib=java-2.1.0&s=37ac44f78b6af60b72971f32c48452c6&w=400"
+    },
+    "El1an": {
+      "profileId": 13281,
+      "profileUrl": "https://www.hltv.org/player/13281/el1an",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "ex-INOX",
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/WWlWHVmnwVY_lqhkAT6XNT.png?ixlib=java-2.1.0&s=70ae8501e8096caff5c26471feb8f568&w=400"
+    },
+    "H4SAN4TOR": {
+      "profileId": 22189,
+      "profileUrl": "https://www.hltv.org/player/22189/h4san4tor",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "PRIVATE",
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/_nDwzcRmBgzybrFVPgzhpp.png?ixlib=java-2.1.0&s=1cb3c711041f6cb7fe288daf4f5cf8c1&w=400"
+    },
+    "salazar": {
+      "profileId": 21379,
+      "profileUrl": "https://www.hltv.org/player/21379/salazar",
+      "country": "Дания",
+      "countryCode": "DK",
+      "team": "BBL",
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/y2EH5zWXde2Sx57tl6fWlj.png?ixlib=java-2.1.0&s=9d4b3775492e707d05aea8b01b857e93&w=400"
+    },
+    "r3salt": {
+      "profileId": 20709,
+      "profileUrl": "https://www.hltv.org/player/20709/r3salt",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "Nemesis",
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/mIJg2u1tyo5pIwrkSkqWCv.png?ixlib=java-2.1.0&s=7c091147fd2165c0143a956e6cbea408&w=400"
+    },
+    "relaxxie": {
+      "profileId": 23684,
+      "profileUrl": "https://www.hltv.org/player/23684/relaxxie",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "K27",
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/xl5WSZlHhqSKBZBCeFosr0.png?ixlib=java-2.1.0&s=7dbbb865c6ab31578a31a809a0221bd4&w=400"
+    },
+    "oontoma": {
+      "profileId": 25577,
+      "profileUrl": "https://www.hltv.org/player/25577/oontoma",
+      "country": "Финляндия",
+      "countryCode": "FI",
+      "team": null,
+      "verifiedAt": "2026-11-11"
     }
   }
 }

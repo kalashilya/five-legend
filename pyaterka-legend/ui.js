@@ -118,7 +118,7 @@ function vHome() {
     </div>
     <div class="lobby-hero__content">
       <div class="lobby-hero__eyebrow"><span><i></i> LIVE ARENA</span><b>SEASON ${String(G.season.m % 12 + 1).padStart(2, '0')}</b></div>
-      <div class="lobby-hero__headline"><span>СОЗДАЙ</span><strong>СВОЮ</strong><em>ЛЕГЕНДУ</em></div>
+      <div class="lobby-hero__headline"><span>СТАНЬ</span><strong>ЛЕГЕНДОЙ</strong><em>СЦЕНЫ</em></div>
       <p class="lobby-hero__sub">Твоя команда. Твоя стратегия. Твой путь к вершине.</p>
       <button class="lobby-hero__rank" data-act="leagues" aria-label="Лиги: где вы сейчас и что дальше"><span class="lobby-hero__rankicon">${rankH(lg)}</span><span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><span class="lobby-hero__cups"><strong>${G.tro}</strong><small>КУБКОВ</small></span><span class="lobby-hero__more" aria-hidden="true">›</span></button>
     </div>

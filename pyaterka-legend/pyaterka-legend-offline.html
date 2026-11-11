@@ -1414,6 +1414,10 @@ html,body{max-width:100%;overflow-x:clip}
 .section-mast__serial{position:absolute;right:12px;bottom:9px}
 @media(max-width:390px){.section-mast{min-height:92px;padding:12px!important;gap:10px!important}.section-mast__icon{flex-basis:38px;width:38px;height:38px}.section-mast__copy h1{font-size:24px}.section-mast__desc{font-size:9px}}
 
+
+/* Keep the primary battle action above the persistent bottom navigation on compact phones. */
+@media(max-width:390px){#app[data-tab="home"] .lobby-hero{min-height:280px}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

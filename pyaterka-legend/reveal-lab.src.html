@@ -18,17 +18,16 @@ button{font:600 13px/1 var(--f-d);letter-spacing:.12em;text-transform:uppercase;
 button[aria-pressed=true]{background:rgb(255 255 255 / .24)}
 button:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none}
-#hint{display:flex;align-items:center;gap:10px;font:700 12px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:#cfd6de}
-#hint i{display:block;width:46px;height:2px;background:linear-gradient(90deg,transparent,#cfd6de);position:relative;animation:swipe 1.4s ease-in-out infinite}
-#hint i::after{content:"";position:absolute;right:-2px;top:-4px;border:5px solid transparent;border-left-color:#cfd6de}
-@keyframes swipe{0%{transform:translateX(-14px);opacity:0}30%{opacity:1}100%{transform:translateX(14px);opacity:0}}
+#hint{font:700 12px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:#cfd6de;animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.35}}
 #nogl{position:fixed;inset:0;display:none;place-items:center;text-align:center;padding:24px;font:500 16px/1.5 var(--f-d)}
 @media (prefers-reduced-motion: reduce){#hint i{animation:none}}
 </style></head><body>
 <canvas id="gl"></canvas><div id="flash"></div><div id="nogl">Этому браузеру недоступна 3D-графика (WebGL). Откройте игру в Chrome, Safari или Firefox.</div>
 <div class="ui top"><span class="eyebrow" id="eb"></span><span class="title" id="tt"></span><span class="sub" id="st"></span></div>
-<div class="ui bot"><span id="hint"><span>Проведите по замкам</span><i></i></span><div class="row" id="demo"><button data-k="elite">Элитный · 87+</button><button data-k="pro">Про · 81</button><button data-k="basic">Базовый · 64</button></div><div class="row"><button id="openBtn">Открыть</button><button id="skip">Пропустить</button></div></div>
+<div class="ui bot"><span id="hint">Нажмите на кейс</span><div class="row" id="demo"><button data-k="elite">Элитный · 87+</button><button data-k="pro">Про · 81</button><button data-k="basic">Базовый · 64</button></div><div class="row"><button id="openBtn">Открыть</button><button id="skip">Пропустить</button></div></div>
 <script>/*THREE*/</script>
+<script>/*FLAGS*/</script>
 <script>
 'use strict';
 /* Тестовые выпадения: в игре сюда придёт лучшая карточка кейса */
@@ -44,14 +43,16 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const lerp = (a, b, t) => a + (b - a) * t, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const easeO = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3), easeIO = t => { t = clamp(t, 0, 1); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 const back = t => { t = clamp(t, 0, 1); const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
-const flagOf = cc => [...cc].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join('');
+const FLAG_IMG = {};
+const loadFlag = cc => FLAG_IMG[cc] ? Promise.resolve(FLAG_IMG[cc]) : new Promise(res => { const svg = typeof FLAGS !== 'undefined' && FLAGS[cc]; if (!svg) return res(null);
+  const im = new Image(); im.onload = () => { FLAG_IMG[cc] = im; res(im); }; im.onerror = () => res(null); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); });
 
 /* ---------- Рендер ---------- */
 const cv = $('#gl'); let R3;
 try { R3 = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' }); } catch (e) { $('#nogl').style.display = 'grid'; throw e; }
 R3.setPixelRatio(Math.min(devicePixelRatio, 2)); R3.outputEncoding = THREE.sRGBEncoding; R3.toneMapping = THREE.ACESFilmicToneMapping; R3.toneMappingExposure = 1.1;
 R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
-const scene = new THREE.Scene(); scene.background = new THREE.Color(0x030407); scene.fog = new THREE.FogExp2(0x030407, .05);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x030407); scene.fog = new THREE.FogExp2(0x030407, .035);
 const cam = new THREE.PerspectiveCamera(38, 1, .1, 100);
 function resize() { const w = innerWidth, h = innerHeight; R3.setSize(w, h, false); cam.aspect = w / h; cam.fov = w / h < .7 ? 46 : 34; cam.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();
@@ -72,7 +73,21 @@ foamT.wrapS = foamT.wrapT = THREE.RepeatWrapping;
 
 /* ---------- Арена: пол, лучи, пыль ---------- */
 const tint = new THREE.Color('#5d6670'), tintTo = new THREE.Color('#5d6670');
-scene.add(new THREE.HemisphereLight(0x9aa8b8, 0x0a0a0a, .55));
+
+scene.add(new THREE.HemisphereLight(0x9aa8b8, 0x0a0a0a, .35));
+/* окружение для отражений: тёмная студия с софтбоксами */
+{ const es = new THREE.Scene(), pm = new THREE.PMREMGenerator(R3), box = (w, h, x, y, z, c) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); es.add(m); };
+  es.background = new THREE.Color(0x050608); box(6, 2, 0, 6, 2, 0xffffff); box(2, 5, -6, 1, 1, 0x8899aa); box(2, 5, 6, 1, 1, 0xaa9988); box(8, 1, 0, -1, -6, 0x333840);
+  scene.environment = pm.fromScene(es, .03).texture; pm.dispose(); }
+/* небо-градиент и дымка у горизонта */
+const sky = new THREE.Mesh(new THREE.SphereGeometry(40, 32, 16), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, uniforms: { c: { value: new THREE.Color('#5d6670') } },
+  vertexShader: 'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+  fragmentShader: 'uniform vec3 c;varying vec3 vP;void main(){float h=normalize(vP).y;float haze=exp(-abs(h-.03)*9.);vec3 col=mix(vec3(.004,.005,.009),vec3(.02,.025,.035),smoothstep(.6,0.,h))+c*haze*.22;gl_FragColor=vec4(col,1.);\n#include <encodings_fragment>\n}' }));
+scene.add(sky);
+/* огни вдали: размытые круги, как прожекторы арены не в фокусе */
+const bokeh = [];
+for (let i = 0; i < 26; i++) { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: null, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: .0 })); const a = (i / 26) * Math.PI * 1.2 - Math.PI * .6, r = 14 + Math.random() * 6;
+  m.position.set(Math.sin(a) * r, 1.5 + Math.random() * 5, -Math.cos(a) * r - 4); const s = .6 + Math.random() * 1.6; m.scale.set(s, s, 1); m.userData = { ph: Math.random() * 6.28, base: .1 + Math.random() * .25 }; scene.add(m); bokeh.push(m); }
 const key = new THREE.SpotLight(0xffffff, 3.4, 30, .5, .55, 1.2); key.position.set(1.5, 9, 5); key.target.position.set(0, .4, 0); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -.0004; scene.add(key, key.target);
 const rimL = new THREE.PointLight(0xffffff, 2.6, 12, 2), rimR = rimL.clone(); rimL.position.set(-3.4, 2.6, -1.8); rimR.position.set(3.4, 2.6, -1.8); scene.add(rimL, rimR);
 const floorMat = new THREE.MeshStandardMaterial({ color: 0x07080b, metalness: .7, roughness: .36, emissive: tint.clone(), emissiveMap: tri, emissiveIntensity: .45, transparent: true, opacity: .9 });
@@ -80,12 +95,12 @@ const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), floorMat); floor.r
 const beamMat = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, uniforms: { c: { value: tint.clone() }, a: { value: .18 } },
   vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
   fragmentShader: 'uniform vec3 c;uniform float a;varying vec2 vUv;void main(){float f=pow(vUv.y,1.6)*(1.-abs(vUv.x-.5)*1.6);gl_FragColor=vec4(c*f*a*2.2,1.);}' });
-const beams = [-2.8, -1.1, 1.1, 2.8].map((x, i) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.08, 1.25, 11, 32, 1, true), beamMat()); m.geometry.translate(0, -5.5, 0); m.position.set(x, 10, -2.4 - (i % 2)); scene.add(m); return m; });
+const beams = [].map((x, i) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.08, 1.25, 11, 32, 1, true), beamMat()); m.geometry.translate(0, -5.5, 0); m.position.set(x, 10, -2.4 - (i % 2)); scene.add(m); return m; });
 const DUST = 800, dg = new THREE.BufferGeometry(), dp = new Float32Array(DUST * 3), dv = new Float32Array(DUST);
 for (let i = 0; i < DUST; i++) { dp[i * 3] = (Math.random() - .5) * 14; dp[i * 3 + 1] = Math.random() * 7; dp[i * 3 + 2] = (Math.random() - .5) * 10 - 1; dv[i] = .05 + Math.random() * .15; }
 dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
 scene.add(new THREE.Points(dg, new THREE.PointsMaterial({ map: dot, size: .055, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xfff0d8, opacity: .6 })));
-const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: dot, color: tint.clone(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 })); glow.scale.set(6, 6, 1); scene.add(glow);
+const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: dot, color: tint.clone(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 })); glow.scale.set(3.6, 4.6, 1); scene.add(glow);
 const ring = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 96), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); scene.add(ring);
 
 /* ---------- Оружейный кейс ----------
@@ -161,7 +176,7 @@ function drawFace(P, g, w, h) {
   g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = '#fff'; g.shadowColor = 'rgba(0,0,0,.7)'; g.shadowBlur = 16 * k;
   g.font = `700 ${190 * k}px Oswald, Impact, sans-serif`; g.fillText(P.ovr, 40 * k, 200 * k); g.shadowBlur = 0;
   g.fillStyle = 'rgba(5,7,10,.75)'; g.fillRect(44 * k, 224 * k, 130 * k, 52 * k); g.fillStyle = P.col; g.font = `700 ${40 * k}px JetBrains Mono, monospace`; g.fillText(P.role, 58 * k, 264 * k);
-  g.font = `${66 * k}px sans-serif`; g.fillText(flagOf(P.cc), 48 * k, 360 * k);
+  const fl = FLAG_IMG[P.cc]; if (fl) { g.fillStyle = 'rgba(0,0,0,.5)'; g.fillRect(44 * k, 300 * k, 92 * k, 69 * k); g.drawImage(fl, 46 * k, 302 * k, 88 * k, 66 * k); }
   g.fillStyle = P.col; g.font = `700 ${30 * k}px JetBrains Mono, monospace`; g.fillText(P.rar.toUpperCase(), 44 * k, h * .69);
   g.fillStyle = '#fff'; g.font = `700 ${100 * k}px Oswald, Impact, sans-serif`; g.fillText(P.nick.toUpperCase(), 40 * k, h * .78);
   g.fillStyle = P.tc; g.save(); g.translate(52 * k, h * .815); g.rotate(Math.PI / 4); g.fillRect(-9 * k, -9 * k, 18 * k, 18 * k); g.restore();
@@ -182,10 +197,10 @@ const holo = map => new THREE.ShaderMaterial({ uniforms: { map: { value: map }, 
   vertexShader: 'varying vec2 vUv;varying vec3 vN;varying vec3 vV;void main(){vUv=uv;vec4 mv=modelViewMatrix*vec4(position,1.);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}',
   fragmentShader: `uniform sampler2D map;uniform float t;uniform float sweep;uniform float foil;varying vec2 vUv;varying vec3 vN;varying vec3 vV;
   vec3 hue(float h){return clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.);}
-  void main(){vec4 b=texture2D(map,vUv);float ang=dot(vN,vV);vec2 tilt=vN.xy;float l=dot(b.rgb,vec3(.299,.587,.114));
+  void main(){vec4 b=texture2D(map,vUv);b.rgb=pow(b.rgb,vec3(2.2));float ang=dot(vN,vV);vec2 tilt=vN.xy;float l=dot(b.rgb,vec3(.299,.587,.114));
   vec3 ir=hue(fract(vUv.x*.35+vUv.y*.45+tilt.x*1.4+tilt.y*1.1+t*.02));float edge=smoothstep(.0,.06,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));float m=foil*(.03+.13*pow(1.-l,2.))*(1.-edge*.5)*(.6+.4*clamp(abs(tilt.x+tilt.y)*2.,0.,1.));
   float s=smoothstep(.09,0.,abs(vUv.x*.6+vUv.y*.8-sweep))*.55;float spec=pow(max(0.,ang),24.)*.08;
-  vec3 c=b.rgb*.92+ir*m+vec3(s)*b.rgb*1.4+spec;gl_FragColor=vec4(c,1.);
+  vec3 c=b.rgb*1.05+ir*m*.5+vec3(s)*(b.rgb+.05)*1.6+spec*.5;gl_FragColor=vec4(c,1.);
   #include <tonemapping_fragment>
   #include <encodings_fragment>
   }` });
@@ -208,12 +223,11 @@ function buildCard(P) {
 /* ---------- Флаг и плашка команды ---------- */
 const wave = map => new THREE.ShaderMaterial({ transparent: true, side: THREE.DoubleSide, uniforms: { map: { value: map }, t: { value: 0 }, a: { value: 0 } },
   vertexShader: 'uniform float t;varying vec2 vUv;varying float vS;void main(){vUv=uv;vec3 p=position;float w=sin(p.x*3.2-t*5.)*.09*(uv.x+.15)+sin(p.y*4.-t*3.)*.03*uv.x;p.z+=w;vS=w;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
-  fragmentShader: 'uniform sampler2D map;uniform float a;varying vec2 vUv;varying float vS;void main(){vec4 c=texture2D(map,vUv);c.rgb*=1.+vS*3.;gl_FragColor=vec4(c.rgb,c.a*a);\n#include <encodings_fragment>\n}' });
+  fragmentShader: 'uniform sampler2D map;uniform float a;varying vec2 vUv;varying float vS;void main(){vec4 c=texture2D(map,vUv);c.rgb=pow(c.rgb,vec3(2.2))*(1.+vS*3.);gl_FragColor=vec4(c.rgb,c.a*a);\n#include <encodings_fragment>\n}' });
 let flag = null, teamP = null;
 function buildSigns(P) {
   [flag, teamP].forEach(m => m && scene.remove(m));
-  const ft = tex(512, 340, (g, w, h) => { g.font = '300px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(flagOf(P.cc), w / 2, h / 2 + 20);
-    const d = g.getImageData(w / 2 - 4, h / 2 - 4, 8, 8).data; let any = 0; for (let i = 3; i < d.length; i += 4) any += d[i]; if (!any) { g.fillStyle = '#fff'; g.font = '700 200px Oswald, Impact, sans-serif'; g.fillText(P.cc, w / 2, h / 2 + 10); } });
+  const fl = FLAG_IMG[P.cc], ft = tex(640, 480, (g, w, h) => { if (fl) g.drawImage(fl, 0, 0, w, h); });
   flag = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.13, 40, 24), wave(ft)); flag.position.set(0, 4.7, -.3); scene.add(flag);
   const tt = tex(1024, 220, (g, w, h) => { const gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(.15, 'rgba(0,0,0,.85)'); gr.addColorStop(.85, 'rgba(0,0,0,.85)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
     g.fillStyle = P.tc; g.fillRect(w * .12, 0, w * .76, 8); g.fillRect(w * .12, h - 8, w * .76, 8); g.fillStyle = '#fff'; g.font = '700 130px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(P.team.toUpperCase(), w / 2, h / 2 + 8); });
@@ -234,9 +248,9 @@ const S = {};
 const ui = (t, s, col) => { const a = $('#tt'), b = $('#st'); a.textContent = t || ''; b.textContent = s || ''; a.style.setProperty('--gl', col || '#fff'); b.style.setProperty('--gl', col || '#fff'); a.classList.toggle('on', !!t); b.classList.toggle('on', !!s); };
 const flash = (a = .6) => { if (reduce) return; const f = $('#flash'); f.style.transition = 'none'; f.style.opacity = a; requestAnimationFrame(() => { f.style.transition = 'opacity .45s'; f.style.opacity = 0; }); };
 function reset(k) {
-  P = DEMO[k]; buildCard(P); buildSigns(P); skinCase(P.box, P); phase = 'idle'; steps.length = 0; swipe.p = 0;
+  P = DEMO[k]; buildCard(P); buildSigns(P); skinCase(P.box, P); phase = 'idle'; steps.length = 0;
   Object.assign(S, { lid: 0, light: 0, rise: 0, show: 0, face: 0, spin: 0, glow: 0, ring: -1, beam: .18, dolly: 0, dollyT: 0, sweep: -1, flag: 0, team: 0, shake: 0, focus: 0 });
-  latches.forEach(l => { l.open = 0; }); rot = 0; S.lidT = S.lightT = S.riseT = S.focusT = 0; tintTo.set('#5d6670'); tint.set('#5d6670'); card.visible = mirror.visible = false;
+  latches.forEach(l => { l.open = 0; }); rot = P.ovr >= WALK ? Math.PI : Math.PI * 2; S.lidT = S.lightT = S.riseT = S.focusT = 0; tintTo.set('#5d6670'); tint.set('#5d6670'); card.visible = mirror.visible = false;
   ui(''); $('#hint').style.visibility = 'visible'; $('#eb').textContent = 'Кейс «' + P.boxN + '»';
   document.querySelectorAll('[data-k]').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
 }
@@ -255,24 +269,22 @@ function open() {
     return;
   }
   /* 87+: рубашка поднимается из кейса → флаг → команда → карточка */
-  at(.9, () => { S.show = 1; S.rise = 1; S.glow = .8; tintTo.copy(c); S.beam = .5; S.spin = 0; });
-  at(2.1, () => { S.focus = 1; S.flag = 1; tintTo.setHSL((P.cc.charCodeAt(0) * 37 + P.cc.charCodeAt(1) * 11) % 360 / 360, .75, .5); });
-  at(3.7, () => { S.flag = 0; S.team = 1; tintTo.set(P.tc); S.spin += 6.283; });
-  at(5.3, () => { S.team = 0; S.glow = 1.6; tintTo.copy(c); S.spin += Math.PI * 3; S.beam = .8; });
-  at(5.95, () => { flash(.7); S.face = 1; S.ring = 0; burst(c, 1, CARD_Y); S.dolly = 1; S.sweep = 0; ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
+  at(.9, () => { S.show = 1; S.rise = 1; S.glow = .5; tintTo.copy(c).multiplyScalar(.8); });
+  at(2.2, () => { S.focus = 1; S.flag = 1; tintTo.setHSL((P.cc.charCodeAt(0) * 37 + P.cc.charCodeAt(1) * 11) % 360 / 360, .6, .45); });
+  at(3.8, () => { S.flag = 0; S.team = 1; tintTo.set(P.tc); });
+  at(5.3, () => { S.team = 0; S.glow = 1.1; tintTo.copy(c); S.charge = 1; });
+  at(5.9, () => { S.face = 1; });
+  at(6.1, () => { flash(.65); S.ring = 0; burst(c, 1, CARD_Y); S.dolly = 1; S.sweep = 0; ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
   at(7.2, () => { phase = 'done'; });
 }
 function skip() { if (phase !== 'run') return; steps.forEach(s => s[1]()); steps.length = 0; S.snap = 1; S.flag = S.team = 0; }
 
-/* ---------- Свайп по замкам ---------- */
-const swipe = { on: false, x0: 0, p: 0 }, ptr = { x: 0, y: 0 };
-cv.addEventListener('pointerdown', e => { if (phase === 'idle') { swipe.on = true; swipe.x0 = e.clientX; cv.setPointerCapture(e.pointerId); } });
-cv.addEventListener('pointermove', e => { ptr.x = e.clientX / innerWidth * 2 - 1; ptr.y = e.clientY / innerHeight * 2 - 1;
-  if (swipe.on && phase === 'idle') { swipe.p = clamp(Math.abs(e.clientX - swipe.x0) / (innerWidth * .4), 0, 1);
-    latches[0].open = Math.max(latches[0].open, clamp(swipe.p * 2, 0, 1)); latches[1].open = Math.max(latches[1].open, clamp(swipe.p * 2 - 1, 0, 1));
-    if (swipe.p >= 1) { swipe.on = false; open(); } } });
-cv.addEventListener('pointerup', () => { swipe.on = false; if (phase === 'idle' && swipe.p < 1) latches.forEach(l => { l.open = 0; }); });
-document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => reset(b.dataset.k)));
+/* ---------- Нажатие на кейс ---------- */
+const ptr = { x: 0, y: 0 };
+cv.addEventListener('pointermove', e => { ptr.x = e.clientX / innerWidth * 2 - 1; ptr.y = e.clientY / innerHeight * 2 - 1; });
+cv.addEventListener('pointerup', () => { if (phase === 'idle') open(); });
+document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => start(b.dataset.k)));
+const start = k => loadFlag(DEMO[k].cc).then(() => reset(k));
 $('#openBtn').addEventListener('click', open); $('#skip').addEventListener('click', skip);
 
 /* ---------- Кадр ---------- */
@@ -282,13 +294,14 @@ function frame() {
   const now = performance.now() / 1000, dt = Math.min(.05, now - last); last = now; const t = phase === 'idle' ? 0 : now - T0;
   while (steps.length && steps[0][0] <= t) steps.shift()[1]();
   const k = 1 - Math.pow(.02, dt); tint.lerp(tintTo, k);
-  floorMat.emissive.copy(tint); floorMat.emissiveIntensity = .3 + S.beam * .5; tri.offset.y -= dt * .04;
+  floorMat.emissive.copy(tint); floorMat.emissiveIntensity = .12 + S.beam * .25; tri.offset.y -= dt * .04;
   beams.forEach((b, i) => { b.material.uniforms.c.value.copy(tint); b.material.uniforms.a.value = lerp(b.material.uniforms.a.value, S.beam, dt * 3); b.rotation.z = Math.sin(now * .5 + i * 1.7) * .16 - b.position.x * .05; });
+  sky.material.uniforms.c.value.copy(tint); bokeh.forEach(b => { if (!b.material.map) b.material.map = dot; b.material.color.copy(tint).lerp(new THREE.Color('#fff'), .3); b.material.opacity = b.userData.base * (.7 + .3 * Math.sin(now * .8 + b.userData.ph)); });
   rimL.color.copy(tint); rimR.color.copy(tint); key.color.copy(tint).lerp(new THREE.Color('#fff'), .65);
   for (let i = 0; i < DUST; i++) { dp[i * 3 + 1] += dv[i] * dt; if (dp[i * 3 + 1] > 7) dp[i * 3 + 1] = 0; } dg.attributes.position.needsUpdate = true;
   /* кейс: покачивание, защёлки, крышка с отскоком, свет изнутри */
   latches.forEach(l => { const a = -l.open * 2.1; l.piv.rotation.x = lerp(l.piv.rotation.x, a, dt * 14); });
-  if (phase === 'idle') { caseG.rotation.y = -.18 + Math.sin(now * .6) * .08 + swipe.p * .05; caseG.position.y = Math.sin(now * 1.4) * .015; }
+  if (phase === 'idle') { caseG.rotation.y = -.18 + Math.sin(now * .6) * .08; caseG.position.y = Math.sin(now * 1.4) * .015; }
   S.lidT = clamp((S.lidT || 0) + (S.lid ? dt * 1.5 : -dt * 4), 0, 1); lidPivot.rotation.x = -back(S.lidT) * 1.85;
   S.lightT = clamp((S.lightT || 0) + (S.light ? dt * 2 : -dt * 4), 0, 1);
   innerLight.intensity = S.lightT * 9 + (S.lightT ? Math.sin(now * 20) * .6 : 0); shaft.material.uniforms.a.value = S.lightT * .55 * (1 - S.focus * .6); slotMat.color.copy(innerLight.color).multiplyScalar(S.lightT * 1.2);
@@ -298,15 +311,16 @@ function frame() {
   S.riseT = clamp((S.riseT || 0) + (S.rise ? dt * .9 : 0), 0, 1); const rt = easeO(S.riseT);
   cardPivot.position.set(0, lerp((CASE.hb + .1) * CS, CARD_Y, rt) + (phase === 'done' ? Math.sin(now * 1.3) * .04 : 0), lerp(.35, .3, rt));
   const lay = (1 - rt) * -Math.PI / 2;
-  const target = S.face ? Math.ceil((S.spin - .001) / 6.283) * 6.283 : S.spin + Math.PI;
+  const target = S.face ? Math.PI * 2 : Math.PI;
   if (S.snap) { S.riseT = 1; S.focusT = 1; rot = target; S.snap = 0; }
-  rot = lerp(rot, target + (S.show && !S.face ? now * .4 : 0), dt * (S.face ? 3.4 : 2.2));
+  rot = lerp(rot, target, dt * (S.face ? 7 : 3));
+  const charge = S.charge && !S.face ? Math.sin(now * 38) * .025 : 0;
   const tiltX = phase === 'done' ? -ptr.y * .2 : Math.sin(now * 1.1) * .04, tiltY = phase === 'done' ? ptr.x * .35 : 0;
-  card.rotation.set(lay + tiltX, rot + tiltY, Math.sin(now * .8) * .02); card.scale.setScalar(lerp(.42, CARD_S, rt));
+  card.rotation.set(lay + tiltX, rot + tiltY + charge, Math.sin(now * .8) * .02 + charge); card.scale.setScalar(lerp(.42, CARD_S, rt));
   mirror.position.set(cardPivot.position.x, -cardPivot.position.y, cardPivot.position.z); mirror.rotation.set(-card.rotation.x, card.rotation.y, -card.rotation.z); mirror.scale.set(card.scale.x, -card.scale.y, card.scale.z); mirror.visible = card.visible && rt > .6;
   if (faceMat) { faceMat.uniforms.t.value = now; if (S.sweep >= 0) { S.sweep += dt * .9; faceMat.uniforms.sweep.value = S.sweep * 2.2 - .3; if (S.sweep > 1.4) S.sweep = -2; } else if (phase === 'done') { S.sweep += dt * .3; if (S.sweep >= 0) S.sweep = 0; } }
   edgeMat.emissiveIntensity = .3 + S.glow * .7;
-  glow.material.color.copy(tint); glow.material.opacity = lerp(glow.material.opacity, S.show ? S.glow * (.7 + Math.sin(now * 3) * .1) : 0, dt * 3); glow.position.set(0, cardPivot.position.y, -.5);
+  glow.material.color.copy(tint); glow.material.opacity = lerp(glow.material.opacity, S.show ? S.glow * .35 : 0, dt * 3); glow.position.set(0, cardPivot.position.y, -.5);
   if (S.ring >= 0) { S.ring += dt * 1.4; ring.position.set(0, CARD_Y, .2); ring.scale.setScalar(.3 + S.ring * 6); ring.material.opacity = Math.max(0, 1 - S.ring) * .9; ring.material.color.copy(tint).lerp(new THREE.Color('#fff'), .4); ring.lookAt(cam.position); if (S.ring > 1) S.ring = -1; }
   if (bLife > 0) { bLife -= dt * .7; for (let i = 0; i < BP; i++) { bv[i * 3 + 1] -= 2.5 * dt; bp[i * 3] += bv[i * 3] * dt; bp[i * 3 + 1] += bv[i * 3 + 1] * dt; bp[i * 3 + 2] += bv[i * 3 + 2] * dt; bv[i * 3] *= .985; bv[i * 3 + 2] *= .985; } bg.attributes.position.needsUpdate = true; bMat.opacity = Math.max(0, bLife); }
   for (const [m, on] of [[flag, S.flag], [teamP, S.team]]) { if (!m) continue; const u = m.material.uniforms; u.t.value = now; u.a.value = lerp(u.a.value, on, dt * 5); m.position.y = lerp(m.position.y, on ? 3.45 : 4.7, dt * 4); m.visible = u.a.value > .01; }
@@ -317,5 +331,5 @@ function frame() {
   look.set(0, lerp(.3, CARD_Y + .15 + (S.flag || S.team ? .45 : 0) * (1 - d), f), 0); cam.lookAt(look);
   R3.render(scene, cam); requestAnimationFrame(frame);
 }
-(document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(() => { reset('elite'); requestAnimationFrame(frame); });
+(document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(() => start('elite')).then(() => requestAnimationFrame(frame));
 </script></body></html>

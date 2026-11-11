@@ -22,6 +22,7 @@ ls -la pyaterka-legend-offline.html | awk '{print $5" bytes"}'
 python3 -I - <<'PY'
 src = open('reveal-lab.src.html', encoding='utf-8').read()
 three = open('vendor/three.min.js', encoding='utf-8').read()
+flags = open('vendor/flags.js', encoding='utf-8').read()
 assert '/*THREE*/' in src
-open('reveal-lab.html', 'w', encoding='utf-8').write(src.replace('/*THREE*/', three, 1))
+open('reveal-lab.html', 'w', encoding='utf-8').write(src.replace('/*THREE*/', three, 1).replace('/*FLAGS*/', flags, 1))
 PY

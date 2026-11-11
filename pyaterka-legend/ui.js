@@ -116,10 +116,10 @@ function vHome() {
 <g fill="none" stroke="#8eb8d3" stroke-opacity=".5"><path d="M30 292L140 265 210 280M530 292L420 265 350 280"/><path d="M75 310H485M105 325H455M145 340H415" stroke-width="2"/><path d="M110 295l-20 15m360-15 20 15M175 279l-12 19m222-19 12 19"/></g>
 <g fill="#8db8d5" opacity=".6"><circle cx="60" cy="125" r="3"/><circle cx="500" cy="125" r="3"/><circle cx="280" cy="58" r="3"/><path d="M268 66h24v3h-24z"/></g><path d="M20 358H540" stroke="#8db8d5" stroke-opacity=".24"/></svg></div></section>
   <section class="home-shortcuts" aria-label="Быстрые разделы">
-    <button class="home-shortcut" data-act="tab" data-v="play"><span class="home-shortcut__icon">01</span><span><b>Матчи</b><small>Проверь свою пятёрку</small></span></button>
-    <button class="home-shortcut" data-act="tab" data-v="col"><span class="home-shortcut__icon">02</span><span><b>Коллекция</b><small>Все твои игроки</small></span></button>
-    <button class="home-shortcut" data-act="tab" data-v="packs"><span class="home-shortcut__icon">03</span><span><b>Кейсы</b><small>Новые открытия</small></span></button>
-    <button class="home-shortcut" data-act="tab" data-v="prof"><span class="home-shortcut__icon">04</span><span><b>Профиль</b><small>Твой прогресс</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="play"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M2 7h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H2z"/><path d="M10 11l-1 4m6-7v3h2V8M4 7V5h3"/></g><g transform="rotate(180 12 12)"><path d="M2 7h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H2z"/></g></svg></span><span><b>Матчи</b><small>Проверь свою пятёрку</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="col"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h12v16H7z"/><path d="M4 6v15h12M10 7h6M10 10h6M10 13h4"/><path d="M9 3V1h12v16h-2"/></svg></span><span><b>Коллекция</b><small>Все твои игроки</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="packs"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l2-4h14l2 4v12H3z"/><path d="M3 8h18M7 4l2 4m8-4-2 4M9 12h6v8H9z"/><path d="M11 12v-2h2v2"/></svg></span><span><b>Кейсы</b><small>Новые открытия</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="prof"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.3 8.7-8 11-4.7-2.3-8-6-8-11V5z"/><circle cx="12" cy="9" r="2.4"/><path d="M7.5 17c.8-2.3 2.3-3.4 4.5-3.4s3.7 1.1 4.5 3.4"/></svg></span><span><b>Профиль</b><small>Твой прогресс</small></span></button>
   </section>
   <section class="lobby home-lineup"><div class="kv"><span>Пятёрка ${G.sqi + 1}</span><span>Рейтинг <b>${info ? info.rating.toFixed(1) : '—'}</b></span></div>
   <div class="lineup">${G.squad.map((id, i) => id == null ? `<button data-act="slot" data-v="${i}" aria-label="Пустой слот: ${RNAME[i]}"><div class="slot empty" style="display:block;padding:0"><div class="ph0">+</div></div></button>` : `<button data-act="card" data-id="${id}" aria-label="${esc(CARDS[id].nick)}">${ownH(id, 'xs')}</button>`).join('')}</div>
@@ -543,16 +543,28 @@ function endBuild() {
 
 const TABS = {
   home: ['Главная', vHome, '<path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/>'],
-  play: ['Матчи', vPlay, '<g stroke-width="1.55"><path d="M2.5 6.5h12.2l3.1-2.2h3.7v2.5h-3.4l-2.7 2.1H9.2l-2.1 2H4.8V8.8H2.5z"/><path d="M8.6 8.9l-1.2 4.4 2.2 1.2 1.3-4.5M14.2 6.7l1.1 4.8 2.2 1.2-.6-5.1M4.8 8.8l-.4-2.3M18.1 6.8l2.2 1.2M3 17.5l17-11" stroke-linecap="round" stroke-linejoin="round"/></g>'],
+  play: ['Матчи', vPlay, '<g stroke-width="1.35"><g transform="rotate(-35 12 12)"><path d="M1.5 8h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H1.5z"/><path d="M10 12l-1 4M15 10v3h2v-3M4 8V6h3"/></g><g transform="rotate(145 12 12)"><path d="M1.5 8h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H1.5z"/><path d="M10 12l-1 4M15 10v3h2v-3M4 8V6h3"/></g></g>'],
   col: ['Коллекция', vCol, '<g stroke-width="1.55"><path d="M4 5.5h11.5v15H4z"/><path d="M8 3.5h12v15"/><path d="M7 10h5.5M7 13h5.5"/><circle cx="9.7" cy="8" r="1.1"/></g>'],
   packs: ['Кейсы', vPacks, '<g stroke-width="1.55"><path d="M3 8.5l2-4h14l2 4v11H3z"/><path d="M3 8.5h18M8 4.5l1 4M16 4.5l-1 4M9 13h6v6H9z"/><path d="M11 13v-2h2v2"/></g>'],
   prof: ['Профиль', vProf, '<g stroke-width="1.55"><path d="M12 2.5l8 3v5.7c0 5.2-3.4 8.5-8 10.3-4.6-1.8-8-5.1-8-10.3V5.5z"/><circle cx="12" cy="9" r="2.3"/><path d="M7.8 16.2c.8-2.1 2.2-3.1 4.2-3.1s3.4 1 4.2 3.1"/></g>']
 };
+
+function tabMastH() {
+  const meta = {
+    play: ['COMPETITIVE ARENA / 5V5','МАТЧИ','Собери боевой состав, выбери тактику и выходи на арену.','01'],
+    col: ['PLAYER ARCHIVE / COLLECTION','КОЛЛЕКЦИЯ','Полный архив игроков, редкостей, ролей и улучшений.','02'],
+    packs: ['ARMORY / SUPPLY DROP','КЕЙСЫ','Открой контейнеры и пополни состав новыми игроками.','03'],
+    prof: ['OPERATOR DOSSIER / CAREER','ПРОФИЛЬ','Твой ранг, результаты, сезонная история и достижения.','04']
+  }[tab];
+  if (!meta) return '';
+  return '<section class="section-mast mast-'+tab+'"><div class="section-mast__icon"><svg viewBox="0 0 24 24" aria-hidden="true">'+TABS[tab][2]+'</svg></div><div class="section-mast__copy"><p class="section-mast__eyebrow">'+meta[0]+'</p><h1>'+meta[1]+'</h1><p class="section-mast__desc">'+meta[2]+'</p></div><span class="section-mast__serial">FL / '+meta[3]+'</span></section>';
+}
+
 function render() {
   if (!G) return;
   try { refresh(G, now()); } catch (e) { /* задания обновятся при следующем действии */ }
   $('#hud .wrap').innerHTML = hudH();
-  const app = $('#app'); app.dataset.tab = tab; app.innerHTML = TABS[tab][1]();
+  const app = $('#app'); app.dataset.tab = tab; app.innerHTML = TABS[tab][1](); if (tab !== 'home') app.insertAdjacentHTML('afterbegin', tabMastH());
   if (tab !== lastTab) {
     const ks = Object.keys(TABS), i = ks.indexOf(tab), j = ks.indexOf(lastTab);
     app.style.setProperty('--dir', j < 0 || i >= j ? 1 : -1); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');

@@ -911,7 +911,7 @@
       "countryCode": "PS",
       "team": "JiJieHao",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/VnMSHCtW9M7DaQksa_Q77j.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=116%2C8%2C467%2C467&s=8262947d391caa6c8793c17bb84e1d59&w=800"
     },
     "cmtry": {
       "profileId": 22674,
@@ -929,7 +929,7 @@
       "countryCode": "MN",
       "team": "The Huns",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/7w43lttA0PJGwHp6hsPuJV.png?ixlib=java-2.1.0&s=d3561656657a2ccbe62261d5f6939219&w=400"
     },
     "dav1deuS": {
       "profileId": 18865,
@@ -992,7 +992,7 @@
       "countryCode": "DK",
       "team": "100 Thieves",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/TE9xSRwRif78uNjfN9VxSY.png?ixlib=java-2.1.0&s=2051fe1f1e664c8ab005e44e9dc8fd8e&w=400"
     },
     "dex": {
       "profileId": 22914,
@@ -1019,7 +1019,7 @@
       "countryCode": "BR",
       "team": "DENDELE",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/5Z9FJ6UWQO_eXU0wnIuwYq.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=117%2C8%2C467%2C467&s=0fce5bb4bfadfdc782ebe7eee2dfbb17&w=800"
     },
     "drop": {
       "profileId": 19750,
@@ -1064,7 +1064,7 @@
       "countryCode": "SE",
       "team": "Alliance",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/gxNU-UfUNvMYTX1I5r-LhR.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=1636fbfba6d55da0a4d74851ed18b052&w=800"
     },
     "esenthial": {
       "profileId": 23643,
@@ -1073,7 +1073,7 @@
       "countryCode": "UA",
       "team": "B8",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/3IONAxm2bNmhsFXI9s6Oqb.png?ixlib=java-2.1.0&s=5ad01698bafc9b1587c85eaa739437dc&w=400"
     },
     "ewjerkz": {
       "profileId": 20464,
@@ -1100,7 +1100,7 @@
       "countryCode": "BR",
       "team": "Fluxo",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ngGbgJbGMeTYXC22_AJEA4.png?ixlib=java-2.1.0&s=8ad71c2b2b7168c9931029ae00920ff9&w=400"
     },
     "F1KU": {
       "profileId": 19044,
@@ -1127,7 +1127,7 @@
       "countryCode": "CA",
       "team": "Without a Roof",
       "verifiedAt": "2026-11-11",
-      "photo": null
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/nfQTxaPem3_-L59KKwmYIg.png?ixlib=java-2.1.0&s=8ab7548450b577649f82cda168a82d53&w=400"
     },
     "faveN": {
       "profileId": 14932,
@@ -1180,7 +1180,8 @@
       "country": "Россия",
       "countryCode": "RU",
       "team": "HOTU",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/GSFcPwd--SCHo_UihInJUO.png?ixlib=java-2.1.0&s=6575469c4ed2cda2d5e80f889d11d34d&w=400"
     },
     "frozen": {
       "profileId": 9960,
@@ -1295,7 +1296,8 @@
       "country": "Австралия",
       "countryCode": "AU",
       "team": "FlyQuest",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/XFTdGqUb5JYOqw50fXjEAp.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C0%2C467%2C467&s=3cfb7c0ebcb87f5fa222b09077dc61ae&w=800"
     },
     "jabbi": {
       "profileId": 17956,
@@ -1303,7 +1305,8 @@
       "country": "Дания",
       "countryCode": "DK",
       "team": "Astralis",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/7bTtwNmavStWwqn7h2Wo7T.png?ixlib=java-2.1.0&s=817da87988437e1bb23e940a12fe5a65&w=400"
     },
     "jackasmo": {
       "profileId": 23414,
@@ -1311,7 +1314,8 @@
       "country": "Украина",
       "countryCode": "UA",
       "team": "fnatic",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/1PtNIIQQ80-0VPVyPj746b.png?ixlib=java-2.1.0&s=ca36d9131da939eea622423c6ea9be96&w=400"
     },
     "jambo": {
       "profileId": 23046,
@@ -1319,7 +1323,8 @@
       "country": "Украина",
       "countryCode": "UA",
       "team": "fnatic",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/9ryzavFg8MVlWvAzqleCZQ.png?ixlib=java-2.1.0&s=0fde68edf7da6c432d4762e904733e75&w=400"
     },
     "JBa": {
       "profileId": 21665,
@@ -1327,7 +1332,8 @@
       "country": "США",
       "countryCode": "US",
       "team": "M80",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/e1F2VxFPrjax_4VC8-tRB0.png?ixlib=java-2.1.0&s=70d0da40a4f07c6fdb6fda301649e321&w=400"
     },
     "JBOEN": {
       "profileId": 22866,
@@ -1335,7 +1341,8 @@
       "country": "Дания",
       "countryCode": "DK",
       "team": "FaZe",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/atKyMZ1t88tI9r2LPbjCSR.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=124%2C4%2C467%2C467&s=5180b73d48d859ba05c27963223635ad&w=800"
     },
     "jcobbb": {
       "profileId": 22383,
@@ -1343,7 +1350,8 @@
       "country": "Польша",
       "countryCode": "PL",
       "team": "FaZe",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/EEnQR7JP45ECDWPxft2zHF.png?ixlib=java-2.1.0&s=137010231f6f6b1db77e15f4235dea1f&w=400"
     },
     "JDC": {
       "profileId": 14929,
@@ -1351,7 +1359,8 @@
       "country": "Германия",
       "countryCode": "DE",
       "team": "BIG",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Yy5X8ZmIapfPDU-aUN5Fol.png?ixlib=java-2.1.0&s=d147d7367dd56a9e87d7272c7b482cd7&w=400"
     },
     "Jee": {
       "profileId": 20702,
@@ -1359,7 +1368,8 @@
       "country": "Китай",
       "countryCode": "CN",
       "team": "TYLOO",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/kHtMM4mJ3iE22ShEr2KdND.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=73adb059491b1347c22908e1e7607169&w=800"
     },
     "Jeorge": {
       "profileId": 20333,
@@ -1367,7 +1377,8 @@
       "country": "США",
       "countryCode": "US",
       "team": "NRG",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/7WRnNHB97ogQmtqTw_3LV3.png?ixlib=java-2.1.0&s=c909552e657885c4c2d46c50a7f008bf&w=400"
     },
     "Jorko": {
       "profileId": 24203,
@@ -1375,7 +1386,8 @@
       "country": "Болгария",
       "countryCode": "BG",
       "team": "Liquid",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/VdM4WgTpFOapNAwb4DCRR6.png?ixlib=java-2.1.0&s=0170385e15572d2f8288e09cfccb41fb&w=400"
     },
     "jottAAA": {
       "profileId": 22361,
@@ -1383,7 +1395,8 @@
       "country": "Турция",
       "countryCode": "TR",
       "team": "Eternal Fire",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/9Jb7t6FNHswlboXE8veloM.png?ixlib=java-2.1.0&s=57d0c96a87ab9cfc36abbda5c085b948&w=400"
     },
     "JT": {
       "profileId": 11630,
@@ -1391,7 +1404,8 @@
       "country": "ЮАР",
       "countryCode": "ZA",
       "team": "Liquid",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/f80kfFbSHORtnVaQz559ha.png?ixlib=java-2.1.0&s=839cb2658384cc872b6f0b64aec07f2e&w=400"
     },
     "JW": {
       "profileId": 3849,
@@ -1516,7 +1530,8 @@
       "country": "Франция",
       "countryCode": "FR",
       "team": "Envy",
-      "verifiedAt": "2026-11-11"
+      "verifiedAt": "2026-11-11",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/vWOw0YLcMKPKFH8tGzphdu.png?ixlib=java-2.1.0&s=1ebcaf75b8ad2709f7bd83585a344a37&w=400"
     },
     "Kvem": {
       "profileId": 21452,

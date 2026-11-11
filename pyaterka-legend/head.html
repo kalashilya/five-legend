@@ -613,6 +613,16 @@ button:has(>.pc)>.pc{transform:none!important;transition:filter .16s}
 @media(hover:hover) and (pointer:fine){
  button:has(>.pc):hover>.pc{filter:brightness(1.12) saturate(1.08);box-shadow:0 0 0 1px rgba(183,214,237,.28),0 12px 24px rgba(0,0,0,.42)}
 }
+@media(hover:hover) and (pointer:fine){
+ /* Layered card depth: the clickable slot never moves; only artwork planes lift inside it. */
+ button:has(>.pc){perspective:900px;transform:none!important}
+ button:has(>.pc)>.pc{transform:none!important;transform-style:preserve-3d}
+ .pc .ph,.pc .hd,.pc .ft,.pc .mg{transition:transform .2s ease,filter .2s ease}
+ button:has(>.pc):hover>.pc .ph{transform:translateZ(12px) scale(1.018);filter:brightness(1.08)}
+ button:has(>.pc):hover>.pc .hd{transform:translateZ(9px)}
+ button:has(>.pc):hover>.pc .ft{transform:translateZ(7px)}
+ button:has(>.pc):hover>.pc .mg{transform:translateZ(3px)}
+}
 
 /* Collection: precise catalog controls and card rails */
 .frow select,select,input[type=text]{border:1px solid rgba(142,174,201,.24);border-radius:8px;background:#0d151e;color:#e8eff5;box-shadow:inset 0 1px rgba(255,255,255,.035)}

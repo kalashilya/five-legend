@@ -9,14 +9,17 @@ pyaterka-legend/  — «Пятёрка Легенд», коллекционна�
   photos/     сюда кладутся фото игроков; имена файлов — в photos/_имена_файлов.txt
   head.html   стили, сцена за интерфейсом и разметка
   data.js     база: 101 команда и 500 игроков (сгенерирована gen.js)
-  core.js     логика: карточки, кейсы, состав, матч до 13 побед, экономика, награды
+  core.js     логика: карточки, кейсы, состав, матч до 13 побед, экономика
+  meta.js     сохранения, составы, контракты, задания, сезоны и прогресс
   ui.js       интерфейс: лобби, вскрытие кейса, матч в реальном времени, звук
-  gen.js      генератор data.js из teams.txt (node gen.js)
+  gen.js      генератор data.js из teams.txt и hltv-data.json (node gen.js)
   teams.txt   топ-101 команд из рейтинга Valve от 2 ноября 2026
-  test.js     проверка шансов кейсов и баланса (сначала: cat data.js core.js > _t.js, затем node test.js)
-  build.sh    сборка одного HTML-файла из head.html, data.js, core.js, ui.js (bash build.sh)
+  hltv-data.json проверенный снимок HLTV за 12 и 3 месяца (пока 15 игроков)
+  test.js     проверка игровой логики и баланса (bash build.sh && node test.js)
+  browser-smoke.js headless-проверка запуска HTML в Chromium на мобильном viewport
+  build.sh    сборка одного HTML-файла из head.html, data.js, core.js, meta.js, ui.js (bash build.sh)
 
-  После правок в head.html, data.js, core.js или ui.js нужно запустить build.sh,
+  После правок в head.html, data.js, core.js, meta.js или ui.js нужно запустить build.sh,
   иначе pyaterka-legend-offline.html останется прежним.
 
 klatch-manager/  — «Клатч Менеджер», менеджер команды (первая версия, отложена)
@@ -28,6 +31,6 @@ klatch-manager/  — «Клатч Менеджер», менеджер кома�
 
 Для запуска игр ничего устанавливать не нужно.
 Для gen.js, test.js и build.sh нужны Node.js и bash.
-Показатели карточек рассчитаны игрой, это не статистика HLTV.
+15 карточек используют проверенные показатели HLTV; остальные пока предварительные. Методика: docs/HLTV_DATA_PIPELINE.md. Методика: docs/HLTV_DATA_PIPELINE.md.
 Игра работает без сервера: прогресс хранится в браузере игрока.
 ```

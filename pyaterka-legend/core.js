@@ -11,9 +11,10 @@ const CARDS = {}, POOL = [[], [], [], [], []], IFP = [[], [], [], [], []], MVPP 
 (function build() {
   const rows = {};
   const mk = (id, row, add, sp, rar) => {
-    const [nick, t, role, o, pid, , hist] = row, ovr = Math.min(99, o + add), st = {};
-    for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
-    return CARDS[id] = { id, base: pid, nick, team: TM[t], t: Math.min(t, 100), role, ovr, rar, sp, hist: !!hist, st };
+    const [nick, t, role, o, pid, , hist, rawStats, hltv] = row, ovr = Math.min(99, o + add), st = {};
+    if (Array.isArray(rawStats) && rawStats.length === SK.length) SK.forEach((k, i) => st[k] = clamp(Math.round(rawStats[i] + add), 40, 99));
+    else for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
+    return CARDS[id] = { id, base: pid, nick, team: TM[t], t, role, ovr, rar, sp, hist: !!hist, st, hltv: hltv || null };
   };
   PL.forEach(row => { rows[row[4]] = row; POOL[row[5]].push(mk(row[4], row, 0, 0, row[5])); });
   SPM.forEach(pid => { if (rows[pid]) MVPP.push(mk(M_ID + pid, rows[pid], 3, 2, 4)); });
@@ -23,7 +24,7 @@ const ALL = Object.values(CARDS).sort((a, b) => b.ovr - a.ovr || a.id - b.id);
 
 /* ---------- Способности ----------
    Базовая зависит от естественной роли и работает только на своей роли. Индивидуальная задаётся по нику в IND;
-   пока данных HLTV нет, у всех нейтральная «Командная игра». Сила растёт с уровнем, у особых версий она выше. */
+   для игроков с подтверждённой статистикой HLTV назначается индивидуальный архетип. Сила растёт с уровнем, у особых версий она выше. */
 const AB_BASE = [
   { n: 'Первый выстрел', d: 'В защите надёжнее встречает первый выход соперника.' },
   { n: 'Размен', d: 'Проигранная первая дуэль обходится команде вдвое дешевле.' },
@@ -31,10 +32,19 @@ const AB_BASE = [
   { n: 'Тайминг', d: 'Усиливает команду, когда она отстаёт по счёту, и в решающем раунде.' },
   { n: 'Чтение игры', d: 'Смягчает неудачный выбор направления.' }
 ];
-const AB_IND = { team: { n: 'Командная игра', d: 'Небольшой бонус команде, пока игрок на своей роли.' } };
-const IND = {};                            // ник -> ключ AB_IND; заполняется по данным HLTV
+const AB_IND = {
+  team: { n: 'Командная игра', d: 'Небольшой универсальный вклад в командное исполнение.', mult: 1 },
+  duelist: { n: 'Дуэлянт', d: 'Высокий HLTV Firepower: усиливает индивидуальный вклад в ключевых дуэлях.', mult: 1.08 },
+  sniper: { n: 'Снайпер', d: 'Высокий HLTV Sniping: сильнее влияет на индивидуальный вклад в раунде.', mult: 1.1 },
+  entry: { n: 'Первый контакт', d: 'Высокий HLTV Opening: усиливает вклад при поиске первых дуэлей.', mult: 1.1 },
+  support: { n: 'Поддержка', d: 'Высокий HLTV Utility: усиливает вклад гранат и командного взаимодействия.', mult: 1.08 },
+  trader: { n: 'Трейдер', d: 'Высокий HLTV Trading: усиливает вклад в размены и поддержку тиммейтов.', mult: 1.08 },
+  anchor: { n: 'Опорник', d: 'Высокий HLTV Closing: сильнее влияет на поздние стадии раунда.', mult: 1.08 }
+};
+const IND = { donk: 'duelist', ZywOo: 'sniper', m0NESY: 'sniper', Vexite: 'entry', jks: 'support', insani: 'entry', blameF: 'anchor', asap: 'duelist', JamYoung: 'support', Senzu: 'entry', Magnojez: 'entry', junior: 'sniper', leakz: 'trader', s1nside: 'anchor', lattykk: 'sniper' };
 const indOf = c => AB_IND[IND[c.nick] || 'team'];
 const abPow = (c, lv) => (1 + .1 * (lv - 1)) * (c.sp ? 1.3 : 1);
+const indPow = (c, lv) => abPow(c, lv) * (indOf(c).mult || 1);
 
 /* ---------- Паки ---------- */
 const PACKS = {
@@ -54,6 +64,12 @@ function pickIn(rar) {
 function openPack(type) {
   const P = PACKS[type], out = []; let best = 0;
   for (let i = 0; i < 5; i++) { let r = rollRar(P.odds); if (i === 4 && best < P.min) r = Math.max(r, P.min); best = Math.max(best, r); out.push(pickIn(r)); }
+  // ВРЕМЕННЫЙ ТЕСТ: кейс «Про» гарантирует хотя бы одного игрока с рейтингом 87+.
+  // Остальные четыре карточки и все остальные кейсы используют обычные вероятности.
+  if (type === 'pro' && !out.some(c => c.ovr >= 87)) {
+    const highRated = ALL.filter(c => c.ovr >= 87);
+    if (highRated.length) out[ri(0, out.length - 1)] = pick(highRated);
+  }
   return shuffle(out);
 }
 
@@ -75,7 +91,7 @@ function addXp(G, x) { G.xp += x; let up = 0; while (G.xp >= 100 * G.lvl) { G.xp
 
 /* ---------- Состав ---------- */
 /* squad: массив из 5 { c: карточка, lv } по слотам ролей */
-function effOf(e, slot) { const pen = e.c.role === slot ? 0 : 5, add = e.lv - 1 - pen, st = {}; for (const k of SK) st[k] = e.c.st[k] + add; return { c: e.c, lv: e.lv, ovr: e.c.ovr + add, st, off: pen > 0, pw: pen ? 0 : abPow(e.c, e.lv) }; }
+function effOf(e, slot) { const pen = e.c.role === slot ? 0 : 5, add = e.lv - 1 - pen, st = {}; for (const k of SK) st[k] = e.c.st[k] + add; return { c: e.c, lv: e.lv, ovr: e.c.ovr + add, st, off: pen > 0, pw: pen ? 0 : abPow(e.c, e.lv), ipw: pen ? 0 : indPow(e.c, e.lv) }; }
 function squadOf(G) { return G.squad.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id] ? G.cards[id].lv : 1 }); }
 function squadInfo(sq) {
   if (sq.some(x => !x)) return null;
@@ -144,7 +160,12 @@ class Match {
     const mk = (name, sq, capt) => { const info = squadInfo(sq); return { name, sq, info, capt, score: 0, en: capt >= 0 ? 3 : 2, bonusEn: 0, deck: shuffle([...DECK]), hand: [], disc: [], money: START_MONEY, ls: 0, ws: 0, k: [0, 0, 0, 0, 0], d: [0, 0, 0, 0, 0], mv: [0, 0, 0, 0, 0], op: [0, 0, 0, 0, 0], spent: 0, buys: {} }; };
     this.a = mk('Вы', mySq, o.capt == null ? -1 : o.capt);
     const btro = Math.max(0, tro + ri(-100, 100)), t = .45 * clamp(64 + btro / 40, 64, 93) + .55 * myRating + rnd(-2, 2), osq = [];
-    for (let role = 0; role < 5; role++) { const c = [...ALL].filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick)).sort((x, y) => Math.abs(x.ovr - t) + R() * 3 - (Math.abs(y.ovr - t) + R() * 3))[0]; osq.push({ c, lv: 1 }); }
+    for (let role = 0; role < 5; role++) {
+      const candidates = ALL.filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick));
+      const c = candidates.map(x => ({ c: x, score: Math.abs(x.ovr - t) + R() * 3 })).sort((x, y) => x.score - y.score)[0]?.c;
+      if (!c) throw new Error('Не найдена обычная карточка для роли ' + role + ' при создании соперника.');
+      osq.push({ c, lv: 1 });
+    }
     this.b = mk(pick(ONAMES), osq, 4); this.style = pick(Object.keys(STYLES));
     this.opp = { name: this.b.name, tro: btro, lg: leagueOf(btro), rating: this.b.info.rating }; this.err = AI_ERR[this.opp.lg];
     this.fav = { A: pick(['A', 'B']), D: pick(['A', 'B']) };          // любимые точки соперника в атаке и в защите
@@ -154,7 +175,7 @@ class Match {
   }
   draw(s) { while (s.hand.length < 4) { if (!s.deck.length) { s.deck = shuffle(s.disc); s.disc = []; } if (!s.deck.length) break; s.hand.push(s.deck.pop()); } }
   /* Приказов за раунд можно отдать сколько угодно, пока хватает импульса */
-  canPlay(s, cards) { return cards.every(k => s.hand.includes(k)) && new Set(cards).size === cards.length && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
+  canPlay(s, cards) { return !!s && Array.isArray(cards) && cards.every(k => typeof k === 'string' && AC[k] && s.hand.includes(k)) && new Set(cards).size === cards.length && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
   isPistol() { return !this.decider && (this.round === 1 || this.round === HALF + 1); }
   /* Закупка считается сама по деньгам команды; карта «Эко-раунд» заставляет сохранить деньги */
   buyOf(s, cards) { return this.isPistol() ? 'pistol' : cards && cards.includes('eco') ? 'eco' : s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
@@ -219,12 +240,16 @@ class Match {
     });
     let top = null; for (const key in cnt) if ((key[0] === 'a') === (W === a) && (!top || cnt[key] > cnt[top])) top = key;
     const ti = top ? +top[1] : wp(W, [0, 1, 2, 3, 4]), frags = top ? cnt[top] : 0; W.mv[ti]++;
-    return { kills, end, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && alive[0][0] === ti, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
+    const lastAlive = surv === 1 ? pick([0, 1, 2, 3, 4]) : -1;
+    return { kills, end, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && lastAlive === ti, lastAlive, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
   }
   /* Разыграть раунд: mine — приказы игрока, plan — направление, темп и ставка на игрока */
   play(mine, plan) {
     if (this.over || !this.canPlay(this.a, mine)) return null;
-    plan = Object.assign({ dir: 'S', tempo: 'norm', focus: -1 }, plan);
+    plan = Object.assign({ dir: 'S', tempo: 'norm', focus: -1 }, plan && typeof plan === 'object' ? plan : {});
+    if (!DIRS.includes(plan.dir)) plan.dir = 'S';
+    if (!TEMPOS.includes(plan.tempo)) plan.tempo = 'norm';
+    if (!Number.isInteger(plan.focus) || plan.focus < 0 || plan.focus >= 5) plan.focus = -1;
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
@@ -234,7 +259,7 @@ class Match {
     const mapV = s => (s === 'D' ? 1 : -1) * this.map.ct / 2, hot = s => s.ws >= 2 ? 1.5 : 0;
     /* вклад ролей и способностей */
     const role = (s, pl, behind) => {
-      const e = s.info.e, util = (e[2].st.utl - 70) / 6 * T_UTIL[pl.tempo] * (1 + .25 * e[2].pw), lurk = behind || this.decider ? .8 * e[3].pw : 0, ind = e.reduce((x, y) => x + .3 * y.pw, 0);
+      const e = s.info.e, util = (e[2].st.utl - 70) / 6 * T_UTIL[pl.tempo] * (1 + .25 * e[2].pw), lurk = behind || this.decider ? .8 * e[3].pw : 0, ind = e.reduce((x, y) => x + .3 * y.ipw, 0);
       return util + lurk + ind;
     };
     const avg = a.info.e.reduce((x, y) => x + y.ovr, 0) / 5, fN = plan.focus >= 0 ? this.hist.slice(-4).filter(x => x.focus === plan.focus).length : 0;

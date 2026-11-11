@@ -1,101 +1,125 @@
-1|1960|MOUZ|PR, Spinx, torzsi, xelex, xertioN
-2|1922|Vitality|flameZ, jL, mezii, ropz, ZywOo
-3|1912|FURIA|FalleN, KSCERATO, molodoy, YEKINDAR, yuurih
-4|1860|Aurora|Jimpphat, kyxsan, Wicadia, woxic, XANTARES
-5|1842|Spirit|donk, magixx, sh1ro, tN1R, zont1x
-6|1786|BETBOOM|Boombl4, d1Ledez, Magnojez, S1ren, zorte
-7|1764|Falcons|karrigan, kyousuke, m0NESY, NiKo, TeSeS
-8|1721|FUT|cmtry, dem0n, dziugss, Krabeni, xfl0ud
-9|1662|Legacy|arT, dumau, latto, n1ssim, try
-10|1650|Nemiga|KaiR0N-, khaN, robo, syph0, Xant3r
-11|1616|G2|HeavyGod, huNter-, MATYS, NertZ, r1nkle
-12|1598|1win|ArtFr0st, Ax1Le, BELCHONOKK, fame, nafany
-13|1589|Natus Vincere|Aleksib, b1t, iM, makazze, w0nderful
-14|1572|Astralis|jabbi, phzy, ryu, siuhy, Staehr
-15|1564|Ninjas in Pyjamas|adamb, Krimbo, sjuush, stavn, xKacpersky
-16|1560|PARIVISION|FL1T, HObbit, Jame, xiELO, zweih
-17|1554|The MongolZ|910, bLitz, cobrazera, nin9, Techno
-18|1548|HEROIC|Brollan, Chr1zN, MartinezSa, nilo, susp
-19|1546|MIBR|insani, LNZ, nqz, tomaszin, venomzera
-20|1539|FaZe|frozen, JBOEN, jcobbb, Neityu, Twistzz
-21|1528|Liquid|EliGE, Jorko, JT, malbsMd, NAF
-22|1513|Eternal Fire|jottAAA, Kvem, MisteM, regali, soulfly
-23|1511|100 Thieves|device, Gizmy, poiii, rain, sirah
-24|1490|9z|dgt, HUASOPEEK, luchov, max, meyern
-25|1489|M80|JBa, Lake, s1n, slaxz-, Swisher
-26|1488|HOTU|dwushka, frontales, kade0, mizu, n0rb3r7
-27|1488|fnatic|cairne, fEAR, jackasmo, jambo, mazay
-28|1472|B8|alex666, esenthial, kensizor, npl, s1zzi
-29|1466|DENDELE|doc, gafolo, koala, maxxkor, rdnzao
-30|1423|Inner Circle|cptkurtka023, Dawy, headtr1ck, onic, zeRRoFIX
-31|1421|Virtus.pro|AquaRS, b1st, mir, Patsi, tO0RO
-32|1408|BIG|blameF, faveN, gr1ks, JDC, tabseN
-33|1408|SINNERS|beastik, kisserek, MoDo, SHOCK, stressarN
-34|1407|K27|clax, kashl1d, qw1nk1, X5G7V, xeedo
-35|1406|Imperial|chelo, decenty, noway, saadzin, VINI
-36|1400|JiJieHao|0SAMAS, Bibu, CacaNito, m1N1, sinnopsyy
-37|1392|GamerLegion|FL4MUS, hypex, REZ, shalfey, Tauson
-38|1391|Wildcard|Cxzi, fr3nd, HexT, nEMANHA, reck
-39|1371|Nemesis|mag1k3Y, r3salt, Sdaim, SELLTER, tex1y
-40|1371|Luminosity|afro, AZUWU, lux, Rainwaker, yxngstxr
-41|1365|magic|AW, lattykk, MaSvAl, sFade8, tenzy
-42|1365|BBL|IceBerg, leakz, MistR, NickyB, salazar
-43|1359|Envy|Graviti, Kursy, Lucky, Maka, misutaaa
-44|1359|Sangal|adamS, bnox, Joey, puuha, R4DYX
-45|1337|BC.Game|asap, Magisk, mzinho, s1mple, Senzu
-46|1335|PRIVATE|1eeR, H4SAN4TOR, sh1nejezzz, sowalio, z1k4
-47|1322|NRG|Grim, hallzerk, Jeorge, nitr0, Sonic
-48|1318|FlyQuest|aliStair, INS, jks, nettik, Vexite
-49|1312|BESTIA|buda, cass1n, drop, kauez, timo
-50|1306|Betclic|Demho, ex1st, Prism, Qlocuu, ultimate
-51|1304|FOKUS|Banjo, jocab, Matheos, podi, ztr
-52|1300|Alliance|avid, bobeksde, eraa, twist, upE
-53|1295|paiN|biguzera, Rkzinho, saffee, snow, Tatu
-54|1290|Iberian Soul|Ag1l, alex, dav1g, mopoz, sausol
-55|1272|Chinggis Warriors|cool4st, fury5k, ROUX, sk0R, tikuak
-56|1267|Lynn Vision|C4LLM3SU3, EmiliaQAQ, Starry, Westmelon, z4KR
-57|1266|Metizport|F1KU, forsyy, MaiL09, Plopski, stanislaw
-58|1266|Nuclear TigeRES|ayuki, Djon8, flouzer, senka, tronic
-59|1264|TYLOO|JamYoung, Mercury, Moseyuh, Zero, zhokiNg
-60|1249|Fluxo|dav1deuS, exit, kye, Ltz, zevy
-61|1224|Phantom|KEi, Kunai, Kylar, nicoodoz, TMB
-62|1223|SAW|ewjerkz, krazy, MUTiRiS, NOPEEj, story
-63|1221|EYEBALLERS|dex, JW, KRIMZ, maxster, Ro1f
-64|1220|UNiTY|2high, Dytor, KWERTZZ, M1key, Sn0w
-65|1187|Nexus|fNk, HOLY, Nexius, s0und, shield
-66|1182|PURE|aNdu, keen, Polbandana, POLO, tein
-67|1175|BRUTE|aidKiT, nbqq, oontoma, tAk, ZEDKO
-68|1169|5star|ariucle, clouden, hoolig4n, NEUZ, rate
-69|1164|SportsBetExpert|consti, Infinite, motm, Peeping, shane
-70|1163|WBT|DemQQ, Psycho, s4ltovsk1yy, Smash, tyr1k
-71|1158|NEXVOID|AccuracyTG, erkaSt, MiQ, xerolte, Zesta
-72|1158|INFINITE|Blytz, kyuubii, ScrunK, sl3nd, volt
-73|1142|Acend|AwaykeN, REDSTAR, SHiPZ, Skrimo, SPELLAN
-74|1142|QUAZAR|gehji, kaiori, Ne1XXX, newt, Porya
-75|1141|BARCA|Alisson, divine, happ, pancc, zmb
-76|1134|Color|cronuss, lattykk, oz1k, Patsi, reyoz
-77|1129|ex-Zero Tenacity|brutmonster, Cjoffo, Dragon, Kind0, VLDN
-78|1127|Black Phoenix|4X1s, karnez, MRcreed, Salazar, topo
-79|1127|Voca|dare, junior, MarKE, nosraC, snav
-80|1125|NAVI Junior|FAZERY, kodak, MahaR, skizzyee, yoki
-81|1097|BASEMENT BOYS|kAlash, kr1vda, maggent, OWNER, Tr0ublE
-82|1097|Lazer Cats|Kiy0o, Magic, n0rths, nikitea, tripex17
-83|1096|ShindeN|abizz, guty, naz, reNTU, tom1jed
-84|1095|UPGRADE|DAN9ARMATURA, pleynnn, SquEzxc, synyx, tw1sterzaza
-85|1095|FORZE Reload|HeCkBNk, KusMe, Lack1, relaxxie, YumsaN
-86|1094|RBLS|aragornN, arrozdoce, Icarus, Shr, stadodo
-87|1092|Galorys|destiny, detr0ittJ, gbb, PKL, tomate
-88|1083|aimclub|mhN1, ragga, waZz, XELLOW, zewts
-89|1081|NT|fakerealityy, m4d4ra, Ryuzak1, ta9z, Woro2k
-90|1074|ex-INOX|El1an, finW, gooddeph, k1slll, m1QUSE
-91|1071|Without a Roof|autimatic, Brehze, CeRq, FaNg, Stewie2K
-92|1069|Alter Ego|adeX, Bloody, laxiee, PokemoN, shadiy
-93|1068|Omega|adai, Aldikon, Botpa1, dan4o, def1zer
-94|1057|Bounty Hunters|KAISER, pepe, ponter, urban0, zock
-95|1055|CYBERSHOKE|Alkaren, alpha, H4SAN4TOR, Mokuj1n, nota
-96|1055|BAKS|danistzz, glowiing, Norwi, turbo, whisper
-97|1055|Spirit Academy|k0gaSs, Kiryasoo, Netrix, s1nside, VILBy
-98|1049|BET-M|bluewh1te, executor, Raijin, z1Nny
-99|1048|ASTRAL|gxx-, meowpop, Neqy, RaY5ive, swiz
-100|1043|9INE|b1elany, flayy, kraghen, raalz, rigoN
-101|1041|LAG|Bwills, Cryptic, djay, Sandman, SLIGHT
+1|912|MOUZ|torzsi, Spinx, xertioN, PR, xelex
+2|910|FURIA|FalleN, yuurih, YEKINDAR, KSCERATO, molodoy
+3|836|Vitality|apEX, ropz, ZywOo, flameZ, mezii
+4|777|Spirit|sh1ro, magixx, tN1R, zont1x, donk
+5|552|Aurora|XANTARES, woxic, Jimpphat, kyxsan, Wicadia
+6|477|Falcons|karrigan, NiKo, TeSeS, m0NESY, kyousuke
+7|439|BETBOOM|Boombl4, zorte, S1ren, d1Ledez, Magnojez
+8|412|Natus Vincere|Aleksib, iM, b1t, w0nderful, makazze
+9|361|FUT|SunPayus, xfl0ud, dem0n, Krabeni, dziugss
+10|324|The MongolZ|nin9, bLitz, Techno, 910, cobrazera
+11|316|Nemiga|KaiR0N-, Xant3r, robo, khaN, syph0
+12|247|G2|huNter-, NertZ, r1nkle, HeavyGod, MATYS
+13|234|PARIVISION|HObbit, FL1T, Jame, xiELO, zweih
+14|221|Legacy|arT, dumau, latto, try
+15|161|1win|Ax1Le, nafany, BELCHONOKK, fame, ArtFr0st
+16|153|MIBR|LNZ, nqz, insani, venomzera, tomaszin
+17|150|Liquid|NAF, EliGE, malbsMd, JT, Jorko
+18|118|FaZe|frozen, Twistzz, Neityu, jcobbb, JBOEN
+19|113|9z|max, dgt, luchov, HUASOPEEK
+20|112|Astralis|phzy, siuhy, Staehr, ryu, cmtry
+21|101|B8|alex666, npl, kensizor, esenthial, s1zzi
+22|100|Ninjas in Pyjamas|stavn, sjuush, Krimbo, adamb, xKacpersky
+23|94|Eternal Fire|MisteM, regali, soulfly, Kvem, jottAAA
+24|89|M80|slaxz-, Swisher, s1n, JBa, Lake
+25|88|HEROIC|Brollan, nilo, susp, MartinezSa, Chr1zN
+26|86|GamerLegion|REZ, shalfey, Tauson, FL4MUS, hypex
+27|76|fnatic|fEAR, jambo, jackasmo, cairne, mazay
+28|72|Envy|Maka, Lucky, misutaaa, Kursy, Graviti
+29|65|magic|MaSvAl, lattykk, sFade8, AW, tenzy
+30|63|TYLOO|JamYoung, Jee, Mercury, Moseyuh, Zero
+31|61|HOTU|n0rb3r7, kade0, mizu, dwushka, frontales
+32|57|BIG|tabseN, JDC, faveN, blameF, gr1ks
+33|57|100 Thieves|device, rain, Gizmy, sirah, poiii
+34|56|Luminosity|Rainwaker, afro, lux, yxngstxr, AZUWU
+35|56|DENDELE|gafolo, koala, maxxkor, rdnzao, doc
+36|53|NRG|nitr0, Sonic, hallzerk, Grim, Jeorge
+37|51|Inner Circle|cptkurtka023, headtr1ck, zeRRoFIX, onic, Dawy
+38|47|JiJieHao|m1N1, sinnopsyy, Bibu, CacaNito, 0SAMAS
+39|45|Alliance|twist, eraa, bobeksde, upE, avid
+40|44|SINNERS|beastik, SHOCK, MoDo, kisserek, stressarN
+41|40|paiN|biguzera, saffee, snow, Tatu, Rkzinho
+42|39|Sangal|adamS, bnox, puuha, R4DYX, Joey
+43|36|Wildcard|nEMANHA, Cxzi, reck, HexT, fr3nd
+44|35|Lynn Vision|Westmelon, z4KR, Starry, EmiliaQAQ, C4LLM3SU3
+45|33|K27|clax, X5G7V, xeedo, kashl1d, qw1nk1
+46|32|PRIVATE|1eeR, H4SAN4TOR, sowalio, sh1nejezzz, z1k4
+47|32|BC.Game|s1mple, Magisk, asap, Senzu, mzinho
+48|29|Imperial|chelo, VINI, decenty, noway, saadzin
+49|28|5star|NEUZ, rate, clouden, ariucle, hoolig4n
+50|28|BBL|IceBerg, MistR, salazar, leakz, NickyB
+51|25|Nemesis|SELLTER, r3salt, mag1k3Y, tex1y, Sdaim
+52|22|Nexus|shield, fNk, s0und, Nexius, HOLY
+53|21|FOKUS|ztr, Banjo, podi, jocab, Matheos
+54|20|Iberian Soul|alex, mopoz, sausol, dav1g
+55|20|Betclic|Demho, Prism, ex1st, ultimate, Qlocuu
+56|19|Black Phoenix|4X1s, karnez, topo, MRcreed, Salazar
+57|19|BESTIA|drop, kauez, cass1n, buda, timo
+58|19|ShindeN|tom1jed, abizz, ivz, naz, guty
+59|18|EYEBALLERS|JW, KRIMZ, maxster, Ro1f
+60|17|FlyQuest|jks, aliStair, INS, Vexite, nettik
+61|17|Nuclear TigeRES|senka, Djon8, flouzer, ayuki, tronic
+62|16|Chinggis Warriors|sk0R, ROUX, cool4st, fury5k, tikuak
+63|16|BASEMENT BOYS|kr1vda, OWNER, kAlash, Tr0ublE, maggent
+64|16|SAW|MUTiRiS, NOPEEj, story, ewjerkz, krazy
+65|15|Metizport|stanislaw, Plopski, F1KU, forsyy, MaiL09
+66|14|Fluxo|exit, dav1deuS, zevy, kye, Ltz
+67|13|Galorys|PKL, destiny, detr0ittJ, gbb, tomate
+68|13|Phantom|TMB, nicoodoz, KEi, Kylar, Kunai
+69|12|NEXVOID|erkaSt, xerolte, MiQ, AccuracyTG, Zesta
+70|11|Voca|MarKE, junior, dare, snav
+71|11|BARCA|zmb, pancc, Alisson, happ, divine
+72|11|PURE|keen, mwlky, aNdu, Polbandana, tein
+73|11|Low Cortisol|t9rnay, zede, fokiu, levi, stormzyn
+74|11|UNiTY|Dytor, KWERTZZ, 2high, M1key, Sn0w
+75|11|RBLS|stadodo, arrozdoce, Icarus, Shr, aragornN
+76|10|Bounty Hunters|ponter, KAISER, zock, urban0, pepe
+77|10|Virtus.pro|mir, b1st, F0R3VER, AquaRS, tO0RO
+78|9|INFINITE|ScrunK, Blytz, kyuubii, volt, sl3nd
+79|9|WBT|Psycho, Smash, s4ltovsk1yy, DemQQ, tyr1k
+80|9|Leo|drac, leen, next1me, Tarkky, aimy
+81|9|aimclub|XELLOW, zewts, ragga, ADRON, mhN1
+82|9|NAVI Junior|MahaR, FAZERY, skizzyee, yoki, kodak
+83|9|Without a Roof|autimatic, Stewie2K, Brehze, CeRq, FaNg
+84|9|UPGRADE|synyx, SquEzxc, pleynnn, tw1sterzaza, DAN9ARMATURA
+85|9|Procyon|lenci, laser, pavv, MaxOff, next
+86|9|The Huns|Bart4k, controlez, Cozen, DarkMeister, bexyz
+87|9|Johnny Speeds|draken, hampus, Svedjehed, bsover, Rack
+88|8|QUAZAR|Porya, gehji, Ne1XXX, newt, kaiori
+89|8|Spirit Academy|VILBy, Kiryasoo, Netrix, s1nside, k0gaSs
+90|8|mellren|lollipop21k, menddel, mdl, shootic, Maksilvl
+91|8|WBT Academy|fl1peR, svemyy, marat2k, tired73, NxStep
+92|8|Marsborne|freshie, nicx, Grizz, ogwizard, WUMBO
+93|8|Inner Circle Academy|Flierax, 3ippoch, NaYz, L1seYoung, Tamefear
+94|8|Lazer Cats|nikitea, Magic, Kiy0o, tripex17
+95|8|ex-Zero Tenacity|Kind0, Dragon, VLDN, Cjoffo, brutmonster
+96|8|BAKS|glowiing, Norwi, danistzz, whisper, turbo
+97|8|OG|bodyy, spooke, Ex3rcice, nut nut, Chucky
+98|8|BRUTE|ZEDKO, nbqq, aidKiT, tAk, hfah
+99|8|Illyrians|cerber, BledarD, ammar, Lewis, rosoneriii
+100|8|Glitch|szejn, smekk, shaiK, Brillo, rud
+101|8|STATE|kwezz, Queenix, Altekz, Zanto, sL1m3
+102|7|Turma do Pagode|WOOD7, Tuurtle, naitte, pesadelo, matios
+103|7|NT|Woro2k, fakerealityy, ta9z
+104|7|G2 Ares|SHiNE, TMKj, hitori, Junyme, yksjupe
+105|7|ASTRAL|gxx-, swiz, RaY5ive, Neqy, meowpop
+106|7|Acend|SPELLAN, SHiPZ, REDSTAR, AwaykeN, Skrimo
+107|7|MINT|amster, kL1o, rendysky, skcH, stefienson
+108|7|Alter Ego|PokemoN, shadiy, adeX, laxiee, Bloody
+109|7|HAVU|uli, Alxc, p3kko, ottob, 8Juho8
+110|7|9INE|raalz, kraghen, b1elany, flayy, rim3
+111|7|LAG|djay, Cryptic, Bwills, SLIGHT, Sandman
+112|7|ex-ENCE|HENU, millert, teme, Schwarz, joeski
+113|7|FORZE Reload|Lack1, YumsaN, KusMe, HeCkBNk
+114|7|Nordic Partners|k1to, Marix, AdrieN, Muciek, bavar1n
+115|7|Saint Sinners|deb0, Caleyy, pavlysha666, halfjix, iRV1NG
+116|6|The Golden Horde|aRTYSAN, regoshka, lyoli, forzaN, dijarom
+117|6|Just Players|h1te, sm3t, sstiNiX, Temny Prince
+118|6|Fire Flux|Cizzx, Quality, zer0UKY, xEternaLxx, zemix
+119|6|SAW Youngsters|M1KA, tuxa, snowiee, Jayy2s, jERK0z
+120|6|GenOne|Keoz, Djoko, Brooxsy, bL4SEZ
+121|6|Balkan Outlaws|Ciocardau, d1maje, starplajerz, grecu
+122|6|Younglings|cheerful, emiiri, Shed0Z, zazzer, MoNaTy
+123|6|Galaxy|Berzius, PoKe, Misterio, OniX, Gopster
+124|6|INFURITY|sirius, CHANKY, shyyne
+125|6|Butterfly|Forester, nitzie, Kurama, ayano

@@ -997,6 +997,11 @@ body{background:transparent;color:var(--fg)}
 .pc.cinema-legend .rl,.pc.cinema-legend .tag{color:#f1d89e}
 @media(prefers-reduced-motion:reduce){.pc.cinema .sh,.pc.cinema-legend .sh{animation:none!important}}
 
+
+/* Unowned cards keep their rarity material; only the portrait is desaturated. */
+.pc.no{filter:none!important;opacity:1!important}
+.pc.no .ph,.pc.no .art{filter:grayscale(1) brightness(.72);opacity:.78}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

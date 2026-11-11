@@ -595,6 +595,36 @@
       "team": "Natus Vincere",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/U6KmIKHcqg2OpMrNn-Aqk6.png?ixlib=java-2.1.0&s=420f1bcb0e6943b68fafb5e2d933197c&w=400",
       "profileUrl": "https://www.hltv.org/player/22673/makazze"
+    },
+    "SunPayus": {
+      "profileId": 19164,
+      "team": "FUT",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/lBSCuct0c7EwbBKHVL4m8e.png?ixlib=java-2.1.0&s=0c46c9c507fae1be16559fdb0313ee63&w=400",
+      "profileUrl": "https://www.hltv.org/player/19164/sunpayus"
+    },
+    "xfl0ud": {
+      "profileId": 19187,
+      "team": "FUT",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/yTyKt5QTtDhtTOTIUuRtOd.png?ixlib=java-2.1.0&s=80bf4967b6a633bbc0e989fb066b20b5&w=400",
+      "profileUrl": "https://www.hltv.org/player/19187/xfl0ud"
+    },
+    "dem0n": {
+      "profileId": 20584,
+      "team": "FUT",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/8vdNoQ4bmcWPDmuhCDaJv7.png?ixlib=java-2.1.0&s=76bc25b4440d5f0de8c0192e0e49734c&w=400",
+      "profileUrl": "https://www.hltv.org/player/20584/dem0n"
+    },
+    "Krabeni": {
+      "profileId": 22203,
+      "team": "FUT",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/kcyl7BuE4C4otOtVCpg5w1.png?ixlib=java-2.1.0&s=6caaba1568f6522e95f90d371fd3e1dd&w=400",
+      "profileUrl": "https://www.hltv.org/player/22203/krabeni"
+    },
+    "dziugss": {
+      "profileId": 23553,
+      "team": "FUT",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/eTJu4sdB8MJJ97ixYS1Q8i.png?ixlib=java-2.1.0&s=42a225e58635602bd46ec5011e2b059c&w=400",
+      "profileUrl": "https://www.hltv.org/player/23553/dziugss"
     }
   }
 }

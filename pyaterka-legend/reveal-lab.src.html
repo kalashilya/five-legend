@@ -586,7 +586,22 @@ function frame() {
   requestAnimationFrame(frame);
 }
 const fontsReady = document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve();
-if (!EMBED) fontsReady.then(() => start('elite')).then(() => requestAnimationFrame(frame));
+/* снимок кейса для значков в игре (#shot=elite&bg=b|w): только кейс, ровный свет, без постобработки — сборка делает из двух снимков картинку с прозрачным фоном */
+const SHOT = (location.hash.match(/shot=(\w+)/) || [])[1];
+function shotRender() {
+  scene.children.forEach(o => { if (o !== caseG && !o.isLight && o !== key.target) o.visible = false; });
+  holo3.visible = cone.visible = false; card.visible = false;
+  scene.background = new THREE.Color(/bg=w/.test(location.hash) ? 0xffffff : 0x000000); scene.fog = null;
+  const A = ART[P.box]; edgeMat.color.set(A.acc).multiplyScalar(A.glow * .9); ledMat.color.set(A.acc).multiplyScalar(.8);
+  const f1 = new THREE.DirectionalLight(0xdfe8f5, 1.1); f1.position.set(2, 3, 6); const f2 = new THREE.DirectionalLight(0x9fc0ff, .7); f2.position.set(-5, 2, -3); scene.add(f1, f2);
+  caseG.rotation.y = -.38; caseG.position.set(0, 0, 0);
+  R3.setPixelRatio(1); R3.setSize(innerWidth, innerHeight, false); cam.fov = 24; cam.aspect = innerWidth / innerHeight; cam.position.set(1.2, 2.5, 6.2); cam.lookAt(0, .36, 0); cam.updateProjectionMatrix();
+  R3.toneMapping = THREE.ACESFilmicToneMapping; R3.toneMappingExposure = 1.15; R3.outputEncoding = THREE.sRGBEncoding; R3.setRenderTarget(null);
+  scene.traverse(o => { if (o.material) o.material.needsUpdate = true; }); R3.render(scene, cam); window.__shot = 1;
+}
+if (SHOT) document.documentElement.classList.add('embed');
+if (SHOT && DEMO[SHOT]) fontsReady.then(() => start(SHOT)).then(shotRender);
+else if (!EMBED) fontsReady.then(() => start('elite')).then(() => requestAnimationFrame(frame));
 else { let looping = false;
   /* игра присылает лучшую карточку кейса; сцена готовит её и сообщает «готово», дальше нажатие на кейс открывает его */
   addEventListener('message', e => { const m = e.data || {}; if (m.t === 'play' && m.p) { DEMO.game = m.p; fontsReady.then(() => start('game')).then(() => { if (!looping) { looping = true; requestAnimationFrame(frame); } post({ t: 'ready' }); }).catch(err => post({ t: 'fail', e: String(err) })); }

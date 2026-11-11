@@ -2,6 +2,7 @@
 cd "$(dirname "$0")"
 { cat head.html
 echo '<!--RV3D-->'
+echo '<!--CASEIMG-->'
 cat <<'X'
 <script>
 window.__cmErr = function (m) {
@@ -43,6 +44,10 @@ open('reveal-lab.html', 'w', encoding='utf-8').write(out)
 # 3D-открытие кейса встраивается в игру целиком (base64), игра запускает его в отдельном слое
 g = open('pyaterka-legend-offline.html', encoding='utf-8').read()
 assert g.count('<!--RV3D-->') == 1
+assert g.count('<!--CASEIMG-->') == 1
+# значки кейсов — снимки 3D-кейсов из сцены открытия (vendor/case-*.webp, прозрачный фон)
+ci = ','.join('"%s":"data:image/webp;base64,%s"' % (k, base64.b64encode(open('vendor/case-%s.webp' % k, 'rb').read()).decode()) for k in ('basic', 'pro', 'elite'))
+g = g.replace('<!--CASEIMG-->', '<script>window.CASE_IMG={' + ci + '};</script>', 1)
 g = g.replace('<!--RV3D-->', '<script>window.RV_SRC="' + base64.b64encode(out.encode('utf-8')).decode() + '";</script>', 1)
 open('pyaterka-legend-offline.html', 'w', encoding='utf-8').write(g)
 PY

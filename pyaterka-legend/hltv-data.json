@@ -2498,6 +2498,87 @@
       "countryCode": "BG",
       "team": "Without a Roof",
       "verifiedAt": "2026-11-11"
+    },
+    "chelo": {
+      "profileId": 10566,
+      "profileUrl": "https://www.hltv.org/player/10566/chelo",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/vIfxljQALwzL52X8driYzf.png?ixlib=java-2.1.0&s=15c30d1afbb6fc315b966256b3d4bed1&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Imperial",
+      "verifiedAt": "2026-11-11"
+    },
+    "Chr1zN": {
+      "profileId": 21983,
+      "profileUrl": "https://www.hltv.org/player/21983/chr1zn",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/zXIeBk5V2-LIrHTYYby7ym.png?ixlib=java-2.1.0&s=8943d63eb2ddfe0eea6d5e4d504a4535&w=400",
+      "country": "Дания",
+      "countryCode": "DK",
+      "team": "HEROIC",
+      "verifiedAt": "2026-11-11"
+    },
+    "controlez": {
+      "profileId": 21398,
+      "profileUrl": "https://www.hltv.org/player/21398/controlez",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/EnPA2GUEka9EDK3_pufT1d.png?ixlib=java-2.1.0&s=53109287d524b1cfeb4769e51645df1c&w=400",
+      "country": "Монголия",
+      "countryCode": "MN",
+      "team": "The Huns",
+      "verifiedAt": "2026-11-11"
+    },
+    "cptkurtka023": {
+      "profileId": 16147,
+      "profileUrl": "https://www.hltv.org/player/16147/cptkurtka023",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/lNH0ztx4DqVYdV85pd_A5v.png?ixlib=java-2.1.0&s=be67bc0495f261dcfc13235315c46b71&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "Inner Circle",
+      "verifiedAt": "2026-11-11"
+    },
+    "Cxzi": {
+      "profileId": 17353,
+      "profileUrl": "https://www.hltv.org/player/17353/cxzi",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ehUELnIC00p5pA28-COgrU.png?ixlib=java-2.1.0&s=ab2a34ff31f1ee4bdb3e4b6c1f13e7db&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Wildcard",
+      "verifiedAt": "2026-11-11"
+    },
+    "d1Ledez": {
+      "profileId": 20357,
+      "profileUrl": "https://www.hltv.org/player/20357/d1ledez",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/93RqXONiJJR2QH-Fwg3AYm.png?ixlib=java-2.1.0&s=5173f549c92068fc34e484cdf6e773a8&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "BETBOOM",
+      "verifiedAt": "2026-11-11"
+    },
+    "dgt": {
+      "profileId": 14736,
+      "profileUrl": "https://www.hltv.org/player/14736/dgt",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/6WgYZCFU9Si5ZpP8-Mx2Xc.png?ixlib=java-2.1.0&s=c85964b03b119712205b02cc19a1ab11&w=400",
+      "country": "Уругвай",
+      "countryCode": "UY",
+      "team": "9z",
+      "verifiedAt": "2026-11-11"
+    },
+    "dumau": {
+      "profileId": 15698,
+      "profileUrl": "https://www.hltv.org/player/15698/dumau",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ecujpGo_puxT2yvT2tGEtU.png?ixlib=java-2.1.0&s=5d6203a0ff287702bf9683e61380845f&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Legacy",
+      "verifiedAt": "2026-11-11"
+    },
+    "EliGE": {
+      "profileId": 8738,
+      "profileUrl": "https://www.hltv.org/player/8738/elige",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/TcRKfhgP8gTZ4xt84bxvxw.png?ixlib=java-2.1.0&s=f418c7d4e203c35939d2c9ad7e03b499&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Liquid",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

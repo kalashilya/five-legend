@@ -398,7 +398,10 @@ function rvUrl() {
   return RV_URL;
 }
 const hslHex = (h, s, l) => { const f = n => { const k = (n + h / 30) % 12, a = s * Math.min(l, 1 - l), v = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(v * 255).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); };
-function rvCard(x, type) { const c = x.c; return { box: PACKS[type] && ['basic', 'pro', 'elite'].includes(type) ? type : 'pro', boxN: PACKS[type] ? PACKS[type].n : '', nick: c.nick, team: teamOf(c), cc: ccOf(c), role: RN[c.role] || '', ovr: c.ovr, rar: rarName(c), col: glow(c), tc: hslHex(hsh(c.team) % 360, .75, .58), st: SK.map(k => [SS[k], c.st[k]]) }; }
+/* тот же источник фото, что и у карточки в интерфейсе (faceH): HLTV, фото, добавленное в игре, или папка photos */
+const rvPhoto = c => { const s = slug(c.nick); let u = c.hltv && typeof c.hltv.photo === 'string' && /^https:\/\/(?:img-cdn|static)\.hltv\.org\//.test(c.hltv.photo) ? c.hltv.photo : IMG[c.base];
+  if (!u && s && typeof PH[s] === 'string') u = PH[s]; if (!u) return ''; try { return new URL(u, location.href).href; } catch (e) { return ''; } };
+function rvCard(x, type) { const c = x.c; return { box: PACKS[type] && ['basic', 'pro', 'elite'].includes(type) ? type : 'pro', boxN: PACKS[type] ? PACKS[type].n : '', nick: c.nick, team: teamOf(c), cc: ccOf(c), role: RN[c.role] || '', ovr: c.ovr, rar: rarName(c), col: glow(c), tc: hslHex(hsh(c.team) % 360, .75, .58), st: SK.map(k => [SS[k], c.st[k]]), photo: rvPhoto(c) }; }
 function rvStart() {
   const f = $('#rv3d'); if (!f) return; OV.top = topOf(OV.cards); const me = OV;
   RV = { f, ov: me, ready: false, quiet: false };

@@ -380,7 +380,17 @@ function drawBg(P, g, w, h) {
   g.strokeStyle = 'rgba(255,255,255,.045)'; g.lineWidth = 3 * k; for (let x = -h; x < w; x += 24 * k) { g.beginPath(); g.moveTo(x, h); g.lineTo(x + h * .55, 0); g.stroke(); }
   g.font = `700 ${380 * k}px Oswald, Impact, sans-serif`; g.fillStyle = 'rgba(255,255,255,.055)'; g.textAlign = 'right'; g.fillText(P.nick.slice(0, 2).toUpperCase(), w + 20 * k, 450 * k);
 }
-function drawPlayer(P, g, w, h) {      // силуэт; в игре здесь будет фото игрока из папки photos
+/* фото игрока: картинку с чужого сайта можно взять в 3D только по разрешённому запросу (crossOrigin) — если сайт не разрешил, остаётся силуэт */
+const PHOTO = {};
+const loadPhoto = url => !url ? Promise.resolve(null) : PHOTO[url] !== undefined ? Promise.resolve(PHOTO[url]) : new Promise(res => { const im = new Image(); let done = false;
+  const fin = v => { if (done) return; done = true; PHOTO[url] = v; res(v); };
+  if (!/^data:/.test(url)) im.crossOrigin = 'anonymous'; im.referrerPolicy = 'no-referrer';
+  im.onload = () => { try { const c = document.createElement('canvas'); c.width = c.height = 2; const g = c.getContext('2d'); g.drawImage(im, 0, 0, 2, 2); g.getImageData(0, 0, 1, 1); fin(im); } catch (e) { fin(null); } };
+  im.onerror = () => fin(null); setTimeout(() => fin(null), 5000); im.src = url; });
+function drawPlayer(P, g, w, h) {      // фото игрока, если загрузилось; иначе силуэт
+  if (P.img) { const im = P.img, th = h * .74, tw = th * im.naturalWidth / Math.max(1, im.naturalHeight), sc = Math.min(1, w * 1.05 / tw);
+    g.save(); g.shadowColor = P.col; g.shadowBlur = 26 * w / 720; g.drawImage(im, (w - tw * sc) / 2, h * .8 - th * sc, tw * sc, th * sc); g.restore();
+    const gr = g.createLinearGradient(0, h * .6, 0, h * .95); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,1)'); g.globalCompositeOperation = 'destination-out'; g.fillStyle = gr; g.fillRect(0, h * .6, w, h * .4); g.globalCompositeOperation = 'source-over'; return; }
   const k = w / 720; g.save(); g.translate(w * .5, h * .06); g.scale(6.4 * k, 6.4 * k);
   const body = new Path2D('M-46 100C-46 76-28 67-12 64L0 73 12 64C28 67 46 76 46 100Z'); g.fillStyle = 'rgba(6,8,11,.96)'; g.fill(body);
   g.strokeStyle = P.col; g.globalAlpha = .55; g.lineWidth = 1.2; g.stroke(body); g.globalAlpha = 1;
@@ -512,7 +522,7 @@ function skip() { if (phase !== 'run') return; const W = P.ovr >= WALK; steps.fo
 const ptr = { x: 0, y: 0 };
 cv.addEventListener('pointermove', e => { ptr.x = e.clientX / innerWidth * 2 - 1; ptr.y = e.clientY / innerHeight * 2 - 1; });
 cv.addEventListener('pointerup', () => { if (phase === 'idle') open(); });
-const start = k => loadFlag(DEMO[k].cc).then(() => reset(k));
+const start = k => Promise.all([loadFlag(DEMO[k].cc), loadPhoto(DEMO[k].photo)]).then(([, im]) => { DEMO[k].img = im; reset(k); });
 document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => start(b.dataset.k)));
 $('#openBtn').addEventListener('click', open); $('#skip').addEventListener('click', skip);
 

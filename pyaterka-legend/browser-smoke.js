@@ -101,32 +101,40 @@ const { chromium } = require('playwright');
       throw new Error('Досье состава должно занимать вторую колонку арены на десктопе: ' + JSON.stringify(matchLayout));
     }
     await page.screenshot({ path: path.join(shotDir, 'play-1440.png'), fullPage: true });
-    await page.setViewportSize({ width: 390, height: 844 });
     const sections = [
       { tab: 'col', selector: '.grid', label: 'Коллекция' },
       { tab: 'packs', selector: '.pk', label: 'Кейсы' },
       { tab: 'play', selector: '.sqtab, .btn.go, .match-dossier', label: 'Матчи' },
       { tab: 'prof', selector: '.stats, .prow, .pn', label: 'Профиль' }
     ];
-    for (const section of sections) {
-      await page.locator('#tabs button[data-v="' + section.tab + '"]').click();
-      await page.waitForFunction(tab => document.querySelector('#app')?.dataset.tab === tab, section.tab);
-      await page.waitForTimeout(300);
-      const sectionState = await page.evaluate(selector => ({
-        text: document.querySelector('#app')?.innerText?.trim() || '',
-        content: !!document.querySelector('#app ' + selector),
-        scrollWidth: document.documentElement.scrollWidth,
-        width: innerWidth
-      }), section.selector);
-      if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно');
-      if (section.tab === 'col') { const tiers = await page.evaluate(() => ['standard','cinema','cinema-legend'].map(k => document.querySelectorAll('#col-grid .pc.' + k).length)); if (tiers.some(n => n === 0)) throw new Error('Коллекция должна показывать все три уровня оформления карточек: ' + tiers.join('/')); }
-      if (section.tab === 'play') { const slots = await page.locator('.match-dossier__slot').count(); if (slots !== 5) throw new Error('Тактическое досье должно содержать ровно пять позиций состава: ' + slots); }
-      if (section.tab === 'col') { const unowned = await page.locator('#col-grid .pc.no').first().evaluate(el => ({filter:getComputedStyle(el).filter,opacity:getComputedStyle(el).opacity})); if (unowned.filter !== 'none' || unowned.opacity !== '1') throw new Error('Неизвестные карточки не должны обесцвечивать всю карточку: ' + JSON.stringify(unowned)); }
-      if (section.tab === 'home' && !(await page.locator('#app .league-emblem').count())) throw new Error('На главной отсутствует эмблема лиги');
-      const mast = await page.locator('#app .section-mast').count();
-      if (mast !== 1 || !(await page.locator('#app .section-mast__icon svg').count())) throw new Error(section.label + ': отсутствует фирменная шапка раздела или эмблема');
-      if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');
-      await page.screenshot({ path: path.join(shotDir, section.tab + '-390.png'), fullPage: true });
+    for (const viewport of [{ width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      for (const section of sections) {
+        await page.locator('#tabs button[data-v="' + section.tab + '"]').click();
+        await page.waitForFunction(tab => document.querySelector('#app')?.dataset.tab === tab, section.tab);
+        await page.waitForTimeout(220);
+        const sectionState = await page.evaluate(selector => ({
+          text: document.querySelector('#app')?.innerText?.trim() || '',
+          content: !!document.querySelector('#app ' + selector),
+          scrollWidth: document.documentElement.scrollWidth,
+          width: innerWidth
+        }), section.selector);
+        if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно при ширине ' + viewport.width);
+        if (section.tab === 'col') {
+          const tiers = await page.evaluate(() => ['standard','cinema','cinema-legend'].map(k => document.querySelectorAll('#col-grid .pc.' + k).length));
+          if (tiers.some(n => n === 0)) throw new Error('Коллекция должна показывать все три уровня оформления карточек: ' + tiers.join('/') + ' при ширине ' + viewport.width);
+          const unowned = await page.locator('#col-grid .pc.no').first().evaluate(el => ({filter:getComputedStyle(el).filter,opacity:getComputedStyle(el).opacity}));
+          if (unowned.filter !== 'none' || unowned.opacity !== '1') throw new Error('Неизвестные карточки не должны обесцвечивать всю карточку: ' + JSON.stringify(unowned));
+        }
+        if (section.tab === 'play') {
+          const slots = await page.locator('.match-dossier__slot').count();
+          if (slots !== 5) throw new Error('Тактическое досье должно содержать ровно пять позиций состава: ' + slots);
+        }
+        const mast = await page.locator('#app .section-mast').count();
+        if (mast !== 1 || !(await page.locator('#app .section-mast__icon svg').count())) throw new Error(section.label + ': отсутствует фирменная шапка раздела или эмблема');
+        if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение при ширине ' + viewport.width);
+        await page.screenshot({ path: path.join(shotDir, section.tab + '-' + viewport.width + '.png'), fullPage: true });
+      }
     }
     if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));
     console.log('Browser smoke OK: responsive layouts ' + layouts.join(', ') + '; home, collection, cases, matches and profile rendered; no overflow or layout displacement; 3D hover lifts only an inner card layer; no page errors.');

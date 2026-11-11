@@ -1115,6 +1115,7 @@ body{background:transparent;color:var(--fg)}
 <div id="over" hidden></div>
 
 
+<style>
 /* ===== FINAL ART PASS: physical armory cases + arena identity ===== */
 .home-shortcut__icon svg{display:block;width:34px;height:34px;overflow:visible;filter:drop-shadow(0 0 7px rgba(126,190,226,.28))}
 .home-shortcut:nth-child(1) .home-shortcut__icon svg{width:38px;height:38px}
@@ -1144,6 +1145,8 @@ body{background:transparent;color:var(--fg)}
 .home-free .pk{max-width:150px}
 @media(max-width:420px){#app[data-tab="packs"] .shop{grid-template-columns:104px minmax(0,1fr);gap:12px}#app[data-tab="packs"] .pk{max-width:112px}.pk .pk-stamp{width:29%}}
 @media(prefers-reduced-motion:reduce){.home-shortcut__icon svg,.section-mast.mast-play .section-mast__icon svg{filter:none}}
+
+</style>
 <script>
 window.__cmErr = function (m) { var a = document.getElementById('app'); if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Скопируйте этот текст и отправьте в чат:</p><p class="num sm" style="overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</p></div>'; };
 window.addEventListener('error', function (e) { window.__cmErr((e.message || 'ошибка') + ' · строка ' + (e.lineno || '?')); });
@@ -2362,5 +2365,4 @@ function start() {
 }
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
 })();
-</script>
-</body></html>
+</script></body></html>

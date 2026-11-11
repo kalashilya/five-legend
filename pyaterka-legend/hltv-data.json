@@ -3196,6 +3196,60 @@
       "countryCode": "RO",
       "team": null,
       "verifiedAt": "2026-11-11"
+    },
+    "kashl1d": {
+      "profileId": 23686,
+      "profileUrl": "https://www.hltv.org/player/23686/kashl1d",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/wNGdRx4DbLG4EZHXhOqxQI.png?ixlib=java-2.1.0&s=6f62e0ba8ea11f8948b0ff198ca2af99&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "K27",
+      "verifiedAt": "2026-11-11"
+    },
+    "hoolig4n": {
+      "profileId": 24303,
+      "profileUrl": "https://www.hltv.org/player/24303/hoolig4n",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/srCK5IU4sKBg2lj353mQhm.png?ixlib=java-2.1.0&s=c3834824d1e02fc462951218a5aeb929&w=400",
+      "country": "Монголия",
+      "countryCode": "MN",
+      "team": "5star",
+      "verifiedAt": "2026-11-11"
+    },
+    "NEUZ": {
+      "profileId": 15060,
+      "profileUrl": "https://www.hltv.org/player/15060/neuz",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/cvLbvbsmBjGJ5b9JFBcrR5.png?ixlib=java-2.1.0&s=ab105ecbfca77cafcffd740aad81543b&w=400",
+      "country": "Монголия",
+      "countryCode": "MN",
+      "team": "5star",
+      "verifiedAt": "2026-11-11"
+    },
+    "Botpa1": {
+      "profileId": 25010,
+      "profileUrl": "https://www.hltv.org/player/25010/botpa1",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/z2gjsCnMlY8MLAVya0rgiM.png?ixlib=java-2.1.0&s=b52aa6c2288397b26a292d4b9e1df18e&w=400",
+      "country": "Казахстан",
+      "countryCode": "KZ",
+      "team": "Omega",
+      "verifiedAt": "2026-11-11"
+    },
+    "def1zer": {
+      "profileId": 22537,
+      "profileUrl": "https://www.hltv.org/player/22537/def1zer",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/tIUdJ8iITQ9elC7VJm8ri0.png?ixlib=java-2.1.0&s=aa7226e9636162eb42f18907a84e3a43&w=400",
+      "country": "Казахстан",
+      "countryCode": "KZ",
+      "team": "Omega",
+      "verifiedAt": "2026-11-11"
+    },
+    "clax": {
+      "profileId": 12004,
+      "profileUrl": "https://www.hltv.org/player/12004/clax",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/2tmGV7HQp_ZlAdqOj8zQK5.png?ixlib=java-2.1.0&s=05f050101fc7938a3962244a165da01c&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "K27",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

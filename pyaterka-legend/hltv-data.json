@@ -2156,6 +2156,141 @@
       "countryCode": "DK",
       "team": "Ninjas in Pyjamas",
       "verifiedAt": "2026-11-11"
+    },
+    "ultimate": {
+      "profileId": 21763,
+      "profileUrl": "https://www.hltv.org/player/21763/ultimate",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/aSi4SpP7OCCn83pcVZkt5G.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C0%2C467%2C467&s=bf5a67a7f57dca77686bfb944bdc5bb9&w=800",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": "Betclic",
+      "verifiedAt": "2026-11-11"
+    },
+    "upE": {
+      "profileId": 22760,
+      "profileUrl": "https://www.hltv.org/player/22760/upe",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/nDe7rgO-SPQGE1J8olxgv6.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C4%2C467%2C467&s=03845cb5dc61985b69f926b0fb3fda02&w=800",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "Alliance",
+      "verifiedAt": "2026-11-11"
+    },
+    "venomzera": {
+      "profileId": 21288,
+      "profileUrl": "https://www.hltv.org/player/21288/venomzera",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/-3fdPMoH4RebMdhWQ72i2O.png?ixlib=java-2.1.0&s=98c8c49a9cb4b7a2c55a8302e091dae3&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "MIBR",
+      "verifiedAt": "2026-11-11"
+    },
+    "VINI": {
+      "profileId": 12822,
+      "profileUrl": "https://www.hltv.org/player/12822/vini",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/8eCE6Lrlb-kX89Jo3f2Box.png?ixlib=java-2.1.0&s=7b8d65bb5bc60727f3806b68343600e8&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Imperial",
+      "verifiedAt": "2026-11-11"
+    },
+    "VLDN": {
+      "profileId": 20813,
+      "profileUrl": "https://www.hltv.org/player/20813/vldn",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/NO3vUpBDRJkdCSRRXKIW9K.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=b44efad244658a53189b70b5a9870e80&w=800",
+      "country": "Сербия",
+      "countryCode": "RS",
+      "team": "ex-Zero Tenacity",
+      "verifiedAt": "2026-11-11"
+    },
+    "volt": {
+      "profileId": 20358,
+      "profileUrl": "https://www.hltv.org/player/20358/volt",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/1nJdaCfmCPu7Xy-4sHxCQv.png?ixlib=java-2.1.0&s=c26fab7b9bfd01a906ec7bd03d7c082d&w=400",
+      "country": "Румыния",
+      "countryCode": "RO",
+      "team": "INFINITE",
+      "verifiedAt": "2026-11-11"
+    },
+    "Westmelon": {
+      "profileId": 16551,
+      "profileUrl": "https://www.hltv.org/player/16551/westmelon",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/uXUgjI6jUYnxoqgAVaXZE9.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=124%2C0%2C467%2C467&s=8f7831c4e4211b39dcdd5a307c2c70d8&w=800",
+      "country": "Китай",
+      "countryCode": "CN",
+      "team": "Lynn Vision",
+      "verifiedAt": "2026-11-11"
+    },
+    "WOOD7": {
+      "profileId": 14390,
+      "profileUrl": "https://www.hltv.org/player/14390/wood7",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/-IREa5UGBIR3d7GcvKtAcF.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=117%2C8%2C467%2C467&s=af9177596783c65514a13aa2d6c71db8&w=800",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Turma do Pagode",
+      "verifiedAt": "2026-11-11"
+    },
+    "xKacpersky": {
+      "profileId": 23372,
+      "profileUrl": "https://www.hltv.org/player/23372/xkacpersky",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/o4yv-l1QzopOf4czz8aNps.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=0b1922b2211f68c79a3016530d7c2da7&w=800",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": "Ninjas in Pyjamas",
+      "verifiedAt": "2026-11-11"
+    },
+    "yxngstxr": {
+      "profileId": 22047,
+      "profileUrl": "https://www.hltv.org/player/22047/yxngstxr",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/LT5vGHKJqF8o5fcMwH9zLo.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C4%2C467%2C467&s=5c5c9b9f3e7e64e1c33790f1ee4fbee6&w=800",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "Luminosity",
+      "verifiedAt": "2026-11-11"
+    },
+    "z4KR": {
+      "profileId": 18744,
+      "profileUrl": "https://www.hltv.org/player/18744/z4kr",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/cX0ETTx2bjmW52mzeLNxbP.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=124%2C0%2C467%2C467&s=788959d9b7462b5b117c7f7f722ffe44&w=800",
+      "country": "Китай",
+      "countryCode": "CN",
+      "team": "Lynn Vision",
+      "verifiedAt": "2026-11-11"
+    },
+    "Zero": {
+      "profileId": 24857,
+      "profileUrl": "https://www.hltv.org/player/24857/zero",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/6q-uT0mSJyubUKR7ralrV6.png?ixlib=java-2.1.0&s=115571f0ec8579c5ca0e702ae3b291fe&w=400",
+      "country": "Китай",
+      "countryCode": "CN",
+      "team": "TYLOO",
+      "verifiedAt": "2026-11-11"
+    },
+    "zeRRoFIX": {
+      "profileId": 23415,
+      "profileUrl": "https://www.hltv.org/player/23415/zerrofix",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ZxP3ucAMyz_-kZ7zy1t3a7.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C4%2C467%2C467&s=b33069060ea9d7559bab4ea0f20f40c3&w=800",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "Inner Circle",
+      "verifiedAt": "2026-11-11"
+    },
+    "zock": {
+      "profileId": 20690,
+      "profileUrl": "https://www.hltv.org/player/20690/zock",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/DNEw43j54JGpTW4YUH7JlZ.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=2b346b204f7127b63e04ec3f05d79442&w=800",
+      "country": "Уругвай",
+      "countryCode": "UY",
+      "team": "Bounty Hunters",
+      "verifiedAt": "2026-11-11"
+    },
+    "ztr": {
+      "profileId": 16486,
+      "profileUrl": "https://www.hltv.org/player/16486/ztr",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/60VoKugbXkfivdf1E2evhb.png?ixlib=java-2.1.0&s=f923d05431ba9445a9563db149ac02df&w=400",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "FOKUS",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

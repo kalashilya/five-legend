@@ -1477,6 +1477,29 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 @media (max-width:380px){.lg-row summary{grid-template-columns:40px minmax(0,1fr) auto 42px 12px;gap:8px}.lg-chip:not(.lg-chip--case){display:none}.lg-body{padding-left:14px}}
 .pk.pk-3d{aspect-ratio:auto;display:flex;align-items:center;justify-content:center}
 .pk.pk-3d img{display:block;width:100%;height:auto;-webkit-user-drag:none;user-select:none;pointer-events:none}
+/* Серия входов */
+#sheet:has(.st-pop){align-items:center;padding:16px}
+#sheet .in.st-pop{position:relative;max-width:440px;max-height:92vh;max-height:92dvh;border-radius:20px;border:1px solid #f0c47755;padding:20px 16px 18px;display:flex;flex-direction:column;gap:10px;animation:stIn .35s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes stIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+.st-pop h2{margin:0;font-size:24px;letter-spacing:.04em}.st-x0{position:absolute;right:12px;top:12px}
+.st-warn{margin:0;color:#ffb08a}
+.st-hero{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px;border-radius:16px;background:radial-gradient(70% 80% at 50% 35%,#f0c47733,transparent 70%),#0a0d12;border:1px solid #f0c47744;text-align:center}
+.st-hero b{font-size:17px}.st-hero small{font-size:11px;color:var(--mut,#8f98a3)}.st-hero .st-case{width:150px}.st-hero .lg-coins{transform:scale(1.5);margin:14px 0 10px}
+.st-hero.is-got{border-color:#7fe0a066;background:radial-gradient(70% 80% at 50% 35%,#7fe0a022,transparent 70%),#0a0d12}
+.st-prog{display:block;height:8px;border-radius:4px;background:#ffffff14;overflow:hidden}.st-prog i{display:block;height:100%;background:linear-gradient(90deg,#f0a93a,#ffd27a)}
+.st-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.st-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:2px;min-height:58px;padding:4px 2px 3px;border-radius:8px;border:1px solid #ffffff14;background:#0b0e12}
+.st-day small{font:700 9px/1 var(--f-m,monospace);color:#8f98a3}.st-day b{font:600 10px/1 var(--f-d,sans-serif);letter-spacing:.02em;color:#cfd6de;white-space:nowrap;max-width:100%}
+.st-day .st-case{width:34px}.st-coin{display:flex;align-items:center;justify-content:center;height:20px}.st-coin .coin{display:block;width:18px;height:18px;box-shadow:0 1px 3px #0008}
+.st-day.is-pack{border-color:#8fb8ff44;background:linear-gradient(180deg,#8fb8ff14,#0b0e12)}.st-day.is-elite{border-color:#f0c47766;background:linear-gradient(180deg,#f0c47720,#0b0e12)}
+.st-day.is-done{opacity:.45}.st-day.is-done::after{content:"✓";position:absolute;right:3px;top:2px;font-size:10px;color:#7fe0a0}
+.st-day.is-today{opacity:1;border-color:#f0c477;box-shadow:0 0 0 1px #f0c477,0 0 16px #f0c47755;animation:stPulse 1.6s ease-in-out infinite}
+@keyframes stPulse{50%{box-shadow:0 0 0 1px #f0c477,0 0 4px #f0c47733}}
+.st-case{position:relative;display:block}.st-x{position:absolute;right:-4px;bottom:-2px;font:700 10px/1 var(--f-m,monospace);font-style:normal;color:#07080a;background:#f0c477;border-radius:4px;padding:2px 3px}
+.st-claim{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px;border-radius:12px;border:1px solid #f0c47755;background:#f0c47712}
+.st-claim .st-case{width:46px}.st-claim>span{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}.st-claim small{font-size:9px;color:#9aafbf}.st-claim b{font-size:12px}
+.lobby-daily__more{margin-top:8px;padding:0;border:0;background:none;color:#f0c477;font:700 11px var(--f-m,monospace);letter-spacing:.08em;cursor:pointer}
+@media (prefers-reduced-motion: reduce){.st-day.is-today,#sheet .in.st-pop{animation:none}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -1961,6 +1984,7 @@ function normalize(G, now) {
   G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.best = Math.max(G.tro, Math.round(G.best)); G.w = Math.max(0, Math.floor(G.w)); G.l = Math.max(0, Math.floor(G.l)); G.lvl = Math.max(1, Math.floor(G.lvl)); G.xp = Math.max(0, Math.min(100 * G.lvl - 1, Math.floor(G.xp))); G.tut = clamp(G.tut | 0, 0, 3); G.frame = clamp(G.frame | 0, -1, 6); G.sqi = clamp(G.sqi | 0, 0, 2);
   G.streak = G.streak && typeof G.streak === 'object' && !Array.isArray(G.streak) ? G.streak : {};
   G.streak.day = clamp(G.streak.day | 0, 0, 28); G.streak.last = Number.isInteger(G.streak.last) ? G.streak.last : -1; G.streak.reward = cleanReward(G.streak.reward);
+  { const p = G.streak.pend; G.streak.pend = p && Number.isInteger(p.d) && Number.isInteger(p.day) && p.day >= 1 && p.day <= 28 ? { d: p.d, day: p.day } : null; G.streak.shown = Number.isInteger(G.streak.shown) ? G.streak.shown : -1; }
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
@@ -2043,23 +2067,27 @@ function giveReward(G, r) {
   if (r.pick != null) { const pool = POOL[r.pick], ids = []; for (let i = 0; i < 3; i++) ids.push(pick(pool).id); G.picks.push(ids); }
 }
 const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object.keys(r.pack).map(k => 'кейс «' + PACKS[k].n + '»' + (r.pack[k] > 1 ? ' ×' + r.pack[k] : '')).join(', ') : '', r.pick != null ? 'карточка на выбор («' + RAR[r.pick] + '»)' : ''].filter(Boolean).join(' + ');
-/* Серия входов: 28 календарных дней по Москве. Пропуск дня сбрасывает цикл. */
+/* Серия входов: 28 календарных дней по Москве. Пропуск дня сбрасывает цикл.
+   Награду дня нужно забрать (окно при первом входе за день или кнопка внизу главной). Монеты растут внутри каждой недели,
+   кейсы «Про» на 7, 14 и 21 (×2) день, «Элитный» на 28-й, «Базовый» на 4, 11 и 24 день. */
 const STREAK_REWARDS = [
-  { coins: 40 }, { coins: 50 }, { coins: 60 }, { coins: 50 }, { coins: 75 }, { coins: 100 },
-  { coins: 150, pack: { basic: 1 } },
-  { coins: 50 }, { coins: 60 }, { coins: 70 }, { coins: 60 }, { coins: 80 }, { coins: 100 },
-  { coins: 200, pack: { pro: 1 } },
-  { coins: 60 }, { coins: 70 }, { coins: 80 }, { coins: 70 }, { coins: 100 }, { coins: 120 },
-  { coins: 250, pack: { pro: 1 } },
-  { coins: 80 }, { coins: 100 }, { coins: 120 }, { coins: 100 }, { coins: 125 }, { coins: 150 },
-  { coins: 400, pack: { elite: 1 } }
+  { coins: 30 }, { coins: 50 }, { coins: 70 }, { pack: { basic: 1 } }, { coins: 90 }, { coins: 110 }, { pack: { pro: 1 } },
+  { coins: 40 }, { coins: 60 }, { coins: 80 }, { pack: { basic: 1 } }, { coins: 100 }, { coins: 120 }, { pack: { pro: 1 } },
+  { coins: 50 }, { coins: 70 }, { coins: 90 }, { coins: 110 }, { coins: 130 }, { coins: 150 }, { pack: { pro: 2 } },
+  { coins: 60 }, { coins: 80 }, { pack: { basic: 1 } }, { coins: 100 }, { coins: 120 }, { coins: 150 }, { pack: { elite: 1 } }
 ];
+/* Отмечает, какой день серии можно забрать сегодня (S.pend). Сама награда выдаётся в claimStreak */
 function updateStreak(G, now) {
   const S = G.streak, today = mskDay(now);
-  if (S.last >= today) return false;
-  const day = S.last === today - 1 ? (S.day % 28) + 1 : 1, reward = STREAK_REWARDS[day - 1];
-  giveReward(G, reward); S.day = day; S.last = today; S.reward = reward;
+  if (S.last >= today) { S.pend = null; return false; }
+  const day = S.last === today - 1 ? (S.day % 28) + 1 : 1;
+  if (!S.pend || S.pend.d !== today || S.pend.day !== day) S.pend = { d: today, day };
   return true;
+}
+function claimStreak(G, now) {
+  updateStreak(G, now); const S = G.streak, p = S.pend; if (!p) return null;
+  const reward = STREAK_REWARDS[p.day - 1]; giveReward(G, reward); S.day = p.day; S.last = p.d; S.reward = reward; S.pend = null;
+  return reward;
 }
 function choosePick(G, i) { const p = G.picks[0]; if (!p || p[i] == null) return null; G.picks.shift(); const isNew = addCard(G, p[i]); return { c: CARDS[p[i]], isNew }; }
 
@@ -2136,7 +2164,7 @@ function lbTable(G, scope, now) {
 const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro).length + 1;
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, IFP, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
-  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak };
+  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
 /* ===== Интерфейс ===== */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -2242,8 +2270,7 @@ function vHome() {
   const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), low = lg > 0 && G.tro - LEAGUES[lg][1] < 30;
   const prog = nx ? Math.max(0, Math.min(100, (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100)) : 100, st = G.tut;
   const collectionHave = Object.keys(G.cards).length, collectionTotal = ALL.length, collectionPct = Math.round(collectionHave / Math.max(1, collectionTotal) * 100), xpPct = Math.round(G.xp / Math.max(1, 100 * G.lvl) * 100);
-  const streak = G.streak || { day: 0, last: -1, reward: null }, streakReward = streak.last === mskDay(now()) && streak.reward ? rewardText(streak.reward) : '';
-  const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span class="lobby-streak__day ${done ? 'is-done' : ''} ${milestone ? 'is-milestone' : ''}">${d}</span>`; }).join('');
+  const ss = stState(), streakReward = !ss.p && G.streak.last === mskDay(now()) && G.streak.reward ? rewardText(G.streak.reward) : '';
   const lineup = G.squad.map((id, i) => id == null
     ? `<button class="lobby-slot" data-act="slot" data-v="${i}" aria-label="Выбрать игрока на роль ${RNAME[i]}"><span class="lobby-slot__plus">+</span><b>${RNAME[i]}</b><small>ВЫБРАТЬ</small></button>`
     : `<button class="lobby-card" data-act="card" data-id="${id}" aria-label="Открыть карточку ${esc(CARDS[id].nick)}"><span class="lobby-card__role">${RNAME[i]}</span>${ownH(id, 'xs')}<span class="lobby-card__open">ОТКРЫТЬ ↗</span></button>`).join('');
@@ -2293,9 +2320,10 @@ function vHome() {
     </div>
     <div class="lobby-daily">
       <div class="lobby-daily__head"><span class="lobby-kicker">DAILY REWARD</span><b>СЕРИЯ ВХОДОВ</b></div>
-      <strong>${streak.day}<small> / 28 ДНЕЙ</small></strong>
-      <div class="lobby-daily__days">${streakCells}</div>
-      <p>${streakReward ? 'Получено сегодня: ' + esc(streakReward) : 'Заходи каждый день и забирай награды.'}</p>
+      <strong>${ss.cur}<small> / 28 ДНЕЙ</small></strong>
+      ${stGrid(ss)}
+      ${ss.p ? `<div class="st-claim">${stArt(STREAK_REWARDS[ss.p.day - 1])}<span><small>Награда дня ${ss.p.day}</small><b>${esc(rewardText(STREAK_REWARDS[ss.p.day - 1]))}</b></span><button class="btn pri s" data-act="streakClaim">Забрать</button></div>` : `<p>${streakReward ? 'Получено сегодня: ' + esc(streakReward) + '. Следующая награда — завтра.' : 'Заходи каждый день и забирай награды.'} Пропуск дня начинает серию заново.</p>`}
+      <button class="lobby-daily__more" data-act="streak">Все награды серии ›</button>
     </div>
   </section>
   ${st === 3 ? `<section class="lobby-missions"><div class="lobby-sectionhead"><div><span class="lobby-kicker">DAILY OBJECTIVES</span><h2>ЗАДАНИЯ</h2></div><button data-act="tab" data-v="play">ВСЕ ЗАДАНИЯ ↗</button></div>${tasksH()}</section>` : ''}
@@ -2474,8 +2502,30 @@ function lgScroll() {
   const step = ts => { if (stop || !box.isConnected) return; if (!t0) t0 = ts; const k = Math.min(1, (ts - t0) / D); box.scrollTop = target * ease(k); if (k < 1) requestAnimationFrame(step); };
   setTimeout(() => requestAnimationFrame(step), 450);
 }
+/* ---------- Серия входов: окно дня и сетка наград ---------- */
+function stState() { const S = G.streak, p = S.pend; return { S, p, cur: p ? p.day : S.day, done: p ? p.day - 1 : S.day, broke: !!(p && p.day === 1 && S.day > 0 && S.day < 28) }; }
+const stArt = (r, big) => { if (r.pack) { const k = Object.keys(r.pack)[0], n = r.pack[k]; return `<span class="st-case ${k}">${pkH(k)}${n > 1 ? `<i class="st-x">×${n}</i>` : ''}</span>`; } return big ? lgCoins() : '<span class="st-coin"><i class="coin"></i></span>'; };
+const stShort = r => r.pack ? (n => n > 1 ? '×' + n : PACKS[Object.keys(r.pack)[0]].n)(r.pack[Object.keys(r.pack)[0]]) : String(r.coins);
+function stGrid(ss) {
+  return `<div class="st-grid">${STREAK_REWARDS.map((r, i) => { const d = i + 1, done = d <= ss.done, today = ss.p && d === ss.p.day;
+    return `<span class="st-day ${done ? 'is-done' : ''} ${today ? 'is-today' : ''} ${r.pack ? 'is-pack' : ''} ${r.pack && r.pack.elite ? 'is-elite' : ''}"><small>${d}</small>${stArt(r)}<b>${stShort(r)}</b></span>`; }).join('')}</div>`;
+}
+function streakH() {
+  const ss = stState(), got = sheet.got, day = got ? G.streak.day : ss.cur, r = got || (ss.p ? STREAK_REWARDS[ss.p.day - 1] : G.streak.reward);
+  const nextPack = STREAK_REWARDS.findIndex((x, i) => i + 1 > day && x.pack), np = nextPack >= 0 ? STREAK_REWARDS[nextPack] : null;
+  return `<div class="in st-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть">✕</button>
+    <small class="eyebrow">Серия входов</small><h2>${got ? 'Награда получена' : ss.p ? 'День ' + ss.p.day + ' из 28' : 'День ' + day + ' из 28'}</h2>
+    ${ss.broke && !got ? '<p class="sm st-warn">Вчера вход был пропущен — серия начинается заново.</p>' : ''}
+    ${r ? `<div class="st-hero ${got ? 'is-got' : ''}">${stArt(r, true)}<b>${esc(rewardText(r))}</b><small>${got ? 'уже у вас' : ss.p ? 'награда за сегодня' : 'получено сегодня'}</small></div>` : ''}
+    <span class="st-prog" aria-label="Пройдено дней: ${got ? day : ss.done} из 28"><i style="width:${(got ? day : ss.done) / 28 * 100}%"></i></span>
+    ${np ? `<p class="sm mut">До ближайшего кейса (${esc(rewardText(np))}) — ${nextPack + 1 - day} ${plural(nextPack + 1 - day, 'день', 'дня', 'дней')}.</p>` : ''}
+    ${stGrid(got ? { done: day, p: null } : ss)}
+    <p class="sm mut">Заходите каждый день: пропуск дня начинает серию с первого дня. После 28-го дня цикл повторяется.</p>
+    <div class="rowb">${ss.p && !got ? '<button class="btn pri" data-act="streakClaim">Забрать награду</button>' : '<button class="btn pri" data-act="close">Отлично</button>'}</div></div>`;
+}
 function vSheet() {
   if (!sheet) return '';
+  if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'slot') {
     const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i && x != null).map(id => CARDS[id].nick));
@@ -2867,6 +2917,7 @@ function render() {
   } else app.classList.remove('enter');
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()) };
   $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${dots[k] ? '<span class="dot"></span>' : ''}</button>`).join('');
+  if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
   if (sheet && sheet.t === 'leagues' && sheet.go) { sheet.go = 0; lgScroll(); }
   const ov = $('#over');
@@ -2890,6 +2941,8 @@ const ACT = {
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },
   leagues() { sheet = { t: 'leagues', go: 1 }; },
+  streak() { sheet = { t: 'streak' }; },
+  streakClaim() { const r = claimStreak(G, now()); if (!r) return; sfx('stop', r.pack ? (r.pack.elite ? 4 : r.pack.pro ? 3 : 1) : 0); if (sheet && sheet.t === 'streak') sheet.got = r; else sheet = { t: 'streak', got: r }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },
   slot(v) { sheet = { t: 'slot', slot: +v }; },
   goSquad() { tab = 'col'; sub = 'squads'; window.scrollTo(0, 0); },

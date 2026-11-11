@@ -103,8 +103,7 @@ function vHome() {
   const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), low = lg > 0 && G.tro - LEAGUES[lg][1] < 30;
   const prog = nx ? Math.max(0, Math.min(100, (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100)) : 100, st = G.tut;
   const collectionHave = Object.keys(G.cards).length, collectionTotal = ALL.length, collectionPct = Math.round(collectionHave / Math.max(1, collectionTotal) * 100), xpPct = Math.round(G.xp / Math.max(1, 100 * G.lvl) * 100);
-  const streak = G.streak || { day: 0, last: -1, reward: null }, streakReward = streak.last === mskDay(now()) && streak.reward ? rewardText(streak.reward) : '';
-  const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span class="lobby-streak__day ${done ? 'is-done' : ''} ${milestone ? 'is-milestone' : ''}">${d}</span>`; }).join('');
+  const ss = stState(), streakReward = !ss.p && G.streak.last === mskDay(now()) && G.streak.reward ? rewardText(G.streak.reward) : '';
   const lineup = G.squad.map((id, i) => id == null
     ? `<button class="lobby-slot" data-act="slot" data-v="${i}" aria-label="Выбрать игрока на роль ${RNAME[i]}"><span class="lobby-slot__plus">+</span><b>${RNAME[i]}</b><small>ВЫБРАТЬ</small></button>`
     : `<button class="lobby-card" data-act="card" data-id="${id}" aria-label="Открыть карточку ${esc(CARDS[id].nick)}"><span class="lobby-card__role">${RNAME[i]}</span>${ownH(id, 'xs')}<span class="lobby-card__open">ОТКРЫТЬ ↗</span></button>`).join('');
@@ -154,9 +153,10 @@ function vHome() {
     </div>
     <div class="lobby-daily">
       <div class="lobby-daily__head"><span class="lobby-kicker">DAILY REWARD</span><b>СЕРИЯ ВХОДОВ</b></div>
-      <strong>${streak.day}<small> / 28 ДНЕЙ</small></strong>
-      <div class="lobby-daily__days">${streakCells}</div>
-      <p>${streakReward ? 'Получено сегодня: ' + esc(streakReward) : 'Заходи каждый день и забирай награды.'}</p>
+      <strong>${ss.cur}<small> / 28 ДНЕЙ</small></strong>
+      ${stGrid(ss)}
+      ${ss.p ? `<div class="st-claim">${stArt(STREAK_REWARDS[ss.p.day - 1])}<span><small>Награда дня ${ss.p.day}</small><b>${esc(rewardText(STREAK_REWARDS[ss.p.day - 1]))}</b></span><button class="btn pri s" data-act="streakClaim">Забрать</button></div>` : `<p>${streakReward ? 'Получено сегодня: ' + esc(streakReward) + '. Следующая награда — завтра.' : 'Заходи каждый день и забирай награды.'} Пропуск дня начинает серию заново.</p>`}
+      <button class="lobby-daily__more" data-act="streak">Все награды серии ›</button>
     </div>
   </section>
   ${st === 3 ? `<section class="lobby-missions"><div class="lobby-sectionhead"><div><span class="lobby-kicker">DAILY OBJECTIVES</span><h2>ЗАДАНИЯ</h2></div><button data-act="tab" data-v="play">ВСЕ ЗАДАНИЯ ↗</button></div>${tasksH()}</section>` : ''}
@@ -335,8 +335,30 @@ function lgScroll() {
   const step = ts => { if (stop || !box.isConnected) return; if (!t0) t0 = ts; const k = Math.min(1, (ts - t0) / D); box.scrollTop = target * ease(k); if (k < 1) requestAnimationFrame(step); };
   setTimeout(() => requestAnimationFrame(step), 450);
 }
+/* ---------- Серия входов: окно дня и сетка наград ---------- */
+function stState() { const S = G.streak, p = S.pend; return { S, p, cur: p ? p.day : S.day, done: p ? p.day - 1 : S.day, broke: !!(p && p.day === 1 && S.day > 0 && S.day < 28) }; }
+const stArt = (r, big) => { if (r.pack) { const k = Object.keys(r.pack)[0], n = r.pack[k]; return `<span class="st-case ${k}">${pkH(k)}${n > 1 ? `<i class="st-x">×${n}</i>` : ''}</span>`; } return big ? lgCoins() : '<span class="st-coin"><i class="coin"></i></span>'; };
+const stShort = r => r.pack ? (n => n > 1 ? '×' + n : PACKS[Object.keys(r.pack)[0]].n)(r.pack[Object.keys(r.pack)[0]]) : String(r.coins);
+function stGrid(ss) {
+  return `<div class="st-grid">${STREAK_REWARDS.map((r, i) => { const d = i + 1, done = d <= ss.done, today = ss.p && d === ss.p.day;
+    return `<span class="st-day ${done ? 'is-done' : ''} ${today ? 'is-today' : ''} ${r.pack ? 'is-pack' : ''} ${r.pack && r.pack.elite ? 'is-elite' : ''}"><small>${d}</small>${stArt(r)}<b>${stShort(r)}</b></span>`; }).join('')}</div>`;
+}
+function streakH() {
+  const ss = stState(), got = sheet.got, day = got ? G.streak.day : ss.cur, r = got || (ss.p ? STREAK_REWARDS[ss.p.day - 1] : G.streak.reward);
+  const nextPack = STREAK_REWARDS.findIndex((x, i) => i + 1 > day && x.pack), np = nextPack >= 0 ? STREAK_REWARDS[nextPack] : null;
+  return `<div class="in st-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть">✕</button>
+    <small class="eyebrow">Серия входов</small><h2>${got ? 'Награда получена' : ss.p ? 'День ' + ss.p.day + ' из 28' : 'День ' + day + ' из 28'}</h2>
+    ${ss.broke && !got ? '<p class="sm st-warn">Вчера вход был пропущен — серия начинается заново.</p>' : ''}
+    ${r ? `<div class="st-hero ${got ? 'is-got' : ''}">${stArt(r, true)}<b>${esc(rewardText(r))}</b><small>${got ? 'уже у вас' : ss.p ? 'награда за сегодня' : 'получено сегодня'}</small></div>` : ''}
+    <span class="st-prog" aria-label="Пройдено дней: ${got ? day : ss.done} из 28"><i style="width:${(got ? day : ss.done) / 28 * 100}%"></i></span>
+    ${np ? `<p class="sm mut">До ближайшего кейса (${esc(rewardText(np))}) — ${nextPack + 1 - day} ${plural(nextPack + 1 - day, 'день', 'дня', 'дней')}.</p>` : ''}
+    ${stGrid(got ? { done: day, p: null } : ss)}
+    <p class="sm mut">Заходите каждый день: пропуск дня начинает серию с первого дня. После 28-го дня цикл повторяется.</p>
+    <div class="rowb">${ss.p && !got ? '<button class="btn pri" data-act="streakClaim">Забрать награду</button>' : '<button class="btn pri" data-act="close">Отлично</button>'}</div></div>`;
+}
 function vSheet() {
   if (!sheet) return '';
+  if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'slot') {
     const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i && x != null).map(id => CARDS[id].nick));
@@ -728,6 +750,7 @@ function render() {
   } else app.classList.remove('enter');
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()) };
   $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${dots[k] ? '<span class="dot"></span>' : ''}</button>`).join('');
+  if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
   if (sheet && sheet.t === 'leagues' && sheet.go) { sheet.go = 0; lgScroll(); }
   const ov = $('#over');
@@ -751,6 +774,8 @@ const ACT = {
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },
   leagues() { sheet = { t: 'leagues', go: 1 }; },
+  streak() { sheet = { t: 'streak' }; },
+  streakClaim() { const r = claimStreak(G, now()); if (!r) return; sfx('stop', r.pack ? (r.pack.elite ? 4 : r.pack.pro ? 3 : 1) : 0); if (sheet && sheet.t === 'streak') sheet.got = r; else sheet = { t: 'streak', got: r }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },
   slot(v) { sheet = { t: 'slot', slot: +v }; },
   goSquad() { tab = 'col'; sub = 'squads'; window.scrollTo(0, 0); },

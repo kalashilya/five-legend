@@ -76,7 +76,7 @@ ok('сохранение переживает перезапуск без пот
 ok('версия 1 переносится: особые карточки, состав, монеты и уровень сохраняются', () => {
   const v1 = { v: 1, coins: 777, tro: 640, best: 700, xp: 30, lvl: 4, cards: { 0: { n: 2, lv: 3 }, 1000: { n: 1, lv: 1 }, 2003: { n: 1, lv: 2 }, 16: { n: 1, lv: 1 }, 26: { n: 1, lv: 1 }, 2: { n: 1, lv: 1 }, 18: { n: 3, lv: 1 } }, squad: [2003, 1000, 26, 2, 18], packs: { basic: 1, pro: 0, elite: 2 }, daily: NOW - 3600000, w: 9, l: 4 };
   const g = E.migrate(JSON.parse(JSON.stringify(v1)), NOW);
-  assert.strictEqual(g.v, 2); assert.strictEqual(g.coins, 817); assert.strictEqual(g.streak.day, 1); assert.strictEqual(g.lvl, 4); assert.strictEqual(g.tro, 640);
+  assert.strictEqual(g.v, 2); assert.strictEqual(g.coins, 777); assert.strictEqual(g.streak.pend.day, 1); assert.strictEqual(g.lvl, 4); assert.strictEqual(g.tro, 640);
   assert.deepStrictEqual(g.cards[0], { n: 2, lv: 3 }); assert(g.cards[E.W_ID] && g.cards[E.M_ID + 3].lv === 2); assert(!g.cards[1000] && !g.cards[2003]);
   assert.deepStrictEqual(g.squad, [E.M_ID + 3, E.W_ID, 26, 2, 18]); assert.strictEqual(E.CARDS[E.M_ID + 3].nick, E.CARDS[3].nick);
   assert.strictEqual(g.capts[0], 18); assert.strictEqual(g.tut, 3); assert.strictEqual(E.dailyReady(g, NOW), false); assert.strictEqual(g.tasks.d.length, 4);
@@ -84,7 +84,7 @@ ok('версия 1 переносится: особые карточки, сос
 ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
   assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);
   const g = E.migrate({ v: 2, coins: 'x', cards: { 5: { n: 1, lv: 9 }, 987654: { n: 2, lv: 1 } }, squads: [[5, 987654, null, null, null]] }, NOW);
-  assert.strictEqual(g.coins, 40); assert.strictEqual(g.streak.day, 1); assert.strictEqual(g.cards[5].lv, 5); assert(!g.cards[987654] && g.orphans[987654]); assert.deepStrictEqual(g.squad, [5, null, null, null, null]); assert.strictEqual(E.squadInfo(E.squadOf(g)), null);
+  assert.strictEqual(g.coins, 0); assert.strictEqual(g.streak.pend.day, 1); assert.strictEqual(g.cards[5].lv, 5); assert(!g.cards[987654] && g.orphans[987654]); assert.deepStrictEqual(g.squad, [5, null, null, null, null]); assert.strictEqual(E.squadInfo(E.squadOf(g)), null);
 });
 ok('миграция v1 переживает слот капитана с отсутствующей карточкой', () => {
   const v1 = { v: 1, coins: 10, cards: { 5: { n: 1, lv: 1 } }, squad: [5, null, null, null, 987654] };
@@ -172,17 +172,20 @@ ok('награды: 40 и 10 монет; кубки +25, +30, −25, −30; ни
   g.tro = 10; assert.strictEqual(E.applyResult(g, false, 5, 13).tro, -10); assert.strictEqual(g.tro, 0);
 });
 
-ok('серия входов: награды по календарным дням, сброс после пропуска и цикл 28 дней', () => {
-  const DAY = 86400000, g = E.newProfile(NOW);
-  assert.strictEqual(g.streak.day, 1); assert.strictEqual(g.streak.reward.coins, 40);
-  const c1 = g.coins; E.refresh(g, NOW); assert.strictEqual(g.coins, c1);
-  E.refresh(g, NOW + DAY); assert.strictEqual(g.streak.day, 2); assert.strictEqual(g.streak.reward.coins, 50);
-  E.refresh(g, NOW + 3 * DAY); assert.strictEqual(g.streak.day, 1, 'пропуск календарного дня сбрасывает серию');
-  const full = E.newProfile(NOW), basic = full.packs.basic, pro = full.packs.pro;
-  for (let d = 1; d < 28; d++) E.refresh(full, NOW + d * DAY);
-  assert.strictEqual(full.streak.day, 28); assert.strictEqual(full.packs.basic, basic + 1);
-  assert.strictEqual(full.packs.pro, pro + 2); assert.strictEqual(full.packs.elite, 1);
-  E.refresh(full, NOW + 28 * DAY); assert.strictEqual(full.streak.day, 1, 'после 28-го дня цикл начинается заново');
+ok('серия входов: награду дня нужно забрать, сброс после пропуска, цикл 28 дней', () => {
+  const DAY = 86400000, g = E.newProfile(NOW), c0 = g.coins;
+  assert.strictEqual(g.streak.day, 0); assert.strictEqual(g.streak.pend.day, 1); assert.strictEqual(g.coins, c0, 'сама награда не начисляется');
+  assert.strictEqual(E.claimStreak(g, NOW).coins, 30); assert.strictEqual(g.coins, c0 + 30); assert.strictEqual(g.streak.day, 1);
+  assert.strictEqual(E.claimStreak(g, NOW), null, 'второй раз за день не выдаётся'); E.refresh(g, NOW); assert.strictEqual(g.coins, c0 + 30);
+  E.refresh(g, NOW + DAY); assert.strictEqual(g.streak.pend.day, 2); assert.strictEqual(E.claimStreak(g, NOW + DAY).coins, 50);
+  E.refresh(g, NOW + 3 * DAY); assert.strictEqual(g.streak.pend.day, 1, 'пропуск календарного дня сбрасывает серию');
+  const full = E.newProfile(NOW), basic = full.packs.basic, pro = full.packs.pro, coins = full.coins;
+  for (let d = 0; d < 28; d++) E.claimStreak(full, NOW + d * DAY);
+  assert.strictEqual(full.streak.day, 28); assert.strictEqual(full.packs.basic, basic + 3); assert.strictEqual(full.packs.pro, pro + 4); assert.strictEqual(full.packs.elite, 1);
+  assert.strictEqual(full.coins - coins, E.STREAK_REWARDS.reduce((a, r) => a + (r.coins || 0), 0)); assert.strictEqual(full.coins - coins, 1860);
+  E.refresh(full, NOW + 28 * DAY); assert.strictEqual(full.streak.pend.day, 1, 'после 28-го дня цикл начинается заново');
+  const old = E.migrate(JSON.parse(JSON.stringify(Object.assign({}, full, { streak: { day: 5, last: E.mskDay(NOW + 27 * DAY), reward: { coins: 90 } } }))), NOW + 28 * DAY);
+  assert.strictEqual(old.streak.pend.day, 6, 'старое сохранение без pend продолжает серию');
 });
 console.log('7. Задания, бесплатный кейс, сезон');
 ok('4 ежедневных, 5 недельных, 1 особое; прогресс, ручная награда, обновление в 00:00 по Москве', () => {

@@ -40,6 +40,7 @@ function normalize(G, now) {
   G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.best = Math.max(G.tro, Math.round(G.best)); G.w = Math.max(0, Math.floor(G.w)); G.l = Math.max(0, Math.floor(G.l)); G.lvl = Math.max(1, Math.floor(G.lvl)); G.xp = Math.max(0, Math.min(100 * G.lvl - 1, Math.floor(G.xp))); G.tut = clamp(G.tut | 0, 0, 3); G.frame = clamp(G.frame | 0, -1, 6); G.sqi = clamp(G.sqi | 0, 0, 2);
   G.streak = G.streak && typeof G.streak === 'object' && !Array.isArray(G.streak) ? G.streak : {};
   G.streak.day = clamp(G.streak.day | 0, 0, 28); G.streak.last = Number.isInteger(G.streak.last) ? G.streak.last : -1; G.streak.reward = cleanReward(G.streak.reward);
+  { const p = G.streak.pend; G.streak.pend = p && Number.isInteger(p.d) && Number.isInteger(p.day) && p.day >= 1 && p.day <= 28 ? { d: p.d, day: p.day } : null; G.streak.shown = Number.isInteger(G.streak.shown) ? G.streak.shown : -1; }
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
@@ -122,23 +123,27 @@ function giveReward(G, r) {
   if (r.pick != null) { const pool = POOL[r.pick], ids = []; for (let i = 0; i < 3; i++) ids.push(pick(pool).id); G.picks.push(ids); }
 }
 const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object.keys(r.pack).map(k => 'кейс «' + PACKS[k].n + '»' + (r.pack[k] > 1 ? ' ×' + r.pack[k] : '')).join(', ') : '', r.pick != null ? 'карточка на выбор («' + RAR[r.pick] + '»)' : ''].filter(Boolean).join(' + ');
-/* Серия входов: 28 календарных дней по Москве. Пропуск дня сбрасывает цикл. */
+/* Серия входов: 28 календарных дней по Москве. Пропуск дня сбрасывает цикл.
+   Награду дня нужно забрать (окно при первом входе за день или кнопка внизу главной). Монеты растут внутри каждой недели,
+   кейсы «Про» на 7, 14 и 21 (×2) день, «Элитный» на 28-й, «Базовый» на 4, 11 и 24 день. */
 const STREAK_REWARDS = [
-  { coins: 40 }, { coins: 50 }, { coins: 60 }, { coins: 50 }, { coins: 75 }, { coins: 100 },
-  { coins: 150, pack: { basic: 1 } },
-  { coins: 50 }, { coins: 60 }, { coins: 70 }, { coins: 60 }, { coins: 80 }, { coins: 100 },
-  { coins: 200, pack: { pro: 1 } },
-  { coins: 60 }, { coins: 70 }, { coins: 80 }, { coins: 70 }, { coins: 100 }, { coins: 120 },
-  { coins: 250, pack: { pro: 1 } },
-  { coins: 80 }, { coins: 100 }, { coins: 120 }, { coins: 100 }, { coins: 125 }, { coins: 150 },
-  { coins: 400, pack: { elite: 1 } }
+  { coins: 30 }, { coins: 50 }, { coins: 70 }, { pack: { basic: 1 } }, { coins: 90 }, { coins: 110 }, { pack: { pro: 1 } },
+  { coins: 40 }, { coins: 60 }, { coins: 80 }, { pack: { basic: 1 } }, { coins: 100 }, { coins: 120 }, { pack: { pro: 1 } },
+  { coins: 50 }, { coins: 70 }, { coins: 90 }, { coins: 110 }, { coins: 130 }, { coins: 150 }, { pack: { pro: 2 } },
+  { coins: 60 }, { coins: 80 }, { pack: { basic: 1 } }, { coins: 100 }, { coins: 120 }, { coins: 150 }, { pack: { elite: 1 } }
 ];
+/* Отмечает, какой день серии можно забрать сегодня (S.pend). Сама награда выдаётся в claimStreak */
 function updateStreak(G, now) {
   const S = G.streak, today = mskDay(now);
-  if (S.last >= today) return false;
-  const day = S.last === today - 1 ? (S.day % 28) + 1 : 1, reward = STREAK_REWARDS[day - 1];
-  giveReward(G, reward); S.day = day; S.last = today; S.reward = reward;
+  if (S.last >= today) { S.pend = null; return false; }
+  const day = S.last === today - 1 ? (S.day % 28) + 1 : 1;
+  if (!S.pend || S.pend.d !== today || S.pend.day !== day) S.pend = { d: today, day };
   return true;
+}
+function claimStreak(G, now) {
+  updateStreak(G, now); const S = G.streak, p = S.pend; if (!p) return null;
+  const reward = STREAK_REWARDS[p.day - 1]; giveReward(G, reward); S.day = p.day; S.last = p.d; S.reward = reward; S.pend = null;
+  return reward;
 }
 function choosePick(G, i) { const p = G.picks[0]; if (!p || p[i] == null) return null; G.picks.shift(); const isNew = addCard(G, p[i]); return { c: CARDS[p[i]], isNew }; }
 
@@ -215,4 +220,4 @@ function lbTable(G, scope, now) {
 const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro).length + 1;
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, IFP, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
-  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak };
+  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };

@@ -3555,6 +3555,69 @@
       "countryCode": "UA",
       "team": "WBT Academy",
       "verifiedAt": "2026-11-11"
+    },
+    "whisper": {
+      "profileId": 24316,
+      "profileUrl": "https://www.hltv.org/player/24316/whisper",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/_HGQuVb2YH9l_NhUmr5-kf.png?ixlib=java-2.1.0&s=37eede62c34d4a49c3380ad3bfaf72dd&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "BAKS",
+      "verifiedAt": "2026-11-11"
+    },
+    "Zanto": {
+      "profileId": 21381,
+      "profileUrl": "https://www.hltv.org/player/21381/zanto",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/IaGk38ILkbIDlAwGpI6hHl.png?ixlib=java-2.1.0&s=775f6f66f870484ab87400179a8f3326&w=400",
+      "country": "Дания",
+      "countryCode": "DK",
+      "team": "STATE",
+      "verifiedAt": "2026-11-11"
+    },
+    "amster": {
+      "profileId": 19617,
+      "profileUrl": "https://www.hltv.org/player/19617/amster",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/cXsuzC1et8OBnUep1DRh6G.png?ixlib=java-2.1.0&s=e47bb901a122cf8af29ff792e227895b&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "MINT",
+      "verifiedAt": "2026-11-11"
+    },
+    "Alxc": {
+      "profileId": 21963,
+      "profileUrl": "https://www.hltv.org/player/21963/alxc",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/X82odLAbXVfzLb9TWnDVKm.png?ixlib=java-2.1.0&s=1356bdec9282b1ba07bca8c87a00a0cf&w=400",
+      "country": "Финляндия",
+      "countryCode": "FI",
+      "team": "HAVU",
+      "verifiedAt": "2026-11-11"
+    },
+    "KusMe": {
+      "profileId": 23628,
+      "profileUrl": "https://www.hltv.org/player/23628/kusme",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/U3ghLU19TdBpaMNp9hmYuQ.png?ixlib=java-2.1.0&s=5bcdcebc344e620aa87135b790347ef2&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "FORZE Reload",
+      "verifiedAt": "2026-11-11"
+    },
+    "gehji": {
+      "profileId": 24319,
+      "profileUrl": "https://www.hltv.org/player/24319/gehji",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/UW8LNnzCxhoGrlXvdlYLe4.png?ixlib=java-2.1.0&s=6c2eb68820540d62e83f87badd78ba0d&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "QUAZAR",
+      "verifiedAt": "2026-11-11"
+    },
+    "adeX": {
+      "profileId": 21211,
+      "profileUrl": "https://www.hltv.org/player/21211/adex",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/W0W7xsI1-bXC4TqqUe-Mjf.png?ixlib=java-2.1.0&s=ac74003dd50189ab56da64c0765916fb&w=400",
+      "country": "Румыния",
+      "countryCode": "RO",
+      "team": "Alter Ego",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

@@ -17,3 +17,11 @@ echo '})();'; echo '</script>'; } > pyaterka-legend.html
 cat data.js core.js meta.js > _t.js
 rm -f pyaterka-legend.html
 ls -la pyaterka-legend-offline.html | awk '{print $5" bytes"}'
+
+# Эталон 3D-открытия: Three.js встраивается в файл, интернет не нужен
+python3 -I - <<'PY'
+src = open('reveal-lab.src.html', encoding='utf-8').read()
+three = open('vendor/three.min.js', encoding='utf-8').read()
+assert '/*THREE*/' in src
+open('reveal-lab.html', 'w', encoding='utf-8').write(src.replace('/*THREE*/', three, 1))
+PY

@@ -1146,6 +1146,98 @@ body{background:transparent;color:var(--fg)}
 @media(min-width:700px){#app[data-tab="home"]{display:flex!important;flex-direction:column!important;max-width:980px!important}#app[data-tab="home"]>.home-stage{min-height:570px;padding:25px 28px 18px}#app[data-tab="home"] .home-stage__lineup{max-width:650px;margin-inline:auto;gap:13px;padding-top:28px}#app[data-tab="home"] .home-stage__lineup .pc{max-width:160px}#app[data-tab="home"] .home-stage__bottom{max-width:650px;margin:18px auto 0;width:100%}#app[data-tab="home"]>.home-quick,#app[data-tab="home"]>.home-lower{width:100%}}
 @media(prefers-reduced-motion:reduce){.home-stage__light,.home-stage__smoke{animation:none!important}}
 
+
+/* ===== FIVE LEGENDS · LOBBY ART DIRECTION 03 ===== */
+:root{--bg:#080d17;--panel:rgba(14,22,35,.86);--panel2:rgba(255,255,255,.055);--line:rgba(173,207,238,.17);--fg:#f4f6fb;--mut:#9aaabd;--accent:#f0bd68;--go:#e5b45f;--go2:#b77b32;--on-go:#1b1207;--sel:#8de6ff;--ct:#65d8ef;--tt:#ffbd72}
+body{background:radial-gradient(ellipse at 50% 0%,#1a3150 0%,#0a1423 42%,#070b13 100%);background-attachment:fixed}
+#scene{opacity:.42;filter:saturate(1.3)}
+#hud{background:linear-gradient(180deg,#07101df5,#0b1728df 76%,transparent)}
+#hud .pill{border-radius:10px;background:linear-gradient(135deg,#27354a,#111b2a);border-color:#e6bd7644;color:#ffe3b2}
+#hud .who b{letter-spacing:.09em}
+#tabs{background:linear-gradient(180deg,#0d1725e8,#07101bf7);border-color:#b5d7f02b}
+#tabs button[aria-current]{color:#f5d18d}
+#tabs button::before{background:linear-gradient(90deg,#65d8ef,#f4c477)}
+#app[data-tab="home"]{max-width:680px!important;gap:13px!important;padding-top:2px}
+.lobby-kicker{display:block;font:700 8px/1.2 var(--f-m);letter-spacing:.2em;color:#8faec8}
+.lobby-hero{position:relative;isolation:isolate;overflow:hidden;min-height:360px;border:1px solid #c6dff02b;border-radius:22px;background:linear-gradient(135deg,#1b3049 0%,#101b2e 48%,#251a27 100%);box-shadow:0 24px 55px #0009,inset 0 1px #ffffff22}
+.lobby-hero:before{content:"";position:absolute;inset:8px;border:1px solid #d8e7f31a;border-radius:16px;z-index:3;pointer-events:none}
+.lobby-hero:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#0a1426f5 0%,#0a1426d9 43%,#0a142650 100%),linear-gradient(0deg,#080d18 0%,transparent 45%)}
+.lobby-hero__art{position:absolute;inset:0;z-index:-2;overflow:hidden;background:radial-gradient(ellipse at 74% 38%,#e7b76d35,transparent 33%),radial-gradient(ellipse at 70% 68%,#49b9d233,transparent 35%),linear-gradient(155deg,#243d5a,#11192a 57%,#251b2b)}
+.lobby-hero__roof{position:absolute;top:0;left:15%;right:8%;height:26%;border-bottom:2px solid #b7d4ec33;background:repeating-linear-gradient(90deg,transparent 0 31px,#c3d9ec18 32px 34px),linear-gradient(180deg,#d5e9ff12,transparent);clip-path:polygon(7% 0,93% 0,100% 100%,0 100%)}
+.lobby-hero__beam{position:absolute;top:-10%;width:44%;height:90%;opacity:.55;filter:blur(15px);background:linear-gradient(180deg,#e7f5ff55,transparent 80%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);transform-origin:top}
+.lobby-hero__beam--a{left:40%;transform:rotate(18deg)}.lobby-hero__beam--b{right:-4%;transform:rotate(-18deg);background:linear-gradient(180deg,#f2c67b66,transparent 80%)}
+.lobby-hero__crowd{position:absolute;left:28%;right:-8%;bottom:25%;height:34%;opacity:.8;background:repeating-linear-gradient(90deg,transparent 0 9px,#050a13aa 10px 12px),linear-gradient(180deg,#344b61aa,#060a12);clip-path:polygon(0 25%,13% 0,88% 0,100% 28%,100% 100%,0 100%)}
+.lobby-hero__screen{position:absolute;right:8%;top:27%;width:43%;height:30%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transform:perspective(600px) rotateY(-8deg);border:2px solid #d6c18b66;background:linear-gradient(145deg,#192a3cdd,#0c1423ee);box-shadow:0 0 38px #65c9ef25,inset 0 0 30px #65c9ef18}
+.lobby-hero__screen:before,.lobby-hero__screen:after{content:"";position:absolute;inset:6px;border:1px solid #d6c18b30;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+.lobby-hero__screen span{font:700 clamp(28px,9vw,54px)/.8 var(--f-d);letter-spacing:.14em;color:#e9f3fc;text-shadow:0 0 25px #66cce8aa}
+.lobby-hero__screen b{font:700 clamp(12px,3.5vw,21px)/1.2 var(--f-d);letter-spacing:.34em;color:#f1c477}
+.lobby-hero__screen i{font:700 7px var(--f-m);letter-spacing:.3em;color:#8ca9c0;font-style:normal;margin-top:7px}
+.lobby-hero__floor{position:absolute;left:25%;right:-10%;bottom:-24%;height:45%;transform:perspective(280px) rotateX(55deg);transform-origin:bottom;background:repeating-linear-gradient(90deg,transparent 0 44px,#a5d7ef20 45px 46px),repeating-linear-gradient(0deg,transparent 0 31px,#a5d7ef18 32px 33px),linear-gradient(180deg,#263f55,#070b12);border-top:1px solid #a4d8f044}
+.lobby-hero__glow{position:absolute;right:13%;bottom:19%;width:45%;height:12%;border-radius:50%;background:#f0bb6b55;filter:blur(30px)}
+.lobby-hero__particles{position:absolute;inset:0;background-image:radial-gradient(#d8efff88 1px,transparent 1.5px),radial-gradient(#e6c17b66 1px,transparent 1.5px);background-size:83px 73px,121px 103px;background-position:10px 8px,45px 29px;opacity:.3}
+.lobby-hero__content{position:relative;z-index:2;padding:21px 18px 16px;max-width:66%}
+.lobby-hero__eyebrow{display:flex;align-items:center;gap:12px;font:700 8px var(--f-m);letter-spacing:.15em;color:#a9c1d5}
+.lobby-hero__eyebrow span{display:flex;align-items:center;gap:6px}.lobby-hero__eyebrow i{width:6px;height:6px;border-radius:50%;background:#70e2bc;box-shadow:0 0 10px #70e2bc}
+.lobby-hero__eyebrow b{color:#f1c477}
+.lobby-hero__headline{display:flex;flex-direction:column;margin-top:27px;font:700 clamp(34px,10vw,58px)/.83 var(--f-d);letter-spacing:.045em;text-shadow:0 5px 22px #000b}
+.lobby-hero__headline span{font-size:.48em;color:#a9c7dd;letter-spacing:.22em}
+.lobby-hero__headline strong{font-weight:700;color:#f5f7fb}
+.lobby-hero__headline em{font-style:normal;color:#f1c477;text-shadow:0 0 26px #e7ad5a44}
+.lobby-hero__sub{margin-top:13px;max-width:235px;font-size:10px;line-height:1.5;color:#b6c8d8}
+.lobby-hero__rank{display:flex;align-items:center;gap:8px;margin-top:20px;padding:8px 9px;width:max-content;max-width:100%;border:1px solid #c9d9e533;background:#071321b8;backdrop-filter:blur(8px)}
+.lobby-hero__rankicon .rank{width:37px}.lobby-hero__rank>span:nth-child(2){display:flex;flex-direction:column;gap:2px}.lobby-hero__rank small{font:700 7px var(--f-m);letter-spacing:.13em;color:#8faac0}.lobby-hero__rank>span:nth-child(2) b{font:700 13px var(--f-d);color:#f2e6d2}
+.lobby-hero__cups{margin-left:10px;padding-left:10px;border-left:1px solid #ffffff24;display:flex;flex-direction:column}.lobby-hero__cups strong{font:700 17px var(--f-m);color:#f3c779}.lobby-hero__ribbon{position:absolute;z-index:2;bottom:0;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px;padding:9px 8px;background:#07101dcc;border-top:1px solid #c1d8eb24;font:700 7px var(--f-m);letter-spacing:.13em;color:#90a9be}.lobby-hero__ribbon i{width:3px;height:3px;background:#e7bd78;transform:rotate(45deg)}
+.lobby-tutorial{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #7bd4e344;border-radius:13px;background:linear-gradient(100deg,#17364b,#111d2d);box-shadow:0 9px 24px #0005}
+.lobby-tutorial>div{display:flex;flex-direction:column;gap:4px;min-width:0}.lobby-tutorial b{font:700 14px var(--f-d);color:#eff6fa}.lobby-tutorial small{font-size:9px;color:#9fb4c7}.lobby-tutorial .btn{flex:none;white-space:nowrap}
+.lobby-command{padding:14px;border:1px solid #b9d2e72c;border-radius:18px;background:linear-gradient(145deg,#17273aee,#0c1523f5 72%);box-shadow:0 18px 38px #0008,inset 0 1px #ffffff14;position:relative;overflow:hidden}
+.lobby-command:before{content:"";position:absolute;right:-45px;top:-75px;width:190px;height:190px;border-radius:50%;border:1px solid #74d4ef18;box-shadow:0 0 0 18px #74d4ef08,0 0 0 38px #74d4ef06}
+.lobby-sectionhead{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:end;gap:10px}
+.lobby-sectionhead h2{margin-top:4px;font:700 21px/1 var(--f-d);letter-spacing:.07em;color:#f3f6fa}
+.lobby-sectionhead>button{font:700 7px var(--f-m);letter-spacing:.08em;color:#e8c17e;white-space:nowrap}.lobby-sectionhead>button b{font-size:13px;margin-left:4px}
+.lobby-lineup{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;align-items:end;padding:19px 0 13px;position:relative}
+.lobby-lineup:before{content:"";position:absolute;left:4%;right:4%;bottom:9px;height:2px;background:linear-gradient(90deg,transparent,#67cce6aa,#f2c174aa,transparent);box-shadow:0 0 16px #70cce688}
+.lobby-card{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0;z-index:1}
+.lobby-card:nth-child(1),.lobby-card:nth-child(5){transform:translateY(8px) scale(.94)}.lobby-card:nth-child(3){transform:translateY(-7px) scale(1.04);z-index:2}
+.lobby-card .pc{width:100%;border-radius:7px;box-shadow:0 9px 19px #000b,0 0 0 1px #d9e8f344}
+.lobby-card__role{text-align:center;font:700 7px var(--f-m);letter-spacing:.12em;color:#a9c5d9;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lobby-card__open{text-align:center;font:700 6px var(--f-m);letter-spacing:.1em;color:#d4b77f;white-space:nowrap}
+.lobby-slot{aspect-ratio:5/8;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;min-width:0;padding:4px;border:1px dashed #8fb7d36b;border-radius:7px;background:linear-gradient(160deg,#23394caa,#101b2aaa);color:#b5d0e2}
+.lobby-slot__plus{width:28px;height:28px;border:1px solid #e4c17b77;border-radius:50%;display:grid;place-items:center;font-size:22px;color:#f0c477;box-shadow:0 0 16px #e7bc7040}
+.lobby-slot b{font:700 7px var(--f-m);text-align:center;text-transform:uppercase}.lobby-slot small{font:700 6px var(--f-m);color:#7c9bb4}
+.lobby-teamstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(125px,1.3fr);gap:7px;align-items:stretch;padding-top:11px;border-top:1px solid #a9c7dc24}
+.lobby-teamstats>div{display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;padding:5px 2px}.lobby-teamstats small{font:700 6px var(--f-m);letter-spacing:.09em;color:#8fa9be}.lobby-teamstats>div b{font:700 18px var(--f-d);color:#f2f5f8}.lobby-teamstats>div b i{font:600 9px var(--f-m);font-style:normal;color:#8fa9be}
+.lobby-play{position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 8px;padding:8px 11px;border:1px solid #f7d69c;background:linear-gradient(135deg,#ffe1a2,#d6a253 60%,#a96d32);border-radius:9px;color:#201609;box-shadow:0 5px 18px #e8b96745,inset 0 1px #fff9}
+.lobby-play span{font:700 19px/1 var(--f-d);letter-spacing:.12em}.lobby-play>b{font-size:17px}.lobby-play small{grid-column:1/-1;margin-top:4px;font:700 6px var(--f-m);letter-spacing:.07em;opacity:.72}
+.lobby-play:disabled{filter:grayscale(.65);opacity:.58}
+.lobby-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lobby-shortcut{position:relative;display:flex;align-items:center;gap:10px;min-width:0;min-height:100px;padding:12px;border:1px solid #b4cfe52d;border-radius:15px;overflow:hidden;text-align:left;background:linear-gradient(140deg,#26354a,#111a29 75%);box-shadow:0 12px 25px #0006}
+.lobby-shortcut:after{content:"";position:absolute;right:-22px;bottom:-45px;width:110px;height:110px;border:1px solid #ffffff16;border-radius:50%;box-shadow:0 0 0 12px #ffffff08,0 0 0 25px #ffffff05}
+.lobby-shortcut--packs{background:linear-gradient(140deg,#493321,#1d1c25 80%);border-color:#e3b66c55}.lobby-shortcut--collection{background:linear-gradient(140deg,#1a4354,#142333 80%);border-color:#64cbe255}
+.lobby-shortcut__art{position:relative;z-index:1;flex:none;width:48px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #e8c27b;background:linear-gradient(145deg,#82603b,#253344 56%,#101522);box-shadow:0 7px 18px #0009;transform:perspective(200px) rotateY(-12deg)}
+.lobby-shortcut__art i{position:absolute;inset:4px;border:1px solid #f0d8a655}.lobby-shortcut__art b{font:700 27px var(--f-d);color:#f6dfb4;text-shadow:0 0 14px #f0c16a77}.lobby-shortcut__art em{font:700 6px var(--f-m);font-style:normal;letter-spacing:.18em;color:#f3c77f}
+.lobby-shortcut--collection .lobby-shortcut__art{border-color:#7bd9ec;background:linear-gradient(145deg,#28647a,#162d43 60%,#0d1723)}.lobby-shortcut--collection .lobby-shortcut__art b{color:#b2f3ff}
+.lobby-shortcut>span:nth-child(2){display:flex;flex-direction:column;gap:4px;min-width:0;position:relative;z-index:1}.lobby-shortcut small{font:700 7px var(--f-m);letter-spacing:.12em;color:#b0c4d3}.lobby-shortcut strong{font:700 17px/1 var(--f-d);letter-spacing:.08em;color:#f7f6f2}.lobby-shortcut>span>em{font:700 6px var(--f-m);font-style:normal;color:#e7c27f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lobby-shortcut__arrow{position:absolute;right:9px;top:8px;font-size:14px;color:#e5c17d}
+.lobby-progress{padding:13px 15px;border:1px solid #c8a76a40;border-radius:15px;background:linear-gradient(110deg,#2b251d,#171a20 58%,#14202d);box-shadow:0 10px 25px #0006}
+.lobby-progress__top{display:flex;justify-content:space-between;align-items:center}.lobby-progress h3{margin-top:4px;font:700 15px var(--f-d);letter-spacing:.08em;color:#f3e8d2}.lobby-progress__top>strong{font:700 25px var(--f-d);color:#f2c477}.lobby-progress__top>strong small{font:700 12px var(--f-m)}
+.lobby-progress__bar{position:relative;height:8px;margin:12px 0 8px;border-radius:9px;background:#05090f;overflow:hidden;box-shadow:inset 0 1px 3px #000}.lobby-progress__bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#62c8dd,#8fd3bd 48%,#eac47c);box-shadow:0 0 15px #74d5d777}.lobby-progress__bar b{position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 18px,#ffffff22 19px 20px)}
+.lobby-progress__foot{display:flex;justify-content:space-between;gap:8px;font:700 7px var(--f-m);letter-spacing:.1em;color:#a9b4c0}
+.lobby-lower{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lobby-season,.lobby-daily{min-width:0;padding:13px;border:1px solid #a9c7dc29;border-radius:15px;background:linear-gradient(145deg,#17283b,#101723);box-shadow:0 10px 24px #0005}
+.lobby-season__head,.lobby-daily__head{display:flex;flex-direction:column;gap:4px}.lobby-season__head>b,.lobby-daily__head>b{font:700 15px var(--f-d);letter-spacing:.07em;color:#f0f4f7}
+.lobby-season__league{display:flex;align-items:center;gap:8px;margin:13px 0 10px}.lobby-season__league .rank{width:43px}.lobby-season__league>span{display:flex;flex-direction:column;gap:2px}.lobby-season__league small{font:700 6px var(--f-m);color:#92a9bc}.lobby-season__league strong{font:700 16px var(--f-d);color:#f1d39a}
+.lobby-season__bar{height:6px;border-radius:6px;background:#050b13;overflow:hidden}.lobby-season__bar i{display:block;height:100%;background:linear-gradient(90deg,#5bc7dc,#f2c275);box-shadow:0 0 12px #6ed0dc77}
+.lobby-season__foot{display:flex;justify-content:space-between;gap:5px;margin-top:7px;font:700 6px var(--f-m);color:#9fb2c2}
+.lobby-daily>strong{display:block;margin:7px 0 8px;font:700 26px var(--f-d);color:#f0c477}.lobby-daily>strong small{font:700 9px var(--f-m);color:#9bb0c0}
+.lobby-daily__days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}.lobby-streak__day{display:grid;place-items:center;min-height:19px;border:1px solid #ffffff18;border-radius:4px;background:#ffffff08;color:#85919c;font:600 7px var(--f-m)}.lobby-streak__day.is-done{background:linear-gradient(135deg,#f4d28f,#b98442);color:#211609;border-color:#f7dba8}.lobby-streak__day.is-milestone{border-color:#d5ae6c}
+.lobby-daily p{margin-top:8px;font-size:8px;color:#9aafbf;line-height:1.35}
+.lobby-missions .pn{border:1px solid #a9c7dc29;border-radius:15px;clip-path:none}
+.lobby-free{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:11px;padding:11px 13px;border:1px solid #d2ae6c44;border-radius:15px;background:linear-gradient(110deg,#302719,#151a22 65%,#102030);box-shadow:0 12px 26px #0006}
+.lobby-free__art{height:65px;display:grid;place-items:center;overflow:hidden}.lobby-free__art .pk{width:58px;transform:scale(.82);filter:drop-shadow(0 6px 10px #000b)}
+.lobby-free__copy{min-width:0}.lobby-free__copy h3{margin:4px 0;font:700 15px var(--f-d);color:#f4e5c8}.lobby-free__copy p{font-size:8px;color:#aeb7c0}
+.lobby-free>.btn{white-space:nowrap;padding-inline:9px}
+@media(max-width:390px){.lobby-hero{min-height:330px}.lobby-hero__content{padding:18px 14px;max-width:72%}.lobby-hero__headline{margin-top:22px;font-size:clamp(32px,10vw,43px)}.lobby-hero__screen{right:3%;width:43%;height:27%}.lobby-hero__ribbon{gap:6px;font-size:6px}.lobby-command{padding:11px 9px}.lobby-sectionhead h2{font-size:18px}.lobby-sectionhead>button{font-size:6px}.lobby-lineup{gap:4px}.lobby-card__role{font-size:6px}.lobby-teamstats{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}.lobby-play{grid-column:1/-1;grid-template-columns:1fr auto}.lobby-play small{grid-column:1/-1}.lobby-shortcut{gap:7px;padding:9px;min-height:88px}.lobby-shortcut__art{width:39px;height:54px}.lobby-shortcut strong{font-size:15px}.lobby-lower{grid-template-columns:1fr}.lobby-daily__days{gap:4px}.lobby-streak__day{min-height:23px}.lobby-free{grid-template-columns:52px minmax(0,1fr) auto;gap:7px;padding:9px}.lobby-free__art .pk{transform:scale(.72)}.lobby-free__copy h3{font-size:13px}.lobby-free>.btn{font-size:10px}}
+@media(min-width:700px){#app[data-tab="home"]{max-width:1040px!important}#app[data-tab="home"]>.lobby-hero{min-height:430px}#app[data-tab="home"]>.lobby-hero .lobby-hero__content{padding:30px 34px}#app[data-tab="home"]>.lobby-hero .lobby-hero__headline{font-size:66px}#app[data-tab="home"]>.lobby-command{padding:20px 24px}#app[data-tab="home"]>.lobby-lineup{max-width:700px;margin:auto}#app[data-tab="home"]>.lobby-lower{grid-template-columns:1fr 1fr}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -1265,6 +1357,7 @@ body{background:transparent;color:var(--fg)}
 .home-free .pk{max-width:150px}
 @media(max-width:420px){#app[data-tab="packs"] .shop{grid-template-columns:104px minmax(0,1fr);gap:12px}#app[data-tab="packs"] .pk{max-width:112px}.pk .pk-stamp{width:29%}}
 @media(prefers-reduced-motion:reduce){.home-shortcut__icon svg,.section-mast.mast-play .section-mast__icon svg{filter:none}}
+
 
 
 <script>
@@ -1929,111 +2022,69 @@ function tasksH() {
 }
 function vHome() {
   const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), low = lg > 0 && G.tro - LEAGUES[lg][1] < 30;
-  const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100, st = G.tut;
+  const prog = nx ? Math.max(0, Math.min(100, (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100)) : 100, st = G.tut;
   const collectionHave = Object.keys(G.cards).length, collectionTotal = ALL.length, collectionPct = Math.round(collectionHave / Math.max(1, collectionTotal) * 100), xpPct = Math.round(G.xp / Math.max(1, 100 * G.lvl) * 100);
   const streak = G.streak || { day: 0, last: -1, reward: null }, streakReward = streak.last === mskDay(now()) && streak.reward ? rewardText(streak.reward) : '';
-  const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span class="home-streak__day ${done ? 'is-done' : ''} ${milestone ? 'is-milestone' : ''}">${d}</span>`; }).join('');
-  const tut = st < 3 ? `<section class="pn tutorial"><div class="tutorial__head"><span class="tutorial__mark">01 / ПОДГОТОВКА</span><h3>Первые шаги</h3></div><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
-  const cards = G.squad.map((id, i) => id == null
-    ? `<button data-act="slot" data-v="${i}" aria-label="Пустой слот: ${RNAME[i]}"><div class="slot empty" style="display:block;padding:0"><div class="ph0">+</div><small>${RNAME[i]}</small></div></button>`
-    : `<button data-act="card" data-id="${id}" aria-label="${esc(CARDS[id].nick)}">${ownH(id, 'xs')}</button>`).join('');
-  return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk" style="margin-top:8px">Понятно</button></div>` : ''}${tut}
-  <section class="home-stage">
-    <div class="home-stage__sky"><i class="home-stage__light home-stage__light--one"></i><i class="home-stage__light home-stage__light--two"></i><i class="home-stage__smoke"></i><div class="home-stage__stands"></div><div class="home-stage__truss"></div><div class="home-stage__floor"></div></div>
-    <div class="home-stage__top"><div><span class="home-stage__eyebrow">FIVE LEGENDS · CS2 MANAGER</span><h1>ТВОЯ АРЕНА</h1><p>Собери состав. Задай тактику. Забери победу.</p></div><div class="home-stage__season"><span>СЕЗОН</span><b>${monthName(G.season.m)}</b><small>${LEAGUES[lg][0]}</small></div></div>
-    <div class="home-stage__matchline"><span><i></i> COMPETITIVE MATCH</span><b>BEST OF 1 <em>·</em> до 13 раундов</b></div>
-    <div class="home-stage__teamhead"><span>ТВОЯ ПЯТЁРКА</span><span>${info ? 'РЕЙТИНГ ' + info.rating.toFixed(1) : 'СОСТАВ НЕ СОБРАН'}</span></div>
-    <div class="home-stage__lineup">${cards}</div>
-    <div class="home-stage__bottom"><div class="home-stage__power"><span>БОЕВАЯ ГОТОВНОСТЬ</span><b>${info ? info.chem + '/13' : '—'}</b><small>${info ? 'Химия состава' : 'Заполните пять позиций'}</small></div><div class="home-stage__cta">${info ? '<button class="btn pri go" data-act="fight"><span>НАЧАТЬ МАТЧ</span><i>↗</i></button>' : '<button class="btn pri go" data-act="goSquad"><span>СОБРАТЬ СОСТАВ</span><i>↗</i></button>'}<small>${info ? 'Ваша пятёрка готова к бою' : 'Выберите игроков на каждую роль'}</small></div></div>
-    <div class="home-stage__edge"><span>MAP CONTROL <b>${info ? info.atk.toFixed(1) : '—'}</b></span><span>TEAM DEFENCE <b>${info ? info.def.toFixed(1) : '—'}</b></span><span>RANKED <b>${G.tro} CP</b></span></div>
+  const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span class="lobby-streak__day ${done ? 'is-done' : ''} ${milestone ? 'is-milestone' : ''}">${d}</span>`; }).join('');
+  const lineup = G.squad.map((id, i) => id == null
+    ? `<button class="lobby-slot" data-act="slot" data-v="${i}" aria-label="Выбрать игрока на роль ${RNAME[i]}"><span class="lobby-slot__plus">+</span><b>${RNAME[i]}</b><small>ВЫБРАТЬ</small></button>`
+    : `<button class="lobby-card" data-act="card" data-id="${id}" aria-label="Открыть карточку ${esc(CARDS[id].nick)}"><span class="lobby-card__role">${RNAME[i]}</span>${ownH(id, 'xs')}<span class="lobby-card__open">ОТКРЫТЬ ↗</span></button>`).join('');
+  const quickCase = packCount() ? `ДОСТУПНО ${packCount()} КЕЙС.` : 'КЕЙСЫ И НАГРАДЫ';
+  const tut = st < 3 ? `<section class="lobby-tutorial"><div><span class="lobby-kicker">ПЕРВЫЙ ВЫХОД НА АРЕНУ</span><b>${st === 0 ? 'Открой стартовые кейсы' : st === 1 ? 'Собери свою пятёрку' : 'Сыграй первый матч'}</b><small>Шаг ${st + 1} из 3 · обучение</small></div>${st === 0 ? '<button class="btn pri s" data-act="tab" data-v="packs">ОТКРЫТЬ КЕЙСЫ ↗</button>' : st === 1 ? '<button class="btn pri s" data-act="auto">СОБРАТЬ СОСТАВ ↗</button>' : '<button class="btn pri s" data-act="goSquad">ПЕРЕЙТИ К СОСТАВУ ↗</button>'}</section>` : '';
+  return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk">Понятно</button></div>` : ''}${tut}
+  <section class="lobby-hero">
+    <div class="lobby-hero__art" aria-hidden="true">
+      <div class="lobby-hero__roof"></div><div class="lobby-hero__beam lobby-hero__beam--a"></div><div class="lobby-hero__beam lobby-hero__beam--b"></div>
+      <div class="lobby-hero__crowd"></div><div class="lobby-hero__screen"><span>FIVE</span><b>LEGENDS</b><i>PRO LEAGUE</i></div>
+      <div class="lobby-hero__floor"></div><div class="lobby-hero__glow"></div><div class="lobby-hero__particles"></div>
+    </div>
+    <div class="lobby-hero__content">
+      <div class="lobby-hero__eyebrow"><span><i></i> LIVE ARENA</span><b>SEASON ${String(G.season.m).padStart(2,'0')}</b></div>
+      <div class="lobby-hero__headline"><span>СОЗДАЙ</span><strong>СВОЮ</strong><em>ЛЕГЕНДУ</em></div>
+      <p class="lobby-hero__sub">Твоя команда. Твоя стратегия. Твой путь к вершине.</p>
+      <div class="lobby-hero__rank"><span class="lobby-hero__rankicon">${rankH(lg)}</span><span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><span class="lobby-hero__cups"><strong>${G.tro}</strong><small>КУБКОВ</small></span></div>
+    </div>
+    <div class="lobby-hero__ribbon"><span>CS2 MANAGER</span><i></i><span>5 PLAYERS · 1 LEGEND</span><i></i><span>COMPETITIVE</span></div>
   </section>
-  <section class="home-collection">
-    <div class="home-collection__icon"><span>▤</span><small>ARCHIVE</small></div>
-    <div class="home-collection__main"><div class="home-collection__title"><b>КОЛЛЕКЦИЯ</b><span>${collectionHave} / ${collectionTotal}</span></div><div class="home-collection__track"><i style="width:${collectionPct}%"></i></div><small>${collectionPct}% собрано · профиль ур. ${G.lvl} · ${xpPct}% опыта до следующего уровня</small></div>
-    <button data-act="tab" data-v="col" aria-label="Открыть коллекцию">↗</button>
+  <section class="lobby-command">
+    <div class="lobby-sectionhead"><div><span class="lobby-kicker">YOUR LINEUP</span><h2>БОЕВАЯ ПЯТЁРКА</h2></div><button data-act="goSquad">УПРАВЛЯТЬ СОСТАВОМ <b>↗</b></button></div>
+    <div class="lobby-lineup">${lineup}</div>
+    <div class="lobby-teamstats">
+      <div><small>ОБЩИЙ РЕЙТИНГ</small><b>${info ? info.rating.toFixed(1) : '—'}</b></div>
+      <div><small>ХИМИЯ</small><b>${info ? info.chem + '<i>/13</i>' : '—'}</b></div>
+      <div><small>СИЛА СОСТАВА</small><b>${info ? (info.atk + info.def).toFixed(1) : '—'}</b></div>
+      <button class="lobby-play" data-act="fight" ${info ? '' : 'disabled'}><span>В БОЙ</span><b>↗</b><small>${info ? 'НАЧАТЬ РЕЙТИНГОВЫЙ МАТЧ' : 'ЗАПОЛНИ ПЯТЬ ПОЗИЦИЙ'}</small></button>
+    </div>
   </section>
-  <section class="home-quick">
-    <button class="home-quick__pack" data-act="tab" data-v="packs"><span class="home-quick__art"><i></i><b>5</b></span><span><small>ОТКРЫТИЯ</small><strong>КЕЙСЫ</strong><em>${packCount() ? 'ДОСТУПНО: ' + packCount() : 'МАГАЗИН И НАГРАДЫ'}</em></span><i class="home-quick__arrow">↗</i></button>
-    <button class="home-quick__league" data-act="tab" data-v="play"><span class="home-quick__crest">${rankH(lg)}</span><span><small>ТВОЙ РАНГ</small><strong>${LEAGUES[lg][0]}</strong><em>${G.tro} КУБКОВ · ${nx ? 'ДО СЛЕДУЮЩЕЙ ' + (nx[1] - G.tro) : 'МАКСИМУМ'}</em></span><i class="home-quick__arrow">↗</i></button>
+  <section class="lobby-shortcuts">
+    <button class="lobby-shortcut lobby-shortcut--packs" data-act="tab" data-v="packs"><span class="lobby-shortcut__art"><i></i><b>5</b><em>DROP</em></span><span><small>SUPPLY DROP</small><strong>КЕЙСЫ</strong><em>${quickCase}</em></span><b class="lobby-shortcut__arrow">↗</b></button>
+    <button class="lobby-shortcut lobby-shortcut--collection" data-act="tab" data-v="col"><span class="lobby-shortcut__art"><i></i><b>✦</b><em>PRO</em></span><span><small>PLAYER ARCHIVE</small><strong>КОЛЛЕКЦИЯ</strong><em>${collectionHave} ИЗ ${collectionTotal} ИГРОКОВ</em></span><b class="lobby-shortcut__arrow">↗</b></button>
   </section>
-  <section class="home-lower">
-    <div class="pn home-streak"><div class="kv"><span>ЕЖЕДНЕВНАЯ СЕРИЯ</span><b>ДЕНЬ ${streak.day}/28</b></div><div class="home-streak__grid">${streakCells}</div><p class="sm mut">${streakReward ? 'Сегодня получено: ' + esc(streakReward) : 'Не пропускайте вход — серия приносит монеты и кейсы.'}</p></div>
-    <div class="pn home-free"><div class="shop">${pkH('basic')}<div class="plain"><h3>БЕСПЛАТНЫЙ КЕЙС</h3>${dailyReady(G, now()) ? '<button class="btn pri s" data-act="daily">ЗАБРАТЬ</button>' : '<p class="sm mut">Новая награда после 00:00 МСК.</p>'}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">МОИ КЕЙСЫ · ${packCount()}</button>` : ''}</div></div></div>
+  <section class="lobby-progress">
+    <div class="lobby-progress__top"><div><span class="lobby-kicker">COLLECT THEM ALL</span><h3>ПРОГРЕСС КОЛЛЕКЦИИ</h3></div><strong>${collectionPct}<small>%</small></strong></div>
+    <div class="lobby-progress__bar"><i style="width:${collectionPct}%"></i><b></b></div>
+    <div class="lobby-progress__foot"><span>${collectionHave} / ${collectionTotal} КАРТОЧЕК</span><span>УРОВЕНЬ ${G.lvl} · XP ${xpPct}%</span></div>
   </section>
-  ${st === 3 ? `<section class="home-tasks">${tasksH()}</section>` : ''}
-  <section class="pn home-league-detail"><div class="kv"><span>ПУТЬ К СЛЕДУЮЩЕЙ ЛИГЕ</span><b>${G.tro} / ${nx ? nx[1] : LEAGUES[lg][1]}</b></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» осталось ${nx[1] - G.tro} кубков.` : 'Высшая лига достигнута.'}</p>${low ? `<p class="warn">До понижения в лигу «${LEAGUES[lg - 1][0]}» осталось ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}</section>`;
-}
-
-/* ---------- Матчи ---------- */
-function lbH() {
-  const t = lbTable(G, lbScope, now()), row = x => `<div class="lb ${x.me ? 'me' : ''}"><b>${x.place}</b><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.name)}</span><b>${x.tro}</b></div>`;
-  return `<section class="pn"><h3>Таблица лидеров</h3>${segH('lb', lbScope, [['all', 'Общая'], ['lg', 'Моя лига']])}<div>${t.top.map(row).join('')}${t.me.place > 10 ? '<div class="lb"><span></span><span class="mut">…</span><span></span></div>' + row(t.me) : ''}</div><p class="sm mut">Мест в таблице: ${t.total}. Пока у игры нет сервера, соперники в таблице — боты.</p></section>`;
-}
-function sqTabsH() {
-  return `<div class="sqtab">${G.squads.map((s, i) => { const inf = squadInfo(s.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id].lv })); return `<button data-act="sq" data-v="${i}" aria-pressed="${G.sqi === i}"><span>Пятёрка ${i + 1}</span><b>${inf ? inf.rating.toFixed(1) : '—'}</b><span>${inf ? 'химия ' + inf.chem + (G.capts[i] != null ? ' · капитан' : ' · без капитана') : 'не собрана'}</span></button>`; }).join('')}</div>`;
-}
-function vPlay() {
-  const info = squadInfo(squadOf(G)), cs = captSlot(G), h = G.season.hist;
-  return `<section class="plain"><h3>Состав на матч</h3>${sqTabsH()}<p class="sm mut">${info ? (cs >= 0 ? `Капитан: ${esc(CARDS[G.squad[cs]].nick)}. Он даёт разведку и стартовый импульс 3.` : 'Капитан не назначен: нет разведки, стартовый импульс 2.') : 'В этой пятёрке есть пустые слоты.'}</p>
-  ${info ? '<button class="btn pri go" data-act="fight">Играть</button>' : '<button class="btn go" data-act="goSquad">Соберите пятёрку</button>'}<p class="sm mut">Рейтинговый матч до 13 побед. Победа: +40 монет и +25 кубков, с разницей больше 5 раундов +30. Поражение: +10 монет и −25 кубков, при 0:13 −30.</p></section>
-  ${G.tut === 3 ? lbH() + `<section class="pn"><h3>Сезон «${monthName(G.season.m)}»</h3><p class="sm mut">Сезон длится месяц. В конце выдаются монеты и кейсы по лиге, а часть кубков сбрасывается: чем выше лига, тем больше.</p>${h.length ? '<div class="list">' + h.slice(0, 3).map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет.</p>'}</section>` : ''}`;
-}
-
-/* ---------- Кейсы ---------- */
-function vPacks() {
-  const inv = Object.keys(PACKS).filter(k => G.packs[k] > 0);
-  return `${dailyReady(G, now()) ? `<section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3><button class="btn pri" data-act="daily">Забрать</button></div></div></section>` : ''}
-  ${inv.length ? `<section class="plain"><h3>Ваши кейсы</h3>${inv.map(k => `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${PACKS[k].n} <span class="num mut" style="font-size:15px">×${G.packs[k]}</span></h2><button class="btn pri" data-act="open" data-v="${k}">Открыть</button></div></div></div>`).join('')}</section>` : ''}
-  <section class="plain"><h3>Магазин</h3>${Object.keys(PACKS).map(k => { const P = PACKS[k]; return `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${P.n}</h2><p class="sm mut">${P.d}</p><div class="pill" style="align-self:flex-start"><i class="coin"></i>${nf(P.price)}</div></div></div><div class="odds">${P.odds.map((o, i) => `<span style="--rc:var(--r${i})">${o}%</span>`).join('')}</div><button class="btn" data-act="buy" data-v="${k}" ${G.coins < P.price ? 'disabled' : ''}>${G.coins < P.price ? 'Не хватает монет' : 'Купить и открыть'}</button></div>`; }).join('')}</section>
-  <p class="sm mut">В кейсе пять карточек. Проценты показывают шанс редкости каждой из них: ${RAR.map(x => x.toLowerCase()).join(', ')}. Внутри редкости реже выпадают игроки с высоким рейтингом и из команд выше в таблице. С шансом 7% вместо обычной версии выпадает «${SPN[1]}» (+3 к рейтингу), с шансом 12% вместо высшей редкости выпадает «${SPN[2]}».</p>`;
-}
-
-/* ---------- Коллекция: карточки, составы, контракты ---------- */
-function colList() {
-  const q = F.q.trim().toLowerCase();
-  const l = ALL.filter(c => (F.rar === 'all' || c.rar === +F.rar) && (F.role === 'all' || c.role === +F.role) && (F.team === 'all' || c.team === F.team)
-    && (F.own === 'all' || (F.own === 'mine' ? own(c.id) : F.own === 'sp' ? c.sp : F.own === 'hist' ? c.hist : !own(c.id))) && (!q || c.nick.toLowerCase().includes(q)));
-  const lv = c => own(c.id) ? own(c.id).lv : 0;
-  return F.sort === 'lv' ? l.sort((a, b) => lv(b) - lv(a) || b.ovr - a.ovr) : F.sort === 'low' ? l.slice().reverse() : l;
-}
-function colGrid() {
-  const l = colList();
-  return `<p class="sm mut">Найдено: ${l.length}</p><div class="grid">${l.slice(0, colN).map(c => `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`).join('')}</div>${l.length > colN ? '<button class="btn" data-act="more">Показать ещё</button>' : ''}`;
-}
-const selH = (k, opts, label) => `<select data-f="${k}" aria-label="${label}">${opts.map(([v, n]) => `<option value="${esc(v)}" ${String(F[k]) === String(v) ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>`;
-function vCards() {
-  const have = Object.keys(G.cards).length, teams = [...new Set(ALL.map(c => c.team))].sort((a, b) => a.localeCompare(b));
-  return `<section class="pn"><div class="kv"><span>Собрано</span><span><b>${have}</b> из ${ALL.length}</span></div><span class="bar"><i style="width:${have / ALL.length * 100}%"></i></span></section>
-  <input type="text" id="col-q" placeholder="Поиск по нику" value="${esc(F.q)}" aria-label="Поиск по нику">
-  <div class="frow">${selH('rar', [['all', 'Любая редкость']].concat(RAR.map((n, i) => [i, n])), 'Редкость')}${selH('role', [['all', 'Любая роль и способность']].concat(RNAME.map((n, i) => [i, n + ' — «' + AB_BASE[i].n + '»'])), 'Роль и способность')}${selH('team', [['all', 'Любая команда']].concat(teams.map(t => [t, t])), 'Команда')}${selH('sort', [['ovr', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки']], 'Сортировка')}</div>
-  ${segH('fown', F.own, [['all', 'Все'], ['mine', 'Мои'], ['none', 'Нет'], ['sp', 'Особые'], ['hist', 'Архив']])}
-  <div class="plain" id="col-grid">${colGrid()}</div>`;
-}
-function vSquads() {
-  const sq = squadOf(G), info = squadInfo(sq), rec = bestCapt(G), cap = G.capts[G.sqi], igls = G.squad.filter(id => id != null && CARDS[id].role === 4);
-  const mates = id => G.squad.filter(x => x != null && x !== id && CARDS[x].team === CARDS[id].team).length;
-  return `${sqTabsH()}
-  ${info ? `<div class="stats"><div class="stat"><b>${info.rating.toFixed(1)}</b><span>рейтинг</span></div><div class="stat"><b>${info.atk.toFixed(1)}</b><span>сила в атаке</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>сила в защите</span></div></div>` : '<div class="note">В пятёрке есть пустые слоты. Заполните их, чтобы играть.</div>'}
-  <section class="plain">${G.squad.map((id, i) => { if (id == null) return `<button class="slot empty" data-act="slot" data-v="${i}"><span><div class="ph0">+</div></span><span><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 17px/1.2 var(--f-d);text-transform:uppercase">Слот пуст</b></span><span class="sm mut">Выбрать</span></button>`;
-    const c = CARDS[id], off = c.role !== i, m = mates(id); return `<button class="slot" data-act="slot" data-v="${i}"><span>${ownH(id, 'xs')}</span><span style="min-width:0"><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 19px/1.1 var(--f-d);text-transform:uppercase;overflow-wrap:anywhere">${esc(c.nick)} ${cap === id ? '<span class="cap">капитан</span>' : ''}</b><span class="sm mut">${esc(c.team)} · ${m ? 'партнёров по команде: ' + m : 'без партнёров по команде'}</span><span class="${off ? 'warn' : 'sm mut'}" style="display:block">${off ? 'Не своя роль: −5 ко всем показателям, способности отключены' : '«' + AB_BASE[c.role].n + '» и «' + indOf(c).n + '»'}</span></span><span class="sm mut">Сменить</span></button>`; }).join('')}</section>
-  <section class="pn"><h3>Капитан</h3><p class="sm mut">Капитаном может быть только игрок с естественной ролью «Капитан». Он даёт разведку, усиливает «Тайм-аут» и добавляет стартовый импульс.</p>${igls.length ? '<div class="list">' + igls.map(id => `<div class="prow" style="--rc:${glow(CARDS[id])}"><span class="o">${CARDS[id].st.igl + own(id).lv - 1}</span><span><b>${esc(CARDS[id].nick)}</b>${id === rec ? ' <span class="sm" style="color:var(--good)">рекомендуем</span>' : ''}<span class="sm mut" style="display:block">тактика · ${esc(CARDS[id].team)}</span></span>${cap === id ? '<span class="cap">капитан</span>' : `<button class="btn s" data-act="capt" data-id="${id}">Назначить</button>`}</div>`).join('') + '</div>' : '<p class="warn">В пятёрке нет игрока с ролью «Капитан».</p>'}${cap != null ? '<button class="btn s" data-act="capt" data-id="">Играть без капитана</button>' : ''}</section>
-  ${info ? `<section class="pn"><h3>Химия ${info.chem} из 13</h3><p class="sm mut">Игроков из одной команды: ${info.mx}. Два дают +2, три +4, четыре +7, пять +10. ${info.onRole ? 'Все на своих ролях: +3.' : 'Если все пятеро на своих ролях, добавится ещё +3.'} Каждые 4 очка химии дают +1 к силе состава. Химия не растёт от числа матчей.</p></section>` : ''}
-  <button class="btn" data-act="auto">Собрать лучший состав</button>
-  <section class="pn"><h3>Тактические приказы</h3>${DECK.map(k => `<p class="sm"><b>${AC[k].n}</b> <span class="num mut">${AC[k].cost}</span> <span class="mut">— ${AC[k].d}</span></p>`).join('')}</section>`;
-}
-function vTu() {
-  const inf = tuInfo(G, tuSel), cnt = id => tuSel.filter(x => x === id).length;
-  const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !c.sp && c.rar === tuRar).sort((a, b) => a.ovr - b.ovr);
-  const risky = [...new Set(tuSel)].filter(id => own(id) && cnt(id) >= own(id).n && inSquads(G, id));
-  return `<section class="pn"><h3>Контракт</h3><p class="sm mut">Десять обычных карточек одной редкости обмениваются на одну. Выпадет либо карточка следующей редкости, либо карточка той же редкости с рейтингом не ниже среднего по вложенным. Чем выше средний рейтинг, тем вероятнее следующая редкость.</p>
-  ${segH('turar', String(tuRar), RAR.map((n, i) => [String(i), n.slice(0, 5) + (n.length > 5 ? '.' : '')]))}
-  <div class="kv"><span>Выбрано</span><span><b>${tuSel.length}</b> из 10</span></div><span class="bar"><i style="width:${tuSel.length * 10}%"></i></span>
-  ${tuSel.length ? `<div class="grid g5">${tuSel.map(id => cardH(CARDS[id], { cls: 'xs' })).join('')}</div>` : ''}
-  ${inf.avg ? `<p class="sm">Средний рейтинг: <b class="num">${inf.avg.toFixed(1)}</b>${inf.up ? ` · следующая редкость: примерно <b>${inf.up}</b> · та же редкость сильнее: примерно <b>${inf.same}</b>` : ''}</p>` : ''}
-  ${inf.why ? `<p class="${tuRar === 4 ? 'warn' : 'sm mut'}">${inf.why}</p>` : ''}${risky.length ? `<p class="warn">В контракт уйдёт последняя копия игрока из состава: ${risky.map(id => esc(CARDS[id].nick)).join(', ')}.</p>` : ''}
-  <div class="rowb"><button class="btn s" data-act="tuFill" ${tuRar === 4 ? 'disabled' : ''}>Добавить слабейшие дубликаты</button><button class="btn s" data-act="tuClear" ${tuSel.length ? '' : 'disabled'}>Очистить</button></div>
-  <button class="btn pri" data-act="tuGo" ${inf.ok ? '' : 'disabled'}>Исполнить контракт — отменить нельзя</button></section>
-  <section class="list">${l.length ? l.map(c => { const o = own(c.id), n = cnt(c.id); return `<div class="tu-row"><span class="num" style="font-weight:700;color:${glow(c)}">${c.ovr}</span><span style="min-width:0"><b>${esc(c.nick)}</b><span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)} · копий ${o.n}${o.lv > 1 ? ' · ур. ' + o.lv : ''}</span></span><span class="cnt-b"><button data-act="tuDel" data-id="${c.id}" ${n ? '' : 'disabled'} aria-label="Убрать">−</button><span class="num">${n}</span><button data-act="tuAdd" data-id="${c.id}" ${n < o.n && tuSel.length < 10 ? '' : 'disabled'} aria-label="Добавить">+</button></span></div>`; }).join('') : '<p class="sm mut">Обычных карточек этой редкости у вас нет.</p>'}</section>`;
+  <section class="lobby-lower">
+    <div class="lobby-season">
+      <div class="lobby-season__head"><span class="lobby-kicker">RANKED ROAD</span><b>ПУТЬ ВЫШЕ</b></div>
+      <div class="lobby-season__league">${rankH(lg)}<span><small>ТВОЙ ДИВИЗИОН</small><strong>${LEAGUES[lg][0]}</strong></span></div>
+      <div class="lobby-season__bar"><i style="width:${prog}%"></i></div>
+      <div class="lobby-season__foot"><span>${G.tro} CP</span><span>${nx ? nx[1] - G.tro + ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНЫЙ РАНГ'}</span></div>
+      ${low ? `<p class="warn">Опасная зона: до понижения ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}
+    </div>
+    <div class="lobby-daily">
+      <div class="lobby-daily__head"><span class="lobby-kicker">DAILY REWARD</span><b>СЕРИЯ ВХОДОВ</b></div>
+      <strong>${streak.day}<small> / 28 ДНЕЙ</small></strong>
+      <div class="lobby-daily__days">${streakCells}</div>
+      <p>${streakReward ? 'Получено сегодня: ' + esc(streakReward) : 'Заходи каждый день и забирай награды.'}</p>
+    </div>
+  </section>
+  ${st === 3 ? `<section class="lobby-missions"><div class="lobby-sectionhead"><div><span class="lobby-kicker">DAILY OBJECTIVES</span><h2>ЗАДАНИЯ</h2></div><button data-act="tab" data-v="play">ВСЕ ЗАДАНИЯ ↗</button></div>${tasksH()}</section>` : ''}
+  <section class="lobby-free">
+    <div class="lobby-free__art">${pkH('basic')}</div><div class="lobby-free__copy"><span class="lobby-kicker">COMPLIMENTARY DROP</span><h3>БЕСПЛАТНЫЙ КЕЙС</h3><p>${dailyReady(G, now()) ? 'Твоя ежедневная награда уже ждёт.' : 'Следующая награда после 00:00 МСК.'}</p></div>
+    ${dailyReady(G, now()) ? '<button class="btn pri s" data-act="daily">ЗАБРАТЬ ↗</button>' : '<button class="btn s" data-act="tab" data-v="packs">К КЕЙСАМ ↗</button>'}
+  </section>`;
 }
 function vCol() {
   const body = sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : vCards();
@@ -2487,6 +2538,7 @@ function start() {
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
   save(); render();
 }
+
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
 })();
 </script></body></html>

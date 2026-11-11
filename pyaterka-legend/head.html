@@ -971,6 +971,32 @@ body{background:transparent;color:var(--fg)}
  .home-shortcut,.btn,.ibtn,.pc{transition:none!important}
 }
 
+
+/* ===== ARENA READABILITY + PLAYER PRESENTATION TIERS ===== */
+#scene .arena-art{opacity:.13!important;filter:brightness(.48) saturate(.42) contrast(1.08)!important}
+#scene .arena-world:after{background:linear-gradient(180deg,rgba(3,6,11,.32),rgba(3,6,11,.72) 42%,rgba(3,6,11,.94) 100%),linear-gradient(90deg,rgba(3,6,11,.46),transparent 24%,transparent 76%,rgba(3,6,11,.46)),radial-gradient(ellipse at 50% 35%,transparent 8%,rgba(0,0,0,.66) 100%)}
+#scene .vig{background:rgba(3,6,11,.5)!important}
+.section-mast{background:linear-gradient(112deg,#172838 0%,#0a1420 58%,#0a121c 100%)!important}
+.pn{background:linear-gradient(145deg,#142131 0%,#0b1520 52%,#080f17 100%)!important;border-color:rgba(153,192,218,.22)}
+.stat{background:linear-gradient(145deg,#1a2a3a,#0a121c)!important}
+#app[data-tab="play"]>.plain{background:linear-gradient(145deg,#142333,#080f17)!important}
+#app[data-tab="prof"]>.pn:first-of-type{background:linear-gradient(120deg,#1d2c3a,#0a121c)!important}
+#app[data-tab="col"] #col-grid .grid>button{background:linear-gradient(145deg,#1a2a3a,#080f17)!important}
+#app[data-tab="packs"] .pn{background:linear-gradient(145deg,#1b2935,#0a1119)!important}
+/* 60–86: restrained graphite collectible; 87–90: silver-blue cinematic; 91–99: legendary gold */
+.pc.standard{background:radial-gradient(90% 45% at 50% 100%,rgba(115,147,174,.2),transparent 75%),linear-gradient(155deg,#263543,#101923 52%,#070c12)}
+.pc.standard:after{box-shadow:inset 0 0 0 1px rgba(202,220,233,.18),inset 0 -3px 0 var(--edge),inset 0 0 18px rgba(255,255,255,.025)}
+.pc.cinema{border:1px solid rgba(177,220,246,.55);background:radial-gradient(90% 55% at 50% 32%,rgba(113,184,226,.22),transparent 70%),radial-gradient(90% 50% at 50% 100%,rgba(141,194,225,.32),transparent 75%),linear-gradient(150deg,#344b5e,#111e2b 52%,#050b12);box-shadow:0 0 0 1px rgba(159,211,242,.2),0 18px 32px rgba(0,0,0,.62),0 0 24px rgba(103,179,225,.16),inset 0 1px rgba(255,255,255,.3)}
+.pc.cinema:after{inset:4px;border:1px solid rgba(196,226,244,.34);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 -4px 0 var(--edge),inset 0 0 30px rgba(128,194,230,.12)}
+.pc.cinema:before{background:repeating-linear-gradient(132deg,rgba(196,228,246,.08) 0 1px,transparent 1px 7px),linear-gradient(115deg,transparent 24%,rgba(210,238,252,.16) 50%,transparent 76%)}
+.pc.cinema .sh{display:block;opacity:.78;animation:shine 3.2s ease-in-out infinite}
+.pc.cinema-legend{border:1px solid rgba(240,211,143,.8);background:radial-gradient(90% 55% at 50% 30%,rgba(230,193,112,.28),transparent 70%),radial-gradient(90% 50% at 50% 100%,rgba(206,160,83,.36),transparent 75%),linear-gradient(150deg,#51432b,#1c1a16 52%,#080b10);box-shadow:0 0 0 2px rgba(222,186,112,.24),0 0 32px rgba(227,183,95,.22),0 22px 38px rgba(0,0,0,.7),inset 0 1px rgba(255,245,218,.38)}
+.pc.cinema-legend:after{inset:5px;border:1px solid rgba(245,221,166,.56);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 -4px 0 #d5b16f,inset 0 0 34px rgba(227,188,112,.16)}
+.pc.cinema-legend:before{background:repeating-linear-gradient(132deg,rgba(255,224,158,.13) 0 2px,transparent 2px 8px),linear-gradient(115deg,transparent 20%,rgba(255,239,197,.2) 50%,transparent 80%)}
+.pc.cinema-legend .sh{display:block;opacity:.9;animation:shine 2.8s ease-in-out infinite}
+.pc.cinema-legend .rl,.pc.cinema-legend .tag{color:#f1d89e}
+@media(prefers-reduced-motion:reduce){.pc.cinema .sh,.pc.cinema-legend .sh{animation:none!important}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

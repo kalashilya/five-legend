@@ -26,7 +26,7 @@ rows.forEach(([rk, pts, name, ros], ti) => {
   { const have = new Set(Object.values(role)); const need = [1, 2, 3].filter(r => !have.has(r)).concat([1, 2, 3]); rest().forEach((n, i) => role[n] = need[i]); }
   for (const n of ps) {
     seen.add(n.toLowerCase());
-    const old = reg.cards[n.toLowerCase() + '|' + name.trim()], h = hltvStats(n, role[n]), p = HLTV.players && HLTV.players[n], meta = p && p.photo && p.profileId ? { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo, verifiedAt: HLTV.snapshotDate } : null;
+    const old = reg.cards[n.toLowerCase() + '|' + name.trim()], h = hltvStats(n, role[n]), p = HLTV.players && HLTV.players[n], meta = p && p.profileId ? { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo, verifiedAt: HLTV.snapshotDate } : null;
     const o = tb + ((hsh(n) % 400) / 100 - 2) + (STAR[n] || 0) - (role[n] === 4 && !(n in STAR) ? 2.5 : 0);
     const hv = Object.assign({}, old && old.hltv || {}, h && h.hltv || {}, meta || {}); cur.push([n, ti, role[n], h ? h.ovr : Math.round(Math.max(58, Math.min(96, o))), h ? h.st : old && old.st || null, Object.keys(hv).length ? hv : null]);
   }

@@ -3510,6 +3510,51 @@
       "countryCode": "DE",
       "team": "INFINITE",
       "verifiedAt": "2026-11-11"
+    },
+    "3ippoch": {
+      "profileId": 24245,
+      "profileUrl": "https://www.hltv.org/player/24245/3ippoch",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/lkXBR6fZf_OujNBBTHMAQA.png?ixlib=java-2.1.0&s=50bcbb10f7f1b511ecf0eec479fe8f03&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "Inner Circle Academy",
+      "verifiedAt": "2026-11-11"
+    },
+    "Grizz": {
+      "profileId": 22069,
+      "profileUrl": "https://www.hltv.org/player/22069/grizz",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/dskR5YuXKMCMjdzKIfbD6D.png?ixlib=java-2.1.0&s=6d82e0b9c132180886f18772c0ea1ff1&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Marsborne",
+      "verifiedAt": "2026-11-11"
+    },
+    "cerber": {
+      "profileId": 18119,
+      "profileUrl": "https://www.hltv.org/player/18119/cerber",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/DSqnWuplsY_VVFjXs3959P.png?ixlib=java-2.1.0&s=702c05e652a6e12e797a3546c510d2ed&w=400",
+      "country": "Косово",
+      "countryCode": "XK",
+      "team": "Illyrians",
+      "verifiedAt": "2026-11-11"
+    },
+    "Norwi": {
+      "profileId": 19882,
+      "profileUrl": "https://www.hltv.org/player/19882/norwi",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/6m1N0gUlQKUQ5f1psDJmoo.png?ixlib=java-2.1.0&s=a8238c862ad329fd9fcbd0425486c9fa&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "BAKS",
+      "verifiedAt": "2026-11-11"
+    },
+    "svemyy": {
+      "profileId": 21648,
+      "profileUrl": "https://www.hltv.org/player/21648/svemyy",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/BwgIFMlqOo4UTcvZvESz5o.png?ixlib=java-2.1.0&s=f09f4af0a869dafa0ac1f9ab5097d46f&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "WBT Academy",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

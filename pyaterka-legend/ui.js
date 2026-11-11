@@ -101,6 +101,7 @@ function tasksH() {
 function vHome() {
   const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), low = lg > 0 && G.tro - LEAGUES[lg][1] < 30;
   const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100, st = G.tut;
+  const collectionHave = Object.keys(G.cards).length, collectionTotal = ALL.length, collectionPct = Math.round(collectionHave / Math.max(1, collectionTotal) * 100), xpPct = Math.round(G.xp / Math.max(1, 100 * G.lvl) * 100);
   const streak = G.streak || { day: 0, last: -1, reward: null }, streakReward = streak.last === mskDay(now()) && streak.reward ? rewardText(streak.reward) : '';
   const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span style="display:grid;place-items:center;min-height:27px;border:1px solid ${milestone ? 'var(--gold)' : 'var(--line)'};border-radius:6px;background:${done ? 'var(--accent)' : 'var(--panel2)'};color:${done ? '#141414' : 'var(--mut)'};font:600 11px var(--f-m)">${d}</span>`; }).join('');
   const tut = st < 3 ? `<section class="pn tutorial"><div class="tutorial__head"><span class="tutorial__mark">01 / ПОДГОТОВКА</span><h3>Первые шаги</h3></div><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
@@ -115,6 +116,20 @@ function vHome() {
 <g class="art-float"><path d="M210 236L280 199 350 236 337 329 223 329Z" fill="#0a121b" stroke="#9fc2dc" stroke-opacity=".8" stroke-width="2"/><path d="M224 242L280 213 336 242 326 313 234 313Z" fill="url(#hero-metal)" stroke="#d2e4ef" stroke-opacity=".45"/><path d="M280 224L316 261 280 299 244 261Z" fill="#09131d" stroke="#c5dfef" stroke-width="2"/><text x="280" y="276" text-anchor="middle" fill="#e2eff7" font-family="Arial,sans-serif" font-size="42" font-weight="900">5</text><path d="M244 318H316M252 325H308" stroke="#9ec5df" stroke-width="2" stroke-opacity=".7"/></g>
 <g fill="none" stroke="#8eb8d3" stroke-opacity=".5"><path d="M30 292L140 265 210 280M530 292L420 265 350 280"/><path d="M75 310H485M105 325H455M145 340H415" stroke-width="2"/><path d="M110 295l-20 15m360-15 20 15M175 279l-12 19m222-19 12 19"/></g>
 <g fill="#8db8d5" opacity=".6"><circle cx="60" cy="125" r="3"/><circle cx="500" cy="125" r="3"/><circle cx="280" cy="58" r="3"/><path d="M268 66h24v3h-24z"/></g><path d="M20 358H540" stroke="#8db8d5" stroke-opacity=".24"/></svg></div></section>
+  <section class="home-progress" aria-label="Прогресс игрока">
+    <div class="home-progress__collection">
+      <div class="home-progress__top"><span>КОЛЛЕКЦИЯ ИГРОКОВ</span><b>${collectionPct}%</b></div>
+      <div class="home-progress__value"><strong>${collectionHave}</strong><span>из ${collectionTotal} карточек открыто</span></div>
+      <div class="home-progress__track"><i style="width:${collectionPct}%"></i></div>
+      <small>Собирай игроков, открывай редкие версии и заполняй архив</small>
+    </div>
+    <div class="home-progress__level">
+      <div class="home-progress__top"><span>УРОВЕНЬ ПРОФИЛЯ</span><b>${G.lvl}</b></div>
+      <div class="home-progress__value"><strong>${xpPct}%</strong><span>до следующего уровня</span></div>
+      <div class="home-progress__track"><i style="width:${xpPct}%"></i></div>
+      <small>${nf(G.xp)} / ${nf(100 * G.lvl)} XP · награды за повышение уровня</small>
+    </div>
+  </section>
   <section class="home-shortcuts" aria-label="Быстрые разделы">
     <button class="home-shortcut" data-act="tab" data-v="play"><span class="home-shortcut__icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 20.5 24 8l19 12.5M8 22v12.5L24 44l16-9.5V22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 21.5 24 14l12 7.5M13 25v7l11 6.5L35 32v-7" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2"/><path d="M17 22h14v8H17z" fill="rgba(155,205,235,.16)" stroke="currentColor" stroke-width="1.4"/><path d="M20 25h8M20 27.5h5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M24 31v7M8 26l5 3m27-3-5 3" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2"/><circle cx="24" cy="24" r="1.5" fill="currentColor"/></svg></span><span><b>Матчи</b><small>Проверь свою пятёрку</small></span></button>
     <button class="home-shortcut" data-act="tab" data-v="col"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h12v16H7z"/><path d="M4 6v15h12M10 7h6M10 10h6M10 13h4"/><path d="M9 3V1h12v16h-2"/></svg></span><span><b>Коллекция</b><small>Все твои игроки</small></span></button>

@@ -1,3 +1,4 @@
+// Final responsive and full-width mast checks for the four-screen redesign.
 // Browser smoke coverage for the approved four-screen arena redesign.
 'use strict';
 const fs = require('fs');

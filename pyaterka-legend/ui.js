@@ -117,10 +117,10 @@ function vHome() {
       <div class="lobby-hero__floor"></div><div class="lobby-hero__glow"></div><div class="lobby-hero__particles"></div>
     </div>
     <div class="lobby-hero__content">
-      <div class="lobby-hero__eyebrow"><span><i></i> LIVE ARENA</span><b>SEASON ${String(G.season.m).padStart(2,'0')}</b></div>
+      <div class="lobby-hero__eyebrow"><span><i></i> LIVE ARENA</span><b>SEASON ${String(G.season.m % 12 + 1).padStart(2, '0')}</b></div>
       <div class="lobby-hero__headline"><span>СОЗДАЙ</span><strong>СВОЮ</strong><em>ЛЕГЕНДУ</em></div>
       <p class="lobby-hero__sub">Твоя команда. Твоя стратегия. Твой путь к вершине.</p>
-      <div class="lobby-hero__rank"><span class="lobby-hero__rankicon">${rankH(lg)}</span><span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><span class="lobby-hero__cups"><strong>${G.tro}</strong><small>КУБКОВ</small></span></div>
+      <button class="lobby-hero__rank" data-act="leagues" aria-label="Лиги: где вы сейчас и что дальше"><span class="lobby-hero__rankicon">${rankH(lg)}</span><span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><span class="lobby-hero__cups"><strong>${G.tro}</strong><small>КУБКОВ</small></span><span class="lobby-hero__more" aria-hidden="true">›</span></button>
     </div>
     <div class="lobby-hero__ribbon"><span>CS2 MANAGER</span><i></i><span>5 PLAYERS · 1 LEGEND</span><i></i><span>COMPETITIVE</span></div>
   </section>
@@ -178,7 +178,7 @@ function vPlay() {
     ? `<button class="match-player is-empty" data-act="slot" data-v="${i}"><span class="match-player__empty">+</span><b>${RNAME[i]}</b><small>СЛОТ ПУСТ</small></button>`
     : `<button class="match-player" data-act="card" data-id="${id}"><span class="match-player__role">${RNAME[i]}</span>${ownH(id, 'xs')}<small>${esc(CARDS[id].nick)}</small></button>`).join('');
   return `<section class="match-hero">
-    <div class="match-hero__light"></div><div class="match-hero__meta"><span><i></i> LIVE COMPETITIVE</span><b>SEASON ${String(G.season.m).padStart(2,'0')}</b></div>
+    <div class="match-hero__light"></div><div class="match-hero__meta"><span><i></i> LIVE COMPETITIVE</span><b>SEASON ${String(G.season.m % 12 + 1).padStart(2, '0')}</b></div>
     <div class="match-hero__title"><small>ТВОЯ СЛЕДУЮЩАЯ ЦЕЛЬ</small><h2>ПУТЬ НА АРЕНУ</h2><p>Собери пятёрку. Выбери тактику. Забери победу.</p></div>
     <div class="match-hero__rank">${rankH(lg)}<span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><strong>${G.tro}<small> КУБКОВ</small></strong></div>
     <div class="match-hero__progress"><i style="width:${prog}%"></i></div>
@@ -288,8 +288,31 @@ function abH(c, lv) {
   const source = c.hltv && c.hltv.last12m ? `HLTV · ${c.hltv.last12m.maps} карт за 12 мес. · обновлено ${c.hltv.snapshotDate}` : 'Предварительные характеристики: статистика HLTV ещё не подключена.';
   return `<p class="sm mut" style="margin:0 0 8px">${source}</p><div class="ab" style="--rc:${glow(c)}"><b>${AB_BASE[c.role].n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${AB_BASE[c.role].d} Работает только на роли «${RNAME[c.role]}».</div><div class="ab"><b>${i.n} <span class="num mut" style="font-size:12px">${ipw}%</span></b>${i.d}${IND[c.nick] ? '' : ' Индивидуальная способность появится после загрузки статистики HLTV.'}</div>`;
 }
+/* Лиги: где игрок сейчас, сколько до следующей, награды, доля игроков в каждой лиге */
+const plural = (n, a, b, c) => { const m = Math.abs(n) % 100, k = m % 10; return m > 10 && m < 20 ? c : k === 1 ? a : k > 1 && k < 5 ? b : c; };
+const seasonPrize = i => [S_COINS[i] + ' монет', i >= 5 ? 'кейс «Элитный»' : i >= 3 ? 'кейс «Про»' : i >= 1 ? 'кейс «Базовый»' : ''].filter(Boolean).join(' + ');
+function leaguesH() {
+  const lg = leagueOf(G.tro), best = leagueOf(G.best), nx = LEAGUES[lg + 1], lo = LEAGUES[lg][1];
+  const pct = nx ? Math.max(0, Math.min(100, (G.tro - lo) / (nx[1] - lo) * 100)) : 100;
+  const pop = lbBots(G.season.m, now()).map(b => b.tro).concat([G.tro]), cnt = LEAGUES.map((_, i) => pop.filter(t => leagueOf(t) === i).length);
+  const share = cnt.map(n => n / pop.length * 100), fmt = v => v > 0 && v < 1 ? '<1' : String(Math.round(v));
+  const rows = LEAGUES.map(([n, from], i) => { const to = LEAGUES[i + 1] ? LEAGUES[i + 1][1] - 1 : null, me = i === lg;
+    const up = i === 0 ? 'стартовая лига' : i <= best ? 'кейс «Про» — получено' : 'кейс «Про» за первый выход';
+    return `<div class="lg-row ${me ? 'is-me' : ''} ${i <= best ? 'is-got' : ''}" style="--lc:${LCOL[i]}"><span class="lg-ic">${rankH(i)}</span>
+      <div class="lg-main"><b>${n}${me ? ' <span class="lg-you">вы здесь</span>' : ''}</b><small>${to === null ? 'от ' + from : from + '–' + to} кубков</small><small class="lg-rw">${up}</small><small class="lg-rw">Итог сезона: ${seasonPrize(i)}${S_DROP[i] ? ' · −' + S_DROP[i] + ' кубков' : ''}</small></div>
+      <div class="lg-share"><b>${fmt(share[i])}%</b><span class="lg-bar"><i style="width:${Math.max(share[i] > 0 ? 3 : 0, share[i])}%"></i></span><small>игроков</small></div></div>`; }).join('');
+  const next = nx ? `<p class="lg-next">До лиги «${nx[0]}» — <b>${nx[1] - G.tro}</b> ${plural(nx[1] - G.tro, 'кубок', 'кубка', 'кубков')}. ${lg + 1 > best ? 'За первый выход в неё — кейс «Про».' : 'Кейс за эту лигу уже получен.'}</p>` : '<p class="lg-next">Вы в высшей лиге. Держитесь в ней до конца сезона.</p>';
+  return `<div class="in"><div class="wrap col lg-sheet"><h2>Лиги</h2>
+    <div class="lg-cur" style="--lc:${LCOL[lg]}"><span class="lg-ic big">${rankH(lg)}</span><div><small class="eyebrow">Текущая лига</small><b>${LEAGUES[lg][0]}</b><span class="num">${G.tro} кубков · рекорд ${G.best}</span></div></div>
+    <span class="lg-prog" aria-label="Прогресс до следующей лиги ${Math.round(pct)}%"><i style="width:${pct}%"></i></span>${next}
+    <p class="sm mut">Победа даёт +25 кубков (+30, если выиграли больше чем на 5 раундов), поражение отнимает 25 (30 при сухом счёте). Сезон длится месяц: в конце — награда по лиге и сброс части кубков.</p>
+    <div class="lg-list">${rows}</div>
+    <p class="sm mut">Доля игроков посчитана по таблице лидеров сезона (${pop.length} участников). Пока сервера нет, соперники в таблице — боты игры; реальные проценты появятся вместе с онлайном.</p>
+    <div class="rowb"><button class="btn pri" data-act="close">Закрыть</button></div></div></div>`;
+}
 function vSheet() {
   if (!sheet) return '';
+  if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'slot') {
     const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i && x != null).map(id => CARDS[id].nick));
     const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((a, b) => (b.role === i) - (a.role === i) || (b.ovr + own(b.id).lv) - (a.ovr + own(a.id).lv)).slice(0, 60);
@@ -701,6 +724,7 @@ const ACT = {
   snd(v) { snd = v; try { localStorage.setItem(SKEY, v); } catch (e) { /* не сохранится */ } sfx('win'); },
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },
+  leagues() { sheet = { t: 'leagues' }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },
   slot(v) { sheet = { t: 'slot', slot: +v }; },
   goSquad() { tab = 'col'; sub = 'squads'; window.scrollTo(0, 0); },

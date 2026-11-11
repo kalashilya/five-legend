@@ -420,6 +420,114 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 @media(max-width:420px){.walk-scene{min-height:300px}.walk-card{right:2%;width:44%}.operator{width:68%}.all-reveal .walk-scene{min-height:190px;max-height:215px}.all-cards{gap:3px}.all-card .pc{font-size:6px}}
 @media(prefers-reduced-motion:reduce){.operator,.operator .actor-body,.operator .prop,.walk-card,.all-card{animation:none!important;opacity:1!important;filter:none!important}}
 
+
+/* PREMIUM VISUAL SYSTEM — Пятёрки Легенд */
+:root{--bg:#080a0d;--panel:rgba(17,20,25,.78);--panel2:rgba(255,255,255,.045);--line:rgba(218,190,143,.17);--fg:#f1f0ed;--mut:#9299a2;--accent:#d7b477;--sel:#f0d6a3;--coin:#e4c17b;--go:#d7b477;--go2:#987343;--on-go:#17130c;--good:#9bc6a0;--bad:#e47e73;--gold:#e2bd79;--cut:none}
+html,body{background:#080a0d}
+body{background:radial-gradient(ellipse at 50% -18%,rgba(120,91,53,.18),transparent 54%),radial-gradient(ellipse at 100% 48%,rgba(43,57,68,.14),transparent 42%),#080a0d;letter-spacing:.005em}
+#scene{background:radial-gradient(ellipse at 50% 48%,rgba(114,91,61,.18),transparent 45%),linear-gradient(180deg,#10151b 0%,#0b0e12 54%,#07090c 100%)!important}
+#scene .sun{width:105vmax;height:54vmax;top:52%;background:radial-gradient(closest-side,rgba(189,151,94,.16),rgba(96,111,121,.07) 38%,transparent 73%);opacity:.85;filter:blur(12px)}
+#scene .beam{opacity:.18;filter:blur(28px)}
+#scene .beam.b1{background:linear-gradient(180deg,rgba(220,192,147,.12),transparent 72%)}
+#scene .beam.b2{background:linear-gradient(180deg,rgba(151,176,196,.1),transparent 72%)}
+#scene .fog{opacity:.5;filter:blur(24px)}
+#scene .floor{background:linear-gradient(180deg,rgba(8,10,13,.25),#050608 75%)}
+#scene .vig{background:radial-gradient(100% 80% at 50% 35%,transparent 25%,rgba(0,0,0,.68) 100%),linear-gradient(180deg,rgba(0,0,0,.32),transparent 24%)}
+#hud{background:linear-gradient(180deg,rgba(6,8,10,.96),rgba(8,10,13,.84) 78%,transparent);border-bottom:1px solid rgba(218,190,143,.08);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#hud .wrap{padding-block:13px 16px;gap:12px}
+#hud .who b{font-size:17px;letter-spacing:.1em}
+.rank{filter:drop-shadow(0 2px 8px rgba(215,180,119,.2))}
+.pill{border-radius:999px;background:linear-gradient(145deg,rgba(35,38,42,.92),rgba(12,14,17,.92));border-color:rgba(218,190,143,.2);box-shadow:inset 0 1px rgba(255,255,255,.06),0 5px 18px rgba(0,0,0,.18)}
+.ibtn{border-radius:12px;background:linear-gradient(145deg,rgba(35,39,44,.9),rgba(12,14,17,.95));border-color:rgba(218,190,143,.18);transition:transform .2s,border-color .2s}
+.ibtn:active{transform:scale(.94)}
+#app{gap:16px;padding-top:8px;padding-bottom:112px}
+.pn,.stat{border:1px solid rgba(218,190,143,.13);border-radius:18px;clip-path:none;background:linear-gradient(145deg,rgba(25,29,35,.88),rgba(12,15,19,.88));box-shadow:inset 0 1px rgba(255,255,255,.055),0 14px 34px rgba(0,0,0,.2);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.pn{padding:16px;gap:12px}
+.pn::before{left:16px;top:0;width:42px;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+h2{font-size:clamp(22px,5vw,28px);letter-spacing:.06em}
+h3,.eyebrow{letter-spacing:.18em}
+.btn{border-radius:12px;clip-path:none;background:linear-gradient(145deg,rgba(54,59,65,.7),rgba(24,27,32,.92));border:1px solid rgba(218,190,143,.18);box-shadow:inset 0 1px rgba(255,255,255,.08),0 7px 18px rgba(0,0,0,.16);transition:transform .18s,border-color .18s,background .18s,box-shadow .18s}
+.btn:hover{border-color:rgba(230,202,157,.42);box-shadow:inset 0 1px rgba(255,255,255,.1),0 9px 24px rgba(0,0,0,.24)}
+.btn:active{transform:translateY(1px) scale(.985)}
+.btn.pri{color:#17130c;background:linear-gradient(135deg,#f0d6a3 0%,#c49a5d 48%,#947044 100%);border-color:rgba(255,235,194,.48);box-shadow:inset 0 1px rgba(255,255,255,.5),0 7px 24px rgba(177,135,75,.2)}
+.btn.go{min-height:58px;border-radius:14px;font-size:21px;letter-spacing:.2em}
+.btn.s{border-radius:9px}
+.bar{height:6px;border-radius:99px;background:rgba(255,255,255,.09)}
+.bar i{border-radius:99px;background:linear-gradient(90deg,#8e7047,#e7c68d);box-shadow:0 0 12px rgba(215,180,119,.25)}
+.chip{border-radius:999px;border:1px solid rgba(218,190,143,.16);border-bottom:1px solid rgba(218,190,143,.16);padding:9px 14px}
+.chip[aria-pressed=true]{background:linear-gradient(135deg,rgba(215,180,119,.2),rgba(255,255,255,.06));border-color:rgba(215,180,119,.5)}
+.stat{border-radius:14px;padding:12px}.stat b{font-size:25px}
+#tabs{background:rgba(7,9,12,.9);border-top:1px solid rgba(218,190,143,.15);box-shadow:0 -12px 36px rgba(0,0,0,.28);-webkit-backdrop-filter:blur(24px) saturate(130%);backdrop-filter:blur(24px) saturate(130%)}
+#tabs .wrap{max-width:680px}
+#tabs button{padding-block:12px 10px;font-size:10px;letter-spacing:.13em;gap:5px}
+#tabs svg{width:21px;height:21px}
+#tabs button[aria-current]{color:#f1dfbf}
+#tabs button::before{left:28%;right:28%;height:2px;border-radius:99px;box-shadow:0 0 12px rgba(215,180,119,.5)}
+#tabs .dot{box-shadow:0 0 9px var(--accent)}
+input[type=text],select{border-radius:10px;background:rgba(7,9,12,.72);border-color:rgba(218,190,143,.16)}
+.grid{gap:10px}
+.pc{border-radius:12px;filter:drop-shadow(0 12px 16px rgba(0,0,0,.34));transition:transform .24s cubic-bezier(.2,.8,.2,1),filter .24s}
+button:has(>.pc):hover>.pc{transform:translateY(-5px) rotateY(-2deg);filter:drop-shadow(0 18px 22px rgba(0,0,0,.5))}
+.pc::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),inset 0 -3px 0 var(--edge),inset 0 0 22px rgba(255,255,255,.035)}
+.lineup{gap:6px;padding-top:30px;perspective:900px}
+.lineup>button{filter:drop-shadow(0 18px 18px rgba(0,0,0,.58));transition:filter .2s}
+.lineup>button:hover{filter:drop-shadow(0 22px 24px rgba(0,0,0,.7))}
+.lobby{gap:16px}
+.kv{letter-spacing:.16em}.kv b{color:#ead5b2}
+#sheet .in{border-radius:22px 22px 0 0;border-top:1px solid rgba(218,190,143,.32);box-shadow:0 -18px 55px rgba(0,0,0,.45)}
+#over{background:rgba(4,6,8,.94)}
+.po-stage,.po-bg{border-radius:18px}
+.note{border-radius:10px}
+.task,.ab,.sqtab button{border-radius:10px}
+.slot .ph0{border-radius:10px}
+/* Главная витрина */
+.home-hero{position:relative;isolation:isolate;overflow:hidden;min-height:205px;padding:22px 20px;display:flex;align-items:center;border:1px solid rgba(222,194,150,.22);border-radius:22px;background:radial-gradient(ellipse at 78% 48%,rgba(184,143,82,.2),transparent 42%),linear-gradient(118deg,rgba(28,32,37,.98),rgba(13,16,20,.94) 62%,rgba(28,25,21,.92));box-shadow:inset 0 1px rgba(255,255,255,.09),0 20px 48px rgba(0,0,0,.34)}
+.home-hero::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.26;background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.08) 50%,transparent 66%),repeating-linear-gradient(135deg,transparent 0 22px,rgba(255,255,255,.025) 23px 24px)}
+.home-hero::after{content:"";position:absolute;inset:10px;z-index:3;pointer-events:none;border:1px solid rgba(255,255,255,.045);border-radius:15px}
+.home-hero__copy{position:relative;z-index:2;max-width:66%}
+.home-hero__eyebrow{font:700 9px/1.4 var(--f-m);letter-spacing:.22em;color:#c5a878;text-transform:uppercase}
+.home-hero h1{margin:10px 0 8px;font:700 clamp(29px,7vw,46px)/.94 var(--f-d);letter-spacing:.055em;color:#f4eee3;text-shadow:0 5px 22px rgba(0,0,0,.5)}
+.home-hero__desc{max-width:320px;font-size:12px;line-height:1.5;color:#aeb3b9}
+.home-hero__tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.home-hero__tags span{padding:5px 8px;border:1px solid rgba(218,190,143,.2);border-radius:99px;background:rgba(0,0,0,.2);font:700 8px/1 var(--f-m);letter-spacing:.12em;color:#d9c6a5}
+.home-hero__artifact{position:absolute;right:3%;top:50%;width:39%;height:90%;transform:translateY(-50%);perspective:700px;pointer-events:none}
+.home-hero__halo{position:absolute;width:90%;aspect-ratio:1;left:5%;top:5%;border-radius:50%;border:1px solid rgba(220,190,140,.25);box-shadow:0 0 32px rgba(192,151,91,.1),inset 0 0 28px rgba(192,151,91,.08);transform:rotateX(68deg) rotateZ(-18deg)}
+.home-hero__halo::before,.home-hero__halo::after{content:"";position:absolute;inset:12%;border:1px solid rgba(220,190,140,.2);border-radius:50%;transform:rotate(55deg)}
+.home-hero__halo::after{inset:25%;transform:rotate(-35deg)}
+.home-hero__sigil{position:absolute;left:28%;top:16%;width:44%;aspect-ratio:5/7;display:grid;place-items:center;border:1px solid rgba(245,220,176,.7);border-radius:10px;background:linear-gradient(145deg,rgba(225,194,143,.22),rgba(20,23,27,.94) 44%,rgba(112,83,48,.42));box-shadow:0 0 0 4px rgba(255,255,255,.025),0 18px 35px rgba(0,0,0,.55),inset 0 0 24px rgba(231,197,141,.14);transform:rotateY(-18deg) rotateX(5deg) rotateZ(-7deg);animation:sigil-float 6s ease-in-out infinite}
+.home-hero__sigil::before{content:"";position:absolute;inset:7px;border:1px solid rgba(229,202,158,.26);border-radius:5px}
+.home-hero__sigil::after{content:"";position:absolute;inset:18% 12%;border:1px solid rgba(229,202,158,.2);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.home-hero__sigil b{font:700 clamp(27px,6vw,43px)/1 var(--f-d);color:#ead4ae;text-shadow:0 0 22px rgba(223,185,124,.35)}
+.home-hero__sigil small{position:absolute;bottom:10%;font:700 7px var(--f-m);letter-spacing:.22em;color:#c6aa7c}
+@keyframes sigil-float{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -8px;rotate:1deg}}
+.home-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.home-shortcut{min-width:0;min-height:88px;padding:12px 10px;display:flex;flex-direction:column;justify-content:space-between;gap:12px;border:1px solid rgba(218,190,143,.16);border-radius:15px;text-align:left;background:linear-gradient(145deg,rgba(30,34,40,.92),rgba(12,15,19,.94));box-shadow:inset 0 1px rgba(255,255,255,.055),0 9px 22px rgba(0,0,0,.2);transition:transform .2s,border-color .2s,background .2s}
+.home-shortcut:hover{transform:translateY(-3px);border-color:rgba(222,194,150,.42)}
+.home-shortcut:active{transform:scale(.98)}
+.home-shortcut__icon{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(145deg,rgba(220,188,137,.2),rgba(255,255,255,.035));border:1px solid rgba(220,188,137,.2);color:#e5c999;font:700 12px var(--f-m)}
+.home-shortcut b{font:700 11px/1.1 var(--f-d);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-shortcut small{font-size:9px;color:var(--mut);line-height:1.2}
+.home-lineup{padding:15px;border:1px solid rgba(218,190,143,.16);border-radius:20px;background:linear-gradient(145deg,rgba(23,27,32,.74),rgba(9,12,16,.76));box-shadow:inset 0 1px rgba(255,255,255,.045),0 18px 38px rgba(0,0,0,.2)}
+.home-lineup .lineup{margin:0 -4px}
+.home-lineup .btn.go{width:100%;margin-top:5px}
+.home-lineup .stats{margin-top:2px}
+.home-league,.home-streak,.home-free{height:100%}
+.home-free .shop{grid-template-columns:minmax(92px,36%) minmax(0,1fr)}
+@media(max-width:390px){.home-hero{min-height:185px;padding:18px 15px}.home-hero__copy{max-width:72%}.home-hero__artifact{right:-3%;width:42%;opacity:.85}.home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-shortcut{min-height:72px}}
+@media(min-width:700px){
+ .wrap{max-width:900px}
+ #app[data-tab="home"]{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:start;gap:16px}
+ #app[data-tab="home"]>.home-hero,#app[data-tab="home"]>.home-shortcuts{grid-column:1/-1}
+ #app[data-tab="home"]>.home-lineup{grid-column:span 8}
+ #app[data-tab="home"]>.home-league{grid-column:span 4}
+ #app[data-tab="home"]>.home-streak{grid-column:span 6}
+ #app[data-tab="home"]>.home-tasks{grid-column:span 6;min-width:0}
+ #app[data-tab="home"]>.home-free{grid-column:span 6}
+ #app[data-tab="home"]>.home-tut,#app[data-tab="home"]>.note{grid-column:1/-1}
+}
+@media(min-width:1050px){.wrap{max-width:1080px}#hud .wrap{max-width:1080px}#tabs .wrap{max-width:760px}.home-hero{min-height:230px;padding:28px 30px}.home-shortcut{min-height:96px;padding:14px}}
+@media(prefers-reduced-motion:reduce){.home-hero__sigil{animation:none}.home-shortcut,.btn,.ibtn,.pc{transition:none}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -1108,14 +1216,21 @@ function vHome() {
   const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span style="display:grid;place-items:center;min-height:27px;border:1px solid ${milestone ? 'var(--gold)' : 'var(--line)'};border-radius:6px;background:${done ? 'var(--accent)' : 'var(--panel2)'};color:${done ? '#141414' : 'var(--mut)'};font:600 11px var(--f-m)">${d}</span>`; }).join('');
   const tut = st < 3 ? `<section class="pn"><h3>Первые шаги</h3><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk" style="margin-top:8px">Понятно</button></div>` : ''}${tut}
-  <section class="lobby"><div class="kv"><span>Пятёрка ${G.sqi + 1}</span><span>Рейтинг <b>${info ? info.rating.toFixed(1) : '—'}</b></span></div>
+  <section class="home-hero"><div class="home-hero__copy"><p class="home-hero__eyebrow">TACTICAL COLLECTION · CS2 UNIVERSE</p><h1>ПЯТЁРКИ<br>ЛЕГЕНД</h1><p class="home-hero__desc">Собирай легендарных игроков, создавай свою пятёрку и доказывай её силу в матчах.</p><div class="home-hero__tags"><span>5 ИГРОКОВ</span><span>СВОЯ КОЛЛЕКЦИЯ</span><span>ТВОЯ СТРАТЕГИЯ</span></div></div><div class="home-hero__artifact" aria-hidden="true"><div class="home-hero__halo"></div><div class="home-hero__sigil"><b>5</b><small>LEGENDS</small></div></div></section>
+  <section class="home-shortcuts" aria-label="Быстрые разделы">
+    <button class="home-shortcut" data-act="tab" data-v="play"><span class="home-shortcut__icon">01</span><span><b>Матчи</b><small>Проверь свою пятёрку</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="col"><span class="home-shortcut__icon">02</span><span><b>Коллекция</b><small>Все твои игроки</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="packs"><span class="home-shortcut__icon">03</span><span><b>Кейсы</b><small>Новые открытия</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="prof"><span class="home-shortcut__icon">04</span><span><b>Профиль</b><small>Твой прогресс</small></span></button>
+  </section>
+  <section class="lobby home-lineup"><div class="kv"><span>Пятёрка ${G.sqi + 1}</span><span>Рейтинг <b>${info ? info.rating.toFixed(1) : '—'}</b></span></div>
   <div class="lineup">${G.squad.map((id, i) => id == null ? `<button data-act="slot" data-v="${i}" aria-label="Пустой слот: ${RNAME[i]}"><div class="slot empty" style="display:block;padding:0"><div class="ph0">+</div></div></button>` : `<button data-act="card" data-id="${id}" aria-label="${esc(CARDS[id].nick)}">${ownH(id, 'xs')}</button>`).join('')}</div>
   ${info ? '<button class="btn pri go" data-act="fight">Играть</button>' : '<button class="btn go" data-act="goSquad">Соберите пятёрку</button>'}
   ${info ? `<div class="stats"><div class="stat"><b>${info.atk.toFixed(1)}</b><span>атака</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>защита</span></div><div class="stat"><b>${info.chem}/13</b><span>химия</span></div></div>` : ''}</section>
-  <section class="pn"><div class="kv"><span>Лига «${LEAGUES[lg][0]}»</span><span>Кубки <b>${G.tro}</b></span></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» ещё ${nx[1] - G.tro} кубков.` : 'Высшая лига достигнута.'}</p>${low ? `<p class="warn">До понижения в лигу «${LEAGUES[lg - 1][0]}» осталось ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}</section>
-  <section class="pn"><div class="kv"><span>Серия ежедневных входов</span><b>День ${streak.day} / 28</b></div><span class="bar"><i style="width:${streak.day / 28 * 100}%"></i></span><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:10px">${streakCells}</div><p class="sm mut" style="margin-top:10px">${streakReward ? 'Сегодня получено: ' + esc(streakReward) : 'Заходите каждый календарный день по Москве — пропуск сбрасывает серию.'}</p><p class="sm mut">Большие награды: день 7 — базовый кейс + 150 монет; 14 — кейс «Про» + 200; 21 — кейс «Про» + 250; 28 — элитный кейс + 400.</p></section>
-  ${st === 3 ? tasksH() : ''}
-  <section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3>${dailyReady(G, now()) ? '<button class="btn" data-act="daily">Забрать</button>' : '<p class="sm mut">Следующий — после 00:00 по Москве.</p>'}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">Неоткрытых кейсов: ${packCount()}</button>` : ''}</div></div></section>`;
+  <section class="pn home-league"><div class="kv"><span>Лига «${LEAGUES[lg][0]}»</span><span>Кубки <b>${G.tro}</b></span></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» ещё ${nx[1] - G.tro} кубков.` : 'Высшая лига достигнута.'}</p>${low ? `<p class="warn">До понижения в лигу «${LEAGUES[lg - 1][0]}» осталось ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}</section>
+  <section class="pn home-streak"><div class="kv"><span>Серия ежедневных входов</span><b>День ${streak.day} / 28</b></div><span class="bar"><i style="width:${streak.day / 28 * 100}%"></i></span><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:10px">${streakCells}</div><p class="sm mut" style="margin-top:10px">${streakReward ? 'Сегодня получено: ' + esc(streakReward) : 'Заходите каждый календарный день по Москве — пропуск сбрасывает серию.'}</p><p class="sm mut">Большие награды: день 7 — базовый кейс + 150 монет; 14 — кейс «Про» + 200; 21 — кейс «Про» + 250; 28 — элитный кейс + 400.</p></section>
+  ${st === 3 ? `<div class="home-tasks">${tasksH()}</div>` : ''}
+  <section class="pn home-free"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3>${dailyReady(G, now()) ? '<button class="btn" data-act="daily">Забрать</button>' : '<p class="sm mut">Следующий — после 00:00 по Москве.</p>'}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">Неоткрытых кейсов: ${packCount()}</button>` : ''}</div></div></section>`;
 }
 
 /* ---------- Матчи ---------- */
@@ -1539,7 +1654,7 @@ function render() {
   if (!G) return;
   try { refresh(G, now()); } catch (e) { /* задания обновятся при следующем действии */ }
   $('#hud .wrap').innerHTML = hudH();
-  const app = $('#app'); app.innerHTML = TABS[tab][1]();
+  const app = $('#app'); app.dataset.tab = tab; app.innerHTML = TABS[tab][1]();
   if (tab !== lastTab) {
     const ks = Object.keys(TABS), i = ks.indexOf(tab), j = ks.indexOf(lastTab);
     app.style.setProperty('--dir', j < 0 || i >= j ? 1 : -1); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');

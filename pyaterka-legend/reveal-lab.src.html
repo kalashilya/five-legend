@@ -49,12 +49,14 @@ const loadFlag = cc => FLAG_IMG[cc] ? Promise.resolve(FLAG_IMG[cc]) : new Promis
 /* ---------- Рендер и постобработка: сцена в HDR, свечение ярких мест, цветокоррекция, зерно, виньетка ---------- */
 const cv = $('#gl'); let R3;
 try { R3 = new THREE.WebGLRenderer({ canvas: cv, antialias: false, powerPreference: 'high-performance' }); } catch (e) { $('#nogl').style.display = 'grid'; throw e; }
-const PR = Math.min(devicePixelRatio, 2); R3.setPixelRatio(PR); R3.outputEncoding = THREE.LinearEncoding; R3.toneMapping = THREE.NoToneMapping;
+let PR = Math.min(devicePixelRatio, 1.5); R3.setPixelRatio(PR);
+const GL2 = R3.capabilities.isWebGL2, HALF = GL2 || R3.extensions.has('EXT_color_buffer_half_float') || R3.extensions.has('OES_texture_half_float');
+const Q = { rays: true, low: false }; R3.outputEncoding = THREE.LinearEncoding; R3.toneMapping = THREE.NoToneMapping;
 R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene(); scene.background = new THREE.Color(0x010204); scene.fog = new THREE.FogExp2(0x020306, .03);
 const cam = new THREE.PerspectiveCamera(36, 1, .1, 120);
 const POST = (() => {
-  const mk = (w, h, ms) => { const r = new THREE.WebGLRenderTarget(w, h, { type: THREE.HalfFloatType, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }); if (ms) r.samples = 4; return r; };
+  const mk = (w, h, ms) => { const r = new THREE.WebGLRenderTarget(Math.max(1, w | 0), Math.max(1, h | 0), { type: HALF ? THREE.HalfFloatType : THREE.UnsignedByteType, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }); if (ms && GL2 && !Q.low) r.samples = 4; return r; };
   const qs = new THREE.Scene(), qc = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2)); quad.frustumCulled = false; qs.add(quad);
   const vs = 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}';
   const bright = new THREE.ShaderMaterial({ uniforms: { t: { value: null }, th: { value: 1.7 } }, vertexShader: vs, depthTest: false,
@@ -62,7 +64,7 @@ const POST = (() => {
   const blur = new THREE.ShaderMaterial({ uniforms: { t: { value: null }, d: { value: new THREE.Vector2() } }, vertexShader: vs, depthTest: false,
     fragmentShader: 'uniform sampler2D t;uniform vec2 d;varying vec2 vUv;void main(){vec3 c=texture2D(t,vUv).rgb*.227;c+=(texture2D(t,vUv+d*1.385).rgb+texture2D(t,vUv-d*1.385).rgb)*.316;c+=(texture2D(t,vUv+d*3.231).rgb+texture2D(t,vUv-d*3.231).rgb)*.07;gl_FragColor=vec4(c,1.);}' });
   const rays = new THREE.ShaderMaterial({ uniforms: { t: { value: null }, lp: { value: new THREE.Vector2(.5, .5) }, dens: { value: .9 }, dec: { value: .955 } }, vertexShader: vs, depthTest: false,
-    fragmentShader: 'uniform sampler2D t;uniform vec2 lp;uniform float dens,dec;varying vec2 vUv;void main(){vec2 d=(vUv-lp)*dens/56.;vec2 uv=vUv;float il=1.;vec3 c=vec3(0.);for(int i=0;i<56;i++){uv-=d;c+=texture2D(t,uv).rgb*il;il*=dec;}gl_FragColor=vec4(c/18.,1.);}' });
+    fragmentShader: 'uniform sampler2D t;uniform vec2 lp;uniform float dens,dec;varying vec2 vUv;void main(){vec2 d=(vUv-lp)*dens/36.;vec2 uv=vUv;float il=1.;vec3 c=vec3(0.);for(int i=0;i<36;i++){uv-=d;c+=texture2D(t,uv).rgb*il;il*=dec;}gl_FragColor=vec4(c/13.,1.);}' });
   const comp = new THREE.ShaderMaterial({ uniforms: { s: { value: null }, b1: { value: null }, b2: { value: null }, b3: { value: null }, g: { value: null }, gk: { value: 0 }, k: { value: 1 }, ex: { value: 1 }, tm: { value: 0 }, res: { value: new THREE.Vector2() } }, vertexShader: vs, depthTest: false,
     fragmentShader: `uniform sampler2D s,b1,b2,b3,g;uniform float k,ex,tm,gk;uniform vec2 res;varying vec2 vUv;
     vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
@@ -72,14 +74,14 @@ const POST = (() => {
     c=aces(c);c=pow(c,vec3(1./2.2));float v=smoothstep(1.05,.25,length((vUv-.5)*vec2(1.,1.15))*1.25);c*=mix(.55,1.,v);
     c+=(h(vUv*res+tm)-.5)*.028;c=mix(c,c*vec3(1.02,1.,.97),.5);gl_FragColor=vec4(c,1.);}` });
   let rt, A = [], B = [], GR;
-  function size(w, h) { [rt, ...A, ...B].forEach(r => r && r.dispose()); rt = mk(w * PR, h * PR, true); A = []; B = []; for (let i = 1; i <= 3; i++) { const d = Math.pow(2, i); A.push(mk(w * PR / d, h * PR / d)); B.push(mk(w * PR / d, h * PR / d)); } GR && GR.dispose(); GR = mk(w * PR / 2, h * PR / 2); comp.uniforms.res.value.set(w * PR, h * PR); }
+  function size(w, h) { [rt, ...A, ...B].forEach(r => r && r.dispose()); rt = mk(w * PR, h * PR, true); A = []; B = []; for (let i = 1; i <= 3; i++) { const d = Math.pow(2, i); A.push(mk(w * PR / d, h * PR / d)); B.push(mk(w * PR / d, h * PR / d)); } GR && GR.dispose(); GR = mk(w * PR / 4, h * PR / 4); comp.uniforms.res.value.set(w * PR, h * PR); }
   const pass = (m, src, dst) => { if (m.uniforms.t) m.uniforms.t.value = src.texture; quad.material = m; R3.setRenderTarget(dst); R3.render(qs, qc); };
   function render(t) {
     R3.setRenderTarget(rt); R3.render(scene, cam);
     let src = rt; for (let i = 0; i < 3; i++) { if (i === 0) pass(bright, src, A[0]); else pass(blur, A[i - 1], A[i]);
       blur.uniforms.d.value.set(1 / A[i].width, 0); pass(blur, A[i], B[i]); blur.uniforms.d.value.set(0, 1 / A[i].height); pass(blur, B[i], A[i]); }
-    if (comp.uniforms.gk.value > .001) { pass(bright, rt, B[0]); pass(rays, B[0], GR); }
-    const u = comp.uniforms; u.s.value = rt.texture; u.g.value = GR.texture; u.b1.value = A[0].texture; u.b2.value = A[1].texture; u.b3.value = A[2].texture; u.tm.value = t % 10;
+    if (Q.rays && comp.uniforms.gk.value > .001) { pass(bright, rt, B[0]); pass(rays, B[0], GR); }
+    const u = comp.uniforms; u.s.value = rt.texture; u.g.value = GR.texture; u.gk.value = Q.rays ? u.gk.value : 0; u.b1.value = A[0].texture; u.b2.value = A[1].texture; u.b3.value = A[2].texture; u.tm.value = t % 10;
     quad.material = comp; R3.setRenderTarget(null); R3.render(qs, qc);
   }
   return { size, render, comp, rays };
@@ -108,7 +110,7 @@ const tint = new THREE.Color('#6f7a86'), tintTo = new THREE.Color('#6f7a86');
   es.background = new THREE.Color(0x030405); panel(8, 2.4, 0, 7, 3, 0xffffff); panel(2, 6, -7, 1.5, 1, 0x8fa3ba); panel(2, 6, 7, 1.5, 1, 0xbaa38f); panel(10, 1.2, 0, 1, -8, 0x404650); panel(3, 3, 0, -6, 0, 0x111111);
   scene.environment = pm.fromScene(es, .02).texture; pm.dispose(); }
 scene.add(new THREE.HemisphereLight(0x9aa8b8, 0x050505, .25));
-const key = new THREE.SpotLight(0xffffff, 5, 30, .45, .6, 1.3); key.position.set(1.8, 9.5, 5.5); key.target.position.set(0, .5, 0); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -.0003; key.shadow.radius = 4; scene.add(key, key.target);
+const key = new THREE.SpotLight(0xffffff, 5, 30, .45, .6, 1.3); key.position.set(1.8, 9.5, 5.5); key.target.position.set(0, .5, 0); key.castShadow = true; key.shadow.mapSize.set(512, 512); key.shadow.bias = -.0003; key.shadow.radius = 4; scene.add(key, key.target);
 const rimL = new THREE.PointLight(0xffffff, 4, 14, 2), rimR = rimL.clone(); rimL.position.set(-3.6, 2.8, -2); rimR.position.set(3.6, 2.8, -2); scene.add(rimL, rimR);
 const fill = new THREE.PointLight(0xffffff, 0, 8, 2); fill.position.set(0, 2.2, 3.2); scene.add(fill);
 
@@ -346,7 +348,7 @@ function reset(k) {
   document.querySelectorAll('[data-k]').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
 }
 function open() {
-  if (phase !== 'idle') return; phase = 'run'; T0 = performance.now() / 1000; $('#hint').style.visibility = 'hidden';
+  if (phase !== 'idle') return; phase = 'run'; S.time = 0; $('#hint').style.visibility = 'hidden';
   const W = P.ovr >= WALK, c = new THREE.Color(P.col);
   const at = (t, f) => steps.push([reduce ? Math.min(t, .3) : t, f]);
   at(0, () => { latches[0].open = 1; S.shake = .35; S.straight = 1; });
@@ -381,10 +383,16 @@ const start = k => loadFlag(DEMO[k].cc).then(() => reset(k));
 document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => start(b.dataset.k)));
 $('#openBtn').addEventListener('click', open); $('#skip').addEventListener('click', skip);
 
+/* ---------- Качество: если устройство не тянет, снижаем чёткость и отключаем лучи и тени ---------- */
+function perf(d) { if (Q.low || !d || d > 1) return; perf.n = (perf.n || 0) + 1; perf.s = (perf.s || 0) + d; if (perf.n < 90) return;
+  const avg = perf.s / perf.n; perf.n = perf.s = 0; if (avg > 1 / 32) { Q.low = true; Q.rays = false; PR = 1; R3.setPixelRatio(1); R3.shadowMap.enabled = false; key.castShadow = false; scene.traverse(o => { if (o.material) o.material.needsUpdate = true; }); resize(); } }
+cv.addEventListener('webglcontextlost', e => { e.preventDefault(); $('#nogl').textContent = 'Видеокарта перегружена. Обновите страницу.'; $('#nogl').style.display = 'grid'; });
+
 /* ---------- Кадр ---------- */
 let last = performance.now() / 1000;
 function frame() {
-  const now = performance.now() / 1000, dt = Math.min(.05, now - last); last = now; const t = phase === 'idle' ? 0 : now - T0;
+  const now = performance.now() / 1000, dt = Math.min(.05, Math.max(0, now - last)); last = now; if (phase !== 'idle') S.time = (S.time || 0) + dt; const t = phase === 'idle' ? 0 : S.time;
+  perf(now - (perf.l || now)); perf.l = now;
   while (steps.length && steps[0][0] <= t) steps.shift()[1]();
   tint.lerp(tintTo, 1 - Math.exp(-dt * 2.2));
   /* арена */
@@ -411,7 +419,7 @@ function frame() {
   if (S.snap) { S.riseT = 1; rot = S.face ? Math.PI * 2 : Math.PI; S.snap = 0; }
   if (S.rise) S.riseT = clamp(S.riseT + dt / 1.7, 0, 1);
   const rt = easeIO(S.riseT), y0 = (SLOT_Y + .03) * CS, z0 = caseG.position.z + SLOT.z * CS;
-  cardPivot.position.set(0, lerp(y0, CARD_Y, rt) + Math.sin(rt * Math.PI) * .35 + (S.riseT >= 1 ? Math.sin(now * 1.1) * .035 : 0), lerp(z0, .32, rt) + Math.sin(rt * Math.PI) * .6);
+  cardPivot.position.set(0, lerp(y0, CARD_Y, rt) + Math.sin(rt * Math.PI) * .2 + (S.riseT >= 1 ? Math.sin(now * 1.1) * .035 : 0), lerp(z0, .32, rt) + Math.sin(rt * Math.PI) * .25);
   rot = damp(rot, S.face ? Math.PI * 2 : Math.PI, S.face ? 5.5 : 3, dt);
   const ch = S.charge && !S.face ? Math.sin(now * 42) * (S.rise ? .02 : .012) : 0;
   const tiltX = phase === 'done' ? -ptr.y * .18 + Math.sin(now * .9) * .03 : Math.sin(now * .9) * .03 * rt, tiltY = phase === 'done' ? ptr.x * .32 + Math.sin(now * .6) * .06 : Math.sin(now * .7) * .05 * rt;
@@ -431,7 +439,8 @@ function frame() {
   { const src = new THREE.Vector3(); if (S.rise) src.copy(cardPivot.position); else { src.set(0, SLOT_Y + .2, SLOT.z); caseG.localToWorld(src); } src.project(cam); POST.rays.uniforms.lp.value.set(src.x * .5 + .5, src.y * .5 + .5);
     S.godV = damp(S.godV, S.god * S.lightT, 2.5, dt); POST.comp.uniforms.gk.value = S.godV * .7 * (1 + flashV * .8); }
   flashV = Math.max(0, flashV - dt * 2.6); POST.comp.uniforms.k.value = .5 + flashV * 1.2; POST.comp.uniforms.ex.value = .92 + flashV * .45;
-  POST.render(now); requestAnimationFrame(frame);
+  try { POST.render(now); } catch (e) { R3.setRenderTarget(null); R3.toneMapping = THREE.ACESFilmicToneMapping; R3.outputEncoding = THREE.sRGBEncoding; R3.render(scene, cam); }
+  requestAnimationFrame(frame);
 }
 (document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(() => start('elite')).then(() => requestAnimationFrame(frame));
 </script></body></html>

@@ -2966,6 +2966,15 @@
       "countryCode": "CN",
       "team": "TYLOO",
       "verifiedAt": "2026-11-11"
+    },
+    "mzinho": {
+      "profileId": 21001,
+      "profileUrl": "https://www.hltv.org/player/21001/mzinho",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/rnJ9WXwUWU_wrL3KzL91s6.png?ixlib=java-2.1.0&s=cd9c01bb64d5c83a10fd16719dc295d0&w=400",
+      "country": "Монголия",
+      "countryCode": "MN",
+      "team": "BC.Game",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

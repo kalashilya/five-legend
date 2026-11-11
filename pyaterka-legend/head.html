@@ -1169,4 +1169,18 @@ body{background:transparent;color:var(--fg)}
 .match-dossier>.stats .stat b{font-size:22px;color:#edf5fa}
 @media(max-width:760px){#app[data-tab="play"]>.match-dossier{grid-column:auto}.match-dossier__slot{grid-template-columns:18px 38px minmax(0,1fr) auto;gap:8px;padding:6px}.match-dossier__portrait{width:38px;min-width:38px}.match-dossier__identity b{font-size:15px}}
 
+
+/* 91–99 legendary reveal: additional gold arena ring, crown label and stronger finish */
+.wo-legend:before{content:"";position:absolute;z-index:-1;left:50%;top:47%;width:min(78vw,500px);aspect-ratio:1;border:1px solid rgba(244,215,157,.68);border-radius:50%;transform:translate(-50%,-50%) rotateX(68deg);box-shadow:0 0 0 12px rgba(229,190,116,.055),0 0 0 28px rgba(229,190,116,.035),0 0 55px rgba(229,190,116,.2),inset 0 0 35px rgba(229,190,116,.14);animation:legend-ring 2.8s cubic-bezier(.16,1,.3,1) both}
+.wo-legend:after{content:"LEGENDARY PLAYER  /  91+";position:absolute;z-index:4;top:5%;left:0;right:0;text-align:center;color:#f0d9a8;font:700 9px var(--f-m);letter-spacing:.32em;text-shadow:0 0 18px rgba(238,197,117,.75);opacity:.92}
+.wo-legend .wo-rays{background:repeating-conic-gradient(from 0deg at 50% 46%,rgba(241,207,142,.34) 0 3deg,transparent 3deg 10deg);animation-duration:8s}
+.wo-legend .wo-floor{background:repeating-linear-gradient(60deg,transparent 0 34px,rgba(236,199,126,.58) 34px 36px),repeating-linear-gradient(-60deg,transparent 0 34px,rgba(236,199,126,.58) 34px 36px),repeating-linear-gradient(0deg,transparent 0 30px,rgba(236,199,126,.42) 30px 32px),linear-gradient(180deg,transparent,rgba(194,145,67,.35))}
+.wo-legend .wo-crack svg{stroke:#fff0c8;stroke-width:.85;filter:drop-shadow(0 0 5px #f0c875) drop-shadow(0 0 14px rgba(237,184,91,.85))}
+.wo-legend .wo-card.rim{filter:drop-shadow(0 0 3px #fff5d8) drop-shadow(0 0 18px #e7bd72) drop-shadow(0 0 42px rgba(232,183,96,.8))}
+.wo-legend.done .wo-rays{background:repeating-conic-gradient(from 0deg at 50% 46%,rgba(255,230,177,.58) 0 3deg,transparent 3deg 9deg)}
+.wo-legend.done .wo-face{animation:legend-card .9s cubic-bezier(.16,1,.3,1) both}
+@keyframes legend-ring{0%{opacity:0;transform:translate(-50%,-50%) rotateX(68deg) scale(.35)}45%{opacity:1}100%{opacity:.78;transform:translate(-50%,-50%) rotateX(68deg) scale(1)}}
+@keyframes legend-card{0%{opacity:0;transform:perspective(1100px) translateY(32px) rotateY(-24deg) rotateX(8deg) scale(.72);filter:brightness(2.2) blur(5px)}65%{opacity:1;filter:brightness(1.35) blur(0)}100%{transform:perspective(1100px) translateY(0) rotateY(0) rotateX(0) scale(1);filter:none}}
+@media(prefers-reduced-motion:reduce){.wo-legend:before,.wo-legend .wo-face{animation:none!important}}
+
 </style>

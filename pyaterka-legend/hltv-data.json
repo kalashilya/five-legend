@@ -2990,6 +2990,78 @@
       "countryCode": "MN",
       "team": "BC.Game",
       "verifiedAt": "2026-11-11"
+    },
+    "Patsi": {
+      "profileId": 19673,
+      "profileUrl": "https://www.hltv.org/player/19673/patsi",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/njurj6wAY1GxLMtyWOGucz.png?ixlib=java-2.1.0&s=dda335923c1da2db003156a7dbc2929e&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "Virtus.pro",
+      "verifiedAt": "2026-11-11"
+    },
+    "autimatic": {
+      "profileId": 8735,
+      "profileUrl": "https://www.hltv.org/player/8735/autimatic",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/6KSiG7ElWjykOS1pA59nxl.png?ixlib=java-2.1.0&s=329ae3e2e0bd351f6b9317609bf1e504&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Without a Roof",
+      "verifiedAt": "2026-11-11"
+    },
+    "Brehze": {
+      "profileId": 9136,
+      "profileUrl": "https://www.hltv.org/player/9136/brehze",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/X4c_wVY8szBOLR8lz8zr2L.png?ixlib=java-2.1.0&s=17dc902e3a1ed3efec27681ae2ead87d&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Without a Roof",
+      "verifiedAt": "2026-11-11"
+    },
+    "reyoz": {
+      "profileId": 23477,
+      "profileUrl": "https://www.hltv.org/player/23477/reyoz",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/zjhPRHMguMr9U5SPEYqMfi.png?ixlib=java-2.1.0&s=c74b52c23775c9059f6e75e826c9bc2e&w=400",
+      "country": "Германия",
+      "countryCode": "DE",
+      "team": "Enjoy",
+      "verifiedAt": "2026-11-11"
+    },
+    "consti": {
+      "profileId": 19177,
+      "profileUrl": "https://www.hltv.org/player/19177/consti",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/7NZPDLvv0eNMHZEsSt-htT.png?ixlib=java-2.1.0&s=add62883a94ee583291313081a11ce0c&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Ludens Gecko",
+      "verifiedAt": "2026-11-11"
+    },
+    "oz1k": {
+      "profileId": 23771,
+      "profileUrl": "https://www.hltv.org/player/23771/oz1k",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/civ76OgrxcSYjQeT1cQ89Z.png?ixlib=java-2.1.0&s=a490ddbc08fb9d2390fdb33c5b306971&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "Color",
+      "verifiedAt": "2026-11-11"
+    },
+    "motm": {
+      "profileId": 13230,
+      "profileUrl": "https://www.hltv.org/player/13230/motm",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/7yEfAzI8kKGsanXN6yLma8.png?ixlib=java-2.1.0&s=f7fe808c9e42e5f18fb1d8feb4a2cb70&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Ludens Gecko",
+      "verifiedAt": "2026-11-11"
+    },
+    "n0rths": {
+      "profileId": 24835,
+      "profileUrl": "https://www.hltv.org/player/24835/n0rths",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/gpEky747wqte2CxZgtN78v.png?ixlib=java-2.1.0&s=f9210e9b4c8614a12b9d34a6d69d1423&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "Inner Circle Academy",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

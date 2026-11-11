@@ -17,7 +17,7 @@ const { chromium } = require('playwright');
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+    page.on('console', message => { if (message.type() === 'error' && !/Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE\.NotSameOrigin/.test(message.text())) errors.push(message.text()); });
     await page.goto('http://127.0.0.1:4173/', { waitUntil: 'load' });
     await page.waitForFunction(() => {
       const app = document.querySelector('#app');

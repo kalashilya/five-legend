@@ -290,25 +290,49 @@ function abH(c, lv) {
 }
 /* Лиги: где игрок сейчас, сколько до следующей, награды, доля игроков в каждой лиге */
 const plural = (n, a, b, c) => { const m = Math.abs(n) % 100, k = m % 10; return m > 10 && m < 20 ? c : k === 1 ? a : k > 1 && k < 5 ? b : c; };
-const seasonPrize = i => [S_COINS[i] + ' монет', i >= 5 ? 'кейс «Элитный»' : i >= 3 ? 'кейс «Про»' : i >= 1 ? 'кейс «Базовый»' : ''].filter(Boolean).join(' + ');
+const seasonPack = i => i >= 5 ? 'elite' : i >= 3 ? 'pro' : i >= 1 ? 'basic' : null;
+const cupSvg = '<svg class="lg-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 2h10v2h4v3a5 5 0 0 1-4.3 5A5 5 0 0 1 13 14.9V18h3v3H8v-3h3v-3.1A5 5 0 0 1 7.3 12 5 5 0 0 1 3 7V4h4zm-2 4v1a3 3 0 0 0 2 2.8V6zm12 0v3.8A3 3 0 0 0 19 7V6z"/></svg>';
+const lgCoins = n => `<span class="lg-coins" aria-hidden="true"><i class="coin"></i><i class="coin"></i><i class="coin"></i></span>`;
+const lgCase = t => `<span class="lg-case" aria-hidden="true">${pkH(t)}</span>`;
+const lgTile = (art, big, small, st) => `<div class="lg-tile ${st || ''}">${art}<b>${big}</b><small>${small}</small></div>`;
+/* Лиги: лестница от Легенды (вверху) до Бронзы; при открытии страница плавно опускается к лиге игрока */
 function leaguesH() {
-  const lg = leagueOf(G.tro), best = leagueOf(G.best), nx = LEAGUES[lg + 1], lo = LEAGUES[lg][1];
-  const pct = nx ? Math.max(0, Math.min(100, (G.tro - lo) / (nx[1] - lo) * 100)) : 100;
+  const lg = leagueOf(G.tro), best = leagueOf(G.best), N = LEAGUES.length;
   const pop = lbBots(G.season.m, now()).map(b => b.tro).concat([G.tro]), cnt = LEAGUES.map((_, i) => pop.filter(t => leagueOf(t) === i).length);
-  const share = cnt.map(n => n / pop.length * 100), fmt = v => v > 0 && v < 1 ? '<1' : String(Math.round(v));
-  const rows = LEAGUES.map(([n, from], i) => { const to = LEAGUES[i + 1] ? LEAGUES[i + 1][1] - 1 : null, me = i === lg;
-    const up = i === 0 ? 'стартовая лига' : i <= best ? 'кейс «Про» — получено' : 'кейс «Про» за первый выход';
-    return `<div class="lg-row ${me ? 'is-me' : ''} ${i <= best ? 'is-got' : ''}" style="--lc:${LCOL[i]}"><span class="lg-ic">${rankH(i)}</span>
-      <div class="lg-main"><b>${n}${me ? ' <span class="lg-you">вы здесь</span>' : ''}</b><small>${to === null ? 'от ' + from : from + '–' + to} кубков</small><small class="lg-rw">${up}</small><small class="lg-rw">Итог сезона: ${seasonPrize(i)}${S_DROP[i] ? ' · −' + S_DROP[i] + ' кубков' : ''}</small></div>
-      <div class="lg-share"><b>${fmt(share[i])}%</b><span class="lg-bar"><i style="width:${Math.max(share[i] > 0 ? 3 : 0, share[i])}%"></i></span><small>игроков</small></div></div>`; }).join('');
-  const next = nx ? `<p class="lg-next">До лиги «${nx[0]}» — <b>${nx[1] - G.tro}</b> ${plural(nx[1] - G.tro, 'кубок', 'кубка', 'кубков')}. ${lg + 1 > best ? 'За первый выход в неё — кейс «Про».' : 'Кейс за эту лигу уже получен.'}</p>` : '<p class="lg-next">Вы в высшей лиге. Держитесь в ней до конца сезона.</p>';
-  return `<div class="in"><div class="wrap col lg-sheet"><h2>Лиги</h2>
-    <div class="lg-cur" style="--lc:${LCOL[lg]}"><span class="lg-ic big">${rankH(lg)}</span><div><small class="eyebrow">Текущая лига</small><b>${LEAGUES[lg][0]}</b><span class="num">${G.tro} кубков · рекорд ${G.best}</span></div></div>
-    <span class="lg-prog" aria-label="Прогресс до следующей лиги ${Math.round(pct)}%"><i style="width:${pct}%"></i></span>${next}
-    <p class="sm mut">Победа даёт +25 кубков (+30, если выиграли больше чем на 5 раундов), поражение отнимает 25 (30 при сухом счёте). Сезон длится месяц: в конце — награда по лиге и сброс части кубков.</p>
+  const fmt = v => v > 0 && v < 1 ? '<1' : String(Math.round(v));
+  const rows = LEAGUES.map(([n, from], i) => ({ n, from, i })).reverse().map(({ n, from, i }) => {
+    const to = LEAGUES[i + 1] ? LEAGUES[i + 1][1] : null, me = i === lg, got = i <= best, sh = cnt[i] / pop.length * 100, pk = seasonPack(i);
+    const status = me ? (to ? `<div class="lg-status"><span>Вы здесь: <b>${G.tro}</b> из ${to} до лиги «${LEAGUES[i + 1][0]}»</span><span class="lg-prog"><i style="width:${Math.max(0, Math.min(100, (G.tro - from) / (to - from) * 100))}%"></i></span><span>Осталось <b>${to - G.tro}</b> ${plural(to - G.tro, 'кубок', 'кубка', 'кубков')}</span></div>` : `<div class="lg-status"><span>Вы в высшей лиге: <b>${G.tro}</b> кубков</span></div>`)
+      : i > lg ? `<div class="lg-status"><span>Нужно <b>${from}</b> кубков — ещё <b>${from - G.tro}</b></span></div>` : `<div class="lg-status"><span>Лига пройдена${got && i < lg ? '' : ''}</span></div>`;
+    const first = i === 0 ? `<p class="sm mut">Стартовая лига — здесь начинают все.</p>` : `<div class="lg-tiles">${lgTile(lgCase('pro'), 'Кейс «Про»', got ? 'уже получен' : 'сразу при входе в лигу', got ? 'is-got' : '')}</div><p class="sm mut">Даётся один раз — когда кубков впервые хватает на эту лигу.</p>`;
+    const season = `<div class="lg-tiles">${lgTile(lgCoins(), S_COINS[i] + ' монет', 'на счёт')}${pk ? lgTile(lgCase(pk), 'Кейс «' + PACKS[pk].n + '»', 'во «Входящие»') : ''}</div>`;
+    const drop = S_DROP[i] ? `<div class="lg-drop">${cupSvg}<div><b>−${S_DROP[i]} ${plural(S_DROP[i], 'кубок', 'кубка', 'кубков')}</b><small>${me ? `в начале нового сезона: было бы ${G.tro} → ${Math.max(0, G.tro - S_DROP[i])}` : 'снимается в начале нового сезона'}</small></div></div>` : `<div class="lg-drop is-none">${cupSvg}<div><b>Кубки не снимаются</b><small>в Бронзе сезон начинается с тех же кубков</small></div></div>`;
+    return `<details class="lg-row ${me ? 'is-me' : ''} ${got ? 'is-got' : ''} ${i > lg ? 'is-up' : ''}" ${me ? 'id="lg-me" open' : ''} style="--lc:${LCOL[i]}">
+      <summary><span class="lg-node">${rankH(i)}</span><span class="lg-main"><b>${n}${me ? ' <span class="lg-you">вы здесь</span>' : ''}</b><small>${cupSvg}${to ? from + '–' + (to - 1) : 'от ' + from}</small></span>
+        <span class="lg-chips"><span class="lg-chip"><i class="coin"></i>${S_COINS[i]}</span>${pk ? `<span class="lg-chip lg-chip--case">${lgCase(pk)}</span>` : ''}</span>
+        <span class="lg-share"><b>${fmt(sh)}%</b><small>игроков</small></span><span class="lg-chev" aria-hidden="true"></span></summary>
+      <div class="lg-body">${status}
+        <h4>Награда за выход в лигу</h4>${first}
+        <h4>Награда за итог сезона</h4><p class="sm mut">Если в последний день месяца вы в этой лиге:</p>${season}
+        <h4>Кубки в новом сезоне</h4>${drop}
+        <h4>Игроки в лиге</h4><div class="lg-pop"><span class="lg-bar"><i style="width:${Math.max(sh > 0 ? 2 : 0, sh)}%"></i></span><span><b>${fmt(sh)}%</b> · ${cnt[i]} из ${pop.length} в таблице сезона</span></div>
+      </div></details>`; }).join('');
+  return `<div class="in lg-page"><div class="lg-top"><div><small class="eyebrow">Лиги</small><b>${LEAGUES[lg][0]} · ${G.tro} ${cupSvg}</b></div><button class="lg-x" data-act="close" aria-label="Закрыть">✕</button></div>
+    <div class="wrap col lg-sheet"><p class="lg-hint sm mut">Сверху — высшая лига. Нажмите на лигу, чтобы увидеть награды и условия.</p>
     <div class="lg-list">${rows}</div>
-    <p class="sm mut">Доля игроков посчитана по таблице лидеров сезона (${pop.length} участников). Пока сервера нет, соперники в таблице — боты игры; реальные проценты появятся вместе с онлайном.</p>
+    <section class="lg-rules"><h4>Как набираются кубки</h4><p class="sm mut">Победа +25 (+30, если выиграли больше чем на 5 раундов). Поражение −25 (−30 при сухом счёте). Сезон длится месяц.</p>
+    <p class="sm mut">Доля игроков посчитана по таблице лидеров сезона (${pop.length} участников). Пока сервера нет, соперники в таблице — боты игры; реальные проценты появятся вместе с онлайном.</p></section>
     <div class="rowb"><button class="btn pri" data-act="close">Закрыть</button></div></div></div>`;
+}
+/* плавный спуск от верха страницы (Легенда) к лиге игрока; любое касание или прокрутка останавливает его */
+function lgScroll() {
+  const box = $('#sheet .in.lg-page'), me = $('#lg-me'); if (!box || !me) return;
+  box.scrollTop = 0; const target = Math.max(0, Math.min(box.scrollHeight - box.clientHeight, me.getBoundingClientRect().top - box.getBoundingClientRect().top - box.clientHeight * .22));
+  if (noMotion() || target < 8) { box.scrollTop = target; return; }
+  let stop = false, t0 = 0; const quit = () => { stop = true; }; ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(k => box.addEventListener(k, quit, { once: true, passive: true }));
+  const D = Math.min(2200, 900 + target * .9), ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const step = ts => { if (stop || !box.isConnected) return; if (!t0) t0 = ts; const k = Math.min(1, (ts - t0) / D); box.scrollTop = target * ease(k); if (k < 1) requestAnimationFrame(step); };
+  setTimeout(() => requestAnimationFrame(step), 450);
 }
 function vSheet() {
   if (!sheet) return '';
@@ -704,6 +728,7 @@ function render() {
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()) };
   $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${dots[k] ? '<span class="dot"></span>' : ''}</button>`).join('');
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
+  if (sheet && sheet.t === 'leagues' && sheet.go) { sheet.go = 0; lgScroll(); }
   const ov = $('#over');
   if (!OV && G.picks.length && !sheet) OV = { t: 'pick', built: false };
   if (!OV) { if (RV) rvDrop(); ov.innerHTML = ''; ov.hidden = true; ov.classList.remove('po3d'); }
@@ -724,7 +749,7 @@ const ACT = {
   snd(v) { snd = v; try { localStorage.setItem(SKEY, v); } catch (e) { /* не сохранится */ } sfx('win'); },
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },
-  leagues() { sheet = { t: 'leagues' }; },
+  leagues() { sheet = { t: 'leagues', go: 1 }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },
   slot(v) { sheet = { t: 'slot', slot: +v }; },
   goSquad() { tab = 'col'; sub = 'squads'; window.scrollTo(0, 0); },

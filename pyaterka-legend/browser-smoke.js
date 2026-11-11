@@ -59,8 +59,27 @@ const { chromium } = require('playwright');
       }
       layouts.push(viewport.width + 'px');
     }
+    await page.setViewportSize({ width: 390, height: 844 });
+    const sections = [
+      { tab: 'col', selector: '.grid', label: 'Коллекция' },
+      { tab: 'packs', selector: '.pk', label: 'Кейсы' },
+      { tab: 'play', selector: '.sqtab, .btn.go', label: 'Матчи' },
+      { tab: 'prof', selector: '.stats, .prow, .pn', label: 'Профиль' }
+    ];
+    for (const section of sections) {
+      await page.locator('#tabs button[data-v="' + section.tab + '"]').click();
+      await page.waitForFunction(tab => document.querySelector('#app')?.dataset.tab === tab, section.tab);
+      const sectionState = await page.evaluate(selector => ({
+        text: document.querySelector('#app')?.innerText?.trim() || '',
+        content: !!document.querySelector('#app ' + selector),
+        scrollWidth: document.documentElement.scrollWidth,
+        width: innerWidth
+      }), section.selector);
+      if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно');
+      if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');
+    }
     if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));
-    console.log('Browser smoke OK: app rendered; responsive layouts ' + layouts.join(', ') + '; no overflow, card displacement or page errors.');
+    console.log('Browser smoke OK: responsive layouts ' + layouts.join(', ') + '; home, collection, cases, matches and profile rendered; no overflow, card displacement or page errors.');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

@@ -655,6 +655,36 @@
       "team": "The MongolZ",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/-7D-1xRFNr6ZtHox19bG3O.png?ixlib=java-2.1.0&s=45b7b8147c51f52e4388a22022de90dd&w=400",
       "profileUrl": "https://www.hltv.org/player/23402/cobrazera"
+    },
+    "KaiR0N-": {
+      "profileId": 19920,
+      "team": "Nemiga",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/o8Ma3q1RcjPo_SAdGv0Uhl.png?ixlib=java-2.1.0&s=2123dd2ff167619994631a7cf5bedc69&w=400",
+      "profileUrl": "https://www.hltv.org/player/19920/kair0n-"
+    },
+    "Xant3r": {
+      "profileId": 20387,
+      "team": "Nemiga",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/gNc_ru2F-tlk_6D6EXF3p_.png?ixlib=java-2.1.0&s=94af9d9f2eba7dafe2a6eacfc4dff73b&w=400",
+      "profileUrl": "https://www.hltv.org/player/20387/xant3r"
+    },
+    "robo": {
+      "profileId": 22864,
+      "team": "Nemiga",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/zRiQyB72PlW-x0RZiBGbw1.png?ixlib=java-2.1.0&s=3aec5d81dedf3d79bb45c62fa051828f&w=400",
+      "profileUrl": "https://www.hltv.org/player/22864/robo"
+    },
+    "khaN": {
+      "profileId": 23317,
+      "team": "Nemiga",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Xzr1A0yvjarZTD2SdzlFfr.png?ixlib=java-2.1.0&s=8d46501505406de38c87bdeac809821f&w=400",
+      "profileUrl": "https://www.hltv.org/player/23317/khan"
+    },
+    "syph0": {
+      "profileId": 23319,
+      "team": "Nemiga",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/VS46puTiOHsKl3-7Q1WYui.png?ixlib=java-2.1.0&s=481f9a7f9dd19cc78b9c4058bc798afc&w=400",
+      "profileUrl": "https://www.hltv.org/player/23319/syph0"
     }
   }
 }

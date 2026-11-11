@@ -42,8 +42,8 @@ ok('16 полных HLTV-профилей и статистика HLTV подк�
   assert.strictEqual(E.indOf(junior).n, 'Снайпер'); assert.strictEqual(E.indOf(leakz).n, 'Трейдер');
 });
 console.log('1. Карточки и база');
-ok('551 карточка, номера уникальны, особые версии на месте', () => { assert.strictEqual(E.ALL.length, 551); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 551); assert.strictEqual(E.MVPP.length, 8); assert.strictEqual(E.IFP.flat().length, 43); });
-ok('редкости 240/150/75/27/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [240, 150, 75, 27, 8]));
+ok('717 карточек, номера уникальны, особые версии на месте', () => { assert.strictEqual(E.ALL.length, 717); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 717); assert.strictEqual(E.MVPP.length, 8); assert.strictEqual(E.IFP.flat().length, 56); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
+ok('редкости 388/152/78/27/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [388, 152, 78, 27, 8]));
 ok('у каждой карточки шесть показателей от 40 до 99', () => E.ALL.forEach(c => Object.values(c.st).forEach(v => assert(v >= 40 && v <= 99))));
 ok('обновление базы: трансфер создаёт новую карточку, старая остаётся архивной с тем же номером', () => {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-')); for (const f of ['gen.js', 'teams.txt', 'ids.json']) fs.copyFileSync(f, path.join(d, f));

@@ -65,7 +65,7 @@ function faceH(c) {
   const s = slug(c.nick);
   // Используем только точный URL фотографии, сохранённый из профиля HLTV.
   // Не конструируем адрес по profileId: у HLTV CDN URL содержит уникальный токен.
-  let u = c.hltv && typeof c.hltv.photo === 'string' && /^https:\/\/img-cdn\.hltv\.org\//.test(c.hltv.photo)
+  let u = c.hltv && typeof c.hltv.photo === 'string' && /^https:\/\/(?:img-cdn|static)\.hltv\.org\//.test(c.hltv.photo)
     ? c.hltv.photo : IMG[c.base];
   if (!u && s && typeof PH[s] === 'string') u = PH[s];
   if (!u && s && PH[s] === undefined) { PH[s] = 0; probe(s, 0); }

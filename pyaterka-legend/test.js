@@ -28,9 +28,10 @@ const P = {
 };
 function sim(o, tro, pol, n = N) { let w = 0, r = 0; for (let i = 0; i < n; i++) { const sq = mkSq(o), m = new E.Match(sq, tro, E.squadInfo(sq).rating, { capt: 4 }); let g = 0; while (!m.over && g++ < 40) { const [c, p] = pol(m); assert(m.play(c, p), 'раунд должен разыграться'); } assert(m.over); if (m.won) w++; r += m.hist.length; } return { win: 100 * w / n, rounds: r / n }; }
 
-ok('15 полных HLTV-профилей и статистика HLTV подключены к карточкам', () => {
+ok('16 полных HLTV-профилей и статистика HLTV подключены к карточкам', () => {
   const profiled = E.ALL.filter(c => c.hltv && c.hltv.photo && c.hltv.country && c.hltv.teamLogo && !c.sp && !c.hist);
-  assert.strictEqual(profiled.length, 15);
+  assert.strictEqual(profiled.length, 16);
+  assert.strictEqual(new Set(E.ALL.filter(c => !c.sp && !c.hist).map(c => c.team)).size, 125, 'в базе должны быть ровно 125 команд HLTV');
   const verified = E.ALL.filter(c => c.hltv && !c.sp && !c.hist), base = E.ALL.filter(c => !c.sp && !c.hist), donk = base.find(c => c.nick === 'donk'), zywoo = base.find(c => c.nick === 'ZywOo');
   assert(donk && zywoo); assert.strictEqual(donk.ovr, 98); assert.strictEqual(donk.st.aim, 97); assert.strictEqual(donk.st.ent, 88);
   assert.strictEqual(donk.hltv.last12m.maps, 177); assert.strictEqual(donk.hltv.last3m.rating3, 1.34);

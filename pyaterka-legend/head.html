@@ -528,60 +528,83 @@ button:has(>.pc):hover>.pc{transform:translateY(-5px) rotateY(-2deg);filter:drop
 @media(prefers-reduced-motion:reduce){.home-hero__sigil{animation:none}.home-shortcut,.btn,.ibtn,.pc{transition:none}}
 
 
-/* ===== ARENA UPDATE: live CS2 tournament atmosphere ===== */
-#scene{background:linear-gradient(180deg,#080d16 0%,#111b2a 38%,#111820 65%,#05070a 100%)}
-#scene .sun,#scene .beam,#scene .fog,#scene .floor{display:none}
-#scene .pan{display:none}
-.arena-world{position:absolute;inset:0;overflow:hidden;perspective:900px;background:
- radial-gradient(ellipse at 50% 46%,rgba(37,78,119,.2),transparent 46%),
- linear-gradient(180deg,rgba(3,7,13,.12),rgba(3,5,8,.35) 55%,#05070a 100%)}
-.arena-ceiling{position:absolute;left:-8%;right:-8%;top:-9%;height:31%;transform:perspective(700px) rotateX(-18deg);border-bottom:1px solid rgba(150,184,215,.18);background:
- repeating-linear-gradient(90deg,transparent 0 8.5%,rgba(120,157,190,.13) 8.6% 8.8%,transparent 9% 17%),
- repeating-linear-gradient(0deg,transparent 0 28px,rgba(120,157,190,.1) 29px 30px),
- linear-gradient(180deg,#080d15,#111c2a 75%,transparent)}
-.arena-ceiling i{position:absolute;bottom:0;width:2px;height:80%;background:linear-gradient(180deg,rgba(151,194,235,.5),transparent);box-shadow:0 0 20px rgba(91,158,224,.3)}
-.arena-ceiling i:nth-child(1){left:22%;transform:rotate(18deg)}.arena-ceiling i:nth-child(2){left:50%;height:100%}.arena-ceiling i:nth-child(3){right:22%;transform:rotate(-18deg)}
-.arena-light{position:absolute;z-index:1;top:5%;width:38vw;height:76vh;filter:blur(15px);opacity:.34;mix-blend-mode:screen;transform-origin:top}
-.arena-light--left{left:8%;transform:rotate(25deg);background:linear-gradient(180deg,rgba(102,174,255,.35),transparent 75%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
-.arena-light--right{right:8%;transform:rotate(-25deg);background:linear-gradient(180deg,rgba(236,185,112,.24),transparent 75%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
-.arena-screen{position:absolute;z-index:2;top:23%;height:17%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid rgba(123,177,225,.28);background:linear-gradient(145deg,rgba(17,35,54,.94),rgba(4,10,18,.98));box-shadow:0 0 35px rgba(48,118,184,.18),inset 0 0 22px rgba(91,158,224,.12);color:#dbeeff;text-shadow:0 0 14px rgba(91,158,224,.5);transform:perspective(700px) rotateY(-9deg)}
-.arena-screen--left{left:5%;width:17%;height:13%;top:27%;opacity:.72}
-.arena-screen--right{right:5%;width:17%;height:13%;top:27%;transform:perspective(700px) rotateY(9deg);opacity:.72}
-.arena-screen--main{left:25%;right:25%;height:20%;top:19%;border-color:rgba(203,169,116,.42);background:linear-gradient(135deg,rgba(23,38,53,.96),rgba(5,10,16,.98) 65%,rgba(54,39,24,.82));box-shadow:0 0 55px rgba(68,139,201,.2),0 12px 60px rgba(0,0,0,.5),inset 0 0 35px rgba(202,166,112,.1);transform:perspective(900px) rotateX(2deg)}
-.arena-screen--main small{font:700 clamp(6px,.8vw,9px) var(--f-m);letter-spacing:.24em;color:#9eb9d3}
-.arena-screen--main strong{font:700 clamp(18px,4vw,38px)/1 var(--f-d);letter-spacing:.16em;color:#f3e5cc}
-.arena-screen--main em{font:700 8px var(--f-m);font-style:normal;letter-spacing:.32em;color:#d0a66e}
-.arena-screen span{font:700 8px var(--f-m);letter-spacing:.22em;color:#90b8df}.arena-screen b{font:700 clamp(13px,2vw,21px) var(--f-d);letter-spacing:.1em}
-.arena-stage{position:absolute;left:10%;right:10%;top:43%;height:18%;transform:perspective(700px) rotateX(-8deg);border-top:2px solid rgba(151,193,231,.45);background:linear-gradient(180deg,rgba(30,49,67,.55),rgba(5,9,14,.96));box-shadow:0 -10px 40px rgba(77,145,202,.12),0 28px 50px rgba(0,0,0,.55)}
-.arena-stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 9%,rgba(160,194,222,.08) 9.2% 9.4%,transparent 9.6% 18%);border-bottom:1px solid rgba(193,160,112,.24)}
-.arena-stage:after{content:"";position:absolute;left:25%;right:25%;top:16%;height:2px;background:linear-gradient(90deg,transparent,#c6a16e,transparent);box-shadow:0 0 18px rgba(198,161,110,.55)}
-.arena-crowd{position:absolute;left:-3%;right:-3%;bottom:8%;height:32%;opacity:.95;background:
- radial-gradient(ellipse at 50% 0%,rgba(27,47,64,.32),transparent 70%),
- repeating-linear-gradient(90deg,transparent 0 10px,rgba(0,0,0,.8) 11px 15px),
- linear-gradient(180deg,transparent 0%,rgba(3,5,8,.96) 28%,#030507 100%);
- clip-path:polygon(0 28%,2% 18%,4% 32%,6% 12%,8% 27%,10% 17%,12% 31%,14% 10%,16% 28%,18% 16%,20% 30%,22% 9%,24% 25%,26% 15%,28% 31%,30% 11%,32% 28%,34% 14%,36% 30%,38% 8%,40% 26%,42% 15%,44% 29%,46% 12%,48% 26%,50% 8%,52% 28%,54% 13%,56% 29%,58% 10%,60% 28%,62% 14%,64% 31%,66% 8%,68% 25%,70% 16%,72% 30%,74% 10%,76% 27%,78% 14%,80% 31%,82% 9%,84% 27%,86% 15%,88% 30%,90% 10%,92% 28%,94% 14%,96% 31%,98% 17%,100% 28%,100% 100%,0 100%)}
-.arena-floor{position:absolute;left:0;right:0;bottom:0;height:17%;background:linear-gradient(180deg,rgba(12,20,28,.1),rgba(3,5,8,.98));border-top:1px solid rgba(141,177,207,.12)}
-.arena-haze{position:absolute;inset:35% -10% 5%;background:radial-gradient(ellipse at 50% 10%,rgba(109,151,184,.12),transparent 65%);filter:blur(18px);animation:arena-breath 9s ease-in-out infinite alternate}
-@keyframes arena-breath{to{opacity:.55;transform:translateY(-12px)}}
-#scene .vig{background:linear-gradient(180deg,rgba(1,4,8,.2),transparent 25%,rgba(1,3,6,.3) 58%,rgba(0,0,0,.72)),radial-gradient(110% 90% at 50% 35%,transparent 38%,rgba(0,0,0,.66))}
-#scene[data-s="packs"] .arena-screen--main{border-color:rgba(224,176,104,.55)}
-#scene[data-s="col"] .arena-screen--main{border-color:rgba(123,177,225,.5)}
-/* Pointer-driven 3D tilt: desktop only; touch devices retain stable layout */
-@media(hover:hover) and (pointer:fine){
- button:has(>.pc){transform-style:preserve-3d;perspective:1000px;transition:transform .18s ease,filter .18s ease}
- button:has(>.pc):hover{transform:translateY(-5px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg));filter:drop-shadow(0 22px 25px rgba(0,0,0,.58))}
- button:has(>.pc)>.pc{transition:transform .18s ease,filter .18s ease;transform:translateZ(12px)}
- .home-shortcut{transform-style:preserve-3d;transform:perspective(800px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg));}
- .home-shortcut:hover{box-shadow:inset 0 1px rgba(255,255,255,.12),0 16px 32px rgba(0,0,0,.38),0 0 24px rgba(109,166,214,.08)}
- .home-shortcut:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--shine-x,50%) var(--shine-y,50%),rgba(210,231,250,.13),transparent 55%);opacity:0;transition:opacity .2s}
- .home-shortcut:hover:after{opacity:1}
- .home-hero{transform-style:preserve-3d;transition:transform .2s ease;transform:perspective(1100px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg))}
- .home-hero__copy{transform:translateZ(14px)}
- .home-hero__artifact{transform:translateY(-50%) translateZ(38px)}
-}
-@media(max-width:699px){.arena-screen--main{left:17%;right:17%;top:22%;height:16%}.arena-screen--left,.arena-screen--right{top:30%;height:10%;width:14%}.arena-stage{top:43%;left:4%;right:4%}.arena-crowd{height:29%}}
-@media(prefers-reduced-motion:reduce){.arena-haze{animation:none}}
 
+/* ===== ARENA ART DIRECTION · STATIC, GPU-LIGHT, LAYOUT-SAFE ===== */
+#scene{background:#070a0f;isolation:isolate}
+#scene .sun,#scene .beam,#scene .fog,#scene .floor,#scene .pan,#scene .dust{display:none!important}
+.arena-world{position:absolute;inset:0;overflow:hidden;background:#070a0f}
+.arena-art{position:absolute;inset:0;width:100%;height:100%;display:block}
+#scene .vig{z-index:2;background:linear-gradient(180deg,rgba(3,6,11,.14),rgba(3,6,11,.1) 38%,rgba(3,5,8,.78) 100%),radial-gradient(ellipse at 50% 35%,transparent 18%,rgba(0,0,0,.52) 100%)}
+#app{isolation:isolate}
+#app.enter>*{animation:sectionFade .18s ease-out both!important}
+@keyframes sectionFade{from{opacity:.82}to{opacity:1}}
+/* Premium surfaces: stable geometry, restrained light, no hover-driven layout transforms */
+.pn,.stat,.home-shortcut,.home-lineup,.home-hero{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.pn{border:1px solid rgba(175,195,216,.12);border-radius:15px;background:linear-gradient(145deg,rgba(21,29,39,.92),rgba(8,12,18,.94));box-shadow:0 12px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.045);clip-path:none}
+.pn:before{height:22px;opacity:.8}
+.stat{border:1px solid rgba(175,195,216,.1);border-bottom:2px solid rgba(175,195,216,.18);border-radius:10px;background:linear-gradient(145deg,rgba(24,32,42,.9),rgba(9,13,19,.94))}
+.home-hero{min-height:236px;padding:clamp(20px,4vw,34px);border:1px solid rgba(183,203,224,.22);border-radius:18px;background:linear-gradient(110deg,rgba(10,17,26,.98) 0%,rgba(15,26,39,.96) 56%,rgba(22,27,34,.94) 100%);box-shadow:0 22px 52px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.09)}
+.home-hero:before{opacity:.42;background:linear-gradient(90deg,transparent 0 54%,rgba(112,161,204,.12) 72%,transparent),repeating-linear-gradient(90deg,transparent 0 59px,rgba(160,190,216,.035) 60px 61px)}
+.home-hero:after{inset:9px;border:1px solid rgba(179,204,226,.1);border-radius:12px}
+.home-hero__copy{max-width:64%}
+.home-hero__eyebrow{color:#9ebbd4;letter-spacing:.2em}
+.home-hero h1{font-size:clamp(34px,6.2vw,58px);letter-spacing:.035em;color:#f4f6f8;text-shadow:0 4px 24px rgba(0,0,0,.55)}
+.home-hero__desc{max-width:390px;color:#b2bfcb;font-size:13px}
+.home-hero__tags span{border-color:rgba(145,183,215,.2);background:rgba(8,15,23,.62);color:#c4d5e4}
+.home-hero__artifact{right:5%;width:33%;height:94%;perspective:none}
+.home-hero__halo{width:100%;left:0;top:0;border-color:rgba(132,177,213,.28);box-shadow:0 0 38px rgba(63,131,186,.12),inset 0 0 28px rgba(63,131,186,.08);transform:rotateX(68deg) rotateZ(-18deg)}
+.home-hero__sigil{left:28%;top:10%;width:44%;border-radius:7px;border-color:rgba(183,207,225,.68);background:linear-gradient(145deg,#34495b,#121d29 48%,#090e15);box-shadow:0 0 0 4px rgba(255,255,255,.025),0 18px 36px rgba(0,0,0,.6),inset 0 0 28px rgba(116,164,201,.14);transform:rotateY(-12deg) rotateX(3deg) rotateZ(-4deg);animation:none}
+.home-hero__sigil b{color:#dce9f3;text-shadow:0 0 24px rgba(120,177,220,.28)}
+.home-hero__sigil small{color:#9dbbd2}
+.home-shortcuts{gap:10px}
+.home-shortcut{position:relative;min-height:94px;padding:14px;border:1px solid rgba(151,181,207,.17);border-radius:12px;background:linear-gradient(145deg,rgba(23,34,46,.96),rgba(9,15,22,.97));box-shadow:inset 0 1px rgba(255,255,255,.06),0 10px 25px rgba(0,0,0,.24);transition:border-color .16s,box-shadow .16s,background .16s}
+.home-shortcut:hover{transform:none;border-color:rgba(145,190,224,.48);background:linear-gradient(145deg,rgba(29,45,60,.98),rgba(10,17,25,.98));box-shadow:inset 0 1px rgba(255,255,255,.09),0 14px 30px rgba(0,0,0,.32)}
+.home-shortcut:active{transform:none}
+.home-shortcut__icon{width:31px;height:31px;border-radius:7px;background:linear-gradient(145deg,rgba(100,151,190,.24),rgba(255,255,255,.035));border-color:rgba(139,180,211,.26);color:#c3d9e9}
+.home-shortcut b{font-size:12px;letter-spacing:.1em}
+.home-shortcut small{font-size:10px}
+.home-lineup{border:1px solid rgba(160,190,216,.2);border-radius:16px;background:linear-gradient(145deg,rgba(19,29,40,.95),rgba(8,13,19,.96));box-shadow:0 18px 40px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.06)}
+.lineup{gap:5px;padding-top:18px}
+.lineup>button{transform:none!important;filter:drop-shadow(0 9px 12px rgba(0,0,0,.55));transition:filter .16s}
+.lineup>button:hover{filter:drop-shadow(0 12px 15px rgba(0,0,0,.72))}
+#app.enter .lineup>button{animation:none!important}
+.pc{box-shadow:0 9px 20px rgba(0,0,0,.32);transition:filter .16s,border-color .16s}
+.pc:after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 0 -3px 0 var(--edge),inset 0 0 24px rgba(255,255,255,.025)}
+.pc .sh{display:none}
+button:has(>.pc){transform:none!important;perspective:none!important;transform-style:flat!important;filter:none;transition:filter .16s}
+button:has(>.pc):hover{transform:none!important;filter:drop-shadow(0 12px 18px rgba(0,0,0,.58))}
+button:has(>.pc)>.pc{transform:none!important;transition:filter .16s}
+.btn,.ibtn{transition:background .14s,border-color .14s,filter .14s}
+.btn:hover,.ibtn:hover{filter:brightness(1.12)}
+.btn:active{transform:translateY(1px) scale(.995)}
+#tabs{background:rgba(5,9,14,.94);border-top-color:rgba(153,183,208,.16)}
+#tabs button[aria-current]{color:#e9f1f7}
+#tabs button:before{background:#82b4d9}
+@media(max-width:600px){
+ .home-hero{min-height:202px;padding:18px 15px}
+ .home-hero__copy{max-width:70%}
+ .home-hero__artifact{right:-2%;width:39%;opacity:.9}
+ .home-hero h1{font-size:clamp(31px,9vw,42px)}
+ .home-hero__desc{font-size:11px;max-width:230px}
+ .home-hero__tags{gap:4px}
+ .home-hero__tags span{font-size:7px;padding:5px 6px}
+ .home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .home-shortcut{min-height:76px;padding:11px}
+ .lineup{gap:3px;padding-top:12px}
+}
+@media(min-width:700px){
+ .home-hero{min-height:270px}
+ #app[data-tab="home"]>.home-lineup{grid-column:span 7}
+ #app[data-tab="home"]>.home-league{grid-column:span 5}
+ #app[data-tab="home"]>.home-streak{grid-column:span 7}
+ #app[data-tab="home"]>.home-tasks{grid-column:span 5}
+ #app[data-tab="home"]>.home-free{grid-column:span 5}
+}
+@media(prefers-reduced-motion:reduce){
+ #app.enter>*{animation:none!important}
+ .home-hero__sigil{animation:none}
+ .home-shortcut,.btn,.ibtn,.pc{transition:none}
+}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -599,13 +622,68 @@ button:has(>.pc):hover>.pc{transform:translateY(-5px) rotateY(-2deg);filter:drop
 </svg>
 <div id="scene" data-s="home">
   <div class="arena-world" aria-hidden="true">
-    <div class="arena-ceiling"><i></i><i></i><i></i></div>
-    <div class="arena-light arena-light--left"></div><div class="arena-light arena-light--right"></div>
-    <div class="arena-screen arena-screen--left"><span>LIVE</span><b>CS2</b></div>
-    <div class="arena-screen arena-screen--main"><small>COUNTER-STRIKE 2 · GLOBAL SERIES</small><strong>FIVE LEGEND</strong><em>PLAY THE LEGACY</em></div>
-    <div class="arena-screen arena-screen--right"><span>MAP 01</span><b>01 : 02</b></div>
-    <div class="arena-stage"></div><div class="arena-crowd"></div><div class="arena-floor"></div>
-    <div class="arena-haze"></div>
+    <svg class="arena-art" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ar-wall" x2="0" y2="1"><stop stop-color="#101b28"/><stop offset=".58" stop-color="#182638"/><stop offset="1" stop-color="#080d14"/></linearGradient>
+        <linearGradient id="ar-stage" x2="0" y2="1"><stop stop-color="#253b50"/><stop offset=".35" stop-color="#111d2a"/><stop offset="1" stop-color="#05080d"/></linearGradient>
+        <linearGradient id="ar-screen" x2="0" y2="1"><stop stop-color="#29435b"/><stop offset=".5" stop-color="#0c1723"/><stop offset="1" stop-color="#07101a"/></linearGradient>
+        <linearGradient id="ar-beam"><stop stop-color="#8bc5ef" stop-opacity=".24"/><stop offset="1" stop-color="#8bc5ef" stop-opacity="0"/></linearGradient>
+        <linearGradient id="ar-gold"><stop stop-color="#e2bd83" stop-opacity="0"/><stop offset=".5" stop-color="#e2bd83" stop-opacity=".75"/><stop offset="1" stop-color="#e2bd83" stop-opacity="0"/></linearGradient>
+        <radialGradient id="ar-vignette"><stop offset=".35" stop-color="#02050a" stop-opacity="0"/><stop offset="1" stop-color="#02050a" stop-opacity=".82"/></radialGradient>
+        <pattern id="ar-grid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="#9ebbd2" stroke-opacity=".09" stroke-width="1"/></pattern>
+        <pattern id="ar-led" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M0 0h2v2H0z" fill="#b8d7ef" opacity=".14"/></pattern>
+      </defs>
+      <rect width="1600" height="1000" fill="#070b11"/>
+      <path d="M0 0H1600V400L1320 510H280L0 400Z" fill="url(#ar-wall)"/>
+      <path d="M0 0H1600L1450 90H150L0 0Z" fill="#0a111a"/>
+      <path d="M0 0L330 0 560 390 420 390Z" fill="url(#ar-beam)"/>
+      <path d="M1600 0H1270L1040 390H1180Z" fill="url(#ar-beam)"/>
+      <path d="M110 0L430 390M1490 0L1170 390" stroke="#8ab9df" stroke-opacity=".24" stroke-width="5"/>
+      <path d="M0 92H1600M0 142H1600M0 192H1600" stroke="#8daec9" stroke-opacity=".1" stroke-width="2"/>
+      <path d="M150 0V260M360 0V300M1240 0V300M1450 0V260" stroke="#7396b4" stroke-opacity=".2" stroke-width="4"/>
+      <path d="M0 365L300 280H1300L1600 365V690H0Z" fill="#0b121b"/>
+      <path d="M0 382L310 305H1290L1600 382" fill="none" stroke="#7da7c8" stroke-opacity=".28" stroke-width="5"/>
+      <path d="M0 415L320 330H1280L1600 415" fill="none" stroke="#d3b17d" stroke-opacity=".3" stroke-width="2"/>
+      <g opacity=".7" fill="#111e2b" stroke="#4e718d" stroke-opacity=".22" stroke-width="3">
+        <path d="M0 420L260 350V570L0 680Z"/><path d="M1600 420L1340 350V570L1600 680Z"/>
+        <path d="M0 500L260 430M0 555L260 485M1600 500L1340 430M1600 555L1340 485"/>
+      </g>
+      <g fill="#070d14" stroke="#7898b2" stroke-opacity=".24" stroke-width="3">
+        <path d="M0 590L320 500V770L0 890Z"/><path d="M1600 590L1280 500V770L1600 890Z"/>
+      </g>
+      <g fill="#9fc3df" opacity=".15">
+        <path d="M25 640h240v8H25zM25 700h240v8H25zM1335 640h240v8h-240zM1335 700h240v8h-240z"/>
+      </g>
+      <path d="M360 165H1240L1300 215V455H300V215Z" fill="#03080e" stroke="#b6cde0" stroke-opacity=".5" stroke-width="8"/>
+      <path d="M382 188H1218L1270 226V425H330V226Z" fill="url(#ar-screen)" stroke="#6e9abb" stroke-opacity=".5" stroke-width="3"/>
+      <path d="M382 188H1218L1270 226V425H330V226Z" fill="url(#ar-grid)"/>
+      <path d="M330 225H1270M330 425H1270" stroke="#d3b17d" stroke-opacity=".62" stroke-width="3"/>
+      <path d="M395 205H1205V407H395Z" fill="url(#ar-led)" opacity=".4"/>
+      <g fill="#a9c8e0" font-family="Arial,sans-serif" text-anchor="middle">
+        <text x="800" y="258" font-size="20" letter-spacing="9">COUNTER-STRIKE 2  /  GLOBAL SERIES</text>
+        <text x="800" y="345" font-size="66" font-weight="700" letter-spacing="12" fill="#f0e7d7">FIVE LEGEND</text>
+        <text x="800" y="388" font-size="15" letter-spacing="12" fill="#d5b27e">THE NEXT ROUND IS YOURS</text>
+      </g>
+      <g fill="#101c29" stroke="#6f91ac" stroke-opacity=".5" stroke-width="4">
+        <path d="M65 260H265L300 290V425H65Z"/><path d="M1335 290L1370 260H1535V425H1335Z"/>
+      </g>
+      <g fill="#9fc4e1" font-family="Arial,sans-serif" text-anchor="middle">
+        <text x="180" y="330" font-size="20" letter-spacing="4">LIVE</text><text x="180" y="385" font-size="44" font-weight="700">CS2</text>
+        <text x="1460" y="330" font-size="18" letter-spacing="3">MAP 01</text><text x="1460" y="385" font-size="38" font-weight="700">MIRAGE</text>
+      </g>
+      <path d="M0 720L330 590H1270L1600 720V1000H0Z" fill="#05090f"/>
+      <path d="M0 760L330 625H1270L1600 760" fill="none" stroke="#6e9bbc" stroke-opacity=".32" stroke-width="5"/>
+      <path d="M0 820L400 665H1200L1600 820" fill="none" stroke="#d3b17d" stroke-opacity=".2" stroke-width="3"/>
+      <path d="M240 1000L560 660H1040L1360 1000Z" fill="url(#ar-stage)" stroke="#6e9bbc" stroke-opacity=".3" stroke-width="3"/>
+      <path d="M520 710H1080L1170 1000H430Z" fill="#0c1824" stroke="#8fb6d4" stroke-opacity=".28" stroke-width="3"/>
+      <path d="M600 735H1000" stroke="url(#ar-gold)" stroke-width="4"/>
+      <path d="M680 760H920M640 820H960M590 890H1010" stroke="#88b4d6" stroke-opacity=".2" stroke-width="2"/>
+      <g fill="#020509">
+        <circle cx="12" cy="575" r="10"/><path d="M-6 583q18 -24 36 0v30h-36z"/><circle cx="55" cy="598" r="12"/><path d="M33.4 606q21.6 -24 43.2 0v36h-43.2z"/><circle cx="98" cy="621" r="14"/><path d="M72.8 629q25.2 -24 50.4 0v42h-50.4z"/><circle cx="141" cy="644" r="16"/><path d="M112.2 652q28.8 -24 57.6 0v48h-57.6z"/><circle cx="184" cy="667" r="10"/><path d="M166 675q18 -24 36 0v30h-36z"/><circle cx="227" cy="575" r="12"/><path d="M205.4 583q21.6 -24 43.2 0v36h-43.2z"/><circle cx="270" cy="598" r="14"/><path d="M244.8 606q25.2 -24 50.4 0v42h-50.4z"/><circle cx="313" cy="621" r="16"/><path d="M284.2 629q28.8 -24 57.6 0v48h-57.6z"/><circle cx="356" cy="644" r="10"/><path d="M338 652q18 -24 36 0v30h-36z"/><circle cx="399" cy="667" r="12"/><path d="M377.4 675q21.6 -24 43.2 0v36h-43.2z"/><circle cx="442" cy="575" r="14"/><path d="M416.8 583q25.2 -24 50.4 0v42h-50.4z"/><circle cx="485" cy="598" r="16"/><path d="M456.2 606q28.8 -24 57.6 0v48h-57.6z"/><circle cx="528" cy="621" r="10"/><path d="M510 629q18 -24 36 0v30h-36z"/><circle cx="571" cy="644" r="12"/><path d="M549.4 652q21.6 -24 43.2 0v36h-43.2z"/><circle cx="614" cy="667" r="14"/><path d="M588.8 675q25.2 -24 50.4 0v42h-50.4z"/><circle cx="657" cy="575" r="16"/><path d="M628.2 583q28.8 -24 57.6 0v48h-57.6z"/><circle cx="700" cy="598" r="10"/><path d="M682 606q18 -24 36 0v30h-36z"/><circle cx="743" cy="621" r="12"/><path d="M721.4 629q21.6 -24 43.2 0v36h-43.2z"/><circle cx="786" cy="644" r="14"/><path d="M760.8 652q25.2 -24 50.4 0v42h-50.4z"/><circle cx="829" cy="667" r="16"/><path d="M800.2 675q28.8 -24 57.6 0v48h-57.6z"/><circle cx="872" cy="575" r="10"/><path d="M854 583q18 -24 36 0v30h-36z"/><circle cx="915" cy="598" r="12"/><path d="M893.4 606q21.6 -24 43.2 0v36h-43.2z"/><circle cx="958" cy="621" r="14"/><path d="M932.8 629q25.2 -24 50.4 0v42h-50.4z"/><circle cx="1001" cy="644" r="16"/><path d="M972.2 652q28.8 -24 57.6 0v48h-57.6z"/><circle cx="1044" cy="667" r="10"/><path d="M1026 675q18 -24 36 0v30h-36z"/><circle cx="1087" cy="575" r="12"/><path d="M1065.4 583q21.6 -24 43.2 0v36h-43.2z"/><circle cx="1130" cy="598" r="14"/><path d="M1104.8 606q25.2 -24 50.4 0v42h-50.4z"/><circle cx="1173" cy="621" r="16"/><path d="M1144.2 629q28.8 -24 57.6 0v48h-57.6z"/><circle cx="1216" cy="644" r="10"/><path d="M1198 652q18 -24 36 0v30h-36z"/><circle cx="1259" cy="667" r="12"/><path d="M1237.4 675q21.6 -24 43.2 0v36h-43.2z"/><circle cx="1302" cy="575" r="14"/><path d="M1276.8 583q25.2 -24 50.4 0v42h-50.4z"/><circle cx="1345" cy="598" r="16"/><path d="M1316.2 606q28.8 -24 57.6 0v48h-57.6z"/><circle cx="1388" cy="621" r="10"/><path d="M1370 629q18 -24 36 0v30h-36z"/><circle cx="1431" cy="644" r="12"/><path d="M1409.4 652q21.6 -24 43.2 0v36h-43.2z"/><circle cx="1474" cy="667" r="14"/><path d="M1448.8 675q25.2 -24 50.4 0v42h-50.4z"/><circle cx="1517" cy="575" r="16"/><path d="M1488.2 583q28.8 -24 57.6 0v48h-57.6z"/><circle cx="1560" cy="598" r="10"/><path d="M1542 606q18 -24 36 0v30h-36z"/><circle cx="1603" cy="621" r="12"/><path d="M1581.4 629q21.6 -24 43.2 0v36h-43.2z"/>
+      </g>
+      <g fill="#8eb6d5" opacity=".22"><path d="M0 500h270v4H0zM1330 500h270v4h-270zM0 530h250v3H0zM1350 530h250v3h-250z"/></g>
+      <rect width="1600" height="1000" fill="url(#ar-vignette)"/>
+    </svg>
   </div>
   <div class="pan far" id="pan-far"></div><div class="pan" id="pan-near"></div>
   <div class="dust" id="dust"></div><div class="vig"></div>

@@ -1529,6 +1529,47 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .tu-grid{row-gap:14px}.tu-pick{position:relative}.tu-pick.is-sel .pc{box-shadow:0 0 0 2px var(--accent,#f0c477),0 0 18px color-mix(in srgb,var(--accent,#f0c477) 35%,transparent)}.tu-pick.is-full{opacity:.5}
 .tu-badge{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);z-index:3;padding:3px 7px;border-radius:9px;background:#1a1e24;border:1px solid #ffffff22;font:700 10px/1 var(--f-m,monospace)}
 .tu-pick.is-sel .tu-badge{background:var(--accent,#f0c477);color:#07080a;border-color:transparent}
+/* Матч: радар карты между составами */
+.arena-rd{gap:8px}.arena-rd .trow{width:100%;max-width:520px;margin:0 auto}
+.rd-box{min-height:0;padding:0;border:1px solid rgba(141,177,205,.2);border-radius:12px;overflow:hidden;background:#060d14;display:block}
+.rd-wrap{position:relative;width:min(100%,46vh);aspect-ratio:1/1;margin:0 auto}
+.rd{display:block;width:100%;height:100%}
+.rd-grid{stroke:#ffffff08;stroke-width:.2;fill:none}
+.rd-w0,.rd-w1,.rd-w2{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.rd-w0{stroke:#0b1620;stroke-width:10.5}.rd-w1{stroke:#3b5266;stroke-width:8.4}.rd-w2{stroke:#1f3040;stroke-width:6.6}
+.rd-site circle{fill:#ff5a5a14;stroke:#ff8a7a66;stroke-width:.5}.rd-site text{fill:#ffb3a8;font:700 9px var(--f-d,sans-serif);text-anchor:middle;opacity:.85}
+.rd-spawn rect{stroke-width:.4}.rd-spawn text{font:700 4px var(--f-m,monospace);text-anchor:middle}
+.rd-spawn.t rect{fill:#f2c14e22;stroke:#f2c14e88}.rd-spawn.t text{fill:#f2c14e}.rd-spawn.ct rect{fill:#4aa3ff22;stroke:#4aa3ff88}.rd-spawn.ct text{fill:#7fbfff}
+.rd-lbl{fill:#9fb3c6;font:600 2.6px var(--f-m,monospace);text-anchor:middle;opacity:.7;letter-spacing:.05px}
+.rd-route{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2.4 1.6;animation:rdDash 1.2s linear infinite}
+.rd-wrap.sd-A .rd-route{stroke:#f2c14e}.rd-wrap.sd-D .rd-route{stroke:#4aa3ff}.rd-route.thin{stroke-width:.8;opacity:.6}
+@keyframes rdDash{to{stroke-dashoffset:-8}}
+.rd-aim{fill:none;stroke:#f2c14e;stroke-width:.7;stroke-dasharray:1.5 1.5}
+.rd-hold circle{fill:#4aa3ff2a;stroke:#4aa3ff;stroke-width:.5}.rd-hold text{fill:#cfe6ff;font:700 4.4px var(--f-d,sans-serif);text-anchor:middle}
+.rd-dot circle{stroke-width:.7}.rd-dot.t circle{fill:#f2c14e;stroke:#5a430f}.rd-dot.ct circle{fill:#4aa3ff;stroke:#0f2f55}
+.rd-dot.me circle{stroke:#fff;stroke-width:.8}.rd-dot text{fill:#e9eef3;font:700 2.6px var(--f-d,sans-serif);text-anchor:middle;paint-order:stroke;stroke:#000a;stroke-width:.6}
+.rd-dot .x{display:none;stroke:#ff5a5a;stroke-width:.9;stroke-linecap:round}
+.rd-dot.dead circle{fill:#30353d;stroke:#555;r:1.6}.rd-dot.dead .x{display:block}.rd-dot.dead text{opacity:.4}
+.rd-shot{stroke-width:.5;opacity:.95;animation:rdShot .5s ease-out forwards}.rd-shot.t{stroke:#ffe08a}.rd-shot.ct{stroke:#9fd0ff}
+@keyframes rdShot{to{opacity:0}}
+.rd-bomb circle{fill:#ff3b30;stroke:#fff;stroke-width:.4;animation:rdBomb .8s ease-in-out infinite}.rd-bomb text{fill:#fff;font:700 2.2px var(--f-m,monospace);text-anchor:middle}
+.rd-bomb.off circle{fill:#4aa3ff;animation:none}
+@keyframes rdBomb{50%{opacity:.45}}
+.rd-boom{fill:#ffb02e;stroke:#fff3;animation:rdBoom 1.3s ease-out forwards}@keyframes rdBoom{to{r:28px;opacity:0}}
+.rd-clock{position:absolute;left:50%;top:6px;transform:translateX(-50%);z-index:2;font:700 12px/1 var(--f-m,monospace);letter-spacing:.08em;pointer-events:none}
+.rd-clock span{display:inline-block;padding:4px 8px;border-radius:6px;background:#000a;border:1px solid #ffffff1a}.rd-clock .bomb{color:#ff7a6a;border-color:#ff5a5a66}
+.rd-box .feed{position:absolute;right:4px;top:28px;z-index:2;pointer-events:none}
+.rd-box .feed div{font-size:10px;padding:3px 6px}
+.rd-box #bn{position:absolute;left:0;right:0;bottom:8px;z-index:3;display:flex;justify-content:center;pointer-events:none}
+.played{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--mut,#8f98a3)}
+.maps5{grid-template-columns:repeat(5,minmax(0,1fr))}.maps5 .map{aspect-ratio:auto;padding:5px;gap:3px}
+.map-rd{display:block;width:100%;aspect-ratio:1;border-radius:6px;overflow:hidden;opacity:.9}.map-rd .rd-lbl,.map-rd .rd-spawn text{display:none}
+.maps5 .map b{font-size:12px}.maps5 .map>span:last-child{font-size:9px;line-height:1.15}
+@media (max-width:420px){.maps5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:900px){.rd-wrap{width:min(100%,56vh)}}
+@media (max-width:559px){#mt .plan{grid-template-columns:1fr}}
+.rd-dot text{font-size:2.3px}
+@media (prefers-reduced-motion: reduce){.rd-route,.rd-bomb circle{animation:none}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

@@ -1366,6 +1366,14 @@ body{background:radial-gradient(ellipse at 50% 0%,#1a3150 0%,#0a1423 42%,#070b13
  #app[data-tab="prof"]>.profile-settings,#app[data-tab="prof"]>.profile-about{align-self:stretch}
 }
 
+
+/* Keep the full-bleed arena artwork inside the viewport on narrow mobile screens. */
+html,body{max-width:100%;overflow-x:clip}
+#scene,.arena-world,.arena-art{clip-path:inset(0);overflow:hidden}
+#scene{contain:paint;max-width:100vw}
+.arena-world{contain:paint}
+.arena-art{max-width:100%;left:0;right:0}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

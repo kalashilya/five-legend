@@ -1,3 +1,4 @@
+// Verify final mobile lobby spacing and all core redesigned screens.
 // Browser smoke coverage for the approved four-screen arena redesign.
 'use strict';
 const fs = require('fs');

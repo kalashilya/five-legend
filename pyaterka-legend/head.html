@@ -527,6 +527,61 @@ button:has(>.pc):hover>.pc{transform:translateY(-5px) rotateY(-2deg);filter:drop
 @media(min-width:1050px){.wrap{max-width:1080px}#hud .wrap{max-width:1080px}#tabs .wrap{max-width:760px}.home-hero{min-height:230px;padding:28px 30px}.home-shortcut{min-height:96px;padding:14px}}
 @media(prefers-reduced-motion:reduce){.home-hero__sigil{animation:none}.home-shortcut,.btn,.ibtn,.pc{transition:none}}
 
+
+/* ===== ARENA UPDATE: live CS2 tournament atmosphere ===== */
+#scene{background:linear-gradient(180deg,#080d16 0%,#111b2a 38%,#111820 65%,#05070a 100%)}
+#scene .sun,#scene .beam,#scene .fog,#scene .floor{display:none}
+#scene .pan{display:none}
+.arena-world{position:absolute;inset:0;overflow:hidden;perspective:900px;background:
+ radial-gradient(ellipse at 50% 46%,rgba(37,78,119,.2),transparent 46%),
+ linear-gradient(180deg,rgba(3,7,13,.12),rgba(3,5,8,.35) 55%,#05070a 100%)}
+.arena-ceiling{position:absolute;left:-8%;right:-8%;top:-9%;height:31%;transform:perspective(700px) rotateX(-18deg);border-bottom:1px solid rgba(150,184,215,.18);background:
+ repeating-linear-gradient(90deg,transparent 0 8.5%,rgba(120,157,190,.13) 8.6% 8.8%,transparent 9% 17%),
+ repeating-linear-gradient(0deg,transparent 0 28px,rgba(120,157,190,.1) 29px 30px),
+ linear-gradient(180deg,#080d15,#111c2a 75%,transparent)}
+.arena-ceiling i{position:absolute;bottom:0;width:2px;height:80%;background:linear-gradient(180deg,rgba(151,194,235,.5),transparent);box-shadow:0 0 20px rgba(91,158,224,.3)}
+.arena-ceiling i:nth-child(1){left:22%;transform:rotate(18deg)}.arena-ceiling i:nth-child(2){left:50%;height:100%}.arena-ceiling i:nth-child(3){right:22%;transform:rotate(-18deg)}
+.arena-light{position:absolute;z-index:1;top:5%;width:38vw;height:76vh;filter:blur(15px);opacity:.34;mix-blend-mode:screen;transform-origin:top}
+.arena-light--left{left:8%;transform:rotate(25deg);background:linear-gradient(180deg,rgba(102,174,255,.35),transparent 75%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.arena-light--right{right:8%;transform:rotate(-25deg);background:linear-gradient(180deg,rgba(236,185,112,.24),transparent 75%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.arena-screen{position:absolute;z-index:2;top:23%;height:17%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid rgba(123,177,225,.28);background:linear-gradient(145deg,rgba(17,35,54,.94),rgba(4,10,18,.98));box-shadow:0 0 35px rgba(48,118,184,.18),inset 0 0 22px rgba(91,158,224,.12);color:#dbeeff;text-shadow:0 0 14px rgba(91,158,224,.5);transform:perspective(700px) rotateY(-9deg)}
+.arena-screen--left{left:5%;width:17%;height:13%;top:27%;opacity:.72}
+.arena-screen--right{right:5%;width:17%;height:13%;top:27%;transform:perspective(700px) rotateY(9deg);opacity:.72}
+.arena-screen--main{left:25%;right:25%;height:20%;top:19%;border-color:rgba(203,169,116,.42);background:linear-gradient(135deg,rgba(23,38,53,.96),rgba(5,10,16,.98) 65%,rgba(54,39,24,.82));box-shadow:0 0 55px rgba(68,139,201,.2),0 12px 60px rgba(0,0,0,.5),inset 0 0 35px rgba(202,166,112,.1);transform:perspective(900px) rotateX(2deg)}
+.arena-screen--main small{font:700 clamp(6px,.8vw,9px) var(--f-m);letter-spacing:.24em;color:#9eb9d3}
+.arena-screen--main strong{font:700 clamp(18px,4vw,38px)/1 var(--f-d);letter-spacing:.16em;color:#f3e5cc}
+.arena-screen--main em{font:700 8px var(--f-m);font-style:normal;letter-spacing:.32em;color:#d0a66e}
+.arena-screen span{font:700 8px var(--f-m);letter-spacing:.22em;color:#90b8df}.arena-screen b{font:700 clamp(13px,2vw,21px) var(--f-d);letter-spacing:.1em}
+.arena-stage{position:absolute;left:10%;right:10%;top:43%;height:18%;transform:perspective(700px) rotateX(-8deg);border-top:2px solid rgba(151,193,231,.45);background:linear-gradient(180deg,rgba(30,49,67,.55),rgba(5,9,14,.96));box-shadow:0 -10px 40px rgba(77,145,202,.12),0 28px 50px rgba(0,0,0,.55)}
+.arena-stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 9%,rgba(160,194,222,.08) 9.2% 9.4%,transparent 9.6% 18%);border-bottom:1px solid rgba(193,160,112,.24)}
+.arena-stage:after{content:"";position:absolute;left:25%;right:25%;top:16%;height:2px;background:linear-gradient(90deg,transparent,#c6a16e,transparent);box-shadow:0 0 18px rgba(198,161,110,.55)}
+.arena-crowd{position:absolute;left:-3%;right:-3%;bottom:8%;height:32%;opacity:.95;background:
+ radial-gradient(ellipse at 50% 0%,rgba(27,47,64,.32),transparent 70%),
+ repeating-linear-gradient(90deg,transparent 0 10px,rgba(0,0,0,.8) 11px 15px),
+ linear-gradient(180deg,transparent 0%,rgba(3,5,8,.96) 28%,#030507 100%);
+ clip-path:polygon(0 28%,2% 18%,4% 32%,6% 12%,8% 27%,10% 17%,12% 31%,14% 10%,16% 28%,18% 16%,20% 30%,22% 9%,24% 25%,26% 15%,28% 31%,30% 11%,32% 28%,34% 14%,36% 30%,38% 8%,40% 26%,42% 15%,44% 29%,46% 12%,48% 26%,50% 8%,52% 28%,54% 13%,56% 29%,58% 10%,60% 28%,62% 14%,64% 31%,66% 8%,68% 25%,70% 16%,72% 30%,74% 10%,76% 27%,78% 14%,80% 31%,82% 9%,84% 27%,86% 15%,88% 30%,90% 10%,92% 28%,94% 14%,96% 31%,98% 17%,100% 28%,100% 100%,0 100%)}
+.arena-floor{position:absolute;left:0;right:0;bottom:0;height:17%;background:linear-gradient(180deg,rgba(12,20,28,.1),rgba(3,5,8,.98));border-top:1px solid rgba(141,177,207,.12)}
+.arena-haze{position:absolute;inset:35% -10% 5%;background:radial-gradient(ellipse at 50% 10%,rgba(109,151,184,.12),transparent 65%);filter:blur(18px);animation:arena-breath 9s ease-in-out infinite alternate}
+@keyframes arena-breath{to{opacity:.55;transform:translateY(-12px)}}
+#scene .vig{background:linear-gradient(180deg,rgba(1,4,8,.2),transparent 25%,rgba(1,3,6,.3) 58%,rgba(0,0,0,.72)),radial-gradient(110% 90% at 50% 35%,transparent 38%,rgba(0,0,0,.66))}
+#scene[data-s="packs"] .arena-screen--main{border-color:rgba(224,176,104,.55)}
+#scene[data-s="col"] .arena-screen--main{border-color:rgba(123,177,225,.5)}
+/* Pointer-driven 3D tilt: desktop only; touch devices retain stable layout */
+@media(hover:hover) and (pointer:fine){
+ button:has(>.pc){transform-style:preserve-3d;perspective:1000px;transition:transform .18s ease,filter .18s ease}
+ button:has(>.pc):hover{transform:translateY(-5px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg));filter:drop-shadow(0 22px 25px rgba(0,0,0,.58))}
+ button:has(>.pc)>.pc{transition:transform .18s ease,filter .18s ease;transform:translateZ(12px)}
+ .home-shortcut{transform-style:preserve-3d;transform:perspective(800px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg));}
+ .home-shortcut:hover{box-shadow:inset 0 1px rgba(255,255,255,.12),0 16px 32px rgba(0,0,0,.38),0 0 24px rgba(109,166,214,.08)}
+ .home-shortcut:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--shine-x,50%) var(--shine-y,50%),rgba(210,231,250,.13),transparent 55%);opacity:0;transition:opacity .2s}
+ .home-shortcut:hover:after{opacity:1}
+ .home-hero{transform-style:preserve-3d;transition:transform .2s ease;transform:perspective(1100px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg))}
+ .home-hero__copy{transform:translateZ(14px)}
+ .home-hero__artifact{transform:translateY(-50%) translateZ(38px)}
+}
+@media(max-width:699px){.arena-screen--main{left:17%;right:17%;top:22%;height:16%}.arena-screen--left,.arena-screen--right{top:30%;height:10%;width:14%}.arena-stage{top:43%;left:4%;right:4%}.arena-crowd{height:29%}}
+@media(prefers-reduced-motion:reduce){.arena-haze{animation:none}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -542,7 +597,19 @@ button:has(>.pc):hover>.pc{transform:translateY(-5px) rotateY(-2deg);filter:drop
 <symbol id="gun" viewBox="0 0 44 20"><path d="M0 6h30V4h3v2h11v3H34v2h-6l-2 3h-6l1-3h-7l-3 8H5l3-8H0z"/></symbol>
 <symbol id="awp" viewBox="0 0 44 20"><path d="M0 8h44v2H30v2h-8l-2 4h-5l1-4H9l-3 6H1l3-6H0zM16 3h12v3H16z"/></symbol>
 </svg>
-<div id="scene" data-s="home"><div class="sun"></div><div class="beam b1"></div><div class="beam b2"></div><div class="pan far" id="pan-far"></div><div class="pan" id="pan-near"></div><div class="floor"></div><div class="fog"></div><div class="dust" id="dust"></div><div class="vig"></div></div>
+<div id="scene" data-s="home">
+  <div class="arena-world" aria-hidden="true">
+    <div class="arena-ceiling"><i></i><i></i><i></i></div>
+    <div class="arena-light arena-light--left"></div><div class="arena-light arena-light--right"></div>
+    <div class="arena-screen arena-screen--left"><span>LIVE</span><b>CS2</b></div>
+    <div class="arena-screen arena-screen--main"><small>COUNTER-STRIKE 2 · GLOBAL SERIES</small><strong>FIVE LEGEND</strong><em>PLAY THE LEGACY</em></div>
+    <div class="arena-screen arena-screen--right"><span>MAP 01</span><b>01 : 02</b></div>
+    <div class="arena-stage"></div><div class="arena-crowd"></div><div class="arena-floor"></div>
+    <div class="arena-haze"></div>
+  </div>
+  <div class="pan far" id="pan-far"></div><div class="pan" id="pan-near"></div>
+  <div class="dust" id="dust"></div><div class="vig"></div>
+</div>
 <header id="hud"><div class="wrap"></div></header>
 <main id="app" class="wrap"><p class="mut" style="padding-block:24px">Загружаем игру…</p></main>
 <nav id="tabs" aria-label="Разделы"><div class="wrap"></div></nav>

@@ -1,3 +1,4 @@
+// Validate the current feature branch build in Chromium.
 // Browser smoke coverage for the approved four-screen arena redesign.
 'use strict';
 const fs = require('fs');

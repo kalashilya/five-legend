@@ -381,10 +381,51 @@ function startPack(type) {
   OV = { t: 'pack', type, cards, phase: 'case', built: false }; save();
 }
 function packBuild() {
-  const o = $('#over');
-  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage"><button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button></div><div class="po-name" id="po-name"><span class="mut">Нажмите на кейс, чтобы открыть</span></div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать все сразу</button></div></div>`;
-  o.hidden = false; o.scrollTop = 0; OV.built = true;
+  const o = $('#over'), d3 = rvOk();
+  o.innerHTML = `${d3 ? '<iframe class="rv3d" id="rv3d" title="Открытие кейса"></iframe>' : ''}<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage">${d3 ? '' : `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`}</div><div class="po-name" id="po-name"><span class="mut">${d3 ? 'Кейс загружается…' : 'Нажмите на кейс, чтобы открыть'}</span></div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать все сразу</button></div></div>`;
+  o.classList.toggle('po3d', d3); o.hidden = false; o.scrollTop = 0; OV.built = true;
+  if (d3) rvStart();
 }
+/* ---------- 3D-открытие кейса ----------
+   Сцена из reveal-lab встроена в файл игры (RV_SRC) и запускается в отдельном слое (iframe): своя графика, стили и видеопамять,
+   после открытия слой удаляется. Игра присылает лучшую карточку кейса и получает шаги: открыт, флаг, команда, раскрытие, готово.
+   Если 3D недоступно или не запустилось за 8 с — обычное открытие (walkout / simpleTop). */
+let RV = null, RV_URL = '';
+const rvOk = () => { if (rvOk.v === undefined) { try { const c = document.createElement('canvas'); rvOk.v = !!(window.RV_SRC && window.Blob && window.TextDecoder && window.URL && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { rvOk.v = false; } } return rvOk.v && !rvOk.bad; };
+function rvUrl() {
+  if (!RV_URL) { const b = atob(window.RV_SRC), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+    const html = new TextDecoder().decode(u).replace('<head>', '<head><script>window.__EMBED=1<\/script>'); RV_URL = URL.createObjectURL(new Blob([html], { type: 'text/html' })); }
+  return RV_URL;
+}
+const hslHex = (h, s, l) => { const f = n => { const k = (n + h / 30) % 12, a = s * Math.min(l, 1 - l), v = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(v * 255).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); };
+function rvCard(x, type) { const c = x.c; return { box: PACKS[type] && ['basic', 'pro', 'elite'].includes(type) ? type : 'pro', boxN: PACKS[type] ? PACKS[type].n : '', nick: c.nick, team: teamOf(c), cc: ccOf(c), role: RN[c.role] || '', ovr: c.ovr, rar: rarName(c), col: glow(c), tc: hslHex(hsh(c.team) % 360, .75, .58), st: SK.map(k => [SS[k], c.st[k]]) }; }
+function rvStart() {
+  const f = $('#rv3d'); if (!f) return; OV.top = topOf(OV.cards); const me = OV;
+  RV = { f, ov: me, ready: false, quiet: false };
+  RV.t = setTimeout(() => { if (RV && RV.ov === me && !RV.ready) rvFallback(); }, 8000);
+  try { f.src = rvUrl(); } catch (e) { rvFallback(); }
+}
+function rvDrop() { if (RV) clearTimeout(RV.t); RV = null; const f = $('#rv3d'); if (f) f.remove(); const o = $('#over'); if (o) o.classList.remove('po3d'); }
+function rvFallback() {
+  rvOk.bad = true; rvDrop(); if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
+  $('#po-stage').innerHTML = `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`; $('#po-name').innerHTML = '<span class="mut">Нажмите на кейс, чтобы открыть</span>';
+}
+function rvStep(m) {
+  if (m.s === 'open') { if (OV.phase !== 'case') return; OV.phase = 'show'; sfx('open'); if (m.w) { sfx('rare'); $('#po-top').textContent = 'Редкий игрок'; }
+    $('#po-name').innerHTML = '<span class="mut">Кейс открывается…</span>'; $('#po-btn').innerHTML = '<button class="btn s" data-act="poSkip" style="width:100%">Пропустить</button>'; return; }
+  if (RV.quiet || !stageOk()) return;
+  if (m.s === 'flag' || m.s === 'team') sfx('scan');
+  else if (m.s === 'reveal') { const c = OV.top.c; sfx('stop', c.sp ? Math.max(3, c.rar) : c.rar); }
+}
+addEventListener('message', e => {
+  const m = e.data; if (!m || !m.rv3d || !RV || !RV.f || e.source !== RV.f.contentWindow) return;
+  if (RV.ov !== OV || !OV || OV.t !== 'pack') { rvDrop(); return; }
+  if (m.t === 'boot') RV.f.contentWindow.postMessage({ t: 'play', p: rvCard(OV.top, OV.type) }, '*');
+  else if (m.t === 'ready') { RV.ready = true; clearTimeout(RV.t); if (OV.phase === 'case') $('#po-name').innerHTML = '<span class="mut">Нажмите на кейс, чтобы открыть</span>'; }
+  else if (m.t === 'fail') { if (OV.phase === 'case') rvFallback(); else poDone(); }
+  else if (m.t === 'step') rvStep(m);
+  else if (m.t === 'done') { if (stageOk()) topDone(OV.top); }
+});
 const stageOk = () => OV && OV.t === 'pack' && OV.phase === 'show';
 function poTap() {
   if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return false;
@@ -438,7 +479,7 @@ function walkout(x) {
 }
 const nameH = x => `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${rarName(x.c)} · ${esc(teamOf(x.c))} · <span class="bdg ${x.isNew ? 'new' : 'dup'}">${x.isNew ? 'новая' : 'дубль'}</span></span>`;
 function poDone() {
-  if (!OV || OV.t !== 'pack') return; OV.phase = 'done';
+  if (!OV || OV.t !== 'pack') return; OV.phase = 'done'; rvDrop();
   const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0], st = $('#po-stage');
   st.classList.remove('wo-on'); $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · 5 карточек`;
   $('#po-bg').style.setProperty('--gl', glow(top.c));
@@ -639,7 +680,7 @@ function render() {
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
   const ov = $('#over');
   if (!OV && G.picks.length && !sheet) OV = { t: 'pick', built: false };
-  if (!OV) { ov.innerHTML = ''; ov.hidden = true; }
+  if (!OV) { if (RV) rvDrop(); ov.innerHTML = ''; ov.hidden = true; ov.classList.remove('po3d'); }
   else if (!OV.built) { ({ pack: packBuild, match: matchBuild, pick: pickBuild, tu: tuBuild })[OV.t](); }
 }
 function autoSquad() {
@@ -681,7 +722,7 @@ const ACT = {
   open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
   buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
   poTap() { return poTap(); },
-  poSkip() { if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
+  poSkip() { if (OV && OV.t === 'pack' && OV.phase === 'show' && RV && RV.ready) { RV.quiet = true; RV.f.contentWindow.postMessage({ t: 'skip' }, '*'); return false; } if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
   fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: shuffle([...MAPS]).slice(0, 3), ban: [], sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1 }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },
   ban(v) { vetoBan(+v); return false; },

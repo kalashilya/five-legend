@@ -1417,6 +1417,14 @@ html,body{max-width:100%;overflow-x:clip}
 /* Keep the primary battle action above the persistent bottom navigation on compact phones. */
 @media(max-width:390px){#app[data-tab="home"] .lobby-hero{min-height:280px}}
 
+/* 3D-открытие кейса: сцена в отдельном слое под подписями и кнопками */
+.rv3d{position:fixed;inset:0;width:100%;height:100%;border:0;display:block;z-index:0;background:#020812}
+#over.po3d{background:#020812;overflow:hidden}
+#over.po3d .po-bg{display:none}
+#over.po3d .po{pointer-events:none;justify-content:space-between}
+#over.po3d .po button,#over.po3d .po [data-act]{pointer-events:auto}
+#over.po3d .po-stage{min-height:0;flex:1}
+#over.po3d .po-name,#over.po3d #po-top{text-shadow:0 1px 3px #000,0 0 14px #000}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

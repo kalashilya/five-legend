@@ -3,9 +3,9 @@
 <title>Открытие кейса 3D</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=JetBrains+Mono:wght@700&display=swap">
 <style>
-/* Эталон 3D-открытия кейса: сцена WebGL на весь экран, поверх — подписи и кнопки */
-:root{--bg:#030407;--fg:#eef0f3;--mut:#8f98a3;--go:#7bc043;--f-d:'Oswald','Roboto Condensed','Arial Narrow',Impact,sans-serif;--f-m:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;color-scheme:dark}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);overflow:hidden;font-family:var(--f-d)}
+/* Эталон 3D-открытия: сцена WebGL на весь экран; поверх — подписи, подсказка свайпа и кнопки */
+:root{--bg:#030407;--fg:#eef0f3;--mut:#8f98a3;--f-d:'Oswald','Roboto Condensed','Arial Narrow',Impact,sans-serif;--f-m:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;color-scheme:dark}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);overflow:hidden;font-family:var(--f-d);-webkit-user-select:none;user-select:none}
 canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
 .ui{position:fixed;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .top{top:calc(14px + env(safe-area-inset-top,0px))}.bot{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
@@ -14,100 +14,145 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 .title.on{opacity:1;transform:none}
 .sub{font:700 12px/1.2 var(--f-m);letter-spacing:.16em;text-transform:uppercase;color:var(--gl,#fff);opacity:0;transition:opacity .5s}.sub.on{opacity:1}
 .row{display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:center}
-button{font:600 13px/1 var(--f-d);letter-spacing:.12em;text-transform:uppercase;color:var(--fg);background:rgb(255 255 255 / .1);border:1px solid rgb(255 255 255 / .18);padding:12px 16px;min-height:44px;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-button.pri{background:linear-gradient(180deg,#7bc043,#4f9a23);color:#0c1a04;border-color:transparent;font-weight:700}
+button{font:600 13px/1 var(--f-d);letter-spacing:.12em;text-transform:uppercase;color:var(--fg);background:rgb(255 255 255 / .1);border:1px solid rgb(255 255 255 / .18);padding:12px 14px;min-height:44px;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+button[aria-pressed=true]{background:rgb(255 255 255 / .24)}
 button:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none}
-#hint{font:700 12px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:#cfd6de;animation:blink 1.6s ease-in-out infinite}
-@keyframes blink{50%{opacity:.35}}
+#hint{display:flex;align-items:center;gap:10px;font:700 12px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:#cfd6de}
+#hint i{display:block;width:46px;height:2px;background:linear-gradient(90deg,transparent,#cfd6de);position:relative;animation:swipe 1.4s ease-in-out infinite}
+#hint i::after{content:"";position:absolute;right:-2px;top:-4px;border:5px solid transparent;border-left-color:#cfd6de}
+@keyframes swipe{0%{transform:translateX(-14px);opacity:0}30%{opacity:1}100%{transform:translateX(14px);opacity:0}}
+#nogl{position:fixed;inset:0;display:none;place-items:center;text-align:center;padding:24px;font:500 16px/1.5 var(--f-d)}
+@media (prefers-reduced-motion: reduce){#hint i{animation:none}}
 </style></head><body>
-<canvas id="gl"></canvas><div id="flash"></div>
-<div class="ui top"><span class="eyebrow" id="eb">Кейс «Элитный»</span><span class="title" id="tt"></span><span class="sub" id="st"></span></div>
-<div class="ui bot"><span id="hint">Нажмите на кейс</span><div class="row"><button data-k="walk" class="pri">Редкий игрок 87+</button><button data-k="simple">Обычная карточка</button><button id="skip">Пропустить</button></div></div>
+<canvas id="gl"></canvas><div id="flash"></div><div id="nogl">Этому браузеру недоступна 3D-графика (WebGL). Откройте игру в Chrome, Safari или Firefox.</div>
+<div class="ui top"><span class="eyebrow" id="eb"></span><span class="title" id="tt"></span><span class="sub" id="st"></span></div>
+<div class="ui bot"><span id="hint"><span>Проведите по замкам</span><i></i></span><div class="row" id="demo"><button data-k="elite">Элитный · 87+</button><button data-k="pro">Про · 81</button><button data-k="basic">Базовый · 64</button></div><div class="row"><button id="openBtn">Открыть</button><button id="skip">Пропустить</button></div></div>
 <script>/*THREE*/</script>
 <script>
 'use strict';
-/* Тестовые игроки: в игре сюда придут данные выпавшей карточки */
+/* Тестовые выпадения: в игре сюда придёт лучшая карточка кейса */
 const DEMO = {
-  walk: { nick: 'molodoy', team: 'FURIA', cc: 'KZ', role: 'AWP', ovr: 92, rar: 'Тайное', col: '#ff4d4d', tc: '#2f7d4a', st: [['СТР', 94], ['ОПН', 92], ['КЛЧ', 95], ['ГРН', 92], ['ПОЗ', 99], ['ТАК', 87]], walk: true },
-  simple: { nick: 'svemyy', team: 'WBT Academy', cc: 'UA', role: 'SUP', ovr: 64, rar: 'Армейское', col: '#6c8cff', tc: '#3a5bd9', st: [['СТР', 61], ['ОПН', 63], ['КЛЧ', 67], ['ГРН', 74], ['ПОЗ', 65], ['ТАК', 65]], walk: false }
+  elite: { box: 'elite', boxN: 'Элитный', nick: 'molodoy', team: 'FURIA', cc: 'KZ', role: 'AWP', ovr: 92, rar: 'Тайное', col: '#ff4d4d', tc: '#2f8f55', st: [['СТР', 94], ['ОПН', 92], ['КЛЧ', 95], ['ГРН', 92], ['ПОЗ', 99], ['ТАК', 87]] },
+  pro: { box: 'pro', boxN: 'Про', nick: 'Krabeni', team: 'BETBOOM', cc: 'RU', role: 'LRK', ovr: 81, rar: 'Засекреченное', col: '#e45cf2', tc: '#d8b13a', st: [['СТР', 79], ['ОПН', 78], ['КЛЧ', 86], ['ГРН', 77], ['ПОЗ', 84], ['ТАК', 76]] },
+  basic: { box: 'basic', boxN: 'Базовый', nick: 'svemyy', team: 'WBT Academy', cc: 'UA', role: 'SUP', ovr: 64, rar: 'Армейское', col: '#6c8cff', tc: '#3a5bd9', st: [['СТР', 61], ['ОПН', 63], ['КЛЧ', 67], ['ГРН', 74], ['ПОЗ', 65], ['ТАК', 65]] }
 };
+const WALK = 87;
+const BOX = { basic: { body: 0x4a5130, rough: .72, metal: .08, trim: 0x2a2d22, accent: '#c9c19a' }, pro: { body: 0x2f3946, rough: .42, metal: .55, trim: 0x9aa6b2, accent: '#b9c6d3' }, elite: { body: 0x121315, rough: .35, metal: .6, trim: 0xc8a24a, accent: '#e2bd63' } };
 const $ = s => document.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const lerp = (a, b, t) => a + (b - a) * t, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const ease = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3), easeIO = t => { t = clamp(t, 0, 1); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+const easeO = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3), easeIO = t => { t = clamp(t, 0, 1); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+const back = t => { t = clamp(t, 0, 1); const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
 const flagOf = cc => [...cc].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join('');
 
 /* ---------- Рендер ---------- */
-const cv = $('#gl'), R3 = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' });
-R3.setPixelRatio(Math.min(devicePixelRatio, 2)); R3.outputEncoding = THREE.sRGBEncoding; R3.toneMapping = THREE.ACESFilmicToneMapping; R3.toneMappingExposure = 1.15;
-const scene = new THREE.Scene(); scene.background = new THREE.Color(0x030407); scene.fog = new THREE.FogExp2(0x030407, .055);
-const cam = new THREE.PerspectiveCamera(38, 1, .1, 100), camBase = new THREE.Vector3(0, 1.35, 8.4), look = new THREE.Vector3(0, 1.25, 0);
-function resize() { const w = innerWidth, h = innerHeight; R3.setSize(w, h, false); cam.aspect = w / h; cam.fov = w / h < .7 ? 44 : 34; cam.updateProjectionMatrix(); }
+const cv = $('#gl'); let R3;
+try { R3 = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' }); } catch (e) { $('#nogl').style.display = 'grid'; throw e; }
+R3.setPixelRatio(Math.min(devicePixelRatio, 2)); R3.outputEncoding = THREE.sRGBEncoding; R3.toneMapping = THREE.ACESFilmicToneMapping; R3.toneMappingExposure = 1.1;
+R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x030407); scene.fog = new THREE.FogExp2(0x030407, .05);
+const cam = new THREE.PerspectiveCamera(38, 1, .1, 100);
+function resize() { const w = innerWidth, h = innerHeight; R3.setSize(w, h, false); cam.aspect = w / h; cam.fov = w / h < .7 ? 46 : 34; cam.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();
 
-/* ---------- Текстуры, нарисованные на canvas ---------- */
-const tex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = R3.capabilities.getMaxAnisotropy(); return t; };
+/* ---------- Текстуры на canvas ---------- */
+const tex = (w, h, draw, srgb = true) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); if (srgb) t.encoding = THREE.sRGBEncoding; t.anisotropy = R3.capabilities.getMaxAnisotropy(); return t; };
 const dot = tex(64, 64, (g, w) => { const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.25, 'rgba(255,255,255,.6)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, w, w); });
 const tri = tex(512, 512, (g, w) => { g.fillStyle = '#000'; g.fillRect(0, 0, w, w); g.strokeStyle = '#fff'; g.lineWidth = 3; const s = w / 4, hh = s * Math.sqrt(3) / 2;
-  for (let y = -1; y < 6; y++) for (let x = -1; x < 6; x++) { const ox = x * s + (y % 2 ? s / 2 : 0), oy = y * hh; g.beginPath(); g.moveTo(ox, oy); g.lineTo(ox + s, oy); g.lineTo(ox + s / 2, oy + hh); g.closePath(); g.stroke(); } });
-tri.wrapS = tri.wrapT = THREE.RepeatWrapping; tri.repeat.set(10, 10); tri.encoding = THREE.LinearEncoding;
+  for (let y = -1; y < 6; y++) for (let x = -1; x < 6; x++) { const ox = x * s + (y % 2 ? s / 2 : 0), oy = y * hh; g.beginPath(); g.moveTo(ox, oy); g.lineTo(ox + s, oy); g.lineTo(ox + s / 2, oy + hh); g.closePath(); g.stroke(); } }, false);
+tri.wrapS = tri.wrapT = THREE.RepeatWrapping; tri.repeat.set(10, 10);
+/* потёртости и шум для пластика и металла кейса */
+const grime = tex(512, 512, (g, w) => { g.fillStyle = '#808080'; g.fillRect(0, 0, w, w); for (let i = 0; i < 2600; i++) { const v = 100 + Math.random() * 60 | 0; g.fillStyle = `rgba(${v},${v},${v},${Math.random() * .5})`; g.fillRect(Math.random() * w, Math.random() * w, 1 + Math.random() * 3, 1 + Math.random() * 3); }
+  g.strokeStyle = 'rgba(200,200,200,.35)'; for (let i = 0; i < 70; i++) { g.lineWidth = Math.random() * 1.5; g.beginPath(); const x = Math.random() * w, y = Math.random() * w; g.moveTo(x, y); g.lineTo(x + (Math.random() - .5) * 60, y + (Math.random() - .5) * 12); g.stroke(); } }, false);
+grime.wrapS = grime.wrapT = THREE.RepeatWrapping;
+/* пена внутри кейса: «яичная решётка» */
+const foamT = tex(256, 256, (g, w) => { g.fillStyle = '#1a1b1e'; g.fillRect(0, 0, w, w); const n = 8, s = w / n; for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) { const r = g.createRadialGradient(x * s + s / 2, y * s + s / 2, 1, x * s + s / 2, y * s + s / 2, s * .62); r.addColorStop(0, '#3a3c42'); r.addColorStop(1, '#141518'); g.fillStyle = r; g.fillRect(x * s, y * s, s, s); } });
+foamT.wrapS = foamT.wrapT = THREE.RepeatWrapping;
 
-/* ---------- Арена: пол из треугольников, лучи прожекторов, пыль ---------- */
-const tint = new THREE.Color('#7d8794'), tintTo = new THREE.Color('#7d8794');
-scene.add(new THREE.HemisphereLight(0x8899aa, 0x080808, .5));
-const key = new THREE.SpotLight(0xffffff, 3.2, 30, .55, .6, 1.2); key.position.set(0, 9, 4); key.target.position.set(0, 1, 0); scene.add(key, key.target);
-const rimL = new THREE.PointLight(0xffffff, 3, 12, 2), rimR = rimL.clone(); rimL.position.set(-3.2, 2.6, -1.5); rimR.position.set(3.2, 2.6, -1.5); scene.add(rimL, rimR);
-const floorMat = new THREE.MeshStandardMaterial({ color: 0x07080b, metalness: .7, roughness: .38, emissive: tint.clone(), emissiveMap: tri, emissiveIntensity: .55, transparent: true, opacity: .9 });
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), floorMat); floor.rotation.x = -Math.PI / 2; scene.add(floor);
-const beamMat = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-  uniforms: { c: { value: tint.clone() }, a: { value: .22 } },
+/* ---------- Арена: пол, лучи, пыль ---------- */
+const tint = new THREE.Color('#5d6670'), tintTo = new THREE.Color('#5d6670');
+scene.add(new THREE.HemisphereLight(0x9aa8b8, 0x0a0a0a, .55));
+const key = new THREE.SpotLight(0xffffff, 3.4, 30, .5, .55, 1.2); key.position.set(1.5, 9, 5); key.target.position.set(0, .4, 0); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -.0004; scene.add(key, key.target);
+const rimL = new THREE.PointLight(0xffffff, 2.6, 12, 2), rimR = rimL.clone(); rimL.position.set(-3.4, 2.6, -1.8); rimR.position.set(3.4, 2.6, -1.8); scene.add(rimL, rimR);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x07080b, metalness: .7, roughness: .36, emissive: tint.clone(), emissiveMap: tri, emissiveIntensity: .45, transparent: true, opacity: .9 });
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), floorMat); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const beamMat = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, uniforms: { c: { value: tint.clone() }, a: { value: .18 } },
   vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
   fragmentShader: 'uniform vec3 c;uniform float a;varying vec2 vUv;void main(){float f=pow(vUv.y,1.6)*(1.-abs(vUv.x-.5)*1.6);gl_FragColor=vec4(c*f*a*2.2,1.);}' });
-const beams = [-2.6, -1, 1, 2.6].map((x, i) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.08, 1.25, 11, 32, 1, true), beamMat()); m.geometry.translate(0, -5.5, 0); m.position.set(x, 10, -2.2 - (i % 2)); m.rotation.z = -x * .07; scene.add(m); return m; });
-const DUST = 900, dg = new THREE.BufferGeometry(), dp = new Float32Array(DUST * 3), dv = new Float32Array(DUST * 3);
-for (let i = 0; i < DUST; i++) { dp[i * 3] = (Math.random() - .5) * 14; dp[i * 3 + 1] = Math.random() * 7; dp[i * 3 + 2] = (Math.random() - .5) * 10 - 1; dv[i * 3 + 1] = .05 + Math.random() * .15; }
+const beams = [-2.8, -1.1, 1.1, 2.8].map((x, i) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.08, 1.25, 11, 32, 1, true), beamMat()); m.geometry.translate(0, -5.5, 0); m.position.set(x, 10, -2.4 - (i % 2)); scene.add(m); return m; });
+const DUST = 800, dg = new THREE.BufferGeometry(), dp = new Float32Array(DUST * 3), dv = new Float32Array(DUST);
+for (let i = 0; i < DUST; i++) { dp[i * 3] = (Math.random() - .5) * 14; dp[i * 3 + 1] = Math.random() * 7; dp[i * 3 + 2] = (Math.random() - .5) * 10 - 1; dv[i] = .05 + Math.random() * .15; }
 dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
-const dust = new THREE.Points(dg, new THREE.PointsMaterial({ map: dot, size: .06, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xfff0d8, opacity: .7 })); scene.add(dust);
-const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: dot, color: tint.clone(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 })); glow.scale.set(6, 6, 1); glow.position.set(0, 1.3, -.6); scene.add(glow);
-const ring = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 96), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); ring.position.set(0, 1.3, 0); scene.add(ring);
+scene.add(new THREE.Points(dg, new THREE.PointsMaterial({ map: dot, size: .055, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xfff0d8, opacity: .6 })));
+const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: dot, color: tint.clone(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 })); glow.scale.set(6, 6, 1); scene.add(glow);
+const ring = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 96), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); scene.add(ring);
 
-/* ---------- 3D-кейс: корпус, крышка, светящиеся полосы, защёлки ---------- */
+/* ---------- Оружейный кейс ----------
+   Корпус и крышка — выдавленный прямоугольник со скруглёнными углами; рёбра жёсткости, уголки, ручка,
+   две защёлки на петлях, пена внутри с гнездом под карточку, свет изнутри цвета редкости. */
+const CASE = { w: 3.1, d: 1.9, hb: .56, hl: .34 };
+const rrect = (w, h, r) => { const s = new THREE.Shape(), x = -w / 2, y = -h / 2; s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r); s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h); s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s; };
+const shell = (h) => { const g = new THREE.ExtrudeGeometry(rrect(CASE.w, CASE.d, .16), { depth: h, bevelEnabled: true, bevelThickness: .035, bevelSize: .035, bevelSegments: 3, curveSegments: 10 }); g.rotateX(-Math.PI / 2); return g; };
 const caseG = new THREE.Group(); scene.add(caseG);
-const metal = new THREE.MeshStandardMaterial({ color: 0x2b3038, metalness: .85, roughness: .32 }), dark = new THREE.MeshStandardMaterial({ color: 0x121418, metalness: .6, roughness: .5 });
-const neon = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: new THREE.Color('#f2c14e'), emissiveIntensity: 2.2 });
-const box = (w, h, d, m, x, y, z) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); caseG.add(b); return b; };
-box(2.4, 1.15, .95, metal, 0, .58, 0); const lid = new THREE.Group(); caseG.add(lid); lid.position.set(0, 1.16, -.47);
-const lidB = new THREE.Mesh(new THREE.BoxGeometry(2.4, .42, .95), metal); lidB.position.set(0, .21, .47); lid.add(lidB);
-const seam = box(2.42, .05, .97, neon, 0, 1.16, 0);
-for (const x of [-1.21, 1.21]) box(.04, 1.5, .97, dark, x, .78, 0);
-box(2.1, .05, .02, neon, 0, .25, .48); box(1.4, .38, .02, dark, 0, .7, .48);
-const latches = [-.7, .7].map(x => { const l = new THREE.Mesh(new THREE.BoxGeometry(.32, .3, .1), new THREE.MeshStandardMaterial({ color: 0xb9c2cc, metalness: .95, roughness: .2 })); l.position.set(x, 1.13, .52); caseG.add(l); return l; });
-const logo = tex(512, 256, (g, w, h) => { g.fillStyle = '#0b0d10'; g.fillRect(0, 0, w, h); g.font = '700 120px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#f2c14e'; g.fillText('ЭЛИТНЫЙ', w / 2, h / 2 + 6); });
-const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.36, .34), new THREE.MeshStandardMaterial({ map: logo, emissive: 0xffffff, emissiveMap: logo, emissiveIntensity: .9, metalness: .2, roughness: .6 })); plate.position.set(0, .7, .495); caseG.add(plate);
-caseG.position.set(0, .05, 0);
+const bodyMat = new THREE.MeshStandardMaterial({ roughnessMap: grime, bumpMap: grime, bumpScale: .004 }), trimMat = new THREE.MeshStandardMaterial({ metalness: .9, roughness: .3 }), rubber = new THREE.MeshStandardMaterial({ color: 0x0c0c0d, roughness: .9, metalness: 0 });
+const stencilMat = new THREE.MeshStandardMaterial({ transparent: true, roughness: .8, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2 });
+const mesh = (g, m, p, parent = caseG) => { const o = new THREE.Mesh(g, m); o.castShadow = o.receiveShadow = true; if (p) o.position.set(p[0], p[1], p[2]); parent.add(o); return o; };
+const lower = mesh(shell(CASE.hb), bodyMat, [0, .04, 0]);
+/* горизонтальные рёбра по бокам корпуса */
+for (const y of [.2, .42]) { mesh(new THREE.BoxGeometry(CASE.w + .1, .05, .04), bodyMat, [0, y, CASE.d / 2 + .04]); mesh(new THREE.BoxGeometry(CASE.w + .1, .05, .04), bodyMat, [0, y, -CASE.d / 2 - .04]); }
+/* пена и гнездо под карточку */
+const foam = mesh(new THREE.PlaneGeometry(CASE.w - .14, CASE.d - .14), new THREE.MeshStandardMaterial({ map: foamT, roughness: 1, bumpMap: foamT, bumpScale: .02 }), [0, CASE.hb + .02, 0]); foam.rotation.x = -Math.PI / 2; foamT.repeat.set(6, 4);
+const slotMat = new THREE.MeshBasicMaterial({ color: 0x000000 }), slot = mesh(new THREE.PlaneGeometry(1.0, 1.4), slotMat, [0, CASE.hb + .025, .05]); slot.rotation.x = -Math.PI / 2;
+const innerLight = new THREE.PointLight(0xffffff, 0, 2.6, 2); innerLight.position.set(0, CASE.hb + .6, .3); caseG.add(innerLight);
+const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.55, .9, 5, 32, 1, true), beamMat()); shaft.geometry.translate(0, 2.5, 0); shaft.position.set(0, CASE.hb, .05); shaft.rotation.x = Math.PI; shaft.material.uniforms.a.value = 0; caseG.add(shaft); shaft.rotation.set(0, 0, 0);
+shaft.material.fragmentShader = 'uniform vec3 c;uniform float a;varying vec2 vUv;void main(){float f=pow(1.-vUv.y,1.4)*(1.-abs(vUv.x-.5)*1.4);gl_FragColor=vec4(c*f*a*2.5,1.);}';
+/* крышка на петле у задней стенки */
+const lidPivot = new THREE.Group(); lidPivot.position.set(0, CASE.hb + .075, -CASE.d / 2 - .03); caseG.add(lidPivot);
+const lidG = new THREE.Group(); lidG.position.set(0, 0, CASE.d / 2 + .03); lidPivot.add(lidG);
+mesh(shell(CASE.hl), bodyMat, [0, 0, 0], lidG);
+const lidFoam = mesh(new THREE.PlaneGeometry(CASE.w - .14, CASE.d - .14), new THREE.MeshStandardMaterial({ map: foamT, roughness: 1, color: 0x6a6a6a }), [0, -.005, 0], lidG); lidFoam.rotation.x = Math.PI / 2;
+for (const z of [-.5, 0, .5]) mesh(new THREE.BoxGeometry(CASE.w - .5, .05, .1), bodyMat, [0, CASE.hl + .05, z], lidG);
+const stencil = mesh(new THREE.PlaneGeometry(2.4, .9), stencilMat, [0, CASE.hl + .036, .02], lidG); stencil.rotation.x = -Math.PI / 2;
+/* уголки, ручка, петли */
+const corners = [];
+for (const sx of [-1, 1]) for (const sz of [-1, 1]) { corners.push(mesh(new THREE.BoxGeometry(.3, CASE.hb + .02, .3), trimMat, [sx * (CASE.w / 2 - .06), CASE.hb / 2 + .05, sz * (CASE.d / 2 - .06)])); corners.push(mesh(new THREE.BoxGeometry(.3, CASE.hl + .02, .3), trimMat, [sx * (CASE.w / 2 - .06), CASE.hl / 2 + .02, sz * (CASE.d / 2 - .06) - CASE.d / 2 - .03 + CASE.d / 2 + .03], lidG)); }
+const handle = new THREE.Group(); handle.position.set(0, .3, CASE.d / 2 + .08); caseG.add(handle);
+mesh(new THREE.TorusGeometry(.42, .055, 12, 32, Math.PI), rubber, [0, -.02, .12], handle).rotation.set(Math.PI / 2, 0, 0);
+for (const x of [-.42, .42]) mesh(new THREE.BoxGeometry(.14, .14, .14), trimMat, [x, -.02, .02], handle);
+for (const x of [-1, 0, 1]) mesh(new THREE.CylinderGeometry(.05, .05, .32, 16), trimMat, [x, CASE.hb + .075, -CASE.d / 2 - .06]).rotation.z = Math.PI / 2;
+/* защёлки: основание на корпусе и рычаг на петле */
+const latches = [-.95, .95].map(x => { const base = mesh(new THREE.BoxGeometry(.38, .2, .06), trimMat, [x, CASE.hb - .07, CASE.d / 2 + .06]);
+  const piv = new THREE.Group(); piv.position.set(x, CASE.hb - .14, CASE.d / 2 + .1); caseG.add(piv);
+  const lever = mesh(new THREE.BoxGeometry(.32, .34, .05), trimMat, [0, .17, 0], piv); mesh(new THREE.BoxGeometry(.2, .06, .07), rubber, [0, .3, .02], piv);
+  return { piv, open: 0, x }; });
+const seam = mesh(new THREE.BoxGeometry(CASE.w - .2, .012, CASE.d - .2), new THREE.MeshBasicMaterial({ color: 0x000000 }), [0, CASE.hb + .075, 0]);
+const CS = .72; caseG.scale.setScalar(CS); caseG.position.set(0, 0, .3); caseG.rotation.y = -.18;
+function skinCase(kind, P) {
+  const B = BOX[kind]; bodyMat.color.set(B.body); bodyMat.roughness = B.rough; bodyMat.metalness = B.metal; trimMat.color.set(B.trim);
+  const t = tex(1024, 384, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = B.accent; g.globalAlpha = .9; g.font = '700 150px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ПЯТЁРКА ЛЕГЕНД', w / 2, h * .42);
+    g.font = '700 56px JetBrains Mono, monospace'; g.fillText('КЕЙС · ' + P.boxN.toUpperCase(), w / 2, h * .82); g.globalCompositeOperation = 'destination-out'; for (let i = 0; i < 900; i++) { g.globalAlpha = Math.random() * .6; g.fillRect(Math.random() * w, Math.random() * h, Math.random() * 6, Math.random() * 3); } });
+  stencilMat.map = t; stencilMat.needsUpdate = true;
+}
 
-/* ---------- Осколки ---------- */
-const SH = 90, shardM = new THREE.InstancedMesh(new THREE.TetrahedronGeometry(.16), new THREE.MeshStandardMaterial({ color: 0x3a4049, metalness: .9, roughness: .25, emissive: new THREE.Color('#ffffff'), emissiveIntensity: .25 }), SH);
-shardM.instanceMatrix.setUsage(THREE.DynamicDrawUsage); shardM.visible = false; scene.add(shardM);
-const shards = Array.from({ length: SH }, () => ({ p: new THREE.Vector3(), v: new THREE.Vector3(), r: new THREE.Euler(), w: new THREE.Vector3(), s: 1 }));
-const tmpO = new THREE.Object3D();
-function blast() { shardM.visible = true; shards.forEach(s => { s.p.set((Math.random() - .5) * 2.2, .3 + Math.random() * 1.3, (Math.random() - .5) * .9); s.v.set(s.p.x * 3.2 + (Math.random() - .5) * 2, 2.5 + Math.random() * 4, 2 + Math.random() * 3.5); s.w.set(Math.random() * 9, Math.random() * 9, Math.random() * 9); s.s = .5 + Math.random() * 1.3; }); }
-
-/* ---------- Карточка: тонкая пластина, металлический торец, голографическая лицевая сторона ---------- */
-const CW = 1.9, CH = 2.66;
+/* ---------- Карточка: пластина со скошенным углом, металлическое ребро, голографическая лицевая сторона ---------- */
+const CW = 1.9, CH = 2.66, CUT = .26, CD = .05;
+const cardShape = () => { const s = new THREE.Shape(), x = -CW / 2, y = -CH / 2, r = .07; s.moveTo(x + r, y); s.lineTo(x + CW - r, y); s.quadraticCurveTo(x + CW, y, x + CW, y + r); s.lineTo(x + CW, y + CH - CUT); s.lineTo(x + CW - CUT, y + CH); s.lineTo(x + r, y + CH); s.quadraticCurveTo(x, y + CH, x, y + CH - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s; };
+const faceGeo = flipU => { const g = new THREE.ShapeGeometry(cardShape(), 12), p = g.attributes.position, uv = g.attributes.uv; for (let i = 0; i < p.count; i++) { const u = (p.getX(i) + CW / 2) / CW; uv.setXY(i, flipU ? 1 - u : u, (p.getY(i) + CH / 2) / CH); } return g; };
+const edgeGeo = (() => { const g = new THREE.ExtrudeGeometry(cardShape(), { depth: CD, bevelEnabled: true, bevelThickness: .012, bevelSize: .012, bevelSegments: 3, curveSegments: 12 }); g.translate(0, 0, -CD / 2); return g; })();
+const frontGeo = faceGeo(false), backGeo = faceGeo(true);
 function drawFace(P, g, w, h) {
-  const k = w / 720, cut = 90 * k;
+  const k = w / 720, cut = CUT / CW * w;
   const path = () => { g.beginPath(); g.moveTo(0, 0); g.lineTo(w - cut, 0); g.lineTo(w, cut); g.lineTo(w, h); g.lineTo(0, h); g.closePath(); };
-  path(); g.save(); g.clip();
+  g.fillStyle = P.col; g.fillRect(0, 0, w, h); path(); g.save(); g.clip();
   let gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#2b3038'); gr.addColorStop(.55, '#15181d'); gr.addColorStop(1, '#07080a'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
   gr = g.createRadialGradient(w / 2, h * 1.02, 0, w / 2, h * 1.02, h * .7); gr.addColorStop(0, P.col + 'cc'); gr.addColorStop(1, P.col + '00'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
   gr = g.createRadialGradient(w / 2, h * .34, 0, w / 2, h * .34, w * .55); gr.addColorStop(0, P.tc + '88'); gr.addColorStop(1, P.tc + '00'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
   g.strokeStyle = 'rgba(255,255,255,.05)'; g.lineWidth = 3 * k; for (let x = -h; x < w; x += 26 * k) { g.beginPath(); g.moveTo(x, h); g.lineTo(x + h * .55, 0); g.stroke(); }
   g.font = `700 ${360 * k}px Oswald, Impact, sans-serif`; g.fillStyle = 'rgba(255,255,255,.05)'; g.textAlign = 'right'; g.fillText(P.nick.slice(0, 2).toUpperCase(), w + 10 * k, 430 * k);
-  /* силуэт игрока: в игре вместо него встанет фото */
+  /* силуэт: в игре здесь будет фото игрока из папки photos */
   g.save(); g.translate(w * .56, h * .2); g.scale(5.2 * k, 5.2 * k);
-  g.fillStyle = 'rgba(5,7,10,.92)'; g.beginPath(); g.moveTo(4 - 50, 100); g.bezierCurveTo(4 - 50, 76, 22 - 50, 67, 38 - 50, 64); g.lineTo(0, 73); g.lineTo(62 - 50, 64); g.bezierCurveTo(78 - 50, 67, 96 - 50, 76, 96 - 50, 100); g.fill();
+  g.fillStyle = 'rgba(5,7,10,.92)'; g.beginPath(); g.moveTo(-46, 100); g.bezierCurveTo(-46, 76, -28, 67, -12, 64); g.lineTo(0, 73); g.lineTo(12, 64); g.bezierCurveTo(28, 67, 46, 76, 46, 100); g.fill();
   g.fillStyle = P.tc; g.beginPath(); g.moveTo(-12, 64); g.lineTo(0, 73); g.lineTo(12, 64); g.lineTo(15, 65); g.lineTo(0, 80); g.lineTo(-15, 65); g.fill();
   g.fillStyle = 'rgba(5,7,10,.95)'; g.fillRect(-7, 53, 14, 15); g.beginPath(); g.ellipse(0, 38, 16.5, 19.5, 0, 0, Math.PI * 2); g.fill();
   g.strokeStyle = P.col; g.lineWidth = 4; g.lineCap = 'round'; g.beginPath(); g.arc(0, 40, 19, Math.PI * 1.05, Math.PI * 1.95); g.stroke(); g.fillStyle = P.col; g.fillRect(-23, 34, 8, 15); g.fillRect(15, 34, 8, 15);
@@ -126,37 +171,38 @@ function drawFace(P, g, w, h) {
   g.restore(); path(); g.lineWidth = 10 * k; g.strokeStyle = P.col; g.stroke(); g.lineWidth = 2 * k; g.strokeStyle = 'rgba(255,255,255,.5)'; g.stroke();
 }
 function drawBack(P, g, w, h) {
-  const k = w / 720, gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, P.col); gr.addColorStop(.5, '#16090b'); gr.addColorStop(1, P.col);
+  const k = w / 720, gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, P.col); gr.addColorStop(.5, '#0d0e12'); gr.addColorStop(1, P.col);
   g.fillStyle = '#0a0b0e'; g.fillRect(0, 0, w, h); g.globalAlpha = .85; g.fillStyle = gr; g.fillRect(0, 0, w, h); g.globalAlpha = 1;
   g.strokeStyle = 'rgba(255,255,255,.16)'; g.lineWidth = 4 * k; for (let x = -h; x < w; x += 34 * k) { g.beginPath(); g.moveTo(x, h); g.lineTo(x + h * .55, 0); g.stroke(); }
   g.save(); g.translate(w / 2, h * .44); g.strokeStyle = '#fff'; g.lineWidth = 12 * k; g.beginPath(); for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * 2 / 5; g.lineTo(Math.cos(a) * 150 * k, Math.sin(a) * 150 * k); } g.closePath(); g.stroke();
   g.fillStyle = '#fff'; g.font = `700 ${150 * k}px Oswald, Impact, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('5', 0, 8 * k); g.restore();
   g.fillStyle = 'rgba(255,255,255,.85)'; g.font = `700 ${44 * k}px JetBrains Mono, monospace`; g.textAlign = 'center'; g.fillText('ПЯТЁРКА ЛЕГЕНД', w / 2, h * .78);
-  g.lineWidth = 14 * k; g.strokeStyle = 'rgba(255,255,255,.6)'; g.strokeRect(0, 0, w, h);
 }
 const holo = map => new THREE.ShaderMaterial({ uniforms: { map: { value: map }, t: { value: 0 }, sweep: { value: -1 }, foil: { value: .9 } },
   vertexShader: 'varying vec2 vUv;varying vec3 vN;varying vec3 vV;void main(){vUv=uv;vec4 mv=modelViewMatrix*vec4(position,1.);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}',
   fragmentShader: `uniform sampler2D map;uniform float t;uniform float sweep;uniform float foil;varying vec2 vUv;varying vec3 vN;varying vec3 vV;
   vec3 hue(float h){return clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.);}
   void main(){vec4 b=texture2D(map,vUv);float ang=dot(vN,vV);vec2 tilt=vN.xy;float l=dot(b.rgb,vec3(.299,.587,.114));
-  vec3 ir=hue(fract(vUv.x*.35+vUv.y*.45+tilt.x*1.4+tilt.y*1.1+t*.02));float edge=smoothstep(.0,.06,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));float m=foil*(.05+.22*pow(1.-l,2.))*(1.-edge*.55)*(.5+.5*abs(tilt.x+tilt.y)*2.);
+  vec3 ir=hue(fract(vUv.x*.35+vUv.y*.45+tilt.x*1.4+tilt.y*1.1+t*.02));float edge=smoothstep(.0,.06,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));float m=foil*(.03+.13*pow(1.-l,2.))*(1.-edge*.5)*(.6+.4*clamp(abs(tilt.x+tilt.y)*2.,0.,1.));
   float s=smoothstep(.09,0.,abs(vUv.x*.6+vUv.y*.8-sweep))*.55;float spec=pow(max(0.,ang),24.)*.08;
   vec3 c=b.rgb*.92+ir*m+vec3(s)*b.rgb*1.4+spec;gl_FragColor=vec4(c,1.);
   #include <tonemapping_fragment>
   #include <encodings_fragment>
   }` });
-const card = new THREE.Group(), cardPivot = new THREE.Group(); cardPivot.add(card); scene.add(cardPivot); cardPivot.position.set(0, 1.42, 0);
-const edgeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: .2, emissive: new THREE.Color('#000') });
-let faceMat = null, backMat = null, cardMesh = null, mirror = null;
+const card = new THREE.Group(), cardPivot = new THREE.Group(); cardPivot.add(card); scene.add(cardPivot);
+const mirror = new THREE.Group(); scene.add(mirror);
+const edgeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: .18, emissive: new THREE.Color('#000') });
+let faceMat = null;
 function buildCard(P) {
-  if (cardMesh) { card.remove(cardMesh); scene.remove(mirror); }
+  [card, mirror].forEach(g => { while (g.children.length) g.remove(g.children[0]); });
   const ft = tex(720, 1008, (g, w, h) => drawFace(P, g, w, h)), bt = tex(720, 1008, (g, w, h) => drawBack(P, g, w, h));
-  faceMat = holo(ft); faceMat.uniforms.foil.value = P.walk ? 1 : .35;
-  backMat = new THREE.MeshStandardMaterial({ map: bt, metalness: .55, roughness: .35, emissive: 0xffffff, emissiveMap: bt, emissiveIntensity: .35 });
-  edgeMat.color.set(P.col); edgeMat.emissive.set(P.col); edgeMat.emissiveIntensity = .5;
-  cardMesh = new THREE.Mesh(new THREE.BoxGeometry(CW, CH, .045), [edgeMat, edgeMat, edgeMat, edgeMat, faceMat, backMat]); card.add(cardMesh);
-  mirror = cardMesh.clone(); mirror.material = cardMesh.material.map(m => { const c = m.clone(); c.transparent = true; c.opacity = .18; return c; });
-  scene.add(mirror);
+  faceMat = holo(ft); faceMat.uniforms.foil.value = P.ovr >= WALK ? 1 : .4;
+  const backMat = new THREE.MeshStandardMaterial({ map: bt, metalness: .5, roughness: .35, emissive: 0xffffff, emissiveMap: bt, emissiveIntensity: .3 });
+  edgeMat.color.set(P.col); edgeMat.emissive.set(P.col); edgeMat.emissiveIntensity = .35;
+  const edge = new THREE.Mesh(edgeGeo, edgeMat), front = new THREE.Mesh(frontGeo, faceMat), backM = new THREE.Mesh(backGeo, backMat);
+  edge.castShadow = true; front.position.z = CD / 2 + .0135; backM.position.z = -CD / 2 - .0135; backM.rotation.y = Math.PI;
+  card.add(edge, front, backM);
+  for (const m of [edge, front, backM]) { const c = m.clone(); c.material = m.material.clone(); c.material.transparent = true; if (c.material.uniforms) { c.material = new THREE.MeshBasicMaterial({ map: ft, transparent: true }); } c.material.opacity = .16; c.castShadow = false; mirror.add(c); }
 }
 
 /* ---------- Флаг и плашка команды ---------- */
@@ -166,95 +212,110 @@ const wave = map => new THREE.ShaderMaterial({ transparent: true, side: THREE.Do
 let flag = null, teamP = null;
 function buildSigns(P) {
   [flag, teamP].forEach(m => m && scene.remove(m));
-  const ft = tex(512, 340, (g, w, h) => { g.clearRect(0, 0, w, h); g.font = '300px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(flagOf(P.cc), w / 2, h / 2 + 20);
+  const ft = tex(512, 340, (g, w, h) => { g.font = '300px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(flagOf(P.cc), w / 2, h / 2 + 20);
     const d = g.getImageData(w / 2 - 4, h / 2 - 4, 8, 8).data; let any = 0; for (let i = 3; i < d.length; i += 4) any += d[i]; if (!any) { g.fillStyle = '#fff'; g.font = '700 200px Oswald, Impact, sans-serif'; g.fillText(P.cc, w / 2, h / 2 + 10); } });
-  flag = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 1.4, 40, 24), wave(ft)); flag.position.set(0, 3.55, -.3); scene.add(flag);
+  flag = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.13, 40, 24), wave(ft)); flag.position.set(0, 4.7, -.3); scene.add(flag);
   const tt = tex(1024, 220, (g, w, h) => { const gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(.15, 'rgba(0,0,0,.85)'); gr.addColorStop(.85, 'rgba(0,0,0,.85)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
     g.fillStyle = P.tc; g.fillRect(w * .12, 0, w * .76, 8); g.fillRect(w * .12, h - 8, w * .76, 8); g.fillStyle = '#fff'; g.font = '700 130px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(P.team.toUpperCase(), w / 2, h / 2 + 8); });
-  teamP = new THREE.Mesh(new THREE.PlaneGeometry(3.4, .73, 30, 6), wave(tt)); teamP.position.set(0, 3.45, -.2); scene.add(teamP);
+  teamP = new THREE.Mesh(new THREE.PlaneGeometry(2.8, .6, 30, 6), wave(tt)); teamP.position.set(0, 4.7, -.2); scene.add(teamP);
 }
 
+/* ---------- Частицы раскрытия ---------- */
+const BP = 600, bg = new THREE.BufferGeometry(), bp = new Float32Array(BP * 3), bv = new Float32Array(BP * 3); bg.setAttribute('position', new THREE.BufferAttribute(bp, 3));
+const bMat = new THREE.PointsMaterial({ map: dot, size: .09, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }); scene.add(new THREE.Points(bg, bMat));
+let bLife = 0;
+function burst(c, power, y) { bMat.color.copy(c).lerp(new THREE.Color('#fff'), .35); bMat.opacity = 1; bLife = 1; for (let i = 0; i < BP; i++) { const a = Math.random() * 6.283, z = Math.random() * 2 - 1, r = Math.sqrt(1 - z * z), s = (2 + Math.random() * 6) * power; bp[i * 3] = 0; bp[i * 3 + 1] = y; bp[i * 3 + 2] = .3; bv[i * 3] = Math.cos(a) * r * s; bv[i * 3 + 1] = z * s; bv[i * 3 + 2] = Math.sin(a) * r * s * .6; } bg.attributes.position.needsUpdate = true; }
+
 /* ---------- Сценарий ---------- */
-let P = DEMO.walk, phase = 'idle', T0 = 0, shake = 0;
-const steps = [];                                   // [время, действие] от момента нажатия
+const CARD_Y = 1.7, CARD_S = .8;
+let P, phase = 'idle', T0 = 0;
+const steps = [];
+const S = {};
 const ui = (t, s, col) => { const a = $('#tt'), b = $('#st'); a.textContent = t || ''; b.textContent = s || ''; a.style.setProperty('--gl', col || '#fff'); b.style.setProperty('--gl', col || '#fff'); a.classList.toggle('on', !!t); b.classList.toggle('on', !!s); };
 const flash = (a = .6) => { if (reduce) return; const f = $('#flash'); f.style.transition = 'none'; f.style.opacity = a; requestAnimationFrame(() => { f.style.transition = 'opacity .45s'; f.style.opacity = 0; }); };
-const S = { case: 1, back: 0, face: 0, flag: 0, team: 0, spin: 0, glow: 0, ring: -1, beam: .22, dolly: 0, sweep: -1 };
 function reset(k) {
-  P = DEMO[k]; buildCard(P); buildSigns(P); phase = 'idle'; steps.length = 0; shardM.visible = false;
-  Object.assign(S, { case: 1, back: 0, face: 0, flag: 0, team: 0, spin: 0, glow: 0, ring: -1, beam: .22, dolly: 0, sweep: -1 });
-  lid.rotation.x = 0; latches.forEach(l => { l.rotation.x = 0; }); neon.emissive.set('#f2c14e'); neon.emissiveIntensity = 2.2; tintTo.set('#7d8794');
-  ui(''); $('#hint').style.visibility = 'visible'; $('#eb').textContent = P.walk ? 'Кейс «Элитный» · редкий игрок' : 'Кейс «Базовый» · обычная карточка';
+  P = DEMO[k]; buildCard(P); buildSigns(P); skinCase(P.box, P); phase = 'idle'; steps.length = 0; swipe.p = 0;
+  Object.assign(S, { lid: 0, light: 0, rise: 0, show: 0, face: 0, spin: 0, glow: 0, ring: -1, beam: .18, dolly: 0, dollyT: 0, sweep: -1, flag: 0, team: 0, shake: 0, focus: 0 });
+  latches.forEach(l => { l.open = 0; }); rot = 0; S.lidT = S.lightT = S.riseT = S.focusT = 0; tintTo.set('#5d6670'); tint.set('#5d6670'); card.visible = mirror.visible = false;
+  ui(''); $('#hint').style.visibility = 'visible'; $('#eb').textContent = 'Кейс «' + P.boxN + '»';
+  document.querySelectorAll('[data-k]').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
 }
 function open() {
   if (phase !== 'idle') return; phase = 'run'; T0 = performance.now() / 1000; $('#hint').style.visibility = 'hidden';
-  const W = P.walk, c = new THREE.Color(P.col);
+  const W = P.ovr >= WALK, c = new THREE.Color(P.col);
   const at = (t, f) => steps.push([reduce ? Math.min(t, .3) : t, f]);
-  at(0, () => { shake = W ? 1 : .5; neon.emissive.copy(c); tintTo.copy(c).multiplyScalar(.6); });
-  at(.35, () => { latches.forEach((l, i) => { l.userData.pop = 1; }); });
-  at(W ? .95 : .6, () => { flash(W ? .6 : .35); blast(); S.case = 0; S.back = 1; S.spin = W ? 14 : 6; S.ring = 0; S.glow = W ? .9 : .6; S.beam = .5; tintTo.copy(c); });
-  if (W) {
-    at(2.3, () => { S.flag = 1; S.beam = .45; tintTo.setHSL((P.cc.charCodeAt(0) * 37 + P.cc.charCodeAt(1) * 11) % 360 / 360, .75, .5); ui(''); });
-    at(4.0, () => { S.flag = 0; S.team = 1; tintTo.set(P.tc); S.spin += 6.283; });
-    at(5.7, () => { S.team = 0; S.glow = 1.6; tintTo.copy(c); S.spin += Math.PI * 3; S.beam = .8; });
-    at(6.35, () => { flash(.7); S.face = 1; S.ring = 0; burst(c, 1); S.dolly = 1; S.sweep = 0; ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
-    at(7.6, () => { phase = 'done'; });
-  } else {
-    at(1.0, () => { S.face = 1; S.spin = Math.PI; burst(c, .35); S.sweep = 0; ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
-    at(2.0, () => { phase = 'done'; });
+  latches.forEach(l => { l.open = 1; });
+  /* честный цвет: свет из кейса — цвет редкости лучшей карточки */
+  at(.15, () => { S.lid = 1; S.shake = .4; innerLight.color.copy(c); shaft.material.uniforms.c.value.copy(c); tintTo.copy(c).multiplyScalar(.55); });
+  at(.55, () => { S.light = 1; S.beam = .35; });
+  if (!W) {
+    /* ниже 87: без анимации — карточка сразу целиком */
+    at(.75, () => { S.show = 1; S.face = 1; S.rise = 1; S.snap = 1; S.focus = 1; S.glow = .5; ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
+    at(.8, () => { phase = 'done'; });
+    return;
   }
+  /* 87+: рубашка поднимается из кейса → флаг → команда → карточка */
+  at(.9, () => { S.show = 1; S.rise = 1; S.glow = .8; tintTo.copy(c); S.beam = .5; S.spin = 0; });
+  at(2.1, () => { S.focus = 1; S.flag = 1; tintTo.setHSL((P.cc.charCodeAt(0) * 37 + P.cc.charCodeAt(1) * 11) % 360 / 360, .75, .5); });
+  at(3.7, () => { S.flag = 0; S.team = 1; tintTo.set(P.tc); S.spin += 6.283; });
+  at(5.3, () => { S.team = 0; S.glow = 1.6; tintTo.copy(c); S.spin += Math.PI * 3; S.beam = .8; });
+  at(5.95, () => { flash(.7); S.face = 1; S.ring = 0; burst(c, 1, CARD_Y); S.dolly = 1; S.sweep = 0; ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
+  at(7.2, () => { phase = 'done'; });
 }
-function skip() { if (phase !== 'run') return; steps.forEach(s => s[1]()); steps.length = 0; flash(.6); }
-/* всплеск частиц при раскрытии */
-const BP = 600, bg = new THREE.BufferGeometry(), bp = new Float32Array(BP * 3), bv = new Float32Array(BP * 3); bg.setAttribute('position', new THREE.BufferAttribute(bp, 3));
-const bMat = new THREE.PointsMaterial({ map: dot, size: .09, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }), bPts = new THREE.Points(bg, bMat); scene.add(bPts);
-let bLife = 0;
-function burst(c, power) { bMat.color.copy(c).lerp(new THREE.Color('#fff'), .35); bMat.opacity = 1; bLife = 1; for (let i = 0; i < BP; i++) { const a = Math.random() * 6.283, z = Math.random() * 2 - 1, r = Math.sqrt(1 - z * z), s = (2 + Math.random() * 6) * power; bp[i * 3] = 0; bp[i * 3 + 1] = 1.42; bp[i * 3 + 2] = 0; bv[i * 3] = Math.cos(a) * r * s; bv[i * 3 + 1] = z * s; bv[i * 3 + 2] = Math.sin(a) * r * s * .6; } bg.attributes.position.needsUpdate = true; }
+function skip() { if (phase !== 'run') return; steps.forEach(s => s[1]()); steps.length = 0; S.snap = 1; S.flag = S.team = 0; }
 
-/* ---------- Управление ---------- */
-const ptr = { x: 0, y: 0 };
-cv.addEventListener('pointermove', e => { ptr.x = e.clientX / innerWidth * 2 - 1; ptr.y = e.clientY / innerHeight * 2 - 1; });
-cv.addEventListener('pointerup', () => { if (phase === 'idle') open(); else if (phase === 'run') skip(); });
-document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => { reset(b.dataset.k); }));
-$('#skip').addEventListener('click', skip);
+/* ---------- Свайп по замкам ---------- */
+const swipe = { on: false, x0: 0, p: 0 }, ptr = { x: 0, y: 0 };
+cv.addEventListener('pointerdown', e => { if (phase === 'idle') { swipe.on = true; swipe.x0 = e.clientX; cv.setPointerCapture(e.pointerId); } });
+cv.addEventListener('pointermove', e => { ptr.x = e.clientX / innerWidth * 2 - 1; ptr.y = e.clientY / innerHeight * 2 - 1;
+  if (swipe.on && phase === 'idle') { swipe.p = clamp(Math.abs(e.clientX - swipe.x0) / (innerWidth * .4), 0, 1);
+    latches[0].open = Math.max(latches[0].open, clamp(swipe.p * 2, 0, 1)); latches[1].open = Math.max(latches[1].open, clamp(swipe.p * 2 - 1, 0, 1));
+    if (swipe.p >= 1) { swipe.on = false; open(); } } });
+cv.addEventListener('pointerup', () => { swipe.on = false; if (phase === 'idle' && swipe.p < 1) latches.forEach(l => { l.open = 0; }); });
+document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => reset(b.dataset.k)));
+$('#openBtn').addEventListener('click', open); $('#skip').addEventListener('click', skip);
 
 /* ---------- Кадр ---------- */
 let last = performance.now() / 1000, rot = 0;
+const look = new THREE.Vector3();
 function frame() {
   const now = performance.now() / 1000, dt = Math.min(.05, now - last); last = now; const t = phase === 'idle' ? 0 : now - T0;
   while (steps.length && steps[0][0] <= t) steps.shift()[1]();
-  tint.lerp(tintTo, 1 - Math.pow(.02, dt));
-  floorMat.emissive.copy(tint); floorMat.emissiveIntensity = .35 + S.beam * .5; tri.offset.y -= dt * .04;
+  const k = 1 - Math.pow(.02, dt); tint.lerp(tintTo, k);
+  floorMat.emissive.copy(tint); floorMat.emissiveIntensity = .3 + S.beam * .5; tri.offset.y -= dt * .04;
   beams.forEach((b, i) => { b.material.uniforms.c.value.copy(tint); b.material.uniforms.a.value = lerp(b.material.uniforms.a.value, S.beam, dt * 3); b.rotation.z = Math.sin(now * .5 + i * 1.7) * .16 - b.position.x * .05; });
-  rimL.color.copy(tint); rimR.color.copy(tint); key.color.copy(tint).lerp(new THREE.Color('#fff'), .6);
-  for (let i = 0; i < DUST; i++) { dp[i * 3 + 1] += dv[i * 3 + 1] * dt; if (dp[i * 3 + 1] > 7) dp[i * 3 + 1] = 0; } dg.attributes.position.needsUpdate = true;
-  /* кейс */
-  caseG.visible = S.case > 0; if (caseG.visible) { const sh = shake * (t < 1 ? t : 1); caseG.position.set(Math.sin(now * 61) * .05 * sh, .05 + Math.sin(now * 1.6) * .06, Math.cos(now * 47) * .03 * sh); caseG.rotation.y = phase === 'idle' ? Math.sin(now * .7) * .35 : caseG.rotation.y * .9; caseG.rotation.z = Math.sin(now * 53) * .03 * sh;
-    neon.emissiveIntensity = 2.2 + sh * (2 + Math.sin(now * 30) * 1.5); seam.scale.y = 1 + sh * 2; latches.forEach(l => { if (l.userData.pop) l.rotation.x = lerp(l.rotation.x, -1.6, dt * 12); }); if (shake) lid.rotation.x = lerp(lid.rotation.x, -.12 * sh, dt * 10); }
-  /* осколки */
-  if (shardM.visible) { let alive = 0; shards.forEach((s, i) => { s.v.y -= 9.8 * dt; s.p.addScaledVector(s.v, dt); if (s.p.y < .05) { s.p.y = .05; s.v.y *= -.35; s.v.x *= .7; s.v.z *= .7; } s.r.x += s.w.x * dt; s.r.y += s.w.y * dt; s.r.z += s.w.z * dt; if (s.p.y > .06 || s.v.lengthSq() > .1) alive++;
-    tmpO.position.copy(s.p); tmpO.rotation.copy(s.r); tmpO.scale.setScalar(s.s); tmpO.updateMatrix(); shardM.setMatrixAt(i, tmpO.matrix); }); shardM.instanceMatrix.needsUpdate = true; shardM.material.emissive.copy(tint); }
-  /* карточка */
-  const vis = S.back || S.face; card.visible = !!vis; mirror.visible = !!vis;
-  const sc = lerp(card.scale.x || .01, vis ? 1 : .01, dt * 6); card.scale.setScalar(sc);
-  const target = S.face ? (S.spin - S.spin % 6.283) + (S.spin % 6.283 > Math.PI ? 6.283 : 0) : S.spin; // лицом к камере после раскрытия
-  rot = lerp(rot, target + (S.back && !S.face ? now * .9 : 0), dt * (S.face ? 3.2 : 2.2));
-  const tiltX = phase === 'done' ? -ptr.y * .22 : Math.sin(now * 1.1) * .05, tiltY = phase === 'done' ? ptr.x * .35 : 0;
-  card.rotation.set(tiltX, rot + tiltY, Math.sin(now * .8) * .02); cardPivot.position.y = 1.42 + Math.sin(now * 1.3) * .05;
-  if (S.face && cardMesh.material[5] !== backMat) { /* лицевая сторона всегда +z, рубашка −z */ }
-  mirror.position.set(0, -cardPivot.position.y, 0); mirror.rotation.set(-card.rotation.x, card.rotation.y, -card.rotation.z); mirror.scale.set(sc, -sc, sc);
-  if (faceMat) { faceMat.uniforms.t.value = now; if (S.sweep >= 0) { S.sweep += dt * .9; faceMat.uniforms.sweep.value = S.sweep * 2.2 - .3; if (S.sweep > 1.4) S.sweep = phase === 'done' ? -1.6 : 1.4; } else { S.sweep += dt * .25; if (S.sweep > -.0001 && S.sweep < .01) S.sweep = 0; } }
-  edgeMat.emissiveIntensity = .4 + S.glow * .8;
-  glow.material.color.copy(tint); glow.material.opacity = lerp(glow.material.opacity, S.glow * (.75 + Math.sin(now * 3) * .1), dt * 3); glow.position.y = cardPivot.position.y;
-  if (S.ring >= 0) { S.ring += dt * 1.4; ring.scale.setScalar(.3 + S.ring * 6); ring.material.opacity = Math.max(0, 1 - S.ring) * .9; ring.material.color.copy(tint).lerp(new THREE.Color('#fff'), .4); ring.lookAt(cam.position); if (S.ring > 1) S.ring = -1; }
+  rimL.color.copy(tint); rimR.color.copy(tint); key.color.copy(tint).lerp(new THREE.Color('#fff'), .65);
+  for (let i = 0; i < DUST; i++) { dp[i * 3 + 1] += dv[i] * dt; if (dp[i * 3 + 1] > 7) dp[i * 3 + 1] = 0; } dg.attributes.position.needsUpdate = true;
+  /* кейс: покачивание, защёлки, крышка с отскоком, свет изнутри */
+  latches.forEach(l => { const a = -l.open * 2.1; l.piv.rotation.x = lerp(l.piv.rotation.x, a, dt * 14); });
+  if (phase === 'idle') { caseG.rotation.y = -.18 + Math.sin(now * .6) * .08 + swipe.p * .05; caseG.position.y = Math.sin(now * 1.4) * .015; }
+  S.lidT = clamp((S.lidT || 0) + (S.lid ? dt * 1.5 : -dt * 4), 0, 1); lidPivot.rotation.x = -back(S.lidT) * 1.85;
+  S.lightT = clamp((S.lightT || 0) + (S.light ? dt * 2 : -dt * 4), 0, 1);
+  innerLight.intensity = S.lightT * 9 + (S.lightT ? Math.sin(now * 20) * .6 : 0); shaft.material.uniforms.a.value = S.lightT * .55 * (1 - S.focus * .6); slotMat.color.copy(innerLight.color).multiplyScalar(S.lightT * 1.2);
+  if (S.shake) { S.shake = Math.max(0, S.shake - dt * .8); caseG.position.x = Math.sin(now * 70) * .03 * S.shake; }
+  /* карточка: поднимается из гнезда и встаёт вертикально */
+  card.visible = mirror.visible = !!S.show;
+  S.riseT = clamp((S.riseT || 0) + (S.rise ? dt * .9 : 0), 0, 1); const rt = easeO(S.riseT);
+  cardPivot.position.set(0, lerp((CASE.hb + .1) * CS, CARD_Y, rt) + (phase === 'done' ? Math.sin(now * 1.3) * .04 : 0), lerp(.35, .3, rt));
+  const lay = (1 - rt) * -Math.PI / 2;
+  const target = S.face ? Math.ceil((S.spin - .001) / 6.283) * 6.283 : S.spin + Math.PI;
+  if (S.snap) { S.riseT = 1; S.focusT = 1; rot = target; S.snap = 0; }
+  rot = lerp(rot, target + (S.show && !S.face ? now * .4 : 0), dt * (S.face ? 3.4 : 2.2));
+  const tiltX = phase === 'done' ? -ptr.y * .2 : Math.sin(now * 1.1) * .04, tiltY = phase === 'done' ? ptr.x * .35 : 0;
+  card.rotation.set(lay + tiltX, rot + tiltY, Math.sin(now * .8) * .02); card.scale.setScalar(lerp(.42, CARD_S, rt));
+  mirror.position.set(cardPivot.position.x, -cardPivot.position.y, cardPivot.position.z); mirror.rotation.set(-card.rotation.x, card.rotation.y, -card.rotation.z); mirror.scale.set(card.scale.x, -card.scale.y, card.scale.z); mirror.visible = card.visible && rt > .6;
+  if (faceMat) { faceMat.uniforms.t.value = now; if (S.sweep >= 0) { S.sweep += dt * .9; faceMat.uniforms.sweep.value = S.sweep * 2.2 - .3; if (S.sweep > 1.4) S.sweep = -2; } else if (phase === 'done') { S.sweep += dt * .3; if (S.sweep >= 0) S.sweep = 0; } }
+  edgeMat.emissiveIntensity = .3 + S.glow * .7;
+  glow.material.color.copy(tint); glow.material.opacity = lerp(glow.material.opacity, S.show ? S.glow * (.7 + Math.sin(now * 3) * .1) : 0, dt * 3); glow.position.set(0, cardPivot.position.y, -.5);
+  if (S.ring >= 0) { S.ring += dt * 1.4; ring.position.set(0, CARD_Y, .2); ring.scale.setScalar(.3 + S.ring * 6); ring.material.opacity = Math.max(0, 1 - S.ring) * .9; ring.material.color.copy(tint).lerp(new THREE.Color('#fff'), .4); ring.lookAt(cam.position); if (S.ring > 1) S.ring = -1; }
   if (bLife > 0) { bLife -= dt * .7; for (let i = 0; i < BP; i++) { bv[i * 3 + 1] -= 2.5 * dt; bp[i * 3] += bv[i * 3] * dt; bp[i * 3 + 1] += bv[i * 3 + 1] * dt; bp[i * 3 + 2] += bv[i * 3 + 2] * dt; bv[i * 3] *= .985; bv[i * 3 + 2] *= .985; } bg.attributes.position.needsUpdate = true; bMat.opacity = Math.max(0, bLife); }
-  /* флаг и команда */
-  for (const [m, on] of [[flag, S.flag], [teamP, S.team]]) { if (!m) continue; const u = m.material.uniforms; u.t.value = now; u.a.value = lerp(u.a.value, on, dt * 5); m.position.y = lerp(m.position.y, on ? 3.45 : 4.6, dt * 4); m.visible = u.a.value > .01; }
-  /* камера */
-  S.dolly && (S.dollyT = Math.min(1, (S.dollyT || 0) + dt * .6));
-  const d = easeIO(S.dollyT || 0); cam.position.set(camBase.x + ptr.x * .25 + Math.sin(now * .3) * .15, camBase.y + .1 * Math.sin(now * .4) - d * .15, camBase.z - d * 1.6);
-  cam.lookAt(look.x, look.y + (S.flag || S.team ? .5 : 0) * (1 - d), look.z);
+  for (const [m, on] of [[flag, S.flag], [teamP, S.team]]) { if (!m) continue; const u = m.material.uniforms; u.t.value = now; u.a.value = lerp(u.a.value, on, dt * 5); m.position.y = lerp(m.position.y, on ? 3.45 : 4.7, dt * 4); m.visible = u.a.value > .01; }
+  /* камера: сверху на кейс, затем на поднявшуюся карточку */
+  S.focusT = clamp((S.focusT || 0) + (S.focus || S.show ? dt * .8 : 0), 0, 1); if (S.dolly) S.dollyT = Math.min(1, S.dollyT + dt * .6);
+  const f = easeIO(S.focusT), d = easeIO(S.dollyT);
+  const far = cam.aspect < .7 ? 1.25 : 1; cam.position.set(ptr.x * .2 + Math.sin(now * .3) * .12, lerp(3.2, 2.0, f) - d * .2, (lerp(7.4, 8.4, f) - d * 1.2) * far);
+  look.set(0, lerp(.3, CARD_Y + .15 + (S.flag || S.team ? .45 : 0) * (1 - d), f), 0); cam.lookAt(look);
   R3.render(scene, cam); requestAnimationFrame(frame);
 }
-(document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(() => { reset('walk'); requestAnimationFrame(frame); });
+(document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(() => { reset('elite'); requestAnimationFrame(frame); });
 </script></body></html>

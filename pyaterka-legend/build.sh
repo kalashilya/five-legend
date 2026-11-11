@@ -3,8 +3,19 @@ cd "$(dirname "$0")"
 { cat head.html
 cat <<'X'
 <script>
-window.__cmErr = function (m) { var a = document.getElementById('app'); if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Скопируйте этот текст и отправьте в чат:</p><p class="num sm" style="overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</p></div>'; };
-window.addEventListener('error', function (e) { window.__cmErr((e.message || 'ошибка') + ' · строка ' + (e.lineno || '?')); });
+window.__cmErr = function (m) {
+  var a = document.getElementById('app');
+  if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Подробности ошибки:</p><pre class="num sm" style="white-space:pre-wrap;overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</pre></div>';
+};
+window.addEventListener('error', function (e) {
+  var detail = e.error && (e.error.stack || e.error.message) || e.message || 'ошибка';
+  window.__cmErr(detail + ' · строка ' + (e.lineno || '?'));
+});
+window.addEventListener('unhandledrejection', function (e) {
+  var reason = e.reason && (e.reason.stack || e.reason.message) || e.reason || 'неизвестная ошибка';
+  window.__cmErr('Unhandled rejection: ' + reason);
+});
+
 </script>
 <script>
 (function () {

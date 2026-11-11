@@ -30,7 +30,7 @@ const { chromium } = require('playwright');
     fs.mkdirSync(shotDir, { recursive: true });
     for (const viewport of [{ width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
       await page.setViewportSize(viewport);
-      await page.waitForTimeout(80);
+      await page.waitForTimeout(300);
       const metrics = await page.evaluate(() => {
         const app = document.querySelector('#app');
         const hero = document.querySelector('.home-hero');
@@ -98,6 +98,7 @@ const { chromium } = require('playwright');
     for (const section of sections) {
       await page.locator('#tabs button[data-v="' + section.tab + '"]').click();
       await page.waitForFunction(tab => document.querySelector('#app')?.dataset.tab === tab, section.tab);
+      await page.waitForTimeout(300);
       const sectionState = await page.evaluate(selector => ({
         text: document.querySelector('#app')?.innerText?.trim() || '',
         content: !!document.querySelector('#app ' + selector),
@@ -105,6 +106,7 @@ const { chromium } = require('playwright');
         width: innerWidth
       }), section.selector);
       if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно');
+      if (section.tab === 'col') { const tiers = await page.evaluate(() => ['standard','cinema','cinema-legend'].map(k => document.querySelectorAll('#col-grid .pc.' + k).length)); if (tiers.some(n => n === 0)) throw new Error('Коллекция должна показывать все три уровня оформления карточек: ' + tiers.join('/')); }
       const mast = await page.locator('#app .section-mast').count();
       if (mast !== 1 || !(await page.locator('#app .section-mast__icon svg').count())) throw new Error(section.label + ': отсутствует фирменная шапка раздела или эмблема');
       if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');

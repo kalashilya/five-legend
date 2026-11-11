@@ -1,3 +1,5 @@
+// Verify final mobile lobby spacing and all core redesigned screens.
+// Browser smoke coverage for the approved four-screen arena redesign.
 'use strict';
 const fs = require('fs');
 const http = require('http');
@@ -16,17 +18,67 @@ const { chromium } = require('playwright');
     browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
-    page.on('console', message => { if (message.type() === 'error' && !/Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE\.NotSameOrigin/.test(message.text())) errors.push(message.text()); });
+    page.on('pageerror', error => errors.push(error.stack || error.message));
     await page.goto('http://127.0.0.1:4173/', { waitUntil: 'load' });
     await page.waitForFunction(() => {
       const app = document.querySelector('#app');
       return app && app.dataset.ok === '1' && app.innerText.trim().length > 20;
     }, null, { timeout: 15000 });
-    const text = await page.locator('#app').innerText();
-    if (!text || text.length < 20) throw new Error('Главный экран пустой');
-    if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));
-    console.log('Browser smoke OK: app started at 390x844; rendered', text.length, 'characters; no page errors.');
+
+    const layouts = [];
+    const shotDir = path.join(__dirname, 'artifacts');
+    fs.mkdirSync(shotDir, { recursive: true });
+    for (const viewport of [{ width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await page.waitForTimeout(250);
+      const metrics = await page.evaluate(() => ({
+        width: innerWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        appReady: document.querySelector('#app')?.dataset.ok === '1',
+        hero: (() => { const r = document.querySelector('.lobby-hero')?.getBoundingClientRect(); return !!r && r.width > 0 && r.height > 0 && r.left >= -1 && r.right <= innerWidth + 1; })(),
+        arena: !!document.querySelector('.arena-art'),
+        lineup: !!document.querySelector('.lobby-lineup'),
+        nav: document.querySelectorAll('#tabs button').length,
+        overflow: [...document.querySelectorAll('body *')].map(el => { const r=el.getBoundingClientRect(); return { tag:el.tagName, id:el.id, cls:typeof el.className==='string'?el.className.slice(0,100):'', left:Math.round(r.left), right:Math.round(r.right), width:Math.round(r.width), scrollWidth:el.scrollWidth }; }).filter(x => x.width > 0 && (x.left < -1 || x.right > innerWidth + 1)).slice(0,18)
+      }));
+      if (!metrics.appReady || !metrics.hero || !metrics.arena || !metrics.lineup || metrics.nav !== 5) {
+        throw new Error('Главный экран не прошёл проверку при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
+      }
+      if (metrics.scrollWidth > viewport.width + 1) {
+        await page.screenshot({ path: path.join(shotDir, 'overflow-' + viewport.width + '.png'), fullPage: true });
+        throw new Error('Горизонтальное переполнение главной при ширине ' + viewport.width + ': ' + JSON.stringify(metrics.overflow));
+      }
+      await page.screenshot({ path: path.join(shotDir, 'home-' + viewport.width + '.png'), fullPage: true });
+      layouts.push(viewport.width + 'px');
+    }
+
+    const sections = [
+      { tab: 'col', selector: '.collection-hero', label: 'Коллекция' },
+      { tab: 'play', selector: '.match-hero', label: 'Матчи' },
+      { tab: 'prof', selector: '.profile-hero', label: 'Профиль' },
+      { tab: 'packs', selector: '.pk', label: 'Кейсы' }
+    ];
+    for (const section of sections) {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.locator('#tabs button[data-v="' + section.tab + '"]').click();
+      await page.waitForFunction(tab => document.querySelector('#app')?.dataset.tab === tab, section.tab);
+      await page.waitForFunction(selector => !!document.querySelector('#app ' + selector), section.selector);
+      const state = await page.evaluate(() => ({
+        text: document.querySelector('#app')?.innerText?.trim() || '',
+        scrollWidth: document.documentElement.scrollWidth,
+        width: innerWidth,
+        mastWidth: document.querySelector('#app .section-mast')?.getBoundingClientRect().width || 0,
+        strayCss: document.body.innerText.includes('/* ===== FINAL ART PASS')
+      }));
+      if (state.text.length < 20) throw new Error(section.label + ': экран пустой');
+      if (state.scrollWidth > state.width + 1) throw new Error(section.label + ': горизонтальное переполнение');
+      if (state.mastWidth < state.width * .85) throw new Error(section.label + ': шапка раздела слишком узкая: ' + state.mastWidth + ' / ' + state.width);
+      if (state.strayCss) throw new Error(section.label + ': CSS-стили попали в видимую разметку');
+      if (errors.length) throw new Error('JavaScript errors: ' + errors.join(' | '));
+      await page.screenshot({ path: path.join(shotDir, section.tab + '-390.png'), fullPage: true });
+    }
+    if (errors.length) throw new Error('JavaScript errors: ' + errors.join(' | '));
+    console.log('Browser smoke OK: home responsive at 390/768/1440; collection, matches, profile and cases rendered at 390; no horizontal overflow or uncaught page errors.');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

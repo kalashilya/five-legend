@@ -1183,4 +1183,10 @@ body{background:transparent;color:var(--fg)}
 @keyframes legend-card{0%{opacity:0;transform:perspective(1100px) translateY(32px) rotateY(-24deg) rotateX(8deg) scale(.72);filter:brightness(2.2) blur(5px)}65%{opacity:1;filter:brightness(1.35) blur(0)}100%{transform:perspective(1100px) translateY(0) rotateY(0) rotateX(0) scale(1);filter:none}}
 @media(prefers-reduced-motion:reduce){.wo-legend:before,.wo-legend .wo-face{animation:none!important}}
 
+
+/* Panel accent is a top rule, not a vertical tab crossing the first text row */
+.pn:before{height:2px!important;width:42px!important;left:16px!important;top:0!important;opacity:.9}
+#app[data-tab="prof"]>.pn:first-of-type>.kv{display:grid;grid-template-columns:1fr;gap:5px;align-items:start}
+#app[data-tab="prof"]>.pn:first-of-type>.kv>span:last-child{font-size:10px;line-height:1.35;letter-spacing:.08em;color:#9fb2c1}
+
 </style>

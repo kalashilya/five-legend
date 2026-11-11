@@ -565,6 +565,36 @@
       "team": "BETBOOM",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/z2xh6sCPYlj4MWi6oLyS53.png?ixlib=java-2.1.0&s=12a04da722fbe7f9645889e9875b6f6b&w=400",
       "profileUrl": "https://www.hltv.org/player/18506/s1ren"
+    },
+    "Aleksib": {
+      "profileId": 9816,
+      "team": "Natus Vincere",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/7-TvianW79yWk13gdw-Jc5.png?ixlib=java-2.1.0&s=f94eda5a77f332bc02821e6b845ca207&w=400",
+      "profileUrl": "https://www.hltv.org/player/9816/aleksib"
+    },
+    "iM": {
+      "profileId": 14759,
+      "team": "Natus Vincere",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/lWNcoOFOcHF3uIERANZRXh.png?ixlib=java-2.1.0&s=cd5df4d5e89df8cab0e4a7edd6db0d8b&w=400",
+      "profileUrl": "https://www.hltv.org/player/14759/im"
+    },
+    "b1t": {
+      "profileId": 18987,
+      "team": "Natus Vincere",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/CgO3veixSYH5OMIePtwp1u.png?ixlib=java-2.1.0&s=1b5f0f326bf822540d59ae246c1b7e65&w=400",
+      "profileUrl": "https://www.hltv.org/player/18987/b1t"
+    },
+    "w0nderful": {
+      "profileId": 20127,
+      "team": "Natus Vincere",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/OepRRBoc68iVojIfgK3JIA.png?ixlib=java-2.1.0&s=99dcc1115ffec1ed275a5cf4eacca825&w=400",
+      "profileUrl": "https://www.hltv.org/player/20127/w0nderful"
+    },
+    "makazze": {
+      "profileId": 22673,
+      "team": "Natus Vincere",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/U6KmIKHcqg2OpMrNn-Aqk6.png?ixlib=java-2.1.0&s=420f1bcb0e6943b68fafb5e2d933197c&w=400",
+      "profileUrl": "https://www.hltv.org/player/22673/makazze"
     }
   }
 }

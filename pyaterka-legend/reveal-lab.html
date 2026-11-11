@@ -68,17 +68,18 @@ const POST = (() => {
   const qs = new THREE.Scene(), qc = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2)); quad.frustumCulled = false; qs.add(quad);
   const vs = 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}';
   const bright = new THREE.ShaderMaterial({ uniforms: { t: { value: null }, th: { value: 1.7 } }, vertexShader: vs, depthTest: false,
-    fragmentShader: 'uniform sampler2D t;uniform float th;varying vec2 vUv;void main(){vec3 c=texture2D(t,vUv).rgb;float l=max(c.r,max(c.g,c.b));gl_FragColor=vec4(c*smoothstep(th,th+.8,l),1.);}' });
+    fragmentShader: 'uniform sampler2D t;uniform float th;varying vec2 vUv;vec3 sn(vec3 c){if(!(c.r>=0.&&c.r<6e4))c.r=0.;if(!(c.g>=0.&&c.g<6e4))c.g=0.;if(!(c.b>=0.&&c.b<6e4))c.b=0.;return c;}void main(){vec3 c=sn(texture2D(t,vUv).rgb);float l=max(c.r,max(c.g,c.b));gl_FragColor=vec4(c*smoothstep(th,th+.8,l),1.);}' });
   const blur = new THREE.ShaderMaterial({ uniforms: { t: { value: null }, d: { value: new THREE.Vector2() } }, vertexShader: vs, depthTest: false,
     fragmentShader: 'uniform sampler2D t;uniform vec2 d;varying vec2 vUv;void main(){vec3 c=texture2D(t,vUv).rgb*.227;c+=(texture2D(t,vUv+d*1.385).rgb+texture2D(t,vUv-d*1.385).rgb)*.316;c+=(texture2D(t,vUv+d*3.231).rgb+texture2D(t,vUv-d*3.231).rgb)*.07;gl_FragColor=vec4(c,1.);}' });
   const rays = new THREE.ShaderMaterial({ uniforms: { t: { value: null }, lp: { value: new THREE.Vector2(.5, .5) }, dens: { value: .9 }, dec: { value: .955 } }, vertexShader: vs, depthTest: false,
     fragmentShader: 'uniform sampler2D t;uniform vec2 lp;uniform float dens,dec;varying vec2 vUv;void main(){vec2 d=(vUv-lp)*dens/36.;vec2 uv=vUv;float il=1.;vec3 c=vec3(0.);for(int i=0;i<36;i++){uv-=d;c+=texture2D(t,uv).rgb*il;il*=dec;}gl_FragColor=vec4(c/13.,1.);}' });
   const comp = new THREE.ShaderMaterial({ uniforms: { s: { value: null }, b1: { value: null }, b2: { value: null }, b3: { value: null }, g: { value: null }, gk: { value: 0 }, k: { value: 1 }, ex: { value: 1 }, tm: { value: 0 }, res: { value: new THREE.Vector2() } }, vertexShader: vs, depthTest: false,
     fragmentShader: `uniform sampler2D s,b1,b2,b3,g;uniform float k,ex,tm,gk;uniform vec2 res;varying vec2 vUv;
+    vec3 sn(vec3 c){if(!(c.r>=0.&&c.r<6e4))c.r=0.;if(!(c.g>=0.&&c.g<6e4))c.g=0.;if(!(c.b>=0.&&c.b<6e4))c.b=0.;return c;}
     vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
     float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
     void main(){vec2 o=(vUv-.5)*.0016;vec3 c=vec3(texture2D(s,vUv+o).r,texture2D(s,vUv).g,texture2D(s,vUv-o).b);
-    vec3 b=texture2D(b1,vUv).rgb*.55+texture2D(b2,vUv).rgb*.8+texture2D(b3,vUv).rgb*1.1;c+=b*k+texture2D(g,vUv).rgb*gk;c*=ex;
+    vec3 b=texture2D(b1,vUv).rgb*.55+texture2D(b2,vUv).rgb*.8+texture2D(b3,vUv).rgb*1.1;c=sn(c);c+=sn(b)*k+sn(texture2D(g,vUv).rgb)*gk;c*=ex;
     c=aces(c);c=pow(c,vec3(1./2.2));float v=smoothstep(1.05,.25,length((vUv-.5)*vec2(1.,1.15))*1.25);c*=mix(.55,1.,v);
     c+=(h(vUv*res+tm)-.5)*.028;c=mix(c,c*vec3(1.02,1.,.97),.5);gl_FragColor=vec4(c,1.);}` });
   let rt, A = [], B = [], GR;
@@ -144,7 +145,7 @@ const banners = TEAMS.map(([name, bgc, fg], i) => {
     let fs = 64; g.font = `700 ${fs}px Oswald, Impact, sans-serif`; while (g.measureText(name.toUpperCase()).width > w - 40 && fs > 20) { fs -= 2; g.font = `700 ${fs}px Oswald, Impact, sans-serif`; } g.fillText(name.toUpperCase(), w / 2, 520);
     g.fillRect(36, 600, w - 72, 6); g.restore(); });
   const m = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 2.7, 10, 24), new THREE.ShaderMaterial({ transparent: true, side: THREE.DoubleSide, uniforms: { map: { value: t }, t: { value: 0 }, ph: { value: i * 1.7 }, li: { value: new THREE.Color(1, 1, 1) } }, vertexShader: flagWave,
-    fragmentShader: 'uniform sampler2D map;uniform vec3 li;varying vec2 vUv;varying float vS;void main(){vec4 c=texture2D(map,vUv);if(c.a<.5)discard;vec3 col=pow(c.rgb,vec3(2.2))*li*(.55+vS*4.)*(.35+.65*vUv.y);gl_FragColor=vec4(col,1.);}' }));
+    fragmentShader: 'uniform sampler2D map;uniform vec3 li;varying vec2 vUv;varying float vS;void main(){vec4 c=texture2D(map,vUv);if(c.a<.5)discard;vec3 col=pow(max(c.rgb,0.),vec3(2.2))*li*(.55+vS*4.)*(.35+.65*vUv.y);gl_FragColor=vec4(col,1.);}' }));
   const col = i % 6, row = i < 6 ? 0 : 1, x = (col - 2.5) * 2.05 + (row ? 1.02 : 0), y = row ? 2.6 : 5.6, z = -6.85;
   m.position.set(x, y, z); scene.add(m);
   const rod = new THREE.Mesh(new THREE.CylinderGeometry(.025, .025, 1.35, 8), new THREE.MeshStandardMaterial({ color: 0x8a8f96, metalness: .9, roughness: .3 })); rod.rotation.z = Math.PI / 2; rod.position.set(x, y + 1.37, z + .02); scene.add(rod);
@@ -198,11 +199,11 @@ const lidLight = new THREE.PointLight(0xffffff, 0, 3, 2); lidLight.position.set(
 /* голограмма над гнездом: проектор, флаг и команда */
 const holoMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, uniforms: { map: { value: null }, c: { value: new THREE.Color() }, a: { value: 0 }, t: { value: 0 } },
   vertexShader: 'uniform float t;varying vec2 vUv;void main(){vUv=uv;vec3 p=position;p.x+=sin(p.y*40.+t*30.)*.004;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
-  fragmentShader: 'uniform sampler2D map;uniform vec3 c;uniform float a,t;varying vec2 vUv;void main(){vec4 m=texture2D(map,vUv);vec3 col=pow(m.rgb,vec3(2.2));float scan=.75+.25*sin(vUv.y*260.-t*8.);float fl=.9+.1*sin(t*37.)*sin(t*13.);float edge=smoothstep(0.,.06,vUv.x)*smoothstep(1.,.94,vUv.x)*smoothstep(0.,.05,vUv.y)*smoothstep(1.,.92,vUv.y);gl_FragColor=vec4((col*1.6+c*.25)*m.a*scan*fl*edge*a*1.8,1.);}' });
+  fragmentShader: 'uniform sampler2D map;uniform vec3 c;uniform float a,t;varying vec2 vUv;void main(){vec4 m=texture2D(map,vUv);vec3 col=pow(max(m.rgb,0.),vec3(2.2));float scan=.75+.25*sin(vUv.y*260.-t*8.);float fl=.9+.1*sin(t*37.)*sin(t*13.);float edge=smoothstep(0.,.06,vUv.x)*smoothstep(1.,.94,vUv.x)*smoothstep(0.,.05,vUv.y)*smoothstep(1.,.92,vUv.y);gl_FragColor=vec4((col*1.6+c*.25)*m.a*scan*fl*edge*a*1.8,1.);}' });
 const holo3 = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.125), holoMat); holo3.position.set(0, FOAM_TOP + .95, SLOT.z); caseG.add(holo3);
 const cone = new THREE.Mesh(new THREE.CylinderGeometry(.75, .3, .9, 40, 1, true), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, uniforms: { c: { value: new THREE.Color() }, a: { value: 0 }, t: { value: 0 } },
   vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-  fragmentShader: 'uniform vec3 c;uniform float a,t;varying vec2 vUv;void main(){float f=pow(1.-vUv.y,1.2)*(.6+.4*sin(vUv.x*80.+t*4.));gl_FragColor=vec4(c*f*a*1.4,1.);}' }));
+  fragmentShader: 'uniform vec3 c;uniform float a,t;varying vec2 vUv;void main(){float f=pow(max(1.-vUv.y,0.),1.2)*(.6+.4*sin(vUv.x*80.+t*4.));gl_FragColor=vec4(c*f*a*1.4,1.);}' }));
 cone.position.set(0, FOAM_TOP + .42, SLOT.z); caseG.add(cone);
 /* крышка на петлях: стенки, верхняя плита, пена изнутри */
 const lidPivot = new THREE.Group(); lidPivot.position.set(0, CASE.hb + .095, -CASE.d / 2 - .04); caseG.add(lidPivot);
@@ -290,8 +291,8 @@ const holo = map => new THREE.ShaderMaterial({ uniforms: { map: { value: map }, 
   vertexShader: 'varying vec2 vUv;varying vec3 vN;varying vec3 vV;void main(){vUv=uv;vec4 mv=modelViewMatrix*vec4(position,1.);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}',
   fragmentShader: `uniform sampler2D map;uniform float t,sweep,foil;varying vec2 vUv;varying vec3 vN;varying vec3 vV;
   vec3 hue(float h){return clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.);}
-  void main(){vec3 b=pow(texture2D(map,vUv).rgb,vec3(2.2));vec2 tilt=vN.xy;float l=dot(b,vec3(.3,.6,.1));
-  vec3 ir=hue(fract(vUv.x*.35+vUv.y*.45+tilt.x*1.4+tilt.y*1.1+t*.02));float m=foil*(.02+.1*pow(1.-l,3.))*(.4+.6*clamp(abs(tilt.x+tilt.y)*2.5,0.,1.));
+  void main(){vec3 b=pow(max(texture2D(map,vUv).rgb,0.),vec3(2.2));vec2 tilt=vN.xy;float l=dot(b,vec3(.3,.6,.1));
+  vec3 ir=hue(fract(vUv.x*.35+vUv.y*.45+tilt.x*1.4+tilt.y*1.1+t*.02));float m=foil*(.02+.1*pow(max(1.-l,0.),3.))*(.4+.6*clamp(abs(tilt.x+tilt.y)*2.5,0.,1.));
   float s=smoothstep(.08,0.,abs(vUv.x*.6+vUv.y*.8-sweep));gl_FragColor=vec4(b*1.1+ir*m+s*(b*2.+.06),1.);}` });
 const card = new THREE.Group(), cardPivot = new THREE.Group(); cardPivot.add(card); scene.add(cardPivot);
 const bodyCardMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: .9, roughness: .3, envMapIntensity: 1.2 });
@@ -315,7 +316,7 @@ function buildCard(P) {
 /* ---------- Флаг, плашка команды, лучи и блик за карточкой ---------- */
 const wave = map => new THREE.ShaderMaterial({ transparent: true, side: THREE.DoubleSide, depthWrite: false, uniforms: { map: { value: map }, t: { value: 0 }, a: { value: 0 } },
   vertexShader: 'uniform float t;varying vec2 vUv;varying float vS;void main(){vUv=uv;vec3 p=position;float w=sin(p.x*3.-t*4.)*.1*(uv.x+.1)+sin(p.y*3.6-t*2.6)*.035*uv.x;p.z+=w;vS=w;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
-  fragmentShader: 'uniform sampler2D map;uniform float a;varying vec2 vUv;varying float vS;void main(){vec4 c=texture2D(map,vUv);c.rgb=pow(c.rgb,vec3(2.2))*(1.1+vS*3.5);gl_FragColor=vec4(c.rgb,c.a*a);}' });
+  fragmentShader: 'uniform sampler2D map;uniform float a;varying vec2 vUv;varying float vS;void main(){vec4 c=texture2D(map,vUv);c.rgb=pow(max(c.rgb,0.),vec3(2.2))*(1.1+vS*3.5);gl_FragColor=vec4(c.rgb,c.a*a);}' });
 let flagHolo = null, teamHolo = null;
 function buildSigns(P) {
   const fl0 = FLAG_IMG[P.cc]; flagHolo = canvasTex(768, 576, (g, w, h) => { if (fl0) g.drawImage(fl0, 0, 0, w, h); });
@@ -324,7 +325,7 @@ function buildSigns(P) {
 }
 const streak = new THREE.Mesh(new THREE.PlaneGeometry(14, .16), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, uniforms: { c: { value: new THREE.Color() }, a: { value: 0 } },
   vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-  fragmentShader: 'uniform vec3 c;uniform float a;varying vec2 vUv;void main(){float f=pow(1.-abs(vUv.x-.5)*2.,3.)*pow(1.-abs(vUv.y-.5)*2.,2.);gl_FragColor=vec4((c+.5)*f*a*2.6,1.);}' }));
+  fragmentShader: 'uniform vec3 c;uniform float a;varying vec2 vUv;void main(){float f=pow(max(1.-abs(vUv.x-.5)*2.,0.),3.)*pow(max(1.-abs(vUv.y-.5)*2.,0.),2.);gl_FragColor=vec4((c+.5)*f*a*2.6,1.);}' }));
 scene.add(streak);
 
 

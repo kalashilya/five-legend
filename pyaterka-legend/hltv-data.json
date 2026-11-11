@@ -715,6 +715,36 @@
       "team": "G2",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/JluNok7czCXoXiPwrhQjgk.png?ixlib=java-2.1.0&s=2eb8d06a59b4c48fb64a4312971c3e8f&w=400",
       "profileUrl": "https://www.hltv.org/player/21062/matys"
+    },
+    "HObbit": {
+      "profileId": 8528,
+      "team": "PARIVISION",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/mgwTqW5HFPk3uvDSdsUWnA.png?ixlib=java-2.1.0&s=75be82e42b0f8ab502b9e38525da4773&w=400",
+      "profileUrl": "https://www.hltv.org/player/8528/hobbit"
+    },
+    "FL1T": {
+      "profileId": 12732,
+      "team": "PARIVISION",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/EoqPcZD7CmgJTuID8cBlFb.png?ixlib=java-2.1.0&s=cacba56f2a906d625a5623e5a7b70f09&w=400",
+      "profileUrl": "https://www.hltv.org/player/12732/fl1t"
+    },
+    "Jame": {
+      "profileId": 13776,
+      "team": "PARIVISION",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/poatsoxwv_ne6Col6VJLg7.png?ixlib=java-2.1.0&s=e497d659582a13880c16cd55a6fe6847&w=400",
+      "profileUrl": "https://www.hltv.org/player/13776/jame"
+    },
+    "xiELO": {
+      "profileId": 22471,
+      "team": "PARIVISION",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/HIMvZS3P0EL5jlbiX2a-E8.png?ixlib=java-2.1.0&s=a8841b9a35372c8afe22bac0a5515159&w=400",
+      "profileUrl": "https://www.hltv.org/player/22471/xielo"
+    },
+    "zweih": {
+      "profileId": 23685,
+      "team": "PARIVISION",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/cTLzpQ529TArTb_GRjMofz.png?ixlib=java-2.1.0&s=ca8cc4ae8e2af9bca6974ee63d5b70af&w=400",
+      "profileUrl": "https://www.hltv.org/player/23685/zweih"
     }
   }
 }

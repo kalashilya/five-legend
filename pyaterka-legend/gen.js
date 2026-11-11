@@ -5,6 +5,7 @@
 const fs = require('fs');
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const HLTV = fs.existsSync('hltv-data.json') ? JSON.parse(fs.readFileSync('hltv-data.json', 'utf8')) : { players: {}, snapshotDate: null };
+const teamLogoByName = {}; for (const p of Object.values(HLTV.players || {})) if (p.team && p.teamLogo) teamLogoByName[p.team] = p.teamLogo;
 const hltvStats = (nick, role) => { const p = HLTV.players && HLTV.players[nick]; if (!p || !p.last12m || !p.last3m || p.last12m.maps < 80 || p.last3m.maps < 25) return null; const a = p.last12m, b = p.last3m, form = clamp((b.rating3 - a.rating3) * 20, -3, 3), ovr = Math.round(clamp(65 + (a.rating3 - 1) * 85 + form, 58, 99)), clutch = Math.round(a.closing * .65 + clamp(a.clutchesPer24 * 200, 0, 100) * .35), st = [a.firepower, a.opening, a.utility, a.trading, clutch, role === 4 ? 80 : 50].map(x => Math.round(clamp(x, 40, 99))); return { ovr, st, hltv: { source: 'HLTV', profileId: p.profileId, snapshotDate: HLTV.snapshotDate, last12m: { maps: a.maps, rating3: a.rating3, roundSwing: a.roundSwing }, last3m: { maps: b.maps, rating3: b.rating3, roundSwing: b.roundSwing } } }; };
 const hsh = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 const AWP = 'torzsi ZywOo molodoy woxic sh1ro m0NESY w0nderful 910 device Jame s1mple hallzerk saffee nicoodoz phzy ArtFr0st nqz CeRq faveN headtr1ck hypex luchov slaxz- JamYoung Starry aliStair Rainwaker story JW cmtry junior lattykk'.split(' ');
@@ -26,7 +27,7 @@ rows.forEach(([rk, pts, name, ros], ti) => {
   { const have = new Set(Object.values(role)); const need = [1, 2, 3].filter(r => !have.has(r)).concat([1, 2, 3]); rest().forEach((n, i) => role[n] = need[i]); }
   for (const n of ps) {
     seen.add(n.toLowerCase());
-    const old = reg.cards[n.toLowerCase() + '|' + name.trim()], h = hltvStats(n, role[n]), p = HLTV.players && HLTV.players[n], meta = p && p.profileId ? { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo, verifiedAt: HLTV.snapshotDate } : null;
+    const old = reg.cards[n.toLowerCase() + '|' + name.trim()], h = hltvStats(n, role[n]), p = HLTV.players && HLTV.players[n], meta = p && p.profileId ? { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo || teamLogoByName[name.trim()], verifiedAt: HLTV.snapshotDate } : null;
     const o = tb + ((hsh(n) % 400) / 100 - 2) + (STAR[n] || 0) - (role[n] === 4 && !(n in STAR) ? 2.5 : 0);
     const hv = Object.assign({}, old && old.hltv || {}, h && h.hltv || {}, meta || {}); cur.push([n, ti, role[n], h ? h.ovr : Math.round(Math.max(58, Math.min(96, o))), h ? h.st : old && old.st || null, Object.keys(hv).length ? hv : null]);
   }
@@ -46,11 +47,11 @@ let archived = 0;
 for (const k in reg.cards) if (!live.has(k)) {                 // архивные версии: игрок сменил команду или выбыл из рейтинга
   const c = reg.cards[k]; let ti = TM.indexOf(c.team); if (ti < 0) { ti = TM.length; TM.push(c.team); }
   const p = HLTV.players && HLTV.players[c.nick];
-  if (p && p.profileId) c.hltv = Object.assign({}, c.hltv || {}, { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo, verifiedAt: HLTV.snapshotDate });
+  if (p && p.profileId) c.hltv = Object.assign({}, c.hltv || {}, { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo || teamLogoByName[c.team], verifiedAt: HLTV.snapshotDate });
   PL.push([c.nick, ti, c.role, c.ovr, c.id, c.rar, 1, c.st || null, c.hltv || null]); archived++;
 }
 PL.sort((a, b) => b[3] - a[3] || a[1] - b[1] || a[4] - b[4]);
 fs.writeFileSync('ids.json', JSON.stringify(reg));
 const verified = Object.keys(HLTV.players || {}).filter(n => HLTV.players[n].photo && cur.some(x => x[0] === n)).length;
-fs.writeFileSync('data.js', '/* Составы: рейтинг HLTV от 9 ноября 2026. HLTV-верифицировано игроков: ' + verified + '. Остальные карточки пока предварительные. */\n/* Строка игрока: ник, команда, роль, рейтинг, постоянный номер, редкость, архивная версия, характеристики HLTV или null, источник HLTV или null */\nconst TM=' + JSON.stringify(TM) + ';\nconst PL=' + JSON.stringify(PL) + ';\nconst SPW=' + JSON.stringify(reg.week) + ',SPM=' + JSON.stringify(reg.mvp) + ';\n');
+fs.writeFileSync('data.js', '/* Составы: Valve global ranking от 11 ноября 2026. HLTV-верифицировано игроков с фото: ' + verified + '. Игроки без фото остаются с затемнённым силуэтом. */\n/* Строка игрока: ник, команда, роль, рейтинг, постоянный номер, редкость, архивная версия, характеристики HLTV или null, источник HLTV или null */\nconst TM=' + JSON.stringify(TM) + ';\nconst PL=' + JSON.stringify(PL) + ';\nconst SPW=' + JSON.stringify(reg.week) + ',SPM=' + JSON.stringify(reg.mvp) + ';\n');
 console.log(PL.length, 'карточек,', archived, 'архивных,', TM.length, 'команд, особых:', reg.week.length, '+', reg.mvp.length);

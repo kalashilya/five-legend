@@ -45,6 +45,8 @@ cur.forEach(([n, ti, role, ovr, st, hltv], rank) => {
 let archived = 0;
 for (const k in reg.cards) if (!live.has(k)) {                 // архивные версии: игрок сменил команду или выбыл из рейтинга
   const c = reg.cards[k]; let ti = TM.indexOf(c.team); if (ti < 0) { ti = TM.length; TM.push(c.team); }
+  const p = HLTV.players && HLTV.players[c.nick];
+  if (p && p.profileId) c.hltv = Object.assign({}, c.hltv || {}, { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo, verifiedAt: HLTV.snapshotDate });
   PL.push([c.nick, ti, c.role, c.ovr, c.id, c.rar, 1, c.st || null, c.hltv || null]); archived++;
 }
 PL.sort((a, b) => b[3] - a[3] || a[1] - b[1] || a[4] - b[4]);

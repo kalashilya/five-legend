@@ -1,4 +1,80 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* ===== HOME ART DIRECTION: tournament broadcast stage, not generic dashboard ===== */
+#hud{width:100%;min-width:0}
+#hud>.wrap{width:min(100%,1080px);max-width:1080px;margin-inline:auto;justify-content:space-between}
+#hud .who{flex:1 1 auto;min-width:0}
+#hud .pill{flex:0 0 auto}
+.home-hero{min-height:clamp(250px,27vw,340px);padding:clamp(22px,4vw,42px);display:grid;grid-template-columns:minmax(0,1.08fr) minmax(250px,.92fr);align-items:center;border:1px solid rgba(155,190,218,.32);border-radius:5px;background:linear-gradient(112deg,rgba(5,11,18,.99),rgba(9,19,30,.98) 48%,rgba(12,25,38,.94));box-shadow:0 28px 70px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.12)}
+.home-hero:before{inset:0;opacity:1;background:linear-gradient(90deg,transparent 0 47%,rgba(102,158,198,.11) 70%,transparent),repeating-linear-gradient(0deg,transparent 0 39px,rgba(145,184,211,.035) 40px 41px),linear-gradient(135deg,transparent 0 72%,rgba(173,204,225,.08) 72.2%,transparent 72.7%)}
+.home-hero:after{inset:9px;border:1px solid rgba(167,198,220,.14);border-radius:2px}
+.home-hero__copy{max-width:100%;padding-right:8px}
+.home-hero__eyebrow{display:flex;align-items:center;gap:10px;color:#9fc2dc;font-size:10px;letter-spacing:.24em}
+.home-hero__eyebrow:before{content:"";width:25px;height:2px;background:#80b5d8;box-shadow:0 0 12px #80b5d8}
+.home-hero h1{margin:14px 0 12px;font-size:clamp(39px,6.1vw,68px);line-height:.88;letter-spacing:.015em;text-wrap:balance}
+.home-hero__desc{max-width:390px;font-size:clamp(12px,1.3vw,14px);line-height:1.65;color:#b6c7d5}
+.home-hero__tags{gap:7px;margin-top:19px}
+.home-hero__tags span{padding:7px 9px;border-radius:2px;border:1px solid rgba(137,180,211,.25);background:rgba(5,13,21,.75);font-size:8px;letter-spacing:.15em;color:#d3e3ed}
+.home-hero__artifact{position:relative;inset:auto;width:100%;height:auto;min-height:220px;transform:none;perspective:none;display:grid;place-items:center;overflow:visible}
+.home-hero__art{display:block;width:100%;height:auto;max-height:290px;overflow:visible;filter:drop-shadow(0 20px 24px rgba(0,0,0,.45))}
+.home-hero__art .art-float{transform-origin:50% 50%;animation:art-drift 7s ease-in-out infinite}
+.home-hero__art .art-screen{filter:drop-shadow(0 0 18px rgba(98,169,218,.24))}
+@keyframes art-drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.home-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.home-shortcut{position:relative;min-width:0;min-height:88px;padding:13px 14px 12px 48px;border:1px solid rgba(139,177,204,.2);border-radius:3px;background:linear-gradient(145deg,rgba(19,33,47,.98),rgba(6,13,21,.99));box-shadow:inset 0 1px rgba(255,255,255,.07),0 12px 25px rgba(0,0,0,.28)}
+.home-shortcut:nth-child(1){grid-column:span 3;grid-row:span 2;min-height:186px;justify-content:flex-end;padding:18px}
+.home-shortcut:nth-child(2),.home-shortcut:nth-child(3),.home-shortcut:nth-child(4){grid-column:span 3;min-height:88px}
+.home-shortcut__icon{position:absolute;left:12px;top:12px;width:27px;height:27px;border-radius:2px;border:1px solid rgba(137,185,217,.35);background:rgba(82,137,177,.15);color:#c8e0f0}
+.home-shortcut:nth-child(1) .home-shortcut__icon{position:relative;left:auto;top:auto;width:42px;height:42px;margin-bottom:10px;font-size:15px}
+.home-shortcut b{font-size:13px;letter-spacing:.13em}
+.home-shortcut small{font-size:10px;line-height:1.35}
+.home-shortcut:nth-child(1):after{content:"LIVE / 5V5";position:absolute;right:14px;top:17px;color:#8fb9d5;font:700 9px var(--f-m);letter-spacing:.16em}
+.home-shortcut:hover{transform:none;border-color:rgba(151,204,239,.55);background:linear-gradient(145deg,rgba(28,49,67,.99),rgba(7,16,25,.99));box-shadow:inset 0 1px rgba(255,255,255,.1),0 15px 30px rgba(0,0,0,.36)}
+.home-lineup{position:relative;overflow:hidden;border:1px solid rgba(150,190,219,.24);border-radius:3px;background:linear-gradient(155deg,rgba(18,32,45,.98),rgba(5,11,18,.99));box-shadow:0 22px 45px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.07)}
+.home-lineup:before{content:"ROSTER / 05";position:absolute;right:16px;top:15px;font:700 9px var(--f-m);letter-spacing:.18em;color:rgba(154,190,216,.55)}
+.home-lineup>.kv{padding-bottom:10px;border-bottom:1px solid rgba(145,181,207,.15)}
+.home-lineup .lineup{padding-top:22px}
+.home-lineup .btn.go{margin-top:14px;min-height:66px;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background:linear-gradient(100deg,#d8e5ed,#8db6d0 58%,#d6e1e8);color:#07111a;box-shadow:0 7px 24px rgba(88,145,182,.22)}
+.home-league{position:relative;overflow:hidden;min-height:150px;justify-content:center;border-radius:3px;background:linear-gradient(125deg,#1b2d3d,#0a121c 70%);border:1px solid rgba(151,191,220,.28)}
+.home-league:after{content:"";position:absolute;right:-18px;bottom:-50px;width:170px;height:170px;border:1px solid rgba(133,182,214,.18);transform:rotate(45deg);box-shadow:0 0 0 14px rgba(133,182,214,.025),0 0 0 28px rgba(133,182,214,.02);pointer-events:none}
+.home-league .bar{height:8px;border-radius:1px;background:#07101a}
+.home-league .bar i{background:linear-gradient(90deg,#6f9fbe,#d7e6ef);box-shadow:0 0 15px rgba(118,175,211,.35)}
+.home-streak{border-radius:3px;background:linear-gradient(145deg,rgba(13,24,34,.98),rgba(6,11,17,.99));border:1px solid rgba(123,159,185,.2)}
+.home-streak .bar{height:6px}
+.home-streak [style*="grid-template-columns:repeat(7"] span{min-height:30px!important;border-radius:1px!important}
+.home-free{border-radius:3px;background:linear-gradient(115deg,rgba(31,39,43,.98),rgba(9,15,19,.99));border:1px solid rgba(190,169,126,.26)}
+.home-free .pk{max-width:150px}
+@media(max-width:600px){
+ .home-hero{display:flex;min-height:238px;padding:20px 16px;align-items:center}
+ .home-hero__copy{max-width:69%;padding-right:0}
+ .home-hero__artifact{position:absolute;right:-4%;top:50%;width:48%;min-height:0;transform:translateY(-50%);opacity:.94}
+ .home-hero__art{max-height:220px}
+ .home-hero h1{font-size:clamp(34px,9vw,43px)}
+ .home-hero__desc{font-size:11px;max-width:220px}
+ .home-hero__tags{gap:4px;margin-top:13px}
+ .home-hero__tags span{font-size:7px;padding:5px 6px}
+ .home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .home-shortcut:nth-child(1){grid-column:1/-1;grid-row:auto;min-height:96px;padding:12px 12px 12px 52px;justify-content:center}
+ .home-shortcut:nth-child(1) .home-shortcut__icon{position:absolute;left:12px;top:12px;width:28px;height:28px;margin:0;font-size:12px}
+ .home-shortcut:nth-child(1):after{top:16px;right:12px}
+ .home-shortcut:nth-child(n+2){grid-column:span 1;min-height:78px;padding:10px 8px 10px 42px}
+ .home-shortcut:nth-child(n+2) .home-shortcut__icon{left:8px;top:10px;width:25px;height:25px}
+ .home-shortcut b{font-size:11px}
+ .home-shortcut small{font-size:9px}
+ .home-lineup{padding:12px}
+ .home-lineup:before{right:12px;top:13px;font-size:8px}
+ .home-lineup .lineup{padding-top:16px}
+}
+@media(min-width:700px){
+ #app[data-tab="home"]>.home-hero,#app[data-tab="home"]>.home-shortcuts{grid-column:1/-1}
+ #app[data-tab="home"]>.home-lineup{grid-column:span 7}
+ #app[data-tab="home"]>.home-league{grid-column:span 5}
+ #app[data-tab="home"]>.home-streak{grid-column:span 7}
+ #app[data-tab="home"]>.home-tasks{grid-column:span 5}
+ #app[data-tab="home"]>.home-free{grid-column:span 5}
+}
+@media(prefers-reduced-motion:reduce){.home-hero__art .art-float{animation:none}}
+
+</style></head><body>
 <title>Пятёрка Легенд</title>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"}}</script>
 
@@ -1426,7 +1502,16 @@ function vHome() {
   const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span style="display:grid;place-items:center;min-height:27px;border:1px solid ${milestone ? 'var(--gold)' : 'var(--line)'};border-radius:6px;background:${done ? 'var(--accent)' : 'var(--panel2)'};color:${done ? '#141414' : 'var(--mut)'};font:600 11px var(--f-m)">${d}</span>`; }).join('');
   const tut = st < 3 ? `<section class="pn"><h3>Первые шаги</h3><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk" style="margin-top:8px">Понятно</button></div>` : ''}${tut}
-  <section class="home-hero"><div class="home-hero__copy"><p class="home-hero__eyebrow">TACTICAL COLLECTION · CS2 UNIVERSE</p><h1>ПЯТЁРКИ<br>ЛЕГЕНД</h1><p class="home-hero__desc">Собирай легендарных игроков, создавай свою пятёрку и доказывай её силу в матчах.</p><div class="home-hero__tags"><span>5 ИГРОКОВ</span><span>СВОЯ КОЛЛЕКЦИЯ</span><span>ТВОЯ СТРАТЕГИЯ</span></div></div><div class="home-hero__artifact" aria-hidden="true"><div class="home-hero__halo"></div><div class="home-hero__sigil"><b>5</b><small>LEGENDS</small></div></div></section>
+  <section class="home-hero"><div class="home-hero__copy"><p class="home-hero__eyebrow">TACTICAL COLLECTION · CS2 UNIVERSE</p><h1>ПЯТЁРКИ<br>ЛЕГЕНД</h1><p class="home-hero__desc">Собирай легендарных игроков, создавай свою пятёрку и доказывай её силу в матчах.</p><div class="home-hero__tags"><span>5 ИГРОКОВ</span><span>СВОЯ КОЛЛЕКЦИЯ</span><span>ТВОЯ СТРАТЕГИЯ</span></div></div><div class="home-hero__artifact" aria-hidden="true"><svg class="home-hero__art" viewBox="0 0 560 390" role="presentation" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hero-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9e8f2"/><stop offset=".28" stop-color="#668ba6"/><stop offset=".58" stop-color="#1b3449"/><stop offset="1" stop-color="#080f18"/></linearGradient><linearGradient id="hero-screen" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#263f55"/><stop offset="1" stop-color="#09131e"/></linearGradient><linearGradient id="hero-floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#42627b" stop-opacity=".5"/><stop offset="1" stop-color="#07101a" stop-opacity="0"/></linearGradient><radialGradient id="hero-glow"><stop stop-color="#a5d4f0" stop-opacity=".42"/><stop offset="1" stop-color="#72b6df" stop-opacity="0"/></radialGradient><filter id="hero-blur"><feGaussianBlur stdDeviation="13"/></filter></defs>
+<ellipse cx="300" cy="315" rx="230" ry="48" fill="url(#hero-glow)" filter="url(#hero-blur)"/>
+<g fill="none" stroke="#789bb5" stroke-opacity=".42" stroke-width="2"><path d="M35 64H520M55 47H505M80 30H480M58 47l22 17 20-17 20 17 20-17 20 17 20-17 20 17 20-17 20 17 20-17 20 17 20-17 20 17 20-17 20 17 20-17 20 17 20-17"/><path d="M74 64v45M486 64v45M104 64v28M456 64v28"/></g>
+<g opacity=".7"><path d="M70 80L185 260H130Z" fill="#7cb5dc" opacity=".09"/><path d="M490 80L380 260H435Z" fill="#7cb5dc" opacity=".09"/><path d="M105 82L210 238M455 82L350 238" stroke="#a5d4f0" stroke-opacity=".25" stroke-width="2"/></g>
+<g class="art-screen"><path d="M155 83L405 83 430 215 130 215Z" fill="#050b12" stroke="#8db8d5" stroke-opacity=".75" stroke-width="2"/><path d="M165 94H395L414 204H146Z" fill="url(#hero-screen)" stroke="#527c9a"/><path d="M181 108H379M174 116H386" stroke="#8db8d5" stroke-opacity=".22"/><text x="280" y="142" text-anchor="middle" fill="#cfe2ef" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="5">FIVE LEGENDS</text><text x="280" y="184" text-anchor="middle" fill="#e5f0f6" font-family="Arial,sans-serif" font-size="42" font-weight="900" letter-spacing="2">CS2</text><path d="M205 194H355" stroke="#8ec0df" stroke-width="2"/></g>
+<g fill="#101e2b" stroke="#6d94b1" stroke-opacity=".7"><path d="M52 147H119L135 265H38Z"/><path d="M441 147H508L522 265H425Z"/><path d="M62 161H111V181H62ZM451 161H500V181H451Z" fill="#85b9d8" fill-opacity=".22"/><path d="M62 193H111V196H62ZM451 193H500V196H451Z" fill="#a9cfe5" fill-opacity=".4"/></g>
+<g class="art-float"><path d="M210 236L280 199 350 236 337 329 223 329Z" fill="#0a121b" stroke="#9fc2dc" stroke-opacity=".8" stroke-width="2"/><path d="M224 242L280 213 336 242 326 313 234 313Z" fill="url(#hero-metal)" stroke="#d2e4ef" stroke-opacity=".45"/><path d="M280 224L316 261 280 299 244 261Z" fill="#09131d" stroke="#c5dfef" stroke-width="2"/><text x="280" y="276" text-anchor="middle" fill="#e2eff7" font-family="Arial,sans-serif" font-size="42" font-weight="900">5</text><path d="M244 318H316M252 325H308" stroke="#9ec5df" stroke-width="2" stroke-opacity=".7"/></g>
+<g fill="none" stroke="#8eb8d3" stroke-opacity=".5"><path d="M30 292L140 265 210 280M530 292L420 265 350 280"/><path d="M75 310H485M105 325H455M145 340H415" stroke-width="2"/><path d="M110 295l-20 15m360-15 20 15M175 279l-12 19m222-19 12 19"/></g>
+<g fill="#8db8d5" opacity=".6"><circle cx="60" cy="125" r="3"/><circle cx="500" cy="125" r="3"/><circle cx="280" cy="58" r="3"/><path d="M268 66h24v3h-24z"/></g><path d="M20 358H540" stroke="#8db8d5" stroke-opacity=".24"/></svg></div></section>
   <section class="home-shortcuts" aria-label="Быстрые разделы">
     <button class="home-shortcut" data-act="tab" data-v="play"><span class="home-shortcut__icon">01</span><span><b>Матчи</b><small>Проверь свою пятёрку</small></span></button>
     <button class="home-shortcut" data-act="tab" data-v="col"><span class="home-shortcut__icon">02</span><span><b>Коллекция</b><small>Все твои игроки</small></span></button>

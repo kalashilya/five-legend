@@ -69,6 +69,7 @@ const { chromium } = require('playwright');
     await page.locator('#tabs button[data-v="col"]').click();
     await page.waitForFunction(() => document.querySelector('#app')?.dataset.tab === 'col');
     const card = page.locator('#col-grid button').first();
+    await card.scrollIntoViewIfNeeded();
     const before = await card.boundingBox();
     if (!before) throw new Error('Не найдена карточка для проверки 3D hover');
     await card.hover();

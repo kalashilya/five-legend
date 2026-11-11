@@ -614,6 +614,53 @@ button:has(>.pc)>.pc{transform:none!important;transition:filter .16s}
 @media(hover:hover) and (pointer:fine){
  button:has(>.pc):hover>.pc{filter:brightness(1.12) saturate(1.08);box-shadow:0 0 0 1px rgba(183,214,237,.28),0 12px 24px rgba(0,0,0,.42)}
 }
+
+/* Collection: precise catalog controls and card rails */
+.frow select,select,input[type=text]{border:1px solid rgba(142,174,201,.24);border-radius:8px;background:#0d151e;color:#e8eff5;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+.frow select:focus,input[type=text]:focus{border-color:#82b4d9;outline:2px solid rgba(130,180,217,.16);outline-offset:1px}
+.seg{padding:3px;border:1px solid rgba(143,176,203,.14);border-radius:10px;background:rgba(6,11,17,.82);gap:3px}
+.seg button{border-radius:7px;transition:background .14s,color .14s}
+.seg button[aria-pressed=true]{background:linear-gradient(180deg,rgba(103,151,190,.28),rgba(55,91,122,.2));box-shadow:inset 0 0 0 1px rgba(147,190,222,.25);color:#eaf3f9}
+.grid{gap:10px}
+.grid>button{min-width:0;padding:3px;border:1px solid rgba(145,177,203,.14);border-radius:9px;background:linear-gradient(145deg,#182431,#090e14);box-shadow:0 8px 18px rgba(0,0,0,.25);transition:border-color .14s,filter .14s}
+.grid>button:hover{border-color:rgba(148,193,225,.48);filter:brightness(1.08)}
+.sqtab{gap:8px}
+.sqtab button{min-width:0;padding:11px;border:1px solid rgba(145,177,203,.16);border-radius:10px;background:linear-gradient(145deg,#172431,#0b1118);transition:border-color .14s,background .14s}
+.sqtab button[aria-pressed=true]{border-color:rgba(150,194,224,.55);background:linear-gradient(145deg,rgba(55,91,119,.62),rgba(14,25,36,.96));box-shadow:inset 0 1px rgba(255,255,255,.08)}
+.slot,.prow{border:1px solid rgba(143,174,199,.13);border-left:3px solid var(--rc,var(--accent));border-radius:10px;background:linear-gradient(110deg,rgba(22,32,43,.96),rgba(9,14,20,.97));box-shadow:0 8px 18px rgba(0,0,0,.18)}
+.slot{padding:9px}
+.slot.empty{border-left-color:#a86c67}
+.prow{padding:11px 12px}
+.prow .o{color:#dce9f3}
+/* Cases: solid collectible objects with bevels, not flat placeholder boxes */
+.pk{filter:drop-shadow(0 15px 16px rgba(0,0,0,.62))}
+.pk .lid{border:1px solid rgba(221,235,246,.32);border-radius:8px 8px 3px 3px;background:linear-gradient(145deg,#596c7b 0%,#303f4d 38%,#17232e 100%);box-shadow:inset 0 1px rgba(255,255,255,.24),inset 0 -8px 18px rgba(0,0,0,.28),0 5px 10px rgba(0,0,0,.25)}
+.pk .box{border:1px solid rgba(185,207,224,.22);border-radius:3px 3px 9px 9px;background:linear-gradient(90deg,#101923,#3a4b5a 18%,#1d2b38 52%,#0b121a 100%);box-shadow:inset 0 1px rgba(255,255,255,.22),inset 0 -12px 20px rgba(0,0,0,.5)}
+.pk .box:before{height:3px;background:linear-gradient(90deg,transparent,var(--kc) 18%,#f1dfbd 50%,var(--kc) 82%,transparent);box-shadow:0 0 16px color-mix(in srgb,var(--kc) 45%,transparent)}
+.pk .box:after{height:2px;opacity:.85}
+.pk .lock{box-shadow:0 0 0 5px rgba(255,255,255,.06),0 0 24px color-mix(in srgb,var(--kc) 55%,transparent)}
+.odds{gap:6px}
+.odds span{border-radius:4px 4px 1px 1px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.35));padding:9px 2px}
+/* Match lobby and tactical round UI */
+.mt-bg{background:radial-gradient(ellipse at 50% 32%,hsl(var(--mh) 42% 24% / .34),transparent 58%),linear-gradient(180deg,#0b1420 0%,#080d14 58%,#04070b 100%)}
+.splash h1{font-size:clamp(30px,6vw,48px);letter-spacing:.09em;text-shadow:0 10px 36px rgba(0,0,0,.55)}
+.maps{gap:10px}
+.map{border:1px solid rgba(180,208,229,.24);border-radius:10px;background:linear-gradient(150deg,hsl(var(--h) 35% 28%),hsl(var(--h) 38% 10%));box-shadow:inset 0 1px rgba(255,255,255,.12),0 12px 25px rgba(0,0,0,.3);transition:border-color .14s,filter .14s,opacity .2s}
+.map:hover{transform:none;border-color:rgba(222,237,248,.68);filter:brightness(1.13)}
+.map:before{background:repeating-linear-gradient(135deg,rgba(0,0,0,.13) 0 8px,transparent 8px 19px),linear-gradient(145deg,rgba(170,209,237,.14),transparent 60%)}
+.map b{font-size:clamp(14px,2.5vw,20px)}
+.sbar{border:1px solid rgba(141,177,205,.18);border-radius:10px;background:linear-gradient(100deg,rgba(17,29,41,.96),rgba(6,11,17,.96));box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.chipp .f{border:1px solid rgba(153,185,210,.2);border-radius:6px 6px 2px 2px;box-shadow:0 5px 12px rgba(0,0,0,.25)}
+.chipp.foc .f{box-shadow:0 0 0 2px var(--accent),0 0 18px color-mix(in srgb,var(--accent) 28%,transparent)}
+.phase{padding:9px 11px;border:1px solid rgba(143,176,202,.14);border-radius:8px;background:rgba(13,21,30,.88)}
+.ac{border:1px solid rgba(147,179,204,.16);border-left:3px solid var(--mut);border-radius:8px;background:linear-gradient(145deg,#172431,#0a1119);box-shadow:0 7px 16px rgba(0,0,0,.2)}
+.ac[aria-pressed=true]{transform:none;border-color:rgba(135,198,157,.6);background:linear-gradient(145deg,rgba(38,82,59,.72),rgba(9,25,19,.96))}
+.mm{border-radius:8px;background:linear-gradient(145deg,rgba(12,22,32,.92),rgba(4,9,14,.96));box-shadow:0 12px 25px rgba(0,0,0,.3)}
+/* Season/profile timeline */
+.home-streak .stat,.home-league .stat{background:linear-gradient(145deg,rgba(23,35,47,.92),rgba(9,14,20,.96))}
+.home-streak [style*="grid-template-columns:repeat(7"] span{border-radius:4px!important}
+@media(max-width:420px){.frow{grid-template-columns:repeat(2,minmax(0,1fr))}.maps{gap:6px}.map{padding:6px}.sqtab{gap:5px}.sqtab button{padding:8px}}
+@media(min-width:700px){.shop{grid-template-columns:150px minmax(0,1fr);gap:22px}.slot{grid-template-columns:72px minmax(0,1fr) auto}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

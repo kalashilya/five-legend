@@ -542,14 +542,18 @@
       "photo": "https://img-cdn.hltv.org/playerbodyshot/ldyCGGQLnZ0aE9hjoomgs0.png?ixlib=java-2.1.0&s=86c8761d17d98a55a366777b5bd8fa12&w=400",
       "team": "Spirit",
       "profileUrl": "https://www.hltv.org/player/19808/tn1r",
-      "teamLogo": "https://img-cdn.hltv.org/teamlogo/ywdn4tmAvXfllLeV2SkkvF.png?ixlib=java-2.1.0&s=9c70c7fbb048348f70f686acd2369c58&w=50"
+      "teamLogo": "https://img-cdn.hltv.org/teamlogo/ywdn4tmAvXfllLeV2SkkvF.png?ixlib=java-2.1.0&s=9c70c7fbb048348f70f686acd2369c58&w=50",
+      "country": "Беларусь",
+      "countryCode": "BY"
     },
     "zont1x": {
       "profileId": 20423,
       "photo": "https://img-cdn.hltv.org/playerbodyshot/V29V5S3QXOX7Q5AxiHoxYg.png?ixlib=java-2.1.0&s=2709cc2e952f739c63d835a9459fb550&w=400",
       "team": "Spirit",
       "profileUrl": "https://www.hltv.org/player/20423/zont1x",
-      "teamLogo": "https://img-cdn.hltv.org/teamlogo/ywdn4tmAvXfllLeV2SkkvF.png?ixlib=java-2.1.0&s=9c70c7fbb048348f70f686acd2369c58&w=50"
+      "teamLogo": "https://img-cdn.hltv.org/teamlogo/ywdn4tmAvXfllLeV2SkkvF.png?ixlib=java-2.1.0&s=9c70c7fbb048348f70f686acd2369c58&w=50",
+      "country": "Украина",
+      "countryCode": "UA"
     },
     "XANTARES": {
       "profileId": 7938,

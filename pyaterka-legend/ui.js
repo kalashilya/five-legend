@@ -352,9 +352,9 @@ function simpleTop(x) {
 /* Церемония 87+: разлом → рубашка → страна → команда → карточка */
 function walkout(x) {
   const c = x.c, cc = ccOf(c), col = glow(c), tc = teamCol(c), team = teamOf(c);
-  const st = $('#po-stage'); st.classList.add('wo-on'); $('#po-top').textContent = 'Редкий игрок';
+  const st = $('#po-stage'), legendary = c.ovr >= 91; st.classList.add('wo-on'); $('#po-top').textContent = legendary ? 'Легендарный игрок' : 'Редкий игрок';
   $('#po-bg').style.setProperty('--gl', '#000');
-  st.innerHTML = `<div class="wo" id="wo" style="--rc:${col};--fc:#7d8794"><i class="wo-rays"></i><i class="wo-floor"></i>
+  st.innerHTML = `<div class="wo ${legendary ? 'wo-legend' : 'wo-cinema'}" id="wo" style="--rc:${col};--fc:#7d8794"><i class="wo-rays"></i><i class="wo-floor"></i>
     <div class="wo-plate" id="wo-plate"></div>
     <div class="wo-crack">${pkH(OV.type)}<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 50L8 6M50 50L96 14M50 50L92 88M50 50L12 94M50 50L50 0M50 50L0 54M50 50L100 58"/></svg></div>
     <div class="wo-card" id="wo-card"></div></div>`;

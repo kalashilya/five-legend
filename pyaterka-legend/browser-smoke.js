@@ -26,6 +26,8 @@ const { chromium } = require('playwright');
     const text = await page.locator('#app').innerText();
     if (!text || text.length < 20) throw new Error('Главный экран пустой');
     const layouts = [];
+    const shotDir = path.join(__dirname, 'artifacts');
+    fs.mkdirSync(shotDir, { recursive: true });
     for (const viewport of [{ width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
       await page.setViewportSize(viewport);
       await page.waitForTimeout(80);
@@ -63,6 +65,7 @@ const { chromium } = require('playwright');
         if (card.width <= 0 || card.transform !== 'none') throw new Error('Нестабильная геометрия карточки состава при ширине ' + viewport.width);
         if (i && metrics.lineupCards[i - 1].center >= card.center) throw new Error('Нарушен порядок карточек состава при ширине ' + viewport.width);
       }
+      await page.screenshot({ path: path.join(shotDir, 'home-' + viewport.width + '.png'), fullPage: true });
       layouts.push(viewport.width + 'px');
     }
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -105,6 +108,7 @@ const { chromium } = require('playwright');
       const mast = await page.locator('#app .section-mast').count();
       if (mast !== 1 || !(await page.locator('#app .section-mast__icon svg').count())) throw new Error(section.label + ': отсутствует фирменная шапка раздела или эмблема');
       if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');
+      await page.screenshot({ path: path.join(shotDir, section.tab + '-390.png'), fullPage: true });
     }
     if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));
     console.log('Browser smoke OK: responsive layouts ' + layouts.join(', ') + '; home, collection, cases, matches and profile rendered; no overflow or layout displacement; 3D hover lifts only an inner card layer; no page errors.');

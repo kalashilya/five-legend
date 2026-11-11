@@ -43,8 +43,8 @@ ok('16 полных HLTV-профилей и статистика HLTV подк�
   assert.strictEqual(E.indOf(junior).n, 'Снайпер'); assert.strictEqual(E.indOf(leakz).n, 'Трейдер');
 });
 console.log('1. Карточки и база');
-ok('717 карточек, номера уникальны, особые версии на месте', () => { assert.strictEqual(E.ALL.length, 717); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 717); assert.strictEqual(E.MVPP.length, 8); assert.strictEqual(E.IFP.flat().length, 56); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
-ok('редкости 388/152/78/27/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [388, 152, 78, 27, 8]));
+ok('718 карточек (jL — архивная Vitality), номера уникальны, особые версии на месте', () => { assert.strictEqual(E.ALL.length, 718); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 718); assert.strictEqual(E.MVPP.length, 8); assert.strictEqual(E.IFP.flat().length, 56); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
+ok('редкости 388/152/78/28/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [388, 152, 78, 28, 8]));
 ok('у каждой карточки шесть показателей от 40 до 99', () => E.ALL.forEach(c => Object.values(c.st).forEach(v => assert(v >= 40 && v <= 99))));
 ok('обновление базы: трансфер создаёт новую карточку, старая остаётся архивной с тем же номером', () => {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-')); for (const f of ['gen.js', 'teams.txt', 'ids.json']) fs.copyFileSync(f, path.join(d, f));
@@ -58,6 +58,11 @@ ok('обновление базы: трансфер создаёт новую к
   for (const c of E.ALL.filter(x => !x.sp)) assert(D.PL.some(p => p[4] === c.id && p[0] === c.nick), 'номер ' + c.id + ' сохранён');
 });
 
+ok('реестр: номер карточки никогда не переходит к другому игроку', () => {
+  const r = JSON.parse(fs.readFileSync('ids.json', 'utf8')), seen = {};
+  for (const k in r.cards) { const id = r.cards[k].id; assert(!(id in seen), 'номер ' + id + ' у ' + seen[id] + ' и ' + k); seen[id] = k; }
+  for (const [k, id] of [['zywoo|Vitality', 0], ['donk|Spirit', 1], ['jl|Vitality', 10]]) assert.strictEqual(r.cards[k] && r.cards[k].id, id, k + ' должен сохранять номер ' + id);
+});
 console.log('2. Кейсы');
 for (const t of ['basic', 'pro', 'elite']) ok('шансы кейса «' + E.PACKS[t].n + '» совпадают с объявленными', () => {
   const c = [0, 0, 0, 0, 0], n = N * 4; for (let i = 0; i < n; i++) { const p = E.openPack(t); assert.strictEqual(p.length, 5); for (const x of p) c[x.rar]++; assert(Math.max(...p.map(x => x.rar)) >= E.PACKS[t].min); }
@@ -69,12 +74,12 @@ const G = E.newProfile(NOW);
 ok('новый профиль: версия 2, пять карточек, три состава', () => { assert.strictEqual(G.v, 2); assert.strictEqual(Object.keys(G.cards).length, 5); assert.strictEqual(G.squads.length, 3); assert(G.squad.every(id => G.cards[id])); assert.strictEqual(G.tut, 0); });
 ok('сохранение переживает перезапуск без потерь', () => { const g2 = E.migrate(JSON.parse(JSON.stringify(G)), NOW); assert.deepStrictEqual(JSON.parse(JSON.stringify(g2)), JSON.parse(JSON.stringify(G))); assert.deepStrictEqual(g2.squad, G.squad); });
 ok('версия 1 переносится: особые карточки, состав, монеты и уровень сохраняются', () => {
-  const v1 = { v: 1, coins: 777, tro: 640, best: 700, xp: 30, lvl: 4, cards: { 0: { n: 2, lv: 3 }, 1000: { n: 1, lv: 1 }, 2003: { n: 1, lv: 2 }, 16: { n: 1, lv: 1 }, 26: { n: 1, lv: 1 }, 2: { n: 1, lv: 1 }, 10: { n: 3, lv: 1 } }, squad: [2003, 1000, 26, 2, 10], packs: { basic: 1, pro: 0, elite: 2 }, daily: NOW - 3600000, w: 9, l: 4 };
+  const v1 = { v: 1, coins: 777, tro: 640, best: 700, xp: 30, lvl: 4, cards: { 0: { n: 2, lv: 3 }, 1000: { n: 1, lv: 1 }, 2003: { n: 1, lv: 2 }, 16: { n: 1, lv: 1 }, 26: { n: 1, lv: 1 }, 2: { n: 1, lv: 1 }, 18: { n: 3, lv: 1 } }, squad: [2003, 1000, 26, 2, 18], packs: { basic: 1, pro: 0, elite: 2 }, daily: NOW - 3600000, w: 9, l: 4 };
   const g = E.migrate(JSON.parse(JSON.stringify(v1)), NOW);
   assert.strictEqual(g.v, 2); assert.strictEqual(g.coins, 817); assert.strictEqual(g.streak.day, 1); assert.strictEqual(g.lvl, 4); assert.strictEqual(g.tro, 640);
   assert.deepStrictEqual(g.cards[0], { n: 2, lv: 3 }); assert(g.cards[E.W_ID] && g.cards[E.M_ID + 3].lv === 2); assert(!g.cards[1000] && !g.cards[2003]);
-  assert.deepStrictEqual(g.squad, [E.M_ID + 3, E.W_ID, 26, 2, 10]); assert.strictEqual(E.CARDS[E.M_ID + 3].nick, E.CARDS[3].nick);
-  assert.strictEqual(g.capts[0], 10); assert.strictEqual(g.tut, 3); assert.strictEqual(E.dailyReady(g, NOW), false); assert.strictEqual(g.tasks.d.length, 4);
+  assert.deepStrictEqual(g.squad, [E.M_ID + 3, E.W_ID, 26, 2, 18]); assert.strictEqual(E.CARDS[E.M_ID + 3].nick, E.CARDS[3].nick);
+  assert.strictEqual(g.capts[0], 18); assert.strictEqual(g.tut, 3); assert.strictEqual(E.dailyReady(g, NOW), false); assert.strictEqual(g.tasks.d.length, 4);
 });
 ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
   assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);

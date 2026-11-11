@@ -3357,6 +3357,78 @@
       "team": "Omega",
       "verifiedAt": "2026-11-11",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/Nny4m8tScwRXNUELzEnS4D.png?ixlib=java-2.1.0&s=b84127e5472dff1f2b80e5ecdf651faf&w=400"
+    },
+    "Kylar": {
+      "profileId": 19114,
+      "profileUrl": "https://www.hltv.org/player/19114/kylar",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/PLlFx0MfvOILb68Nb6i30K.png?ixlib=java-2.1.0&s=e6e3bc5e065557d691c9932d33477e1c&w=400",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": "Phantom",
+      "verifiedAt": "2026-11-11"
+    },
+    "Kunai": {
+      "profileId": 25104,
+      "profileUrl": "https://www.hltv.org/player/25104/kunai",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/NTQXVamTtnUX2sFVx2uNhY.png?ixlib=java-2.1.0&s=a29225e077b579025f1362a68fab598f&w=400",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": "Phantom",
+      "verifiedAt": "2026-11-11"
+    },
+    "nosraC": {
+      "profileId": 17918,
+      "profileUrl": "https://www.hltv.org/player/17918/nosrac",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/JGj7Utzg_zl3PbPJFvUB24.png?ixlib=java-2.1.0&s=2a1b7c95d7fd6c9b74f62bdd5faf085b&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Voca",
+      "verifiedAt": "2026-11-11"
+    },
+    "stormzyn": {
+      "profileId": 22964,
+      "profileUrl": "https://www.hltv.org/player/22964/stormzyn",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/81KNDCA6vwBr_bcgqR8JOU.png?ixlib=java-2.1.0&s=41a5b2437d4e32c2831be69a510fc9e3&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Low Cortisol",
+      "verifiedAt": "2026-11-11"
+    },
+    "happ": {
+      "profileId": 21284,
+      "profileUrl": "https://www.hltv.org/player/21284/happ",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/h2l12exZp0aGxIBxIj4wSZ.png?ixlib=java-2.1.0&s=ca47074065d014e916dca040038f2e95&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "BARCA",
+      "verifiedAt": "2026-11-11"
+    },
+    "divine": {
+      "profileId": 23550,
+      "profileUrl": "https://www.hltv.org/player/23550/divine",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/hzns6F04bB3io9PHo1jaH2.png?ixlib=java-2.1.0&s=e111c8a8a90f583d10a9656359c0008c&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "BARCA",
+      "verifiedAt": "2026-11-11"
+    },
+    "Polbandana": {
+      "profileId": 22680,
+      "profileUrl": "https://www.hltv.org/player/22680/polbandana",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/2OsCFfqlqLHCzKwpFvjTxA.png?ixlib=java-2.1.0&s=9c91e706f6308ed57226305cb72d8911&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "PURE",
+      "verifiedAt": "2026-11-11"
+    },
+    "tomate": {
+      "profileId": 23551,
+      "profileUrl": "https://www.hltv.org/player/23551/tomate",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/CYo2Aj8IijiOWVVzehG3vR.png?ixlib=java-2.1.0&s=680a9013931ed8bddee38f52600f7c32&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Galorys",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

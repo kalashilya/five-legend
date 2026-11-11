@@ -3124,6 +3124,78 @@
       "countryCode": "FI",
       "team": null,
       "verifiedAt": "2026-11-11"
+    },
+    "jocab": {
+      "profileId": 22759,
+      "profileUrl": "https://www.hltv.org/player/22759/jocab",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/hxeNF5dapqds2QQP4Pc29I.png?ixlib=java-2.1.0&s=fe09b1baf2a0d42203711c6bae5fd56b&w=400",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "FOKUS",
+      "verifiedAt": "2026-11-11"
+    },
+    "zevy": {
+      "profileId": 19692,
+      "profileUrl": "https://www.hltv.org/player/19692/zevy",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Qmpf_rCl3_1e1Jw9aXRDcf.png?ixlib=java-2.1.0&s=3bbd9bd2351c5744bc8f8deeb23f2175&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": null,
+      "verifiedAt": "2026-11-11"
+    },
+    "m4d4ra": {
+      "profileId": 24836,
+      "profileUrl": "https://www.hltv.org/player/24836/m4d4ra",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/1tnwCg3ITR9thqOyWxr7cd.png?ixlib=java-2.1.0&s=bd1853b2d5f218f811b1394904e68b93&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "MAYBE",
+      "verifiedAt": "2026-11-11"
+    },
+    "cronuss": {
+      "profileId": 23770,
+      "profileUrl": "https://www.hltv.org/player/23770/cronuss",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/K4Y6BJ0dQB4w1j2N_CQQ_7.png?ixlib=java-2.1.0&s=6052c0c5fd684869c8c28df1b8acd963&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "Color",
+      "verifiedAt": "2026-11-11"
+    },
+    "guty": {
+      "profileId": 24749,
+      "profileUrl": "https://www.hltv.org/player/24749/guty",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ZonW-1eWiBPxEP4hJ7WmKO.png?ixlib=java-2.1.0&s=def2979338a424c19b67dd0956c9a5a6&w=400",
+      "country": "Аргентина",
+      "countryCode": "AR",
+      "team": "ShindeN",
+      "verifiedAt": "2026-11-11"
+    },
+    "ROUX": {
+      "profileId": 19229,
+      "profileUrl": "https://www.hltv.org/player/19229/roux",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/dB1ksh6g4cBikH1ktF8yaX.png?ixlib=java-2.1.0&s=ef27a8fd81c135f9e18e51bfb9088b9f&w=400",
+      "country": "Монголия",
+      "countryCode": "MN",
+      "team": "Chinggis Warriors",
+      "verifiedAt": "2026-11-11"
+    },
+    "xeedo": {
+      "profileId": 22886,
+      "profileUrl": "https://www.hltv.org/player/22886/xeedo",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/peZ4CDwvPiNL_pKOksbZFS.png?ixlib=java-2.1.0&s=f068148cf7b40460adebcbc928f34710&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "K27",
+      "verifiedAt": "2026-11-11"
+    },
+    "waZz": {
+      "profileId": 21716,
+      "profileUrl": "https://www.hltv.org/player/21716/wazz",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/UjgLsaL3i5MGtZoIZZH_fh.png?ixlib=java-2.1.0&s=6de72a4fb4a38ed7527124d2cd8ddaa2&w=400",
+      "country": "Румыния",
+      "countryCode": "RO",
+      "team": null,
+      "verifiedAt": "2026-11-11"
     }
   }
 }

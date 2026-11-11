@@ -38,6 +38,8 @@ const { chromium } = require('playwright');
           return { left: r.left, right: r.right, width: r.width, center: r.left + r.width / 2, transform: getComputedStyle(el).transform };
         }) : [];
         const hr = hero?.getBoundingClientRect();
+        const hud = document.querySelector('#hud > .wrap')?.getBoundingClientRect();
+        const headerCenterError = hud ? Math.abs((hud.left + hud.right) / 2 - innerWidth / 2) : Infinity;
         return {
           width: innerWidth,
           scrollWidth: document.documentElement.scrollWidth,
@@ -45,11 +47,14 @@ const { chromium } = require('playwright');
           arenaSvg: !!document.querySelector('.arena-art'),
           heroVisible: !!hr && hr.width > 0 && hr.height > 0,
           heroInside: !!hr && hr.left >= -1 && hr.right <= innerWidth + 1,
+          headerCentered: headerCenterError <= 1,
+          headerCenterError,
+          heroArt: !!document.querySelector('.home-hero__art'),
           lineupCards: cards,
           scenePosition: getComputedStyle(document.querySelector('#scene')).position
         };
       });
-      if (!metrics.appReady || !metrics.arenaSvg || !metrics.heroVisible || !metrics.heroInside) throw new Error('Некорректная сцена/главная при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
+      if (!metrics.appReady || !metrics.arenaSvg || !metrics.heroVisible || !metrics.heroInside || !metrics.headerCentered || !metrics.heroArt) throw new Error('Некорректная сцена/главная при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
       if (metrics.scrollWidth > viewport.width + 1) throw new Error('Горизонтальный выезд страницы при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
       if (metrics.scenePosition !== 'fixed') throw new Error('Фон арены должен быть закреплён независимо от прокрутки');
       for (let i = 0; i < metrics.lineupCards.length; i++) {

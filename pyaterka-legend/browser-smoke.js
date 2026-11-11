@@ -1,3 +1,4 @@
+// Verify all core screens and the final stylesheet in headless Chromium.
 // Browser smoke coverage for the approved four-screen arena redesign.
 'use strict';
 const fs = require('fs');

@@ -3618,6 +3618,24 @@
       "countryCode": "RO",
       "team": "Alter Ego",
       "verifiedAt": "2026-11-11"
+    },
+    "d1maje": {
+      "profileId": 21117,
+      "profileUrl": "https://www.hltv.org/player/21117/d1maje",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/dcgVytsUTW82-TC44tGLSI.png?ixlib=java-2.1.0&s=3a2ef5cf940b362379a74ba568bdface&w=400",
+      "country": "Румыния",
+      "countryCode": "RO",
+      "team": "Balkan Outlaws",
+      "verifiedAt": "2026-11-11"
+    },
+    "AdrieN": {
+      "profileId": 23767,
+      "profileUrl": "https://www.hltv.org/player/23767/adrien",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Y0VEhTY4_YCjqfLqXzsNYz.png?ixlib=java-2.1.0&s=b60b65821ce68e4bea120712552777a1&w=400",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": "Nordic Partners",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

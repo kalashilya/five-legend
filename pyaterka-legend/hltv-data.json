@@ -505,6 +505,36 @@
       "photo": "https://img-cdn.hltv.org/playerbodyshot/HwdtHmtO-pl5oKVeVJqhP1.png?ixlib=java-2.1.0&s=1565383f86356916f098e1969e0495d2&w=400",
       "team": "Aurora",
       "profileUrl": "https://www.hltv.org/player/8574/woxic"
+    },
+    "Jimpphat": {
+      "profileId": 18850,
+      "team": "Aurora",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/YV17JXjtrMTI4G0LULROlE.png?ixlib=java-2.1.0&s=429021ee8e8ce7cfced630caa82ea4a2&w=400",
+      "profileUrl": "https://www.hltv.org/player/18850/jimpphat"
+    },
+    "kyxsan": {
+      "profileId": 19677,
+      "team": "Aurora",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/J0y8JcMMhuMg9oZ5VhrrIp.png?ixlib=java-2.1.0&s=73d96af92e3e63ee59559bdcca2d7ffe&w=400",
+      "profileUrl": "https://www.hltv.org/player/19677/kyxsan"
+    },
+    "Wicadia": {
+      "profileId": 21243,
+      "team": "Aurora",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Ewe2uyIIaNKBDTs_Zkv-PC.png?ixlib=java-2.1.0&s=0b4cbf6f3252f3233b39257551870f26&w=400",
+      "profileUrl": "https://www.hltv.org/player/21243/wicadia"
+    },
+    "karrigan": {
+      "profileId": 429,
+      "team": "Falcons",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/4nm-v1aawxy5SUrv81H9JZ.png?ixlib=java-2.1.0&s=5dd93d8662a38f7eae1780cc2ba7dbe7&w=400",
+      "profileUrl": "https://www.hltv.org/player/429/karrigan"
+    },
+    "NiKo": {
+      "profileId": 3741,
+      "team": "Falcons",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ZPB6zop8FumkqqbHl8BGos.png?ixlib=java-2.1.0&s=a81b4da0555bb1f3599bd3ca854f5515&w=400",
+      "profileUrl": "https://www.hltv.org/player/3741/niko"
     }
   }
 }

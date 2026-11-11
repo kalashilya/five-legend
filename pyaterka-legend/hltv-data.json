@@ -469,6 +469,42 @@
       "countryCode": "GB",
       "team": "Vitality",
       "teamLogo": "https://img-cdn.hltv.org/teamlogo/ogcHrcCdzRvxbYvAz04KAN.png?ixlib=java-2.1.0&s=e1f6019aa9f274ffe45a5e99c88dbc02&w=50"
+    },
+    "sh1ro": {
+      "profileId": 16920,
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/4nm-v1aawxy5SUrv81H9JZ.png?ixlib=java-2.1.0&s=5dd93d8662a38f7eae1780cc2ba7dbe7&w=400",
+      "team": "Spirit",
+      "profileUrl": "https://www.hltv.org/player/16920/sh1ro"
+    },
+    "magixx": {
+      "profileId": 18317,
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/HrWpH_vGGmmidy_5NGYzot.png?ixlib=java-2.1.0&s=54f03db9912d953797325482ca72ccd1&w=400",
+      "team": "Spirit",
+      "profileUrl": "https://www.hltv.org/player/18317/magixx"
+    },
+    "tN1R": {
+      "profileId": 19808,
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ldyCGGQLnZ0aE9hjoomgs0.png?ixlib=java-2.1.0&s=86c8761d17d98a55a366777b5bd8fa12&w=400",
+      "team": "Spirit",
+      "profileUrl": "https://www.hltv.org/player/19808/tn1r"
+    },
+    "zont1x": {
+      "profileId": 20423,
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/V29V5S3QXOX7Q5AxiHoxYg.png?ixlib=java-2.1.0&s=2709cc2e952f739c63d835a9459fb550&w=400",
+      "team": "Spirit",
+      "profileUrl": "https://www.hltv.org/player/20423/zont1x"
+    },
+    "XANTARES": {
+      "profileId": 7938,
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/9zPNSNo_4XxREmOgFhVWY8.png?ixlib=java-2.1.0&s=921783f5c5bd3d054acef1f62eb92dd5&w=400",
+      "team": "Aurora",
+      "profileUrl": "https://www.hltv.org/player/7938/xantares"
+    },
+    "woxic": {
+      "profileId": 8574,
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/HwdtHmtO-pl5oKVeVJqhP1.png?ixlib=java-2.1.0&s=1565383f86356916f098e1969e0495d2&w=400",
+      "team": "Aurora",
+      "profileUrl": "https://www.hltv.org/player/8574/woxic"
     }
   }
 }

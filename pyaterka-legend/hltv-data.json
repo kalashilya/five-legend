@@ -262,7 +262,13 @@
         "maps": 40,
         "rating3": 1.15,
         "roundSwing": 0.92
-      }
+      },
+      "profileUrl": "https://www.hltv.org/player/20903/senzu",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ACOV-uKlXkFHz-Ab9WB0lq.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C4%2C467%2C467&s=10543c2c6dbcde645d25bd4d194a031d&w=800",
+      "country": "Монголия",
+      "countryCode": "MN",
+      "team": "BC.Game",
+      "verifiedAt": "2026-11-11"
     },
     "Magnojez": {
       "profileId": 21667,
@@ -1807,6 +1813,168 @@
       "country": "США",
       "countryCode": "US",
       "team": "Wildcard",
+      "verifiedAt": "2026-11-11"
+    },
+    "onic": {
+      "profileId": 24168,
+      "profileUrl": "https://www.hltv.org/player/24168/onic",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/fKnYryOJlxJGvVOQDCWPye.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=6b42b8d995cdffb1ba0a6b90861ff884&w=800",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "Inner Circle",
+      "verifiedAt": "2026-11-11"
+    },
+    "pancc": {
+      "profileId": 16314,
+      "profileUrl": "https://www.hltv.org/player/16314/pancc",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ItbCgg0AiRDwpdCDd39LTh.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=117%2C0%2C467%2C467&s=709a7cca202f4ba439e589ee6e243073&w=800",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "BARCA",
+      "verifiedAt": "2026-11-11"
+    },
+    "phzy": {
+      "profileId": 16726,
+      "profileUrl": "https://www.hltv.org/player/16726/phzy",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/STTbSc9phAC9XXjVZMg8n4.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=5d3f322cdf1a84193e36dd6ec7546ff5&w=800",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "Astralis",
+      "verifiedAt": "2026-11-11"
+    },
+    "podi": {
+      "profileId": 21815,
+      "profileUrl": "https://www.hltv.org/player/21815/podi",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/1VUN6qPmaeHNMIEhKV18V9.png?ixlib=java-2.1.0&s=a9d68293bf2e269787d8249d2fe3d8fe&w=400",
+      "country": "Финляндия",
+      "countryCode": "FI",
+      "team": "FOKUS",
+      "verifiedAt": "2026-11-11"
+    },
+    "Prism": {
+      "profileId": 18979,
+      "profileUrl": "https://www.hltv.org/player/18979/prism",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/TDjOwlLJEkHn7AFjguSRYz.png?ixlib=java-2.1.0&s=7316e36c3fe941ad27b16c88730028a4&w=400",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": "Betclic",
+      "verifiedAt": "2026-11-11"
+    },
+    "raalz": {
+      "profileId": 2898,
+      "profileUrl": "https://www.hltv.org/player/2898/raalz",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/G9AAtXIPOHBYhWr-uNEn-f.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C0%2C467%2C467&s=9d6bccc5b68f6589d8bd95a33e5cbfbc&w=800",
+      "country": "Дания",
+      "countryCode": "DK",
+      "team": "9INE",
+      "verifiedAt": "2026-11-11"
+    },
+    "regali": {
+      "profileId": 20123,
+      "profileUrl": "https://www.hltv.org/player/20123/regali",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/FoWOeCpTIRWZL54x0moRMO.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=117%2C4%2C478%2C478&s=e26122e19a7a283b535ca3ccbda2191c&w=800",
+      "country": "Румыния",
+      "countryCode": "RO",
+      "team": "Eternal Fire",
+      "verifiedAt": "2026-11-11"
+    },
+    "REZ": {
+      "profileId": 9278,
+      "profileUrl": "https://www.hltv.org/player/9278/rez",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ZtKT_itHAZh67CQ_7H9BQa.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C4%2C467%2C467&s=0779d9145a9a5796ea001087b97614f4&w=800",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "GamerLegion",
+      "verifiedAt": "2026-11-11"
+    },
+    "rigoN": {
+      "profileId": 12708,
+      "profileUrl": "https://www.hltv.org/player/12708/rigon",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/H82X1oyOfqQTzKPprcX-t-.png?ixlib=java-2.1.0&s=85e81666899eddcb20c2788a6d55482a&w=400",
+      "country": "Косово",
+      "countryCode": "XK",
+      "team": null,
+      "verifiedAt": "2026-11-11"
+    },
+    "Ro1f": {
+      "profileId": 21012,
+      "profileUrl": "https://www.hltv.org/player/21012/ro1f",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/a-6WgrxIAH2lqggByUSJnV.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=86e5c1dddddabc953ac1c2d3dd9aa96e&w=800",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "EYEBALLERS",
+      "verifiedAt": "2026-11-11"
+    },
+    "ryu": {
+      "profileId": 21217,
+      "profileUrl": "https://www.hltv.org/player/21217/ryu",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/mglBUZLDVKCiJOJsR_n1K3.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C4%2C467%2C467&s=72e635d62573d7056eacd6ffa07455c6&w=800",
+      "country": "Литва",
+      "countryCode": "LT",
+      "team": "Astralis",
+      "verifiedAt": "2026-11-11"
+    },
+    "s1mple": {
+      "profileId": 7998,
+      "profileUrl": "https://www.hltv.org/player/7998/s1mple",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/kIHjh9sr2gW8b-xmLfW4Oq.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=2ebd168f9cf3b5354e5b100a03b11ad0&w=800",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "BC.Game",
+      "verifiedAt": "2026-11-11"
+    },
+    "s1n": {
+      "profileId": 20104,
+      "profileUrl": "https://www.hltv.org/player/20104/s1n",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/omou6FnIFE6WR1gOsMOUYc.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=117%2C8%2C467%2C467&s=192bfa8750bb305c733c48055efbe827&w=800",
+      "country": "Германия",
+      "countryCode": "DE",
+      "team": "M80",
+      "verifiedAt": "2026-11-11"
+    },
+    "s1zzi": {
+      "profileId": 25619,
+      "profileUrl": "https://www.hltv.org/player/25619/s1zzi",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/u17qJ2zrqmk8wP9w9xnM8E.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=ce0d7f165eeb73c1422c061897cf7009&w=800",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "B8",
+      "verifiedAt": "2026-11-11"
+    },
+    "saadzin": {
+      "profileId": 22965,
+      "profileUrl": "https://www.hltv.org/player/22965/saadzin",
+      "photo": "https://img-cdn.hltv.org/gallerypicture/J0W3UL6X9JZraYNUkV09bQ.jpg?auto=compress&ixlib=java-2.1.0&m=%2Fm.png&mw=107&mx=20&my=473&q=75&s=a34feff6200210258ce3e9f9778aa181&w=800",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Imperial",
+      "verifiedAt": "2026-11-11"
+    },
+    "saffee": {
+      "profileId": 18835,
+      "profileUrl": "https://www.hltv.org/player/18835/saffee",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Q1xLCZVFfopHUYciBQV5KQ.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=116%2C8%2C467%2C467&s=09b100a09bf492faa9e1c60c26351510&w=800",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "paiN",
+      "verifiedAt": "2026-11-11"
+    },
+    "sausol": {
+      "profileId": 18749,
+      "profileUrl": "https://www.hltv.org/player/18749/sausol",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/odJHGF8lngmXX28-FOWbwG.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=c4cf3ca846cb831bcdf49c70bfb3479a&w=800",
+      "country": "Испания",
+      "countryCode": "ES",
+      "team": "Iberian Soul",
+      "verifiedAt": "2026-11-11"
+    },
+    "sFade8": {
+      "profileId": 22075,
+      "profileUrl": "https://www.hltv.org/player/22075/sfade8",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/u9mZxq7nQmSctJwMdPsPE8.png?ixlib=java-2.1.0&s=2e14b6a08d0d5cc51d3847748d1c77eb&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "magic",
       "verifiedAt": "2026-11-11"
     }
   }

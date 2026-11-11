@@ -22,11 +22,12 @@ button:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
 #nogl{position:fixed;inset:0;display:none;place-items:center;text-align:center;padding:24px;font:500 16px/1.5 var(--f-d)}
 @media (prefers-reduced-motion: reduce){#hint{animation:none}}
 </style></head><body>
-<canvas id="gl"></canvas><div id="ver" style="position:fixed;right:10px;bottom:6px;font:700 10px/1 var(--f-m);letter-spacing:.1em;color:#5d6672;pointer-events:none">версия 6 · арена</div><div id="nogl">Этому браузеру недоступна 3D-графика (WebGL). Откройте игру в Chrome, Safari или Firefox.</div>
+<canvas id="gl"></canvas><div id="ver" style="position:fixed;right:10px;bottom:6px;font:700 10px/1 var(--f-m);letter-spacing:.1em;color:#5d6672;pointer-events:none">версия 7 · фон турнира</div><div id="nogl">Этому браузеру недоступна 3D-графика (WebGL). Откройте игру в Chrome, Safari или Firefox.</div>
 <div class="ui top"><span class="eyebrow" id="eb"></span><span class="title" id="tt"></span><span class="sub" id="st"></span></div>
 <div class="ui bot"><span id="hint">Нажмите на кейс</span><div class="row" id="demo"><button data-k="elite">Элитный · 87+</button><button data-k="pro">Про · 81</button><button data-k="basic">Базовый · 64</button></div><div class="row"><button id="openBtn">Открыть</button><button id="skip">Пропустить</button></div></div>
 <script>/*THREE*/</script>
 <script>/*FLAGS*/</script>
+<script>/*BG*/</script>
 <script>
 'use strict';
 /* Тестовые выпадения: в игре сюда придёт лучшая карточка кейса */
@@ -53,7 +54,7 @@ let PR = Math.min(devicePixelRatio, 1.5); R3.setPixelRatio(PR);
 const GL2 = R3.capabilities.isWebGL2, HALF = GL2 || R3.extensions.has('EXT_color_buffer_half_float') || R3.extensions.has('OES_texture_half_float');
 const Q = { rays: true, low: false }; R3.outputEncoding = THREE.LinearEncoding; R3.toneMapping = THREE.NoToneMapping;
 R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
-const scene = new THREE.Scene(); scene.background = new THREE.Color(0x010204); scene.fog = new THREE.FogExp2(0x020306, .03);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x020812); scene.fog = new THREE.FogExp2(0x030c1c, .03);
 const cam = new THREE.PerspectiveCamera(36, 1, .1, 120);
 const POST = (() => {
   const mk = (w, h, ms) => { const r = new THREE.WebGLRenderTarget(Math.max(1, w | 0), Math.max(1, h | 0), { type: HALF ? THREE.HalfFloatType : THREE.UnsignedByteType, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }); if (ms && GL2 && !Q.low) r.samples = 4; return r; };
@@ -117,11 +118,12 @@ const fill = new THREE.PointLight(0xffffff, 0, 8, 2); fill.position.set(0, 2.2, 
 
 /* ---------- Арена турнира (по мотивам сцен мейджоров): подиум, большой LED-экран, будки игроков, фермы с прожекторами, баннеры команд, трибуны с огоньками телефонов, дымка ---------- */
 /* свет сцены нейтральный холодно-белый; цвет редкости подмешивается только в момент раскрытия */
-const NEUTRAL = new THREE.Color('#b8c4d4'), stageC = NEUTRAL.clone(), WHITE = new THREE.Color('#ffffff');
+const NEUTRAL = new THREE.Color('#9dbde6'), stageC = NEUTRAL.clone(), WHITE = new THREE.Color('#ffffff');
 const floorMat = new THREE.MeshStandardMaterial({ color: 0x030405, metalness: .5, roughness: .36, envMapIntensity: .08, emissive: new THREE.Color(0), emissiveMap: hexT, emissiveIntensity: 0 });
 hexT.repeat.set(14, 14);
 const floor = new THREE.Mesh(new THREE.CircleGeometry(40, 64), floorMat); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
 const ringFloor = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.33, 96), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .3, blending: THREE.AdditiveBlending, depthWrite: false })); ringFloor.rotation.x = -Math.PI / 2; ringFloor.position.y = .005; scene.add(ringFloor);
+const decoFrom = scene.children.length;
 const trussMat = new THREE.MeshStandardMaterial({ color: 0x15171b, metalness: .85, roughness: .45, envMapIntensity: .3 });
 const darkMat = new THREE.MeshStandardMaterial({ color: 0x08090b, metalness: .4, roughness: .5, envMapIntensity: .18 });
 const stripMat = new THREE.MeshBasicMaterial({ color: NEUTRAL.clone() });
@@ -208,8 +210,14 @@ const phMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, b
   vertexShader: 'attribute float ph;uniform float t,px;varying float vA;void main(){vA=.35+.65*smoothstep(-.2,1.,sin(t*.8+ph*3.)) ;vec4 mv=modelViewMatrix*vec4(position,1.);gl_PointSize=px*90./-mv.z;gl_Position=projectionMatrix*mv;}',
   fragmentShader: 'uniform float k;varying float vA;void main(){vec2 d=gl_PointCoord-.5;float f=smoothstep(.5,0.,length(d));f*=f;gl_FragColor=vec4(vec3(.9,.94,1.)*f*vA*k*.9,1.);}' });
 scene.add(new THREE.Points(phG, phMat));
+const decoTo = scene.children.length;
+/* фон: картинка турнира на дальнем плане, приглушённая и слегка размытая; декорации арены скрыты, чтобы не спорили с картинкой */
+const bgTex = new THREE.TextureLoader().load(typeof BG_SRC !== 'undefined' ? BG_SRC : ''); bgTex.encoding = THREE.sRGBEncoding;
+const bgMat = new THREE.MeshBasicMaterial({ map: bgTex, fog: false, color: new THREE.Color(.26, .26, .26), depthWrite: false });
+const bgPlane = new THREE.Mesh(new THREE.PlaneGeometry(40, 22.5), bgMat); bgPlane.position.set(0, 3.4, -16); scene.add(bgPlane);
+scene.children.slice(decoFrom, decoTo).forEach(o => { o.visible = false; });
 /* дымка в воздухе арены */
-const fogs = [[-2.5, 1.2, .018], [-7, 2.6, .028], [-12, 4, .035]].map(([z, y, o]) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(40, 8), new THREE.MeshBasicMaterial({ map: fogT.clone(), transparent: true, opacity: o, depthWrite: false, blending: THREE.AdditiveBlending, color: NEUTRAL.clone(), fog: false })); m.material.map.wrapS = THREE.RepeatWrapping; m.material.map.needsUpdate = true; m.position.set(0, y, z); m.userData.o = o; scene.add(m); return m; });
+const fogs = [[-2.5, 1.2, .012], [-7, 2.6, .016], [-12, 4, .02]].map(([z, y, o]) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(40, 8), new THREE.MeshBasicMaterial({ map: fogT.clone(), transparent: true, opacity: o, depthWrite: false, blending: THREE.AdditiveBlending, color: NEUTRAL.clone(), fog: false })); m.material.map.wrapS = THREE.RepeatWrapping; m.material.map.needsUpdate = true; m.position.set(0, y, z); m.userData.o = o; scene.add(m); return m; });
 const DUST = 600, dg = new THREE.BufferGeometry(), dp = new Float32Array(DUST * 3), dv = new Float32Array(DUST);
 for (let i = 0; i < DUST; i++) { dp[i * 3] = (Math.random() - .5) * 12; dp[i * 3 + 1] = Math.random() * 6; dp[i * 3 + 2] = (Math.random() - .5) * 8; dv[i] = .03 + Math.random() * .1; }
 dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
@@ -252,7 +260,7 @@ const lidLight = new THREE.PointLight(0xffffff, 0, 3, 2); lidLight.position.set(
 /* голограмма над гнездом: проектор, флаг и команда */
 const holoMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, uniforms: { map: { value: null }, c: { value: new THREE.Color() }, a: { value: 0 }, t: { value: 0 } },
   vertexShader: 'uniform float t;varying vec2 vUv;void main(){vUv=uv;vec3 p=position;p.x+=sin(p.y*40.+t*30.)*.004;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
-  fragmentShader: 'uniform sampler2D map;uniform vec3 c;uniform float a,t;varying vec2 vUv;vec3 sn(vec3 c){if(!(c.r>=0.&&c.r<6e4))c.r=0.;if(!(c.g>=0.&&c.g<6e4))c.g=0.;if(!(c.b>=0.&&c.b<6e4))c.b=0.;return c;}void main(){vec4 m=texture2D(map,vUv);vec3 col=pow(max(m.rgb,0.),vec3(2.2));float scan=.75+.25*sin(vUv.y*260.-t*8.);float fl=.9+.1*sin(t*37.)*sin(t*13.);float edge=smoothstep(0.,.06,vUv.x)*smoothstep(1.,.94,vUv.x)*smoothstep(0.,.05,vUv.y)*smoothstep(1.,.92,vUv.y);gl_FragColor=vec4(sn((col*1.6+c*.25)*m.a*scan*fl*edge*a*1.8),1.);}' });
+  fragmentShader: 'uniform sampler2D map;uniform vec3 c;uniform float a,t;varying vec2 vUv;vec3 sn(vec3 c){if(!(c.r>=0.&&c.r<6e4))c.r=0.;if(!(c.g>=0.&&c.g<6e4))c.g=0.;if(!(c.b>=0.&&c.b<6e4))c.b=0.;return c;}void main(){vec4 m=texture2D(map,vUv);vec3 col=pow(max(m.rgb,0.),vec3(2.2));float scan=.75+.25*sin(vUv.y*260.-t*8.);float fl=.9+.1*sin(t*37.)*sin(t*13.);float edge=smoothstep(0.,.06,vUv.x)*smoothstep(1.,.94,vUv.x)*smoothstep(0.,.05,vUv.y)*smoothstep(1.,.92,vUv.y);gl_FragColor=vec4(sn((col*1.6+c*.25)*m.a*scan*fl*edge*a*1.2),1.);}' });
 const holo3 = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.125), holoMat); holo3.position.set(0, FOAM_TOP + .95, SLOT.z); caseG.add(holo3);
 const cone = new THREE.Mesh(new THREE.CylinderGeometry(.75, .3, .9, 40, 1, true), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, uniforms: { c: { value: new THREE.Color() }, a: { value: 0 }, t: { value: 0 } },
   vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
@@ -384,7 +392,7 @@ scene.add(streak);
 
 /* ---------- Частицы: втягивание в карточку перед раскрытием и взрыв после ---------- */
 const BP = 900, bg = new THREE.BufferGeometry(), bp = new Float32Array(BP * 3), bv = new Float32Array(BP * 3); bg.setAttribute('position', new THREE.BufferAttribute(bp, 3));
-const bMat = new THREE.PointsMaterial({ map: dot, size: .07, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0, fog: false }); scene.add(new THREE.Points(bg, bMat));
+const bMat = new THREE.PointsMaterial({ map: dot, size: .05, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0, fog: false }); scene.add(new THREE.Points(bg, bMat));
 let bLife = 0, bMode = 0;
 function particles(c, mode, y) { bMat.color.copy(c).lerp(new THREE.Color('#fff'), .4); bMat.opacity = 1; bLife = 1; bMode = mode;
   for (let i = 0; i < BP; i++) { const a = Math.random() * 6.283, z = Math.random() * 2 - 1, r = Math.sqrt(1 - z * z), s = 1.5 + Math.random() * 6;
@@ -429,11 +437,11 @@ function open() {
   at(2.6, () => { S.holo = 1; holoMat.uniforms.map.value = flagHolo; S.screen = .7; shot(0, 2.7, 4.8, 0, .8, .3); });
   at(4.7, () => { S.holo = 0; });
   at(5.2, () => { S.holo = 1; holoMat.uniforms.map.value = teamHolo; shot(.35, 2.7, 4.8, 0, .8, .3); });
-  at(7.3, () => { S.holo = 0; S.charge = 1; S.glow = 1; tintTo.copy(c); S.god = .7; particles(c, 2, .3); shot(0, 2.9, 4.1, 0, .25, .3); });
+  at(7.3, () => { S.holo = 0; S.charge = 1; S.glow = 1; tintTo.copy(c); S.god = .5; particles(c, 2, .3); shot(0, 2.9, 4.1, 0, .25, .3); });
   at(8.4, () => { S.rise = 1; S.god = .7; shot(0, 1.9, 8.0, 0, CARD_Y, 0); });
   at(10.2, () => { S.face = 1; });
-  at(10.45, () => { flash(1); S.streak = .6; S.god = .75; S.focus = 1; S.screen = .9; particles(c, 1, CARD_Y); S.sweep = 0; S.orbit = 1; shot(.7, 1.75, 6.3, 0, CARD_Y, 0); ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
-  at(12, () => { phase = 'done'; S.god = .35; });
+  at(10.45, () => { flash(.5); S.god = .25; S.focus = 1; S.screen = .9; particles(c, 1, CARD_Y); S.sweep = 0; S.orbit = 1; shot(.7, 1.75, 6.3, 0, CARD_Y, 0); ui(P.nick, P.rar + ' · ' + P.ovr, P.col); });
+  at(12, () => { phase = 'done'; S.god = .15; });
 }
 function skip() { if (phase !== 'run') return; const W = P.ovr >= WALK; steps.forEach(s => s[1]()); steps.length = 0; S.snap = 1; S.holo = 0; S.charge = 0; bLife = 0; S.streak = 0; camP.copy(camPT); camL.copy(camLT); flashV = flashA = 0; S.lidT = 1; S.lightT = 1; }
 
@@ -467,7 +475,7 @@ function frame() {
     heads.forEach(h => { e.set((h.back ? .42 : -.3) + Math.sin(now * .21 + h.ph) * .22, 0, Math.sin(now * .16 + h.ph * 1.3) * .38 - h.sx * .025); qa.setFromEuler(e);
       qb.setFromUnitVectors(dn, tgt.clone().sub(h.piv.position).normalize()); h.piv.quaternion.copy(qa).slerp(qb, S.focusV * (h.back ? .55 : .85));
       const a = .028 + S.screen * .02 + S.focusV * .03; h.bm.material.uniforms.a.value = a; h.bm.material.uniforms.c.value.copy(stageC); h.lens.material.color.copy(stageC).multiplyScalar(.9 + a * 8); }); }
-  phMat.uniforms.t.value = now; phMat.uniforms.px.value = R3.getPixelRatio() * innerHeight / 900; phMat.uniforms.k.value = .7 + S.focusV * .5;
+  bgMat.color.setScalar(.24 + S.screen * .16 + S.focusV * .06); phMat.uniforms.t.value = now; phMat.uniforms.px.value = R3.getPixelRatio() * innerHeight / 900; phMat.uniforms.k.value = .7 + S.focusV * .5;
   fogs.forEach((f, i) => { f.material.color.copy(stageC); f.material.map.offset.x += dt * (.005 + i * .003); });
   rimL.color.copy(stageC); rimR.color.copy(stageC); key.color.copy(NEUTRAL).lerp(WHITE, .6); fill.color.copy(tint).lerp(WHITE, .55); fill.intensity = damp(fill.intensity, S.show ? 1.1 : 0, 2, dt);
   for (let i = 0; i < DUST; i++) { dp[i * 3 + 1] += dv[i] * dt; if (dp[i * 3 + 1] > 6) dp[i * 3 + 1] = 0; } dg.attributes.position.needsUpdate = true;
@@ -478,7 +486,7 @@ function frame() {
   if (S.lid) S.lidT = clamp(S.lidT + dt / (S.lid === 1 ? 1.8 : .8), 0, 1);
   const lt = S.lid === 1 ? easeIO(S.lidT) : easeO(S.lidT); lidPivot.rotation.x = -lt * 1.9 - Math.sin(lt * Math.PI) * .04;
   if (S.light) S.lightT = clamp(S.lightT + dt * 1.2, 0, 1);
-  const chg = S.charge && !S.rise ? 1 : 0; innerLight.intensity = S.lightT * (4 + chg * 5) * (1 + Math.sin(now * 23) * .05); lidLight.intensity = S.lightT * 3; slotMat.emissive.copy(innerLight.color).multiplyScalar(S.lightT * (.9 + chg * 1.5));
+  const chg = S.charge && !S.rise ? 1 : 0; const dimC = 1 - S.riseT * .75; innerLight.intensity = dimC * S.lightT * (4 + chg * 5) * (1 + Math.sin(now * 23) * .05); lidLight.intensity = dimC * S.lightT * 1.8; slotMat.emissive.copy(innerLight.color).multiplyScalar(dimC * S.lightT * (.9 + chg * 1.5));
   holoMat.uniforms.a.value = damp(holoMat.uniforms.a.value, S.holo, S.holo ? 3 : 8, dt); holoMat.uniforms.t.value = now; holoMat.uniforms.c.value.set('#7fc4ff'); holo3.lookAt(cam.position); holo3.visible = holoMat.uniforms.a.value > .01;
   cone.material.uniforms.a.value = holoMat.uniforms.a.value * .8; cone.material.uniforms.c.value.set('#7fc4ff'); cone.material.uniforms.t.value = now; cone.visible = holo3.visible;
   if (S.shake > 0) { S.shake = Math.max(0, S.shake - dt * .9); caseG.position.x = Math.sin(now * 70) * .02 * S.shake; }
@@ -496,7 +504,7 @@ function frame() {
   card.scale.setScalar(lerp(.395, CARD_S, rt));
   layers.forEach((m, i) => { m.material.opacity = S.face || rot > Math.PI * 1.5 ? 1 : 0; });
   if (faceMat) { faceMat.uniforms.t.value = now; if (S.sweep >= 0) { S.sweep += dt * .7; faceMat.uniforms.sweep.value = S.sweep * 2.2 - .3; if (S.sweep > 1.5) S.sweep = -3; } else if (phase === 'done') { S.sweep += dt * .35; if (S.sweep >= 0) S.sweep = 0; } }
-  frameMat.emissiveIntensity = .08 + S.glow * .25 + (S.charge && !S.face ? .6 + Math.sin(now * 30) * .3 : 0);
+  frameMat.emissiveIntensity = .05 + S.glow * .12 + (S.charge && !S.face ? .35 + Math.sin(now * 30) * .15 : 0);
   /* лучи, блик, кольцо, частицы */
   if (S.streak > 0) { S.streak = Math.max(0, S.streak - dt * .8); } streak.position.set(0, CARD_Y, .5); streak.lookAt(cam.position); streak.material.uniforms.a.value = S.streak; streak.material.uniforms.c.value.copy(tint);
   if (bLife > 0) { bLife -= dt * (bMode === 2 ? .9 : .55); for (let i = 0; i < BP; i++) { if (bMode === 1) { bv[i * 3 + 1] -= 2 * dt; bv[i * 3] *= .985; bv[i * 3 + 2] *= .985; } bp[i * 3] += bv[i * 3] * dt * (bMode === 2 ? 1 : 1); bp[i * 3 + 1] += bv[i * 3 + 1] * dt; bp[i * 3 + 2] += bv[i * 3 + 2] * dt; } bg.attributes.position.needsUpdate = true; bMat.opacity = Math.max(0, bMode === 2 ? Math.sin(bLife * Math.PI) : bLife); }
@@ -507,7 +515,7 @@ function frame() {
   cam.position.set(camP.x + orb + ptr.x * .15, camP.y + Math.sin(now * .4) * .04, camP.z * far); look.copy(camL); cam.lookAt(look);
   { const src = new THREE.Vector3(); if (S.rise) src.copy(cardPivot.position); else { src.set(0, SLOT_Y + .2, SLOT.z); caseG.localToWorld(src); } src.project(cam); POST.rays.uniforms.lp.value.set(src.x * .5 + .5, src.y * .5 + .5);
     S.godV = damp(S.godV, S.god * S.lightT, 2.5, dt); POST.comp.uniforms.gk.value = S.godV * .42 * (1 + flashV * .3); }
-  flashA = Math.max(0, flashA - dt * 1.6); flashV = damp(flashV, flashA, flashA > flashV ? 22 : 6, dt); POST.comp.uniforms.k.value = .38 + flashV * .35; POST.comp.uniforms.ex.value = .95 + flashV * .18;
+  flashA = Math.max(0, flashA - dt * 1.6); flashV = damp(flashV, flashA, flashA > flashV ? 22 : 6, dt); POST.comp.uniforms.k.value = .3 + flashV * .25; POST.comp.uniforms.ex.value = .95 + flashV * .18;
   try { POST.render(now); } catch (e) { R3.setRenderTarget(null); R3.toneMapping = THREE.ACESFilmicToneMapping; R3.outputEncoding = THREE.sRGBEncoding; R3.render(scene, cam); }
   requestAnimationFrame(frame);
 }

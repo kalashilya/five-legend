@@ -23,6 +23,8 @@ python3 -I - <<'PY'
 src = open('reveal-lab.src.html', encoding='utf-8').read()
 three = open('vendor/three.min.js', encoding='utf-8').read()
 flags = open('vendor/flags.js', encoding='utf-8').read()
+import base64
+bg = 'const BG_SRC = "data:image/jpeg;base64,' + base64.b64encode(open('vendor/stage-bg.jpg','rb').read()).decode() + '";'
 assert '/*THREE*/' in src
-open('reveal-lab.html', 'w', encoding='utf-8').write(src.replace('/*THREE*/', three, 1).replace('/*FLAGS*/', flags, 1))
+open('reveal-lab.html', 'w', encoding='utf-8').write(src.replace('/*THREE*/', three, 1).replace('/*FLAGS*/', flags, 1).replace('/*BG*/', bg, 1))
 PY

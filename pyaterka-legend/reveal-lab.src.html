@@ -22,7 +22,7 @@ button:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
 #nogl{position:fixed;inset:0;display:none;place-items:center;text-align:center;padding:24px;font:500 16px/1.5 var(--f-d)}
 @media (prefers-reduced-motion: reduce){#hint{animation:none}}
 </style></head><body>
-<canvas id="gl"></canvas><div id="nogl">Этому браузеру недоступна 3D-графика (WebGL). Откройте игру в Chrome, Safari или Firefox.</div>
+<canvas id="gl"></canvas><div id="ver" style="position:fixed;right:10px;bottom:6px;font:700 10px/1 var(--f-m);letter-spacing:.1em;color:#5d6672;pointer-events:none">версия 6 · арена</div><div id="nogl">Этому браузеру недоступна 3D-графика (WebGL). Откройте игру в Chrome, Safari или Firefox.</div>
 <div class="ui top"><span class="eyebrow" id="eb"></span><span class="title" id="tt"></span><span class="sub" id="st"></span></div>
 <div class="ui bot"><span id="hint">Нажмите на кейс</span><div class="row" id="demo"><button data-k="elite">Элитный · 87+</button><button data-k="pro">Про · 81</button><button data-k="basic">Базовый · 64</button></div><div class="row"><button id="openBtn">Открыть</button><button id="skip">Пропустить</button></div></div>
 <script>/*THREE*/</script>

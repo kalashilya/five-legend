@@ -22,6 +22,12 @@
     "clutchesPer24": "HLTV clutches won per 24 rounds"
   },
   "players": {
+    "910": {
+      "profileId": 21809,
+      "team": "The MongolZ",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/JIT8R_sfNuKRsJVN9C-EKr.png?ixlib=java-2.1.0&s=627ac15b6cc60667f47d01ea43bbdca2&w=400",
+      "profileUrl": "https://www.hltv.org/player/21809/910"
+    },
     "donk": {
       "profileId": 21167,
       "last12m": {
@@ -625,6 +631,30 @@
       "team": "FUT",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/eTJu4sdB8MJJ97ixYS1Q8i.png?ixlib=java-2.1.0&s=42a225e58635602bd46ec5011e2b059c&w=400",
       "profileUrl": "https://www.hltv.org/player/23553/dziugss"
+    },
+    "nin9": {
+      "profileId": 15072,
+      "team": "The MongolZ",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/_-J_vQUSgUtOal4dK-5l00.png?ixlib=java-2.1.0&s=2f79f1c1be97dde5ef2984f92bfd7798&w=400",
+      "profileUrl": "https://www.hltv.org/player/15072/nin9"
+    },
+    "bLitz": {
+      "profileId": 20194,
+      "team": "The MongolZ",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/kykQ3F8viM9hTTgTSHkIL_.png?ixlib=java-2.1.0&s=2f8d247d93e81bfd6734740e30a96a35&w=400",
+      "profileUrl": "https://www.hltv.org/player/20194/blitz"
+    },
+    "Techno": {
+      "profileId": 20275,
+      "team": "The MongolZ",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Wu_0EiveIQJkkjyDkjOEZN.png?ixlib=java-2.1.0&s=1350fd380dc3a07d9b35dc90453df93e&w=400",
+      "profileUrl": "https://www.hltv.org/player/20275/techno"
+    },
+    "cobrazera": {
+      "profileId": 23402,
+      "team": "The MongolZ",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/-7D-1xRFNr6ZtHox19bG3O.png?ixlib=java-2.1.0&s=45b7b8147c51f52e4388a22022de90dd&w=400",
+      "profileUrl": "https://www.hltv.org/player/23402/cobrazera"
     }
   }
 }

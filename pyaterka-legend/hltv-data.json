@@ -1709,6 +1709,105 @@
       "countryCode": "CN",
       "team": "TYLOO",
       "verifiedAt": "2026-11-11"
+    },
+    "npl": {
+      "profileId": 21708,
+      "profileUrl": "https://www.hltv.org/player/21708/npl",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/gD8t4gdn2oEMSqmPF6zcPj.png?ixlib=java-2.1.0&s=5d5e2b4cf23259cf487bec216df213ba&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "B8",
+      "verifiedAt": "2026-11-11"
+    },
+    "nqz": {
+      "profileId": 19694,
+      "profileUrl": "https://www.hltv.org/player/19694/nqz",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/AAvHJ-yrDpW6YuaUsllly4.png?ixlib=java-2.1.0&s=1288f9523d362a4f4ab1dd54ca330c9b&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "MIBR",
+      "verifiedAt": "2026-11-11"
+    },
+    "oSee": {
+      "profileId": 13249,
+      "profileUrl": "https://www.hltv.org/player/13249/osee",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/PSZRu17-f2TcgPB_aFuY0p.png?ixlib=java-2.1.0&s=01e839321d0044ec205bd544146c1cd2&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "NRG",
+      "verifiedAt": "2026-11-11"
+    },
+    "Peeping": {
+      "profileId": 22135,
+      "profileUrl": "https://www.hltv.org/player/22135/peeping",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/bHEkMeXvOmCg5C3LfTo_cY.png?ixlib=java-2.1.0&s=5a58e7009c0fdf843b3856a243391a63&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Ludens Gecko",
+      "verifiedAt": "2026-11-11"
+    },
+    "Perfecto": {
+      "profileId": 16947,
+      "profileUrl": "https://www.hltv.org/player/16947/perfecto",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/_Bd-3-3iI1t4EASNUNt3p6.png?ixlib=java-2.1.0&s=5ff55c62d7b042632d6724ea413cfb95&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": null,
+      "verifiedAt": "2026-11-11"
+    },
+    "piriajr": {
+      "profileId": 18714,
+      "profileUrl": "https://www.hltv.org/player/18714/piriajr",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/el559DU-tzyOOGEZo6bz1-.png?ixlib=java-2.1.0&s=71aa60caf359b6b6b8d9b9414e4d697f&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "paiN",
+      "verifiedAt": "2026-11-11"
+    },
+    "prosus": {
+      "profileId": 19284,
+      "profileUrl": "https://www.hltv.org/player/19284/prosus",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/dvoaHUG_TluR4f1HgsSZN8.png?ixlib=java-2.1.0&s=c01fff15b44bb61ca77aa83708d5d141&w=400",
+      "country": "Германия",
+      "countryCode": "DE",
+      "team": "BIG Academy",
+      "verifiedAt": "2026-11-11"
+    },
+    "rain": {
+      "profileId": 8183,
+      "profileUrl": "https://www.hltv.org/player/8183/rain",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/oO0Eu3frIZSJrQZeC501Zm.png?ixlib=java-2.1.0&s=b8aa24aa5e6bc2a87e46cccc9f4c422b&w=400",
+      "country": "Норвегия",
+      "countryCode": "NO",
+      "team": "100 Thieves",
+      "verifiedAt": "2026-11-11"
+    },
+    "Rainwaker": {
+      "profileId": 17145,
+      "profileUrl": "https://www.hltv.org/player/17145/rainwaker",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ObPp7ZDUn9_5K-e6VmfjpQ.png?ixlib=java-2.1.0&s=8768eafeb52644bf5514d2a31a100497&w=400",
+      "country": "Болгария",
+      "countryCode": "BG",
+      "team": "Luminosity",
+      "verifiedAt": "2026-11-11"
+    },
+    "rdnzao": {
+      "profileId": 21921,
+      "profileUrl": "https://www.hltv.org/player/21921/rdnzao",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/SAX7-YxporDoYiRURXIxQU.png?ixlib=java-2.1.0&s=31953b51d21facf199b752f024d4f839&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "DENDELE",
+      "verifiedAt": "2026-11-11"
+    },
+    "reck": {
+      "profileId": 17378,
+      "profileUrl": "https://www.hltv.org/player/17378/reck",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/hoQPxrJhPAiYD1xt41n-I2.png?ixlib=java-2.1.0&s=b079eec7dbb0e04fac8f1ae88f53b30e&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Wildcard",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

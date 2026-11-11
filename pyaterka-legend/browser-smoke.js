@@ -59,6 +59,25 @@ const { chromium } = require('playwright');
       }
       layouts.push(viewport.width + 'px');
     }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.locator('#tabs button[data-v="col"]').click();
+    await page.waitForFunction(() => document.querySelector('#app')?.dataset.tab === 'col');
+    const card = page.locator('#col-grid button').first();
+    const before = await card.boundingBox();
+    if (!before) throw new Error('Не найдена карточка для проверки 3D hover');
+    await card.hover();
+    await page.waitForTimeout(240);
+    const after = await card.boundingBox();
+    const depth = await card.evaluate(el => ({
+      outer: getComputedStyle(el).transform,
+      card: getComputedStyle(el.querySelector('.pc')).transform,
+      layer: getComputedStyle(el.querySelector('.pc .hd')).transform
+    }));
+    if (!after || Math.abs(before.x - after.x) > 0.5 || Math.abs(before.y - after.y) > 0.5 ||
+        Math.abs(before.width - after.width) > 0.5 || Math.abs(before.height - after.height) > 0.5 ||
+        depth.outer !== 'none' || depth.card !== 'none' || depth.layer === 'none') {
+      throw new Error('3D hover должен поднимать только внутренний слой карточки, не сдвигая её контейнер: ' + JSON.stringify({ before, after, depth }));
+    }
     await page.setViewportSize({ width: 390, height: 844 });
     const sections = [
       { tab: 'col', selector: '.grid', label: 'Коллекция' },
@@ -79,7 +98,7 @@ const { chromium } = require('playwright');
       if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');
     }
     if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));
-    console.log('Browser smoke OK: responsive layouts ' + layouts.join(', ') + '; home, collection, cases, matches and profile rendered; no overflow, card displacement or page errors.');
+    console.log('Browser smoke OK: responsive layouts ' + layouts.join(', ') + '; home, collection, cases, matches and profile rendered; no overflow or layout displacement; 3D hover lifts only an inner card layer; no page errors.');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

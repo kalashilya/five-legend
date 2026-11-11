@@ -1002,6 +1002,29 @@ body{background:transparent;color:var(--fg)}
 .pc.no{filter:none!important;opacity:1!important}
 .pc.no .ph,.pc.no .art{filter:grayscale(1) brightness(.72);opacity:.78}
 
+
+/* League panel: visible rank insignia instead of an empty stretched surface */
+.home-hero__artifact{right:1%;width:53%;height:100%}
+.home-hero__art{max-height:370px}
+.home-league{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:16px;min-height:250px;padding:20px}
+.home-league>.league-emblem{grid-column:1;grid-row:1/5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:190px;border-right:1px solid rgba(160,194,218,.18)}
+.league-emblem .rank{width:86px;height:62px;filter:drop-shadow(0 10px 15px rgba(0,0,0,.5))}
+.league-emblem span{font:700 9px var(--f-m);letter-spacing:.22em;color:#91a9ba}
+.league-emblem b{font:700 22px/1 var(--f-d);letter-spacing:.12em;text-transform:uppercase;color:#e4edf3}
+.home-league>.kv,.home-league>.bar,.home-league>p{grid-column:2}
+.home-league>.kv{align-self:end}
+.home-league>.bar{margin-block:8px}
+.home-league>p{align-self:start}
+@media(max-width:760px){
+ .home-hero__artifact{right:-4%;width:54%;height:100%}
+ .home-hero__art{max-height:300px}
+ .home-league{grid-template-columns:82px minmax(0,1fr);min-height:150px;padding:14px;gap:12px}
+ .home-league>.league-emblem{min-height:128px;gap:6px}
+ .league-emblem .rank{width:68px;height:50px}
+ .league-emblem b{font-size:17px}
+ .league-emblem span{font-size:8px}
+}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

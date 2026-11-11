@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - "chatgpt/**"
+      - "feature/premium-visual-redesign"
   pull_request:
     branches:
       - main

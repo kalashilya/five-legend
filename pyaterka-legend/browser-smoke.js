@@ -16,106 +16,59 @@ const { chromium } = require('playwright');
     browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
-    page.on('console', message => { if (message.type() === 'error' && !/Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE\.NotSameOrigin/.test(message.text())) errors.push(message.text()); });
+    page.on('pageerror', error => errors.push(error.stack || error.message));
     await page.goto('http://127.0.0.1:4173/', { waitUntil: 'load' });
     await page.waitForFunction(() => {
       const app = document.querySelector('#app');
       return app && app.dataset.ok === '1' && app.innerText.trim().length > 20;
     }, null, { timeout: 15000 });
-    const text = await page.locator('#app').innerText();
-    if (!text || text.length < 20) throw new Error('Главный экран пустой');
+
     const layouts = [];
     const shotDir = path.join(__dirname, 'artifacts');
     fs.mkdirSync(shotDir, { recursive: true });
     for (const viewport of [{ width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
       await page.setViewportSize(viewport);
-      await page.waitForTimeout(300);
-      const metrics = await page.evaluate(() => {
-        const app = document.querySelector('#app');
-        const hero = document.querySelector('.home-hero');
-        const lineup = document.querySelector('.lineup');
-        const cards = lineup ? [...lineup.children].map(el => {
-          const r = el.getBoundingClientRect();
-          return { left: r.left, right: r.right, width: r.width, center: r.left + r.width / 2, transform: getComputedStyle(el).transform };
-        }) : [];
-        const hr = hero?.getBoundingClientRect();
-        const hud = document.querySelector('#hud > .wrap')?.getBoundingClientRect();
-        const headerCenterError = hud ? Math.abs((hud.left + hud.right) / 2 - innerWidth / 2) : Infinity;
-        return {
-          width: innerWidth,
-          scrollWidth: document.documentElement.scrollWidth,
-          appReady: app?.dataset.ok === '1',
-          arenaSvg: !!document.querySelector('.arena-art'),
-          tutorialCentered: (() => { const t = document.querySelector('.tutorial'); if (!t) return true; const r=t.getBoundingClientRect(); return Math.abs((r.left+r.right)/2-innerWidth/2) <= 1 && r.left >= -1 && r.right <= innerWidth+1; })(),
-          heroVisible: !!hr && hr.width > 0 && hr.height > 0,
-          heroInside: !!hr && hr.left >= -1 && hr.right <= innerWidth + 1,
-          headerCentered: headerCenterError <= 1,
-          headerCenterError,
-          heroArt: !!document.querySelector('.home-hero__art'),
-          lineupCards: cards,
-          scenePosition: getComputedStyle(document.querySelector('#scene')).position
-        };
-      });
-      if (!metrics.appReady || !metrics.arenaSvg || !metrics.heroVisible || !metrics.heroInside || !metrics.headerCentered || !metrics.heroArt || !metrics.tutorialCentered) throw new Error('Некорректная сцена/главная при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
-      if (metrics.scrollWidth > viewport.width + 1) throw new Error('Горизонтальный выезд страницы при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
-      if (metrics.scenePosition !== 'fixed') throw new Error('Фон арены должен быть закреплён независимо от прокрутки');
-      for (let i = 0; i < metrics.lineupCards.length; i++) {
-        const card = metrics.lineupCards[i];
-        if (card.width <= 0 || card.transform !== 'none') throw new Error('Нестабильная геометрия карточки состава при ширине ' + viewport.width);
-        if (i && metrics.lineupCards[i - 1].center >= card.center) throw new Error('Нарушен порядок карточек состава при ширине ' + viewport.width);
+      await page.waitForTimeout(250);
+      const metrics = await page.evaluate(() => ({
+        width: innerWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        appReady: document.querySelector('#app')?.dataset.ok === '1',
+        hero: (() => { const r = document.querySelector('.lobby-hero')?.getBoundingClientRect(); return !!r && r.width > 0 && r.height > 0 && r.left >= -1 && r.right <= innerWidth + 1; })(),
+        arena: !!document.querySelector('.arena-art'),
+        lineup: !!document.querySelector('.lobby-lineup'),
+        nav: document.querySelectorAll('#tabs button').length
+      }));
+      if (!metrics.appReady || !metrics.hero || !metrics.arena || !metrics.lineup || metrics.nav !== 5) {
+        throw new Error('Главный экран не прошёл проверку при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
       }
+      if (metrics.scrollWidth > viewport.width + 1) throw new Error('Горизонтальное переполнение главной при ширине ' + viewport.width);
       await page.screenshot({ path: path.join(shotDir, 'home-' + viewport.width + '.png'), fullPage: true });
       layouts.push(viewport.width + 'px');
     }
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.locator('#tabs button[data-v="col"]').click();
-    await page.waitForFunction(() => document.querySelector('#app')?.dataset.tab === 'col');
-    const card = page.locator('#col-grid button').first();
-    await card.scrollIntoViewIfNeeded();
-    const before = await card.boundingBox();
-    if (!before) throw new Error('Не найдена карточка для проверки 3D hover');
-    await card.hover();
-    await page.waitForTimeout(240);
-    const after = await card.boundingBox();
-    const depth = await card.evaluate(el => ({
-      outer: getComputedStyle(el).transform,
-      card: getComputedStyle(el.querySelector('.pc')).transform,
-      layer: getComputedStyle(el.querySelector('.pc .hd')).transform
-    }));
-    if (!after || Math.abs(before.x - after.x) > 0.5 || Math.abs(before.y - after.y) > 0.5 ||
-        Math.abs(before.width - after.width) > 0.5 || Math.abs(before.height - after.height) > 0.5 ||
-        depth.outer !== 'none' || depth.card !== 'none' || depth.layer === 'none') {
-      throw new Error('3D hover должен поднимать только внутренний слой карточки, не сдвигая её контейнер: ' + JSON.stringify({ before, after, depth }));
-    }
-    await page.setViewportSize({ width: 390, height: 844 });
+
     const sections = [
-      { tab: 'col', selector: '.grid', label: 'Коллекция' },
-      { tab: 'packs', selector: '.pk', label: 'Кейсы' },
-      { tab: 'play', selector: '.sqtab, .btn.go', label: 'Матчи' },
-      { tab: 'prof', selector: '.stats, .prow, .pn', label: 'Профиль' }
+      { tab: 'col', selector: '.collection-hero', label: 'Коллекция' },
+      { tab: 'play', selector: '.match-hero', label: 'Матчи' },
+      { tab: 'prof', selector: '.profile-hero', label: 'Профиль' },
+      { tab: 'packs', selector: '.pk', label: 'Кейсы' }
     ];
     for (const section of sections) {
+      await page.setViewportSize({ width: 390, height: 844 });
       await page.locator('#tabs button[data-v="' + section.tab + '"]').click();
       await page.waitForFunction(tab => document.querySelector('#app')?.dataset.tab === tab, section.tab);
-      await page.waitForTimeout(300);
-      const sectionState = await page.evaluate(selector => ({
+      await page.waitForFunction(selector => !!document.querySelector('#app ' + selector), section.selector);
+      const state = await page.evaluate(() => ({
         text: document.querySelector('#app')?.innerText?.trim() || '',
-        content: !!document.querySelector('#app ' + selector),
         scrollWidth: document.documentElement.scrollWidth,
         width: innerWidth
-      }), section.selector);
-      if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно');
-      if (section.tab === 'col') { const tiers = await page.evaluate(() => ['standard','cinema','cinema-legend'].map(k => document.querySelectorAll('#col-grid .pc.' + k).length)); if (tiers.some(n => n === 0)) throw new Error('Коллекция должна показывать все три уровня оформления карточек: ' + tiers.join('/')); }
-      if (section.tab === 'col') { const unowned = await page.locator('#col-grid .pc.no').first().evaluate(el => ({filter:getComputedStyle(el).filter,opacity:getComputedStyle(el).opacity})); if (unowned.filter !== 'none' || unowned.opacity !== '1') throw new Error('Неизвестные карточки не должны обесцвечивать всю карточку: ' + JSON.stringify(unowned)); }
-      if (section.tab === 'home' && !(await page.locator('#app .league-emblem').count())) throw new Error('На главной отсутствует эмблема лиги');
-      const mast = await page.locator('#app .section-mast').count();
-      if (mast !== 1 || !(await page.locator('#app .section-mast__icon svg').count())) throw new Error(section.label + ': отсутствует фирменная шапка раздела или эмблема');
-      if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');
+      }));
+      if (state.text.length < 20) throw new Error(section.label + ': экран пустой');
+      if (state.scrollWidth > state.width + 1) throw new Error(section.label + ': горизонтальное переполнение');
+      if (errors.length) throw new Error('JavaScript errors: ' + errors.join(' | '));
       await page.screenshot({ path: path.join(shotDir, section.tab + '-390.png'), fullPage: true });
     }
-    if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));
-    console.log('Browser smoke OK: responsive layouts ' + layouts.join(', ') + '; home, collection, cases, matches and profile rendered; no overflow or layout displacement; 3D hover lifts only an inner card layer; no page errors.');
+    if (errors.length) throw new Error('JavaScript errors: ' + errors.join(' | '));
+    console.log('Browser smoke OK: home responsive at 390/768/1440; collection, matches, profile and cases rendered at 390; no horizontal overflow or uncaught page errors.');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

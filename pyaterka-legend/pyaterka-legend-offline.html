@@ -1,5 +1,4 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
-<title>Пятёрка Легенд</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Пятёрка Легенд</title>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"}}</script>
 
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -1114,6 +1113,37 @@ body{background:transparent;color:var(--fg)}
 <nav id="tabs" aria-label="Разделы"><div class="wrap"></div></nav>
 <div id="sheet" hidden></div>
 <div id="over" hidden></div>
+
+
+/* ===== FINAL ART PASS: physical armory cases + arena identity ===== */
+.home-shortcut__icon svg{display:block;width:34px;height:34px;overflow:visible;filter:drop-shadow(0 0 7px rgba(126,190,226,.28))}
+.home-shortcut:nth-child(1) .home-shortcut__icon svg{width:38px;height:38px}
+#tabs svg{overflow:visible}
+.section-mast.mast-play .section-mast__icon{background:linear-gradient(145deg,rgba(106,165,204,.24),rgba(7,17,27,.94));border-color:rgba(151,201,231,.42);box-shadow:inset 0 1px rgba(255,255,255,.12),0 0 24px rgba(83,151,194,.12)}
+.section-mast.mast-play .section-mast__icon svg{filter:drop-shadow(0 0 5px rgba(125,190,226,.35))}
+/* Один и тот же физический контейнер во всех местах: магазин, инвентарь и бесплатная награда */
+.pk{isolation:isolate;transform-style:preserve-3d;filter:drop-shadow(0 18px 18px rgba(0,0,0,.66))}
+.pk .lid{overflow:hidden;border:1px solid rgba(226,239,248,.48);border-radius:3px 3px 1px 1px;background:linear-gradient(110deg,#182632 0%,#60798b 13%,#293d4c 29%,#8299a8 47%,#263947 68%,#101b25 100%);box-shadow:inset 0 1px rgba(255,255,255,.48),inset 0 -8px 14px rgba(0,0,0,.48),0 5px 10px rgba(0,0,0,.34)}
+.pk .lid:before{content:"";position:absolute;inset:5px 7%;border:1px solid rgba(226,239,248,.25);background:repeating-linear-gradient(105deg,transparent 0 12px,rgba(255,255,255,.09) 13px 14px,transparent 15px 25px);clip-path:polygon(4% 0,96% 0,100% 100%,0 100%)}
+.pk .lid:after{content:"";position:absolute;left:50%;top:22%;width:28%;height:42%;transform:translateX(-50%);border:1px solid color-mix(in srgb,var(--kc) 70%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--kc) 42%,#fff),color-mix(in srgb,var(--kc) 28%,#07111a));clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 0 14px color-mix(in srgb,var(--kc) 40%,transparent)}
+.pk .box{overflow:hidden;border:1px solid rgba(201,220,233,.34);border-radius:1px 1px 4px 4px;background:linear-gradient(90deg,#07111a 0%,#263b4b 8%,#172b3a 17%,#31495a 49%,#142735 83%,#050d14 100%);box-shadow:inset 0 1px rgba(255,255,255,.3),inset 0 -18px 24px rgba(0,0,0,.62),inset 8px 0 12px rgba(0,0,0,.22),inset -8px 0 12px rgba(0,0,0,.28)}
+.pk .box:before{z-index:3;left:3%;right:3%;height:5px;background:linear-gradient(90deg,transparent,var(--kc) 12%,#e8f0f4 50%,var(--kc) 88%,transparent);box-shadow:0 0 15px color-mix(in srgb,var(--kc) 55%,transparent)}
+.pk .box:after{z-index:2;left:8%;right:8%;bottom:12%;height:5px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--kc) 85%,#fff) 0 2px,transparent 2px 9px);opacity:.72}
+.pk .pk-side{position:absolute;z-index:1;inset:9% 5% 13%;border:1px solid rgba(211,228,239,.2);background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 12% 88%,rgba(0,0,0,.32));pointer-events:none}
+.pk .pk-side:before,.pk .pk-side:after{content:"";position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,rgba(211,228,239,.42) 18% 82%,transparent)}
+.pk .pk-side:before{left:12%}.pk .pk-side:after{right:12%}
+.pk .pk-stamp{position:absolute;z-index:2;left:50%;top:48%;width:25%;aspect-ratio:1;display:grid;place-items:center;transform:translate(-50%,-50%);border:1px solid color-mix(in srgb,var(--kc) 72%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--kc) 45%,#253847),#09131c 72%);box-shadow:0 0 0 3px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.35),0 0 18px color-mix(in srgb,var(--kc) 28%,transparent);color:#edf5fa;font:700 clamp(12px,2.4vw,20px)/1 var(--f-d);text-shadow:0 1px 5px #000}
+.pk .box b{position:absolute;z-index:4;left:0;right:0;bottom:4%;text-align:center;font:700 clamp(7px,1.5vw,10px)/1 var(--f-m);letter-spacing:.18em;color:#dce8ef;text-shadow:0 2px 5px #000}
+.pk .lock{z-index:5;width:18%;aspect-ratio:1;clip-path:none;border:1px solid rgba(245,249,251,.72);border-radius:2px;background:linear-gradient(145deg,#f1f5f7 0%,#8fa8b8 32%,#314b5c 68%,#0a1721 100%);box-shadow:0 0 0 3px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.8),0 0 16px color-mix(in srgb,var(--kc) 42%,transparent)}
+.pk .lock:after{content:"";position:absolute;inset:26%;border:1px solid rgba(5,14,22,.8);background:rgba(5,14,22,.42)}
+.pk.pro .lid,.pk.pro .box{background-color:#3c2d57}.pk.elite .lid,.pk.elite .box{background-color:#51432a}
+#app[data-tab="packs"] .shop{grid-template-columns:minmax(112px,164px) minmax(0,1fr);gap:18px}
+#app[data-tab="packs"] .pk{width:100%;max-width:164px;margin:auto;transform:none;filter:drop-shadow(0 18px 18px rgba(0,0,0,.66))}
+#app[data-tab="packs"] .pk .lid{border-radius:3px 3px 1px 1px}
+#app[data-tab="packs"] .pk .box{border-radius:1px 1px 4px 4px}
+.home-free .pk{max-width:150px}
+@media(max-width:420px){#app[data-tab="packs"] .shop{grid-template-columns:104px minmax(0,1fr);gap:12px}#app[data-tab="packs"] .pk{max-width:112px}.pk .pk-stamp{width:29%}}
+@media(prefers-reduced-motion:reduce){.home-shortcut__icon svg,.section-mast.mast-play .section-mast__icon svg{filter:none}}
 <script>
 window.__cmErr = function (m) { var a = document.getElementById('app'); if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Скопируйте этот текст и отправьте в чат:</p><p class="num sm" style="overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</p></div>'; };
 window.addEventListener('error', function (e) { window.__cmErr((e.message || 'ошибка') + ' · строка ' + (e.lineno || '?')); });
@@ -1753,7 +1783,7 @@ function cardH(c, o = {}) {
   return `<div class="pc ${presentation} r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${lv >= 5 ? 'l5' : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:${teamCol(c)}"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span>${c.hist ? '<span class="arc">архив</span>' : ''}<div class="ft">${c.sp ? `<span class="tag">${SPN[c.sp]}</span>` : ''}<span class="nk">${esc(c.nick)}</span><span class="tm">${c.hltv && c.hltv.teamLogo ? `<img class="team-logo" src="${esc(c.hltv.teamLogo)}" alt="" loading="lazy">` : ''}<span class="team-name">${esc(!c.hist && c.hltv && c.hltv.team ? c.hltv.team : c.team)}</span>${c.hltv && /^[A-Z]{2}$/.test(c.hltv.countryCode || "") ? `<span class="country" title="${esc(c.hltv.countryCode)}"><b>${[...c.hltv.countryCode].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join("")}</b></span>` : ""}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
 }
 const ownH = (id, cls) => { const o = own(id); return cardH(CARDS[id], { lv: o ? o.lv : 1, n: o ? o.n : 0, cls, pips: !!o, no: !o }); };
-const pkH = (t, cls) => `<div class="pk ${t} ${cls || ''}"><i class="lid"></i><i class="lock"></i><div class="box"><b>${PACKS[t].n}</b></div></div>`;
+const pkH = (t, cls) => `<div class="pk ${t} ${cls || ''}"><i class="lid"><span class="pk-rib"></span></i><i class="lock"></i><div class="box"><span class="pk-side"></span><span class="pk-stamp">5</span><b>${PACKS[t].n}</b></div></div>`;
 const LCOL = ['#b98a5a', '#b9c2cc', '#f2c14e', '#7fe0d0', '#8fb8ff', '#e45cf2', '#ff5a5a'];
 const rankH = i => `<svg class="rank" viewBox="0 0 44 30" aria-hidden="true"><path d="M2 2h40v17L22 28 2 19z" fill="#101215" stroke="${LCOL[i]}" stroke-width="1.6"/>${[0, 1, 2].slice(0, i % 3 + 1).map(k => `<path d="M12 ${7 + k * 5}l10 4 10-4" fill="none" stroke="${LCOL[i]}" stroke-width="2.2"/>`).join('')}</svg>`;
 const segH = (act, cur, opts) => `<div class="seg">${opts.map(([v, n, dot]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${n}${dot ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>`;
@@ -1792,7 +1822,7 @@ function vHome() {
 <g fill="none" stroke="#8eb8d3" stroke-opacity=".5"><path d="M30 292L140 265 210 280M530 292L420 265 350 280"/><path d="M75 310H485M105 325H455M145 340H415" stroke-width="2"/><path d="M110 295l-20 15m360-15 20 15M175 279l-12 19m222-19 12 19"/></g>
 <g fill="#8db8d5" opacity=".6"><circle cx="60" cy="125" r="3"/><circle cx="500" cy="125" r="3"/><circle cx="280" cy="58" r="3"/><path d="M268 66h24v3h-24z"/></g><path d="M20 358H540" stroke="#8db8d5" stroke-opacity=".24"/></svg></div></section>
   <section class="home-shortcuts" aria-label="Быстрые разделы">
-    <button class="home-shortcut" data-act="tab" data-v="play"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M2 7h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H2z"/><path d="M10 11l-1 4m6-7v3h2V8M4 7V5h3"/></g><g transform="rotate(180 12 12)"><path d="M2 7h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H2z"/></g></svg></span><span><b>Матчи</b><small>Проверь свою пятёрку</small></span></button>
+    <button class="home-shortcut" data-act="tab" data-v="play"><span class="home-shortcut__icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 20.5 24 8l19 12.5M8 22v12.5L24 44l16-9.5V22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 21.5 24 14l12 7.5M13 25v7l11 6.5L35 32v-7" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2"/><path d="M17 22h14v8H17z" fill="rgba(155,205,235,.16)" stroke="currentColor" stroke-width="1.4"/><path d="M20 25h8M20 27.5h5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M24 31v7M8 26l5 3m27-3-5 3" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2"/><circle cx="24" cy="24" r="1.5" fill="currentColor"/></svg></span><span><b>Матчи</b><small>Проверь свою пятёрку</small></span></button>
     <button class="home-shortcut" data-act="tab" data-v="col"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h12v16H7z"/><path d="M4 6v15h12M10 7h6M10 10h6M10 13h4"/><path d="M9 3V1h12v16h-2"/></svg></span><span><b>Коллекция</b><small>Все твои игроки</small></span></button>
     <button class="home-shortcut" data-act="tab" data-v="packs"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l2-4h14l2 4v12H3z"/><path d="M3 8h18M7 4l2 4m8-4-2 4M9 12h6v8H9z"/><path d="M11 12v-2h2v2"/></svg></span><span><b>Кейсы</b><small>Новые открытия</small></span></button>
     <button class="home-shortcut" data-act="tab" data-v="prof"><span class="home-shortcut__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.3 8.7-8 11-4.7-2.3-8-6-8-11V5z"/><circle cx="12" cy="9" r="2.4"/><path d="M7.5 17c.8-2.3 2.3-3.4 4.5-3.4s3.7 1.1 4.5 3.4"/></svg></span><span><b>Профиль</b><small>Твой прогресс</small></span></button>
@@ -2219,7 +2249,7 @@ function endBuild() {
 
 const TABS = {
   home: ['Главная', vHome, '<path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/>'],
-  play: ['Матчи', vPlay, '<g stroke-width="1.35"><g transform="rotate(-35 12 12)"><path d="M1.5 8h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H1.5z"/><path d="M10 12l-1 4M15 10v3h2v-3M4 8V6h3"/></g><g transform="rotate(145 12 12)"><path d="M1.5 8h7l2-2h6v2h5v2h-5l-2 2h-4l-2 4H6l1-4H1.5z"/><path d="M10 12l-1 4M15 10v3h2v-3M4 8V6h3"/></g></g>'],
+  play: ['Матчи', vPlay, '<path d="M3 10 12 4l9 6v10H3z"/><path d="M6 11h12M6 14h12M8 17h8"/><path d="M12 4v16" stroke-dasharray="1.5 2"/>'],
   col: ['Коллекция', vCol, '<g stroke-width="1.55"><path d="M4 5.5h11.5v15H4z"/><path d="M8 3.5h12v15"/><path d="M7 10h5.5M7 13h5.5"/><circle cx="9.7" cy="8" r="1.1"/></g>'],
   packs: ['Кейсы', vPacks, '<g stroke-width="1.55"><path d="M3 8.5l2-4h14l2 4v11H3z"/><path d="M3 8.5h18M8 4.5l1 4M16 4.5l-1 4M9 13h6v6H9z"/><path d="M11 13v-2h2v2"/></g>'],
   prof: ['Профиль', vProf, '<g stroke-width="1.55"><path d="M12 2.5l8 3v5.7c0 5.2-3.4 8.5-8 10.3-4.6-1.8-8-5.1-8-10.3V5.5z"/><circle cx="12" cy="9" r="2.3"/><path d="M7.8 16.2c.8-2.1 2.2-3.1 4.2-3.1s3.4 1 4.2 3.1"/></g>']

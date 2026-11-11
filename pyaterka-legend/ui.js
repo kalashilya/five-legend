@@ -141,8 +141,13 @@ function sqTabsH() {
 }
 function vPlay() {
   const info = squadInfo(squadOf(G)), cs = captSlot(G), h = G.season.hist;
+  const roster = G.squad.map((id, i) => {
+    const c = id == null ? null : CARDS[id], o = c ? own(id) : null;
+    return `<div class="match-dossier__slot"><span class="match-dossier__index num">0${i + 1}</span><span class="match-dossier__portrait">${c ? ownH(id, 'xs') : '<span class="match-dossier__empty">+</span>'}</span><span class="match-dossier__identity"><small>${RNAME[i]}</small><b>${c ? esc(c.nick) : 'Слот пуст'}</b><span>${c ? esc(c.team) : 'Выберите игрока'}</span></span><b class="match-dossier__ovr num">${c ? c.ovr + (o ? o.lv - 1 : 0) : '—'}</b></div>`;
+  }).join('');
   return `<section class="plain"><h3>Состав на матч</h3>${sqTabsH()}<p class="sm mut">${info ? (cs >= 0 ? `Капитан: ${esc(CARDS[G.squad[cs]].nick)}. Он даёт разведку и стартовый импульс 3.` : 'Капитан не назначен: нет разведки, стартовый импульс 2.') : 'В этой пятёрке есть пустые слоты.'}</p>
   ${info ? '<button class="btn pri go" data-act="fight">Играть</button>' : '<button class="btn go" data-act="goSquad">Соберите пятёрку</button>'}<p class="sm mut">Рейтинговый матч до 13 побед. Победа: +40 монет и +25 кубков, с разницей больше 5 раундов +30. Поражение: +10 монет и −25 кубков, при 0:13 −30.</p></section>
+  <section class="pn match-dossier"><div class="match-dossier__head"><div><p class="eyebrow">TACTICAL UNIT / FIVE PLAYERS</p><h2>Боевой состав</h2></div><span class="match-dossier__serial">5V5</span></div><div class="match-dossier__slots">${roster}</div><div class="stats"><div class="stat"><b>${info ? info.rating.toFixed(1) : '—'}</b><span>рейтинг</span></div><div class="stat"><b>${info ? info.atk.toFixed(1) : '—'}</b><span>атака</span></div><div class="stat"><b>${info ? info.def.toFixed(1) : '—'}</b><span>защита</span></div></div></section>
   ${G.tut === 3 ? lbH() + `<section class="pn"><h3>Сезон «${monthName(G.season.m)}»</h3><p class="sm mut">Сезон длится месяц. В конце выдаются монеты и кейсы по лиге, а часть кубков сбрасывается: чем выше лига, тем больше.</p>${h.length ? '<div class="list">' + h.slice(0, 3).map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет.</p>'}</section>` : ''}`;
 }
 

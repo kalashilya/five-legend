@@ -51,3 +51,12 @@ g = g.replace('<!--CASEIMG-->', '<script>window.CASE_IMG={' + ci + '};</script>'
 g = g.replace('<!--RV3D-->', '<script>window.RV_SRC="' + base64.b64encode(out.encode('utf-8')).decode() + '";</script>', 1)
 open('pyaterka-legend-offline.html', 'w', encoding='utf-8').write(g)
 PY
+
+# Прототип матча в 3D: Three.js и движок игры (данные, правила, радар) встраиваются в файл
+python3 -I - <<'PY'
+src = open('match-lab.src.html', encoding='utf-8').read()
+three = open('vendor/three.min.js', encoding='utf-8').read()
+game = ''.join(open(f, encoding='utf-8').read() + '\n' for f in ('data.js', 'core.js', 'meta.js', 'radar.js'))
+assert '</script' not in game.lower() and '/*GAME*/' in src
+open('match-lab.html', 'w', encoding='utf-8').write(src.replace('/*THREE*/', three, 1).replace('/*GAME*/', game, 1))
+PY

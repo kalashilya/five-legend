@@ -535,6 +535,36 @@
       "team": "Falcons",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/ZPB6zop8FumkqqbHl8BGos.png?ixlib=java-2.1.0&s=a81b4da0555bb1f3599bd3ca854f5515&w=400",
       "profileUrl": "https://www.hltv.org/player/3741/niko"
+    },
+    "TeSeS": {
+      "profileId": 12018,
+      "team": "Falcons",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/8WRqHyjmzJ6HqrG6ZkQ1Vh.png?ixlib=java-2.1.0&s=49e132ae6b4902017caa625d9206bca3&w=400",
+      "profileUrl": "https://www.hltv.org/player/12018/teses"
+    },
+    "kyousuke": {
+      "profileId": 24177,
+      "team": "Falcons",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/hkLE4eILVbTT3QigB1gFqp.png?ixlib=java-2.1.0&s=3e95d87dd9b57017eddaacb6777db1a2&w=400",
+      "profileUrl": "https://www.hltv.org/player/24177/kyousuke"
+    },
+    "Boombl4": {
+      "profileId": 11840,
+      "team": "BETBOOM",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/v8MBOUd9K8F0zZZp_5gQWq.png?ixlib=java-2.1.0&s=5375b78741f2a06382c4ade05cc6d4a2&w=400",
+      "profileUrl": "https://www.hltv.org/player/11840/boombl4"
+    },
+    "zorte": {
+      "profileId": 15662,
+      "team": "BETBOOM",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/dc_LmDPTQxHE4C3W7Mz2FZ.png?ixlib=java-2.1.0&s=f82e43fae90fc04f55b84a8ed8a07f88&w=400",
+      "profileUrl": "https://www.hltv.org/player/15662/zorte"
+    },
+    "S1ren": {
+      "profileId": 18506,
+      "team": "BETBOOM",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/z2xh6sCPYlj4MWi6oLyS53.png?ixlib=java-2.1.0&s=12a04da722fbe7f9645889e9875b6f6b&w=400",
+      "profileUrl": "https://www.hltv.org/player/18506/s1ren"
     }
   }
 }

@@ -178,7 +178,9 @@ class Match {
   canPlay(s, cards) { return !!s && Array.isArray(cards) && cards.every(k => typeof k === 'string' && AC[k] && s.hand.includes(k)) && new Set(cards).size === cards.length && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
   isPistol() { return !this.decider && (this.round === 1 || this.round === HALF + 1); }
   /* Закупка считается сама по деньгам команды; карта «Эко-раунд» заставляет сохранить деньги */
-  buyOf(s, cards) { return this.isPistol() ? 'pistol' : cards && cards.includes('eco') ? 'eco' : s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
+  buyOf(s, cards, want) { if (this.isPistol()) return 'pistol'; if (cards && cards.includes('eco')) return 'eco';
+    if (want === 'full' || want === 'force' || want === 'eco') { if (s.money >= BUY[want].c) return want; }      /* закупка на выбор игрока, если хватает денег */
+    return s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
   capIgl(s) { return s.capt >= 0 ? s.info.e[s.capt].st.igl : 55; }
   /* Соперник решает до игрока и видит только прошлые раунды */
   prep() {
@@ -253,7 +255,7 @@ class Match {
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
-    const buyA = this.decider ? 'full' : this.buyOf(a, mine), buyB = this.decider ? 'full' : this.buyOf(b, theirs);
+    const buyA = this.decider ? 'full' : this.buyOf(a, mine, plan.buy), buyB = this.decider ? 'full' : this.buyOf(b, theirs);
     const val = (me, my, opp, side, behind) => { const ctx = { side, behind, cap: this.capIgl(me), oppStack: opp.includes('stack'), oppTempo: opp.includes('tempo'), oppNades: opp.includes('nades') }; return my.filter(k => k !== 'eco').map(k => ({ k, v: acVal(k, me, ctx) })); };
     const va = val(a, A.l, B.l, sideA, a.score < b.score), vb = val(b, B.l, A.l, sideB, b.score < a.score);
     const mapV = s => (s === 'D' ? 1 : -1) * this.map.ct / 2, hot = s => s.ws >= 2 ? 1.5 : 0;

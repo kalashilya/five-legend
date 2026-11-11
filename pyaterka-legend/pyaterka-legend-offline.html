@@ -1571,6 +1571,71 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 @media (max-width:559px){#mt .plan{grid-template-columns:1fr}}
 .rd-dot text{font-size:2.3px}
 @media (prefers-reduced-motion: reduce){.rd-route,.rd-bomb circle{animation:none}}
+/* Матч: карта сверху, составы, подготовка к раунду */
+.lv{display:flex;flex-direction:column;gap:6px;width:100%;--tc:#f2c14e;--cc:#4aa3ff}
+.lv .sd-A{--sc:var(--tc)}.lv .sd-D{--sc:var(--cc)}
+.lv-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;border-radius:10px;overflow:hidden;background:linear-gradient(100deg,#111d29f2,#060b11f2);border:1px solid #8db1cd2e}
+.lv-tm{padding:6px 10px;min-width:0;border-bottom:3px solid var(--sc,#888)}.lv-tm.r{text-align:right}
+.lv-tm b{display:block;font:700 14px/1.1 var(--f-d);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv-tm span{display:block;font:700 10px/1.3 var(--f-m);color:var(--sc)}
+.lv-sc{display:flex;align-items:center;gap:10px;padding:0 12px;background:#0008}.lv-sc>b{font:700 30px/1 var(--f-d);min-width:22px;text-align:center}
+.lv-sc div{display:flex;flex-direction:column;align-items:center;gap:2px;font:600 10px/1.1 var(--f-d);letter-spacing:.12em;text-transform:uppercase;color:#cfd6de}
+.lv-map i{font-style:normal;color:#fff;background:#d33;padding:0 3px;border-radius:2px;margin-left:3px;font-size:8px}
+.lv-team{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.pl{position:relative;display:flex;flex-direction:column;gap:3px;padding:4px;border-radius:8px;background:linear-gradient(180deg,color-mix(in srgb,var(--sc,#888) 22%,#0c1117),#0b0f14);border:1px solid color-mix(in srgb,var(--sc,#888) 40%,transparent);transition:opacity .3s,filter .3s;min-width:0}
+.pl-ph{position:relative;display:block;aspect-ratio:1/.82;border-radius:5px;overflow:hidden;background:#151b22}.pl-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.pl-ph i{position:absolute;inset:0;display:grid;place-items:center;font:700 15px var(--f-d);font-style:normal;color:#ffffff55;text-transform:uppercase}.pl-ph img+i{display:none}
+.pl-in{display:flex;flex-direction:column;gap:2px;min-width:0}.pl-in>b{font:700 10px/1.1 var(--f-d);letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-kd{display:flex;align-items:center;justify-content:space-between;gap:2px;font:700 9px/1 var(--f-m);color:#cfd6de}.pl-w .wpn{width:20px;height:8px;fill:#e9eef3;display:block}
+.pl-hp{display:block;height:3px;border-radius:2px;background:#ffffff1a;overflow:hidden}.pl-hp i{display:block;height:100%;width:100%;background:#7fe0a0;transition:width .3s}
+.pl.dead{opacity:.4;filter:grayscale(1)}.pl.dead .pl-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(45deg,transparent 46%,#ff5a5a 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#ff5a5a 47% 53%,transparent 54%)}
+.pl.hit{animation:hitk .3s}.lv-team.mine .pl{cursor:pointer}.pl.foc{box-shadow:0 0 0 2px var(--accent,#f0c477)}
+.lv-view{position:relative;width:100%;height:min(104vw,56vh);border-radius:12px;overflow:hidden;background:#3a3328;border:1px solid #8db1cd33;touch-action:manipulation}
+.lv-cam{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.lv-art,.lv-ov,.lv-avas{position:absolute;inset:0;width:100%;height:100%}.lv-art{display:block;user-select:none;-webkit-user-drag:none}
+.lv-ov .rd-route{stroke-width:1.4}.lv-view.sd-A .rd-route{stroke:#ffd35a}.lv-view.sd-D .rd-route{stroke:#59b2ff}
+.ava{position:absolute;left:0;top:0;width:0;height:0;will-change:transform;z-index:1}.ava.me{z-index:2}
+.ava-in{position:absolute;left:-14px;top:-14px;width:28px;display:flex;flex-direction:column;align-items:center;transform:scale(var(--iz,1));transform-origin:14px 14px}
+.ava-ph{position:relative;width:28px;height:28px;border-radius:50%;overflow:hidden;background:#11161c;border:2.5px solid var(--ac);box-shadow:0 2px 6px #000a,0 0 0 1px #0008}
+.ava.t{--ac:#f2c14e}.ava.ct{--ac:#4aa3ff}
+.ava-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 10%}.ava-ph i{position:absolute;inset:0;display:grid;place-items:center;font:700 10px var(--f-d);font-style:normal;color:#fff;text-transform:uppercase}.ava-ph img+i{display:none}
+.ava b{margin-top:1px;padding:1px 4px;border-radius:3px;background:#000b;font:700 8px/1.2 var(--f-d);letter-spacing:.02em;white-space:nowrap;color:#d9dee4}.ava.me b{color:#fff;box-shadow:inset 0 -1px 0 var(--ac)}
+.ava-x{display:none;position:absolute;left:6px;top:6px;width:16px;height:16px}.ava-x::before,.ava-x::after{content:"";position:absolute;left:7px;top:-2px;width:2.5px;height:20px;background:#ff4a3a;border-radius:2px;transform:rotate(45deg)}.ava-x::after{transform:rotate(-45deg)}
+.ava.dead{z-index:0}.ava.dead .ava-ph{filter:grayscale(1);opacity:.45;border-color:#666}.ava.dead .ava-x{display:block}.ava.dead b{opacity:.5}
+.lv-view .feed{position:absolute;right:6px;top:30px;z-index:3;pointer-events:none;gap:3px}.lv-view .feed div{font-size:10px;padding:3px 6px;background:#000b;border:1px solid #ffffff1a;gap:4px}
+.feed .ka.t,.feed .va.t{color:#f2c14e}.feed .ka.ct,.feed .va.ct{color:#6fb8ff}.feed .wpn{width:20px;height:8px;fill:#e9ebee}
+.lv-view .rd-clock{top:6px}.lv-view #bn{position:absolute;left:0;right:0;bottom:10px;z-index:4;display:flex;justify-content:center;pointer-events:none;padding:0 10px}
+.banner.sm span{font-size:11px}
+.lv-intro{position:absolute;right:14px;bottom:18px;z-index:5;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;transition:opacity .8s,transform .8s;text-shadow:0 2px 14px #000}
+.lv-intro small{font:600 14px var(--f-d);letter-spacing:.06em}.lv-intro b{font:700 52px/0.9 var(--f-d);letter-spacing:.02em;text-transform:uppercase}.lv-intro.out{opacity:0;transform:translateY(10px)}
+.lv-ctl{display:flex;justify-content:center;gap:6px}
+.lv-b{min-width:44px;height:38px;padding:0 10px;border-radius:9px;border:1px solid #ffffff22;background:#0f151c;color:#fff;font:700 13px var(--f-m);cursor:pointer}.lv-b.wide{font:600 12px var(--f-d);letter-spacing:.08em;text-transform:uppercase}.lv-b.q{color:#ff9a8a}
+.lv-prep{position:fixed;left:0;right:0;bottom:0;z-index:60;max-height:72vh;max-height:72dvh;overflow-y:auto;transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);background:linear-gradient(180deg,#1a222cf7,#0d1218fa);border-top:1px solid #f0c47755;border-radius:18px 18px 0 0;box-shadow:0 -18px 40px #000a;padding:12px 14px calc(14px + env(safe-area-inset-bottom,0px))}
+.lv-prep.on{transform:none}.lv-prep>*{max-width:640px;margin-left:auto;margin-right:auto}
+.lv-prep{display:flex;flex-direction:column;gap:9px}
+.pp-h{display:flex;align-items:center;justify-content:space-between;width:100%}.pp-h>div{display:flex;flex-direction:column;gap:2px}.pp-h b{font:700 19px var(--f-d);letter-spacing:.04em;text-transform:uppercase}
+.pp-min{width:36px;height:36px;border-radius:50%;border:1px solid #ffffff22;background:#ffffff0d;color:#fff;font-size:16px;cursor:pointer}
+.pp-money{display:flex;justify-content:space-between;gap:8px;font-size:12px;width:100%}.pp-money b{color:#ffd35a;font:700 18px var(--f-d)}
+.pp-buy{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+.pb{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:10px;border:1px solid #ffffff1f;background:#0b1016;color:#cfd6de;cursor:pointer}.pb b{font:700 13px var(--f-d);text-transform:uppercase;letter-spacing:.05em}.pb small{font:700 10px var(--f-m);color:#9aa4b0}
+.pb.on{border-color:#4aa3ff;background:#4aa3ff22;color:#fff}.pb.rec::after{content:"совет";position:absolute;top:-7px;right:6px;font:700 8px/1 var(--f-m);padding:2px 4px;border-radius:4px;background:#f0c477;color:#07080a}.pb:disabled{opacity:.35}
+.pp-dir{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+.hx{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 9px;border-radius:12px;border:1px solid #ffffff1a;background:#0b1016;color:#cfd6de;cursor:pointer;text-align:center}
+.hx-i{display:grid;place-items:center;width:46px;height:52px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(160deg,#41536a,#1a2430);font:700 20px var(--f-d);color:#fff}
+.hx b{font:700 12px var(--f-d);text-transform:uppercase;letter-spacing:.04em}.hx small{font-size:9px;color:#8f98a3;line-height:1.2}
+.hx.on{border-color:#f0c477;background:#f0c47714;color:#fff}.hx.on .hx-i{background:linear-gradient(160deg,#ffe08a,#c9902a);color:#1a1205;box-shadow:0 0 18px #f0c47788}
+.lv-prep .seg{width:100%}
+.pp-en{display:flex;align-items:center;gap:8px;width:100%;font:700 11px var(--f-m);letter-spacing:.08em;text-transform:uppercase;color:#9aa4b0}.en2{display:flex;gap:3px;flex:1}.en2 i{flex:1;height:6px;border-radius:2px;background:#ffffff14}.en2 i.on{background:#f0c477}.en2 i.use{background:#f0c47755}.pp-en b{color:#fff}
+.pp-cards{display:flex;gap:6px;overflow-x:auto;width:100%;padding-bottom:2px;scrollbar-width:none}.pp-cards::-webkit-scrollbar{display:none}
+.ac2{position:relative;flex:0 0 auto;display:flex;flex-direction:column;gap:3px;min-width:104px;max-width:130px;padding:8px 8px 7px;border-radius:10px;border:1px solid #ffffff1f;background:#0b1016;color:#e9eef3;text-align:left;cursor:pointer}
+.ac2 b{font:700 11px/1.15 var(--f-d);text-transform:uppercase;letter-spacing:.03em;padding-right:16px}.ac2 small{font:700 10px var(--f-m)}.ac2 small.pos{color:#7fe0a0}.ac2 small.neg{color:#ff8a7a}
+.ac2 .c{position:absolute;right:6px;top:6px;width:16px;height:16px;border-radius:4px;display:grid;place-items:center;background:#f0c477;color:#07080a;font:700 10px var(--f-m)}
+.ac2.on{border-color:#f0c477;background:#f0c4771c;box-shadow:0 0 0 1px #f0c47766}.ac2.dis{opacity:.4}
+.pp-foc{display:flex;flex-wrap:wrap;align-items:center;gap:5px;width:100%;font:700 10px var(--f-m);letter-spacing:.08em;text-transform:uppercase;color:#9aa4b0}.pp-foc span{width:100%}
+.pp-foc button{flex:1 1 0;min-width:0;padding:6px 3px;border-radius:8px;border:1px solid #ffffff1a;background:#0b1016;color:#cfd6de;font:600 10px var(--f-d);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.pp-foc button.on{border-color:#f0c477;color:#fff;background:#f0c47714}
+.pp-n{margin:0;width:100%}.pp-go{width:100%;font-size:15px}
+.map-rd img{display:block;width:100%;height:100%;object-fit:cover}
+@media (min-width:900px){.lv-view{height:58vh}.lv-team{max-width:680px;margin:0 auto;width:100%}}
+.lv-b.go{background:#f0c477;color:#07080a;border-color:#f0c477}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -1863,7 +1928,9 @@ class Match {
   canPlay(s, cards) { return !!s && Array.isArray(cards) && cards.every(k => typeof k === 'string' && AC[k] && s.hand.includes(k)) && new Set(cards).size === cards.length && cards.reduce((x, k) => x + AC[k].cost, 0) <= s.en; }
   isPistol() { return !this.decider && (this.round === 1 || this.round === HALF + 1); }
   /* Закупка считается сама по деньгам команды; карта «Эко-раунд» заставляет сохранить деньги */
-  buyOf(s, cards) { return this.isPistol() ? 'pistol' : cards && cards.includes('eco') ? 'eco' : s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
+  buyOf(s, cards, want) { if (this.isPistol()) return 'pistol'; if (cards && cards.includes('eco')) return 'eco';
+    if (want === 'full' || want === 'force' || want === 'eco') { if (s.money >= BUY[want].c) return want; }      /* закупка на выбор игрока, если хватает денег */
+    return s.money >= BUY.full.c ? 'full' : s.money >= BUY.force.c ? 'force' : 'eco'; }
   capIgl(s) { return s.capt >= 0 ? s.info.e[s.capt].st.igl : 55; }
   /* Соперник решает до игрока и видит только прошлые раунды */
   prep() {
@@ -1938,7 +2005,7 @@ class Match {
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
-    const buyA = this.decider ? 'full' : this.buyOf(a, mine), buyB = this.decider ? 'full' : this.buyOf(b, theirs);
+    const buyA = this.decider ? 'full' : this.buyOf(a, mine, plan.buy), buyB = this.decider ? 'full' : this.buyOf(b, theirs);
     const val = (me, my, opp, side, behind) => { const ctx = { side, behind, cap: this.capIgl(me), oppStack: opp.includes('stack'), oppTempo: opp.includes('tempo'), oppNades: opp.includes('nades') }; return my.filter(k => k !== 'eco').map(k => ({ k, v: acVal(k, me, ctx) })); };
     const va = val(a, A.l, B.l, sideA, a.score < b.score), vb = val(b, B.l, A.l, sideB, b.score < a.score);
     const mapV = s => (s === 'D' ? 1 : -1) * this.map.ct / 2, hot = s => s.ws >= 2 ? 1.5 : 0;
@@ -2371,6 +2438,52 @@ function rdPlanSvg(mapN, sideA, plan) {
   }
   const st = plan.dir === 'A' ? { A: 3, B: 1, M: 1 } : plan.dir === 'B' ? { A: 1, B: 3, M: 1 } : { A: 2, B: 2, M: 1 };
   return ['A', 'B', 'M'].map(k => { const p = M.n[M.ct[k][M.ct[k].length - 1]]; return line(rdPts(M, M.ct[k]), 'me thin') + `<g class="rd-hold"><circle cx="${p[0]}" cy="${p[1]}" r="${4 + st[k] * 1.6}"/><text x="${p[0]}" y="${p[1] + 1.6}">${st[k]}</text></g>`; }).join('');
+}
+
+/* ---------- Вид карты сверху: улицы, дома, плиты A/B, респауны. Рисуется один раз на матч в canvas ---------- */
+const RD_THEME = {
+  sand: { g: '#cbb48b', g2: '#b9a079', st: '#5f5a50', st2: '#726b5f', curb: '#3f3b35', roof: ['#ece1c8', '#dccaa6', '#cfb98f', '#e4d4b2'], det: '#bfa47a', tree: '#5c8a3a', dome: '#c9a043' },
+  inferno: { g: '#b49a74', g2: '#a3896a', st: '#6a5a4c', st2: '#7a685a', curb: '#45392f', roof: ['#b8613f', '#c97a4f', '#a5543a', '#d08b5c'], det: '#8a4a30', tree: '#4f7a34', dome: '#c9a043' },
+  ancient: { g: '#4c6741', g2: '#3f5937', st: '#6c695d', st2: '#7b786b', curb: '#3b3a33', roof: ['#8a8f7a', '#9aa08a', '#7d826d', '#a7ab93'], det: '#5e6352', tree: '#2f5a2a', dome: '#7f9a6a' } };
+const RD_MAP_THEME = { Mirage: 'sand', 'Dust II': 'sand', Anubis: 'sand', Inferno: 'inferno', Ancient: 'ancient' };
+const RD_ART = {};
+function rdArt(mapN, size = 1024) {
+  const key = mapN + '@' + size; if (RD_ART[key]) return RD_ART[key];
+  const M = rdMap(mapN), T = RD_THEME[RD_MAP_THEME[mapN] || 'sand'], c = document.createElement('canvas'); c.width = c.height = size;
+  const g = c.getContext('2d'), u = size / 100; let sd = 0; for (const ch of mapN) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0;
+  const rnd = () => { sd = (sd + 0x6D2B79F5) | 0; let t = Math.imul(sd ^ sd >>> 15, 1 | sd); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const seg = M.e.map(([a, b]) => [M.n[a], M.n[b]]), W = 8.4;
+  const dist = (p) => Math.min(...seg.map(([a, b]) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, t = clamp(((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l, 0, 1); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); }));
+  /* земля с пятнами */
+  g.fillStyle = T.g; g.fillRect(0, 0, size, size);
+  for (let i = 0; i < 2600; i++) { g.fillStyle = rnd() < .5 ? T.g2 : 'rgba(255,255,255,.05)'; const r = rnd() * 2.2 * u; g.globalAlpha = .35; g.beginPath(); g.arc(rnd() * size, rnd() * size, r, 0, 7); g.fill(); } g.globalAlpha = 1;
+  /* дома: блоки вдоль улиц, с тенью, крышами и деталями */
+  for (let y = 1; y < 99; y += 4.2) for (let x = 1; x < 99; x += 4.2) {
+    const cx = x + rnd() * 1.2, cy = y + rnd() * 1.2, d = dist([cx + 2, cy + 2]); if (d < W / 2 + 2.6 || rnd() < .1) continue;
+    const w = 3.2 + rnd() * 1.6, h = 3.2 + rnd() * 1.6, roof = T.roof[(rnd() * T.roof.length) | 0];
+    g.fillStyle = 'rgba(0,0,0,.32)'; g.fillRect((cx + .7) * u, (cy + .9) * u, w * u, h * u);
+    g.fillStyle = roof; g.fillRect(cx * u, cy * u, w * u, h * u);
+    g.strokeStyle = 'rgba(255,255,255,.28)'; g.lineWidth = u * .25; g.strokeRect((cx + .35) * u, (cy + .35) * u, (w - .7) * u, (h - .7) * u);
+    const q = rnd(); if (q < .3) { g.fillStyle = T.det; g.fillRect((cx + w * .2) * u, (cy + h * .25) * u, w * .3 * u, h * .3 * u); }
+    else if (q < .38) { g.fillStyle = T.dome; g.beginPath(); g.arc((cx + w / 2) * u, (cy + h / 2) * u, Math.min(w, h) * .32 * u, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.35)'; g.beginPath(); g.arc((cx + w / 2 - .4) * u, (cy + h / 2 - .4) * u, Math.min(w, h) * .12 * u, 0, 7); g.fill(); }
+    else if (q < .5) { g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect((cx + .6) * u, (cy + h - 1.4) * u, (w - 1.2) * u, .6 * u); }
+  }
+  /* улицы: бордюр, покрытие, разметка */
+  const path = () => { g.beginPath(); for (const [a, b] of seg) { g.moveTo(a[0] * u, a[1] * u); g.lineTo(b[0] * u, b[1] * u); } };
+  g.lineCap = g.lineJoin = 'round';
+  path(); g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = (W + 2.2) * u; g.stroke();
+  path(); g.strokeStyle = T.curb; g.lineWidth = (W + 1) * u; g.stroke();
+  path(); g.strokeStyle = T.st; g.lineWidth = W * u; g.stroke();
+  for (let i = 0; i < 1400; i++) { const p = [rnd() * 100, rnd() * 100]; if (dist(p) < W / 2 - .3) { g.fillStyle = rnd() < .5 ? T.st2 : 'rgba(0,0,0,.12)'; g.fillRect(p[0] * u, p[1] * u, (.5 + rnd()) * u, (.5 + rnd()) * u); } }
+  /* ящики и деревья у дорог */
+  for (let i = 0; i < 70; i++) { const p = [rnd() * 100, rnd() * 100], d = dist(p); if (d > W / 2 - 1.6 && d < W / 2 - .4) { g.fillStyle = 'rgba(0,0,0,.3)'; g.fillRect((p[0] + .3) * u, (p[1] + .3) * u, 1.6 * u, 1.6 * u); g.fillStyle = '#8b6a3f'; g.fillRect(p[0] * u, p[1] * u, 1.6 * u, 1.6 * u); g.strokeStyle = '#5e4628'; g.lineWidth = u * .2; g.strokeRect(p[0] * u, p[1] * u, 1.6 * u, 1.6 * u); }
+    else if (d > W / 2 + .6 && d < W / 2 + 2.4 && rnd() < .5) { g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.arc((p[0] + .6) * u, (p[1] + .6) * u, 1.5 * u, 0, 7); g.fill(); g.fillStyle = T.tree; g.beginPath(); for (let k = 0; k < 7; k++) { const a = k / 7 * 6.283; g.lineTo((p[0] + Math.cos(a) * 1.6) * u, (p[1] + Math.sin(a) * 1.6) * u); g.lineTo((p[0] + Math.cos(a + .45) * .6) * u, (p[1] + Math.sin(a + .45) * .6) * u); } g.fill(); } }
+  /* плиты точек и респауны */
+  for (const s of ['A', 'B']) { const p = M.n[s]; g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect((p[0] - 4.2) * u, (p[1] - 3.6) * u, 9 * u, 9 * u); g.fillStyle = '#c4252b'; g.fillRect((p[0] - 4.5) * u, (p[1] - 4.5) * u, 9 * u, 9 * u); g.strokeStyle = '#fff'; g.lineWidth = u * .5; g.strokeRect((p[0] - 4.5) * u, (p[1] - 4.5) * u, 9 * u, 9 * u);
+    g.fillStyle = '#fff'; g.font = `700 ${7 * u}px Oswald, Impact, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(s, p[0] * u, (p[1] + .4) * u); }
+  for (const [k, col] of [['TS', 'rgba(242,193,78,.35)'], ['CTS', 'rgba(74,163,255,.35)']]) { const p = M.n[k]; g.fillStyle = col; g.fillRect((p[0] - 6) * u, (p[1] - 4) * u, 12 * u, 8 * u); g.strokeStyle = col.replace('.35', '.9'); g.lineWidth = u * .4; g.strokeRect((p[0] - 6) * u, (p[1] - 4) * u, 12 * u, 8 * u); }
+  const vg = g.createRadialGradient(size / 2, size / 2, size * .3, size / 2, size / 2, size * .75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.45)'); g.fillStyle = vg; g.fillRect(0, 0, size, size);
+  return (RD_ART[key] = c.toDataURL('image/jpeg', .86));
 }
 /* ===== Интерфейс ===== */
 const $ = s => document.querySelector(s);
@@ -3004,7 +3117,7 @@ function matchBuild() {
 }
 function vetoBuild() {
   OV.st = 'veto'; OV.vt = 0;
-  $('#mt').innerHTML = `<div class="splash"><p class="eyebrow">Выбор карты</p><h2 id="veto-t">Забаньте карту</h2><div class="maps maps5">${OV.maps.map((x, i) => `<button class="map" id="map${i}" data-act="ban" data-v="${i}" style="--h:${x.hue}"><span class="map-rd" aria-hidden="true">${rdSvg(x.n)}</span><b>${x.n}</b><span>${x.d}</span></button>`).join('')}</div><p class="sm mut" id="veto-d">Баните по очереди с соперником: вы, соперник, вы, соперник. Играем на оставшейся карте.</p></div>`;
+  $('#mt').innerHTML = `<div class="splash"><p class="eyebrow">Выбор карты</p><h2 id="veto-t">Забаньте карту</h2><div class="maps maps5">${OV.maps.map((x, i) => `<button class="map" id="map${i}" data-act="ban" data-v="${i}" style="--h:${x.hue}"><span class="map-rd" aria-hidden="true"><img src="${rdArt(x.n, 512)}" alt=""></span><b>${x.n}</b><span>${x.d}</span></button>`).join('')}</div><p class="sm mut" id="veto-d">Баните по очереди с соперником: вы, соперник, вы, соперник. Играем на оставшейся карте.</p></div>`;
 }
 /* баны по очереди: игрок, соперник, игрок, соперник — остаётся одна карта */
 function vetoBan(i) {
@@ -3018,129 +3131,9 @@ function vetoBan(i) {
   };
   next();
 }
-const chipH = (x, id, i, mine) => `<div class="chipp" id="${id}" ${mine ? `data-act="focus" data-v="${i}" role="button" aria-label="Ставка на ${esc(x.c.nick)}"` : ''}><div class="f">${faceH(x.c).replace('class="art"', '')}<span class="k">0</span></div><span class="n">${esc(x.c.nick)}</span></div>`;
-function liveBuild() {
-  const m = OV.m; OV.st = 'live';
-  document.querySelector('.mt').style.setProperty('--mh', m.map.hue);
-  $('#mt').innerHTML = `<div class="sbar"><div class="t" id="tA"><b>Вы</b><span id="monA"></span></div><div class="c"><b id="scA">0</b><div><span id="rn"></span><span>${m.map.n}</span></div><b id="scB">0</b></div><div class="t r" id="tB"><b>${esc(m.b.name)}</b><span id="monB"></span></div></div>
-  <div class="hist" id="hist"></div>
-  <div class="arena-m arena-rd"><div class="trow" id="rowB">${m.b.info.e.map((x, i) => chipH(x, 'cB' + i, i, false)).join('')}</div>
-    <div class="mid rd-box"><div class="rd-wrap" id="rdw">${rdSvg(m.map.n)}</div><div class="rd-clock" id="rdc"></div><div class="feed" id="feed" aria-live="off"></div><div id="bn"></div></div>
-    <div class="trow mine" id="rowA">${m.a.info.e.map((x, i) => chipH(x, 'cA' + i, i, true)).join('')}</div></div>
-  <div class="played" id="played"></div>
-  <div class="phase"><b id="phl"></b><span class="bar"><i id="phb"></i></span><span id="buyl"></span></div>
-  <div class="plan" id="plan"></div><div class="en" id="en"></div><div class="hand" id="hand"></div><div class="rowb" id="mbtn"></div>`;
-  LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, spd: LV && LV.spd || 1, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] } };
-  lvBuy(true); lvBtns(); requestAnimationFrame(lvTick);
-}
-/* точки игроков на радаре */
-function rdDotsBuild(S) {
-  const m = OV.m, g = $('#rd-dots'); if (!g) return;
-  g.innerHTML = S.dots.map((d, n) => { const tm = d.team === 'a' ? m.a : m.b, nk = tm.info.e[d.i].c.nick;
-    return `<g class="rd-dot ${d.side === 'T' ? 't' : 'ct'} ${d.team === 'a' ? 'me' : 'op'}" id="rdd${n}"><circle r="2.4"/><path class="x" d="M-1.8 -1.8L1.8 1.8M1.8 -1.8L-1.8 1.8"/>${d.team === 'a' ? `<text y="-3.6">${esc(nk.slice(0, 8))}</text>` : ''}</g>`; }).join('');
-  LV.dEl = S.dots.map((_, n) => $('#rdd' + n));
-}
-function rdDotsAt(S, t) { S.dots.forEach((d, n) => { const el = LV.dEl && LV.dEl[n]; if (!el) return; const p = rdPos(d, t); el.setAttribute('transform', `translate(${p[0].toFixed(2)} ${p[1].toFixed(2)})`); el.classList.toggle('dead', d.dt != null && t >= d.dt); }); }
-/* стоят на респаунах, пока идёт план */
-function rdIdle() {
-  const m = OV.m, fake = { sideA: m.sideA, plan: { dir: 'S', tempo: 'norm' }, planB: { dir: 'S', tempo: 'norm' }, kills: [], end: 'elim', round: m.round };
-  const S = rdScript(fake, m.map.n); rdDotsBuild(S); rdDotsAt(S, 0); return S;
-}
-function rdFx(html, ms) { const g = $('#rd-fx'); if (!g) return; const w = document.createElementNS('http://www.w3.org/2000/svg', 'g'); w.innerHTML = html; g.appendChild(w); setTimeout(() => w.remove(), ms); }
-function rdEvent(S, e) {
-  const M = rdMap(OV.m.map.n), sp = M.n[e.site || S.site];
-  if (e.type === 'kill') {
-    const kd = S.dots.find(d => d.team === (e.k.byA ? 'a' : 'b') && d.i === e.k.k), vd = S.dots.find(d => d.team === (e.k.byA ? 'b' : 'a') && d.i === e.k.v);
-    if (kd && vd) { const a = rdPos(kd, e.t), b = rdPos(vd, e.t); rdFx(`<line class="rd-shot ${kd.side === 'T' ? 't' : 'ct'}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`, 520); }
-    lvKill(e.k);
-  } else if (e.type === 'plant') { $('#rd-top').innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3} ${sp[1] - 3})"><circle r="2.6"/><text y="1">C4</text></g>`; $('#rdc').innerHTML = '<span class="bomb">Бомба заложена</span>'; sfx('scan'); }
-  else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); $('#rd-top').innerHTML = ''; }
-  else if (e.type === 'defuse') { $('#rd-top').innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3} ${sp[1] - 3})"><circle r="2.6"/><text y="1">✓</text></g>`; $('#rdc').innerHTML = '<span>Бомба обезврежена</span>'; }
-  else if (e.type === 'time') $('#rdc').innerHTML = '<span>Время вышло</span>';
-}
-function lvBtns() { $('#mbtn').innerHTML = OV.askQuit ? '<button class="btn dan s" data-act="quitYes">Сдаться, засчитать поражение</button><button class="btn s" data-act="quitNo">Играть дальше</button>' : `${LV.ph === 'buy' && !OV.m.over ? '<button class="btn pri" data-act="goRound">Начать раунд ›</button>' : ''}<button class="btn s" data-act="spd" aria-label="Скорость">Скорость ×${LV.spd}</button><button class="btn s" data-act="pause">${LV.paused ? 'Продолжить' : 'Пауза'}</button><button class="btn s" data-act="quitAsk">Сдаться</button>`; }
-function lvHud() {
-  const m = OV.m, a = m.a, b = m.b, sn = s => s === 'A' ? 'T' : 'CT';
-  $('#rn').textContent = m.over ? 'Финал' : m.decider ? 'Решающий' : 'Раунд ' + m.round;
-  $('#tA').className = 't sd-' + m.sideA; $('#rowA').className = 'trow mine sd-' + m.sideA; $('#tB').className = 't r sd-' + other(m.sideA); $('#rowB').className = 'trow sd-' + other(m.sideA);
-  $('#monA').textContent = '$' + nf(a.money) + ' · ' + sn(m.sideA); $('#monB').textContent = sn(other(m.sideA)) + ' · $' + nf(b.money);
-  $('#scA').textContent = a.score; $('#scB').textContent = b.score;
-  let h = ''; for (let i = 0; i < 24; i++) { if (i === 12) h += '<i class="h"></i>'; const x = m.hist[i]; h += `<i class="${x ? (x.win ? 'w' : 'l') : ''}"></i>`; } $('#hist').innerHTML = h;
-}
-/* План вашей команды на радаре: стрелки маршрутов в атаке, сколько игроков держит каждую точку в защите */
-function mmDraw() { const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, OV.plan) : ''; $('#rdw').className = 'rd-wrap sd-' + OV.m.sideA; }
-function planDraw() {
-  const m = OV.m, atk = m.sideA === 'A';
-  $('#plan').innerHTML = m.over ? '' : segH('dir', OV.plan.dir, [['A', atk ? 'Идём на A' : 'Держим A'], ['S', atk ? 'Центр' : 'Ровно'], ['B', atk ? 'Идём на B' : 'Держим B']]) + segH('tempo', OV.plan.tempo, [['fast', 'Быстро'], ['norm', 'Обычно'], ['slow', 'Медленно']]);
-  document.querySelectorAll('#rowA .chipp').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i));
-  mmDraw();
-}
-function handDraw() {
-  const m = OV.m, a = m.a, hd = $('#hand'), en = $('#en');
-  if (m.over) { hd.innerHTML = ''; en.innerHTML = ''; $('#buyl').textContent = ''; return; }
-  OV.sel = OV.sel.filter(k => a.hand.includes(k)); if (!m.canPlay(a, OV.sel)) OV.sel = [];
-  const cost = OV.sel.reduce((s, k) => s + AC[k].cost, 0), ctx = { side: m.sideA, behind: a.score < m.b.score, cap: m.capIgl(a) };
-  en.innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i class="${i <= a.en - cost ? 'on' : i <= a.en ? 'use' : ''}"></i>`).join('') + `<span>${a.en - cost}/8</span>`;
-  en.setAttribute('aria-label', `Импульс ${a.en - cost} из 8`);
-  hd.innerHTML = a.hand.map(k => { const on = OV.sel.includes(k), v = acVal(k, a, ctx), dis = !on && cost + AC[k].cost > a.en; return `<button class="ac ${dis ? 'dis' : ''}" data-act="sel" data-v="${k}" aria-pressed="${on}" ${dis ? 'aria-disabled="true"' : ''}><span class="h"><span class="n">${AC[k].n}</span><span class="c" aria-label="Стоит ${AC[k].cost} импульса">${AC[k].cost}</span></span>${k === 'fake' || k === 'eco' ? '' : `<span class="v ${v < 0 ? 'neg' : 'pos'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</span>`}<span class="d">${AC[k].d}</span></button>`; }).join('');
-  $('#buyl').textContent = m.decider ? 'Полная закупка' : BUY[m.buyOf(a, OV.sel)].n;
-}
-function lvBuy(first) {
-  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY;
-  document.querySelectorAll('.chipp').forEach(c => c.classList.remove('dead', 'hit'));
-  const it = m.nx.intel, head = m.isPistol() ? 'Пистолетный раунд' : m.decider ? 'Счёт 12:12 — решающий раунд' : m.a.ws >= 2 ? 'Серия побед: +1,5 к силе' : '';
-  $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#rd-top').innerHTML = ''; $('#rdc').innerHTML = '<span>План на раунд</span>'; LV.S = rdIdle(); $('#played').innerHTML = `<span>${it ? '<b>Разведка:</b> ' + esc(it.t) : head}</span><span>${m.decider || m.isPistol() ? '' : 'Соперник: ' + BUY[m.buyOf(m.b, [])].n.toLowerCase()}</span>`;
-  $('#phl').textContent = (m.sideA === 'A' ? 'Атака (T)' : 'Защита (CT)') + ' · план'; lvHud(); planDraw(); handDraw(); lvBtns();
-}
-function lvPlay() {
-  const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [], L = m.play(sel, OV.plan);
-  OV.sel = []; LV.last = L; LV.q = [...L.kills]; LV.ph = 'round'; LV.rt = 0; LV.S = rdScript(L, m.map.n); LV.ei = 0; rdDotsBuild(LV.S); rdDotsAt(LV.S, 0); lvBtns();
-  taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
-  const tg = (pl, vals, cut) => pl.length ? pl.map(k => { const v = vals.find(x => x.k === k); return k === cut ? `<s>${AC[k].n}</s>` : `<b>${AC[k].n}${v && k !== 'fake' ? ' ' + (v.v >= 0 ? '+' : '−') + Math.abs(v.v).toFixed(1) : ''}</b>`; }).join(', ') : 'без приказов';
-  $('#played').innerHTML = `<span>Вы: ${tg(L.mine, L.va, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.vb, L.cutB)}</span>`;
-  $('#phl').textContent = 'Раунд идёт'; $('#phb').style.width = '0%'; $('#buyl').textContent = `шанс ${Math.round(L.p * 100)}%`;
-  mmDraw(); handDraw(); $('#plan').innerHTML = `<p class="sm mut" style="grid-column:1/-1">Соперник: ${DIRN[L.planB.dir]}, ${TEMPON[L.planB.tempo]}. Вы: ${DIRN[L.plan.dir]}, ${TEMPON[L.plan.tempo]}.</p>`;
-}
-function lvKill(k) {
-  const L = LV.last, kt = k.byA ? 'A' : 'B', vt = k.byA ? 'B' : 'A', m = OV.m, K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
-  const ks = k.byA ? L.sideA : other(L.sideA), col = s => s === 'D' ? 'var(--ct)' : 'var(--tt)', f = $('#feed');
-  f.insertAdjacentHTML('beforeend', `<div class="${k.byA ? '' : 'me'}"><span class="ka" style="--ka:${col(ks)}">${esc(K.info.e[k.k].c.nick)}</span><svg aria-hidden="true"><use href="#${k.awp ? 'awp' : 'gun'}"/></svg>${k.hs ? '<i class="hs"></i>' : ''}<span class="va" style="--vc:${col(other(ks))}">${esc(V.info.e[k.v].c.nick)}</span></div>`);
-  while (f.children.length > 4) f.firstChild.remove();
-  $('#c' + vt + k.v).classList.add('dead');
-  const kc = $('#c' + kt + k.k); kc.classList.remove('hit'); void kc.offsetWidth; kc.classList.add('hit'); kc.querySelector('.k').textContent = ++LV.kc[kt][k.k];
-  sfx('kill');
-}
-function lvEnd() {
-  const L = LV.last; LV.ph = 'end'; LV.t = T_END;
-  const rd = { good: 'вы переиграли соперника по направлению', bad: 'соперник прочитал ваше направление', fake: 'фейк спас атаку' }[L.read];
-  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span>${rd ? `<span>${rd}</span>` : ''}</div>`;
-  lvHud(); sfx(L.win ? 'win' : 'lose');
-}
 function finishMatch() {
   const m = OV.m; OV.st = 'end'; OV.reward = applyResult(G, m.won, m.a.score, m.b.score);
   taskAdd(G, matchEvent(G, m)); delete G.live; if (G.tut < 3) G.tut = 3; refresh(G, now()); save(); endBuild();
-}
-function lvNext() {
-  const m = OV.m, L = LV.last;
-  if (m.over) { finishMatch(); return; }
-  if (LV.ph === 'end' && L.swap) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = `<div class="banner n"><b>Смена сторон</b><span>Вы теперь ${sideName(m.sideA)} · деньги сброшены</span></div>`; lvHud(); return; }
-  if (LV.ph === 'end' && m.decider) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = '<div class="banner n"><b>12:12</b><span>Решающий раунд, полная закупка у обеих команд</span></div>'; return; }
-  lvBuy(false);
-}
-function lvTick(ts) {
-  if (!OV || OV.t !== 'match' || OV.st !== 'live' || !LV) return;
-  const dt = Math.min(100, ts - (LV.ts || ts)); LV.ts = ts;
-  if (!LV.paused) {
-    LV.t -= dt;
-    if (LV.ph === 'buy') { $('#phb').style.width = (100 * Math.max(0, LV.t) / LV.T) + '%'; $('#buyl').dataset.t = Math.ceil(Math.max(0, LV.t) / 1000); if (LV.t <= 0) lvPlay(); }
-    else if (LV.ph === 'round') { const S = LV.S; LV.rt += dt / 1000 * LV.spd;
-      while (LV.ei < S.ev.length && S.ev[LV.ei].t <= LV.rt) rdEvent(S, S.ev[LV.ei++]);
-      rdDotsAt(S, LV.rt); $('#phb').style.width = (100 * Math.min(1, LV.rt / S.T)) + '%';
-      const left = Math.max(0, Math.ceil(115 - LV.rt * 115 / S.T)); if (!$('#rdc .bomb') && !/обезврежена|вышло/.test($('#rdc').textContent)) $('#rdc').innerHTML = `<span>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</span>`;
-      if (LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); lvEnd(); } }
-    else { LV.t -= dt * (LV.spd - 1); if (LV.t <= 0) lvNext(); }
-  }
-  requestAnimationFrame(lvTick);
 }
 function endBuild() {
   const m = OV.m, r = OV.reward, mv = m.mvp(), rep = m.report(), by = rep.eco.buys, bq = k => by[k] ? by[k][1] + ' из ' + by[k][0] : '—';
@@ -3246,12 +3239,15 @@ const ACT = {
   poTap() { return poTap(); },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase === 'show' && RV && RV.ready) { RV.quiet = true; RV.f.contentWindow.postMessage({ t: 'skip' }, '*'); return false; } if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
-  fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: RD_POOL.map(n => MAPS.find(x => x.n === n)).filter(Boolean), ban: [], vt: 0, sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1 }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },
+  fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: RD_POOL.map(n => MAPS.find(x => x.n === n)).filter(Boolean), ban: [], vt: 0, sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1, buy: null }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },
   ban(v) { vetoBan(+v); return false; },
   sel(v) { if (!OV || OV.st !== 'live') return false; const m = OV.m, i = OV.sel.indexOf(v); if (i >= 0) OV.sel.splice(i, 1); else if (m.canPlay(m.a, OV.sel.concat(v))) OV.sel.push(v); else return false; sfx('tap'); handDraw(); return false; },
-  dir(v) { if (OV && OV.st === 'live' && LV.ph === 'buy') { OV.plan.dir = v; planDraw(); } else if (OV && OV.st === 'live') OV.plan.dir = v; return false; },
+  dir(v) { if (OV && OV.st === 'live' && LV.ph === 'buy') { OV.plan.dir = v; sfx('tap'); planDraw(); } return false; },
   tempo(v) { if (OV && OV.st === 'live') { OV.plan.tempo = v; if (LV.ph === 'buy') planDraw(); } return false; },
-  focus(v) { if (OV && OV.st === 'live') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; document.querySelectorAll('#rowA .chipp').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); } return false; },
+  focus(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; planDraw(); } return false; },
+  buyT(v) { if (OV && OV.st === 'live' && LV.ph === 'buy' && ['full', 'force', 'eco'].includes(v)) { OV.plan.buy = OV.plan.buy === v ? null : v; planDraw(); lvKD(); } return false; },
+  prepMin() { if (LV) { LV.min = true; planDraw(); } return false; }, prepOpen() { if (LV) { LV.min = false; planDraw(); } return false; },
+  skipRound() { if (LV && LV.ph === 'round') LV.rt = LV.S.T; return false; },
   pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
   goRound() { if (LV && LV.ph === 'buy' && OV && OV.st === 'live') LV.t = 0; return false; },
   spd() { if (LV) { LV.spd = LV.spd === 1 ? 2 : 1; lvBtns(); } return false; },
@@ -3283,6 +3279,187 @@ function start() {
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
   save(); render();
+}
+/* ---------- Матч в реальном времени: карта сверху, игроки с фото, составы, подготовка к раунду ----------
+   По образцу менеджеров киберспорта, упрощено для телефона: карта рисуется один раз (картинка),
+   двигаются только 10 кружков игроков (transform), камера — один transform контейнера. */
+const WPN = { pistol: 'M3 3h11v2.4H9.6V10H6.4V5.4H3z', smg: 'M1 3h16v2.2h-3v2.4h-2.4V5.2H7v4.4H4V5.2H1z', rifle: 'M0 3.6h17l2.2-1.2H23v2.2h-3.4v1.2h-6v3.6h-2.4V5.8H6.4v2.6H3.2V5.8H0z', awp: 'M0 4h24v1.6H0zM7 2.2h5.6V4H7zM4 5.6h3.2V9H4zM14.4 5.6h2.2V8h-2.2z' };
+const wpnOf = (buy, role) => buy === 'pistol' || buy === 'eco' ? 'pistol' : buy === 'force' ? (role === 0 ? 'pistol' : 'smg') : role === 0 ? 'awp' : 'rifle';
+const wpnH = w => `<svg class="wpn" viewBox="0 0 24 10" aria-hidden="true"><path d="${WPN[w]}"/></svg>`;
+const faceSrc = c => { const h = faceH(c), m = /src="([^"]+)"/.exec(h); return m ? m[1] : ''; };
+const sideCol = s => s === 'D' ? 'ct' : 't';
+
+/* строка игрока в составе: фото, ник, здоровье, у/с, оружие */
+function plH(m, team, i) {
+  const s = team === 'a' ? m.a : m.b, x = s.info.e[i], c = x.c, src = faceSrc(c);
+  return `<div class="pl" id="pl-${team}-${i}" ${team === 'a' ? `data-act="focus" data-v="${i}" role="button" tabindex="0" aria-label="Ставка на ${esc(c.nick)}"` : ''}>
+    <span class="pl-ph">${src ? `<img src="${esc(src)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<i>${esc(c.nick.slice(0, 2))}</i></span>
+    <span class="pl-in"><b>${esc(c.nick)}</b><span class="pl-kd"><span id="kd-${team}-${i}">0/0</span><span class="pl-w" id="w-${team}-${i}"></span></span><span class="pl-hp"><i id="hp-${team}-${i}"></i></span></span></div>`;
+}
+function liveBuild() {
+  const m = OV.m; OV.st = 'live';
+  const art = rdArt(m.map.n, clamp(Math.round(Math.min(1100, Math.max(innerWidth, 360)) * Math.min(2, devicePixelRatio || 1) * 1.4 / 256) * 256, 1024, 2048));   /* под размер экрана, с запасом на приближение */
+  $('#mt').innerHTML = `<div class="lv">
+    <div class="lv-top"><div class="lv-tm" id="tA"><b>Вы</b><span id="monA"></span></div><div class="lv-sc"><b id="scA">0</b><div><span id="rn"></span><span class="lv-map">${esc(m.map.n)} <i>LIVE</i></span></div><b id="scB">0</b></div><div class="lv-tm r" id="tB"><b>${esc(m.b.name)}</b><span id="monB"></span></div></div>
+    <div class="hist" id="hist"></div>
+    <div class="lv-team op" id="rowB">${[0, 1, 2, 3, 4].map(i => plH(m, 'b', i)).join('')}</div>
+    <div class="lv-view" id="lvv"><div class="lv-cam" id="lvc"><img class="lv-art" src="${art}" alt="" draggable="false"><svg class="lv-ov" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g id="rd-plan"></g><g id="rd-fx"></g><g id="rd-top"></g></svg><div class="lv-avas" id="avas"></div></div>
+      <div class="rd-clock" id="rdc"></div><div class="feed" id="feed" aria-live="off"></div><div id="bn"></div><div class="lv-intro" id="intro"><small>Добро пожаловать на</small><b>${esc(m.map.n)}</b></div></div>
+    <div class="lv-team mine" id="rowA">${[0, 1, 2, 3, 4].map(i => plH(m, 'a', i)).join('')}</div>
+    <div class="lv-ctl" id="mbtn"></div>
+    <div class="lv-prep" id="prep"></div></div>`;
+  LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, spd: LV && LV.spd || 1, cam: { x: 50, y: 50, z: 1 }, kd: null, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] } };
+  setTimeout(() => { const n = $('#intro'); if (n) n.classList.add('out'); }, 2300);
+  lvBuy(true); requestAnimationFrame(lvTick);
+}
+/* табло, деньги, история раундов, у/с и оружие игроков */
+function lvHud() {
+  const m = OV.m, a = m.a, b = m.b, sn = s => s === 'A' ? 'T' : 'CT';
+  $('#rn').textContent = m.over ? 'Финал' : m.decider ? 'Решающий' : 'Раунд ' + m.round;
+  $('#tA').className = 'lv-tm sd-' + m.sideA; $('#tB').className = 'lv-tm r sd-' + other(m.sideA);
+  $('#rowA').className = 'lv-team mine sd-' + m.sideA; $('#rowB').className = 'lv-team op sd-' + other(m.sideA);
+  $('#monA').textContent = sn(m.sideA) + ' · $' + nf(a.money); $('#monB').textContent = '$' + nf(b.money) + ' · ' + sn(other(m.sideA));
+  $('#scA').textContent = a.score; $('#scB').textContent = b.score;
+  let h = ''; for (let i = 0; i < 24; i++) { if (i === 12) h += '<i class="h"></i>'; const x = m.hist[i]; h += `<i class="${x ? (x.win ? 'w' : 'l') : ''}"></i>`; } $('#hist').innerHTML = h;
+  lvKD();
+}
+function lvKD() {
+  const m = OV.m, L = LV.ph === 'buy' ? null : LV.last;
+  for (const [t, s] of [['a', m.a], ['b', m.b]]) for (let i = 0; i < 5; i++) {
+    const k0 = LV.kd ? LV.kd[t].k[i] : s.k[i], d0 = LV.kd ? LV.kd[t].d[i] : s.d[i], kd = $(`#kd-${t}-${i}`); if (!kd) continue;
+    kd.textContent = `${k0}/${d0}`;
+    const buy = L ? (t === 'a' ? L.buyA : L.buyB) : (m.decider ? 'full' : t === 'a' ? m.buyOf(m.a, OV.sel, OV.plan.buy) : m.buyOf(m.b, []));
+    $(`#w-${t}-${i}`).innerHTML = wpnH(wpnOf(buy, s.info.e[i].c.role));
+  }
+}
+/* ---------- Игроки на карте ---------- */
+function rdDotsBuild(S) {
+  const m = OV.m, g = $('#avas'); if (!g) return;
+  g.innerHTML = S.dots.map((d, n) => { const tm = d.team === 'a' ? m.a : m.b, c = tm.info.e[d.i].c, src = faceSrc(c);
+    return `<div class="ava ${d.side === 'T' ? 't' : 'ct'} ${d.team === 'a' ? 'me' : 'op'}" id="ava${n}"><span class="ava-in"><span class="ava-ph">${src ? `<img src="${esc(src)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<i>${esc(c.nick.slice(0, 2))}</i></span><b>${esc(c.nick)}</b><span class="ava-x" aria-hidden="true"></span></span></div>`; }).join('');
+  LV.dEl = S.dots.map((_, n) => $('#ava' + n));
+}
+function rdDotsAt(S, t) {
+  const v = $('#lvv'); if (!v) return; const Sz = LV.sz || 1;
+  S.dots.forEach((d, n) => { const el = LV.dEl && LV.dEl[n]; if (!el) return; const p = rdPos(d, t); el.style.transform = `translate3d(${(p[0] * Sz / 100).toFixed(1)}px,${(p[1] * Sz / 100).toFixed(1)}px,0)`; const dead = d.dt != null && t >= d.dt; if (dead !== el._dead) { el._dead = dead; el.classList.toggle('dead', dead); } });
+}
+/* камера: в плане — вся карта, в раунде — приближение к живым игрокам */
+function lvCam(t, dt) {
+  const v = $('#lvv'), c = $('#lvc'); if (!v || !c) return;
+  const W = v.clientWidth, H = v.clientHeight, Sz = Math.max(W, H); if (LV.sz !== Sz) { LV.sz = Sz; c.style.width = c.style.height = Sz + 'px'; }
+  let tx = 50, ty = 50, tz = 1;
+  if (LV.ph === 'round' && LV.S) { const al = LV.S.dots.filter(d => d.dt == null || t < d.dt).map(d => rdPos(d, t)); if (al.length) { const xs = al.map(p => p[0]), ys = al.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    tx = (x0 + x1) / 2; ty = (y0 + y1) / 2; tz = clamp(100 / (Math.max(26, x1 - x0, y1 - y0) + 20), 1, 2.1); } }
+  const k = 1 - Math.exp(-dt / 1000 * 2.2), C = LV.cam; C.x += (tx - C.x) * k; C.y += (ty - C.y) * k; C.z += (tz - C.z) * k;
+  const z = Math.max(1, C.z), px = C.x * Sz / 100, py = C.y * Sz / 100;
+  const ox = clamp(W / 2 - px * z, W - Sz * z, 0), oy = clamp(H / 2 - py * z, H - Sz * z, 0);
+  c.style.transform = `translate3d(${ox.toFixed(1)}px,${oy.toFixed(1)}px,0) scale(${z.toFixed(4)})`; c.style.setProperty('--iz', (1 / z).toFixed(3));
+}
+function rdIdle() {
+  const m = OV.m, fake = { sideA: m.sideA, plan: { dir: 'S', tempo: 'norm' }, planB: { dir: 'S', tempo: 'norm' }, kills: [], end: 'elim', round: m.round };
+  const S = rdScript(fake, m.map.n); rdDotsBuild(S); rdDotsAt(S, 0); return S;
+}
+function rdFx(html, ms) { const g = $('#rd-fx'); if (!g) return; const w = document.createElementNS('http://www.w3.org/2000/svg', 'g'); w.innerHTML = html; g.appendChild(w); setTimeout(() => w.remove(), ms); }
+function rdEvent(S, e) {
+  const M = rdMap(OV.m.map.n), sp = M.n[e.site || S.site];
+  if (e.type === 'kill') {
+    const kd = S.dots.find(d => d.team === (e.k.byA ? 'a' : 'b') && d.i === e.k.k), vd = S.dots.find(d => d.team === (e.k.byA ? 'b' : 'a') && d.i === e.k.v);
+    if (kd && vd) { const a = rdPos(kd, e.t), b = rdPos(vd, e.t); rdFx(`<line class="rd-shot ${kd.side === 'T' ? 't' : 'ct'}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`, 600); }
+    lvKill(e.k);
+  } else if (e.type === 'plant') { $('#rd-top').innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">C4</text></g>`; $('#rdc').innerHTML = '<span class="bomb">Бомба заложена</span>'; sfx('scan'); }
+  else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); $('#rd-top').innerHTML = ''; }
+  else if (e.type === 'defuse') { $('#rd-top').innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">✓</text></g>`; $('#rdc').innerHTML = '<span>Бомба обезврежена</span>'; }
+  else if (e.type === 'time') $('#rdc').innerHTML = '<span>Время вышло</span>';
+}
+/* ---------- Кнопки внизу ---------- */
+function lvBtns() {
+  const c = $('#mbtn'); if (!c) return;
+  if (OV.askQuit) { c.innerHTML = '<button class="btn dan s" data-act="quitYes">Сдаться — поражение</button><button class="btn s" data-act="quitNo">Играть дальше</button>'; return; }
+  c.innerHTML = `<button class="lv-b" data-act="spd" aria-label="Скорость">×${LV.spd}</button><button class="lv-b" data-act="pause" aria-label="${LV.paused ? 'Продолжить' : 'Пауза'}">${LV.paused ? '▶' : '❚❚'}</button>${LV.ph === 'round' ? '<button class="lv-b" data-act="skipRound" aria-label="Досмотреть раунд">⏭</button>' : LV.ph === 'buy' && LV.min ? '<button class="lv-b wide" data-act="prepOpen">План</button><button class="lv-b wide go" data-act="goRound">Начать ›</button>' : ''}<button class="lv-b wide q" data-act="quitAsk">Сдаться</button>`;
+}
+/* ---------- Подготовка к раунду: закупка, направление, темп, приказы ---------- */
+function planDraw() {
+  const m = OV.m, atk = m.sideA === 'A', p = $('#prep'); if (!p) return;
+  if (m.over || LV.ph !== 'buy' || LV.min) { p.className = 'lv-prep'; p.innerHTML = ''; mmDraw(); lvBtns(); return; }
+  const a = m.a, pistol = m.isPistol() || m.decider, auto = m.buyOf(a, OV.sel), cur = m.decider ? 'full' : m.buyOf(a, OV.sel, OV.plan.buy), eco = OV.sel.includes('eco');
+  const buyB = k => { const B = BUY[k], can = a.money >= B.c, on = cur === k; return `<button class="pb ${on ? 'on' : ''} ${k === auto ? 'rec' : ''}" data-act="buyT" data-v="${k}" ${can && !eco ? '' : 'disabled'} aria-pressed="${on}"><b>${k === 'full' ? 'Полная' : k === 'force' ? 'Форс' : 'Эко'}</b><small>${B.c ? '$' + nf(B.c) : 'копим'}</small></button>`; };
+  const hex = (v, ic, t, s) => `<button class="hx ${OV.plan.dir === v ? 'on' : ''}" data-act="dir" data-v="${v}" aria-pressed="${OV.plan.dir === v}"><span class="hx-i" aria-hidden="true">${ic}</span><b>${t}</b><small>${s}</small></button>`;
+  const dirs = atk ? hex('A', 'A', 'Штурм A', 'вся команда на A') + hex('S', '⇄', 'Через центр', 'разделиться, точка позже') + hex('B', 'B', 'Штурм B', 'вся команда на B')
+    : hex('A', 'A', 'Стек A', '3 на A, 1 мид, 1 на B') + hex('S', '◎', 'Ровно', '2 на A, 1 мид, 2 на B') + hex('B', 'B', 'Стек B', '3 на B, 1 мид, 1 на A');
+  const cost = OV.sel.reduce((s, k) => s + AC[k].cost, 0), ctx = { side: m.sideA, behind: a.score < m.b.score, cap: m.capIgl(a) };
+  const cards = a.hand.map(k => { const on = OV.sel.includes(k), v = acVal(k, a, ctx), dis = !on && cost + AC[k].cost > a.en; return `<button class="ac2 ${on ? 'on' : ''} ${dis ? 'dis' : ''}" data-act="sel" data-v="${k}" aria-pressed="${on}" ${dis ? 'aria-disabled="true"' : ''} title="${esc(AC[k].d)}"><span class="c">${AC[k].cost}</span><b>${AC[k].n}</b>${k === 'fake' || k === 'eco' ? '' : `<small class="${v < 0 ? 'neg' : 'pos'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</small>`}</button>`; }).join('');
+  const it = m.nx.intel, fx = OV.plan.focus >= 0 ? a.info.e[OV.plan.focus].c.nick : '';
+  p.className = 'lv-prep on';
+  p.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${atk ? 'Атака · T' : 'Защита · CT'} · раунд ${m.round}</small><b>Подготовка к раунду</b></div><button class="pp-min" data-act="prepMin" aria-label="Свернуть и посмотреть карту">▾</button></div>
+    <div class="pp-money"><span>Деньги команды <b>$${nf(a.money)}</b></span><span class="mut">${pistol ? (m.decider ? 'Решающий раунд: полная закупка' : 'Пистолетный раунд') : 'Рекомендуем: ' + (auto === 'full' ? 'полную' : auto === 'force' ? 'форс' : 'эко')}</span></div>
+    ${pistol ? '' : `<div class="pp-buy">${buyB('full')}${buyB('force')}${buyB('eco')}</div>`}${eco ? '<p class="sm mut pp-n">Приказ «Эко-раунд» — команда не закупается.</p>' : ''}
+    <div class="pp-dir">${dirs}</div>
+    ${segH('tempo', OV.plan.tempo, [['fast', 'Быстро'], ['norm', 'Обычно'], ['slow', 'Медленно']])}
+    <div class="pp-en"><span>Приказы</span><span class="en2">${[1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i class="${i <= a.en - cost ? 'on' : i <= a.en ? 'use' : ''}"></i>`).join('')}</span><b>${a.en - cost}/8</b></div>
+    <div class="pp-cards">${cards}</div>
+    <div class="pp-foc"><span>Ставка на игрока</span>${a.info.e.map((e, i) => `<button class="${OV.plan.focus === i ? 'on' : ''}" data-act="focus" data-v="${i}" aria-pressed="${OV.plan.focus === i}">${esc(e.c.nick)}</button>`).join('')}</div>
+    ${it ? `<p class="sm mut pp-n"><b>Разведка:</b> ${esc(it.t)}</p>` : ''}
+    <button class="btn pri pp-go" data-act="goRound">Следующий раунд <span id="ppt"></span></button>`;
+  mmDraw(); lvBtns();
+}
+function handDraw() { planDraw(); }
+function mmDraw() { const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, OV.plan) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; document.querySelectorAll('#rowA .pl').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); }
+function lvBuy(first) {
+  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY; LV.min = false; LV.kd = null;
+  document.querySelectorAll('.pl').forEach(c => c.classList.remove('dead', 'hit')); document.querySelectorAll('[id^="hp-"]').forEach(h => h.style.width = '100%');
+  $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#rd-top').innerHTML = ''; $('#rdc').innerHTML = '';
+  LV.S = rdIdle(); OV.sel = OV.sel.filter(k => m.a.hand.includes(k)); if (!m.canPlay(m.a, OV.sel)) OV.sel = [];
+  lvHud(); planDraw();
+}
+function lvPlay() {
+  const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [];
+  LV.kd = { a: { k: [...m.a.k], d: [...m.a.d] }, b: { k: [...m.b.k], d: [...m.b.d] } };
+  const L = m.play(sel, OV.plan);
+  OV.sel = []; LV.last = L; LV.ph = 'round'; LV.rt = 0; LV.S = rdScript(L, m.map.n); LV.ei = 0; rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
+  taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
+  planDraw(); lvKD();
+  const tg = (pl, cut) => pl.length ? pl.map(k => k === cut ? `<s>${AC[k].n}</s>` : AC[k].n).join(', ') : 'без приказов';
+  $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>';
+  $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[L.plan.dir]}, ${TEMPON[L.plan.tempo]} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
+  setTimeout(() => { if (LV && LV.ph === 'round') $('#bn').innerHTML = ''; }, 2600);
+}
+function lvKill(k) {
+  const L = LV.last, m = OV.m, kt = k.byA ? 'a' : 'b', vt = k.byA ? 'b' : 'a', K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
+  const ks = k.byA ? L.sideA : other(L.sideA), f = $('#feed');
+  f.insertAdjacentHTML('beforeend', `<div class="${k.byA ? '' : 'me'}"><span class="ka ${sideCol(ks)}">${esc(K.info.e[k.k].c.nick)}</span>${wpnH(wpnOf(k.byA ? L.buyA : L.buyB, K.info.e[k.k].c.role))}${k.hs ? '<i class="hs"></i>' : ''}<span class="va ${sideCol(other(ks))}">${esc(V.info.e[k.v].c.nick)}</span></div>`);
+  while (f.children.length > 4) f.firstChild.remove();
+  if (LV.kd) { LV.kd[kt].k[k.k]++; LV.kd[vt].d[k.v]++; }
+  const vr = $(`#pl-${vt}-${k.v}`); if (vr) vr.classList.add('dead'); const hp = $(`#hp-${vt}-${k.v}`); if (hp) hp.style.width = '0%';
+  const kr = $(`#pl-${kt}-${k.k}`); if (kr) { kr.classList.remove('hit'); void kr.offsetWidth; kr.classList.add('hit'); }
+  lvKD(); sfx('kill');
+}
+function lvEnd() {
+  const L = LV.last; LV.ph = 'end'; LV.t = T_END; lvBtns();
+  const rd = { good: 'вы переиграли соперника по направлению', bad: 'соперник прочитал ваше направление', fake: 'фейк спас атаку' }[L.read];
+  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span>${rd ? `<span>${rd}</span>` : ''}</div>`;
+  LV.kd = null; lvHud(); sfx(L.win ? 'win' : 'lose');
+}
+function lvNext() {
+  const m = OV.m, L = LV.last;
+  if (m.over) { finishMatch(); return; }
+  if (LV.ph === 'end' && L.swap) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = `<div class="banner n"><b>Смена сторон</b><span>Вы теперь ${sideName(m.sideA)} · деньги сброшены</span></div>`; lvHud(); return; }
+  if (LV.ph === 'end' && m.decider) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = '<div class="banner n"><b>12:12</b><span>Решающий раунд, полная закупка у обеих команд</span></div>'; return; }
+  lvBuy(false);
+}
+function lvTick(ts) {
+  if (!OV || OV.t !== 'match' || OV.st !== 'live' || !LV) return;
+  const dt = Math.min(100, ts - (LV.ts || ts)); LV.ts = ts;
+  if (!LV.paused) {
+    LV.t -= dt;
+    if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; if (LV.t <= 0) lvPlay(); }
+    else if (LV.ph === 'round') { const S = LV.S; LV.rt += dt / 1000 * LV.spd;
+      while (LV.ei < S.ev.length && S.ev[LV.ei].t <= LV.rt) rdEvent(S, S.ev[LV.ei++]);
+      const left = Math.max(0, Math.ceil(115 - LV.rt * 115 / S.T)), rc = $('#rdc'); if (rc && !rc.querySelector('.bomb') && !/обезврежена|вышло/.test(rc.textContent)) rc.innerHTML = `<span>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</span>`;
+      if (LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); rdDotsAt(S, S.T); lvEnd(); } }
+    else { LV.t -= dt * (LV.spd - 1); if (LV.t <= 0) lvNext(); }
+  }
+  if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' ? 0 : LV.S.T; rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); }
+  requestAnimationFrame(lvTick);
 }
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
 })();

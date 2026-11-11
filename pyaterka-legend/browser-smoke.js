@@ -45,6 +45,7 @@ const { chromium } = require('playwright');
           scrollWidth: document.documentElement.scrollWidth,
           appReady: app?.dataset.ok === '1',
           arenaSvg: !!document.querySelector('.arena-art'),
+          tutorialCentered: (() => { const t = document.querySelector('.tutorial'); if (!t) return true; const r=t.getBoundingClientRect(); return Math.abs((r.left+r.right)/2-innerWidth/2) <= 1 && r.left >= -1 && r.right <= innerWidth+1; })(),
           heroVisible: !!hr && hr.width > 0 && hr.height > 0,
           heroInside: !!hr && hr.left >= -1 && hr.right <= innerWidth + 1,
           headerCentered: headerCenterError <= 1,
@@ -54,7 +55,7 @@ const { chromium } = require('playwright');
           scenePosition: getComputedStyle(document.querySelector('#scene')).position
         };
       });
-      if (!metrics.appReady || !metrics.arenaSvg || !metrics.heroVisible || !metrics.heroInside || !metrics.headerCentered || !metrics.heroArt) throw new Error('Некорректная сцена/главная при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
+      if (!metrics.appReady || !metrics.arenaSvg || !metrics.heroVisible || !metrics.heroInside || !metrics.headerCentered || !metrics.heroArt || !metrics.tutorialCentered) throw new Error('Некорректная сцена/главная при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
       if (metrics.scrollWidth > viewport.width + 1) throw new Error('Горизонтальный выезд страницы при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
       if (metrics.scenePosition !== 'fixed') throw new Error('Фон арены должен быть закреплён независимо от прокрутки');
       for (let i = 0; i < metrics.lineupCards.length; i++) {
@@ -100,6 +101,8 @@ const { chromium } = require('playwright');
         width: innerWidth
       }), section.selector);
       if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно');
+      const mast = await page.locator('#app .section-mast').count();
+      if (mast !== 1 || !(await page.locator('#app .section-mast__icon svg').count())) throw new Error(section.label + ': отсутствует фирменная шапка раздела или эмблема');
       if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');
     }
     if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));

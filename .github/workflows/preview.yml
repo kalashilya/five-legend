@@ -1,0 +1,46 @@
+name: Publish arena redesign preview
+
+on:
+  push:
+    branches:
+      - feature/premium-visual-redesign
+    paths:
+      - ".github/workflows/preview.yml"
+      - "pyaterka-legend/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout redesign branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/premium-visual-redesign
+      - name: Prepare browser preview
+        run: |
+          mkdir -p public
+          cp pyaterka-legend/pyaterka-legend-offline.html public/index.html
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload preview
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - name: Deploy preview
+        id: deployment
+        uses: actions/deploy-pages@v4

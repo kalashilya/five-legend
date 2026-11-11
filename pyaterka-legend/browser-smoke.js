@@ -107,6 +107,7 @@ const { chromium } = require('playwright');
       }), section.selector);
       if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно');
       if (section.tab === 'col') { const tiers = await page.evaluate(() => ['standard','cinema','cinema-legend'].map(k => document.querySelectorAll('#col-grid .pc.' + k).length)); if (tiers.some(n => n === 0)) throw new Error('Коллекция должна показывать все три уровня оформления карточек: ' + tiers.join('/')); }
+      if (section.tab === 'col') { const unowned = await page.locator('#col-grid .pc.no').first().evaluate(el => ({filter:getComputedStyle(el).filter,opacity:getComputedStyle(el).opacity})); if (unowned.filter !== 'none' || unowned.opacity !== '1') throw new Error('Неизвестные карточки не должны обесцвечивать всю карточку: ' + JSON.stringify(unowned)); }
       const mast = await page.locator('#app .section-mast').count();
       if (mast !== 1 || !(await page.locator('#app .section-mast__icon svg').count())) throw new Error(section.label + ': отсутствует фирменная шапка раздела или эмблема');
       if (sectionState.scrollWidth > sectionState.width + 1) throw new Error(section.label + ': горизонтальное переполнение на мобильном экране');

@@ -47,8 +47,8 @@ ok('редкости 388/152/78/27/8', () => assert.deepStrictEqual(E.POOL.map(p
 ok('у каждой карточки шесть показателей от 40 до 99', () => E.ALL.forEach(c => Object.values(c.st).forEach(v => assert(v >= 40 && v <= 99))));
 ok('обновление базы: трансфер создаёт новую карточку, старая остаётся архивной с тем же номером', () => {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-')); for (const f of ['gen.js', 'teams.txt', 'ids.json']) fs.copyFileSync(f, path.join(d, f));
-  let t = fs.readFileSync(path.join(d, 'teams.txt'), 'utf8'); assert(t.includes('flameZ, ') && t.includes('donk, '));
-  t = t.replace('flameZ, ', '').replace('donk, ', 'donk, flameZ, '); fs.writeFileSync(path.join(d, 'teams.txt'), t);
+  let t = fs.readFileSync(path.join(d, 'teams.txt'), 'utf8'); assert(t.includes('flameZ, ') && t.includes('donk'));
+  t = t.replace('flameZ, ', '').replace('donk\n', 'donk, flameZ\n'); fs.writeFileSync(path.join(d, 'teams.txt'), t);
   cp.execFileSync('node', ['gen.js'], { cwd: d });
   const D = new Function(fs.readFileSync(path.join(d, 'data.js'), 'utf8') + ';return {PL,TM}')(), old = E.ALL.find(c => c.nick === 'flameZ' && !c.sp);
   const rows = D.PL.filter(p => p[0] === 'flameZ'); assert.strictEqual(rows.length, 2);

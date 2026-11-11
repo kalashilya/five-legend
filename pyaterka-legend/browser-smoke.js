@@ -88,11 +88,24 @@ const { chromium } = require('playwright');
         depth.outer !== 'none' || depth.card !== 'none' || depth.layer === 'none') {
       throw new Error('3D hover должен поднимать только внутренний слой карточки, не сдвигая её контейнер: ' + JSON.stringify({ before, after, depth }));
     }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.locator('#tabs button[data-v="play"]').click();
+    await page.waitForFunction(() => document.querySelector('#app')?.dataset.tab === 'play');
+    const matchLayout = await page.evaluate(() => {
+      const left = document.querySelector('#app[data-tab="play"]>.plain')?.getBoundingClientRect();
+      const right = document.querySelector('#app[data-tab="play"]>.match-dossier')?.getBoundingClientRect();
+      return { left: left && {x:left.x,right:left.right,width:left.width}, right: right && {x:right.x,right:right.right,width:right.width}, viewport: innerWidth };
+    });
+    if (!matchLayout.left || !matchLayout.right || matchLayout.right.width < 280 ||
+        matchLayout.right.x < matchLayout.left.right - 1 || matchLayout.right.right > matchLayout.viewport + 1) {
+      throw new Error('Досье состава должно занимать вторую колонку арены на десктопе: ' + JSON.stringify(matchLayout));
+    }
+    await page.screenshot({ path: path.join(shotDir, 'play-1440.png'), fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     const sections = [
       { tab: 'col', selector: '.grid', label: 'Коллекция' },
       { tab: 'packs', selector: '.pk', label: 'Кейсы' },
-      { tab: 'play', selector: '.sqtab, .btn.go', label: 'Матчи' },
+      { tab: 'play', selector: '.sqtab, .btn.go, .match-dossier', label: 'Матчи' },
       { tab: 'prof', selector: '.stats, .prow, .pn', label: 'Профиль' }
     ];
     for (const section of sections) {
@@ -107,6 +120,7 @@ const { chromium } = require('playwright');
       }), section.selector);
       if (sectionState.text.length < 20 || !sectionState.content) throw new Error(section.label + ': раздел не отрисовался корректно');
       if (section.tab === 'col') { const tiers = await page.evaluate(() => ['standard','cinema','cinema-legend'].map(k => document.querySelectorAll('#col-grid .pc.' + k).length)); if (tiers.some(n => n === 0)) throw new Error('Коллекция должна показывать все три уровня оформления карточек: ' + tiers.join('/')); }
+      if (section.tab === 'play') { const slots = await page.locator('.match-dossier__slot').count(); if (slots !== 5) throw new Error('Тактическое досье должно содержать ровно пять позиций состава: ' + slots); }
       if (section.tab === 'col') { const unowned = await page.locator('#col-grid .pc.no').first().evaluate(el => ({filter:getComputedStyle(el).filter,opacity:getComputedStyle(el).opacity})); if (unowned.filter !== 'none' || unowned.opacity !== '1') throw new Error('Неизвестные карточки не должны обесцвечивать всю карточку: ' + JSON.stringify(unowned)); }
       if (section.tab === 'home' && !(await page.locator('#app .league-emblem').count())) throw new Error('На главной отсутствует эмблема лиги');
       const mast = await page.locator('#app .section-mast').count();

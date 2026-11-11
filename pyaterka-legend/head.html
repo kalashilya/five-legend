@@ -1503,6 +1503,32 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .is-link:hover{border-color:#f0c47766!important;box-shadow:0 12px 30px #0007,0 0 0 1px #f0c47733}
 .is-link:active{transform:scale(.99)}.is-link:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
 .lg-link{display:inline-block;margin-top:10px;font:700 11px/1 var(--f-m,monospace);letter-spacing:.08em;color:#f0c477;position:relative;z-index:1}
+/* Коллекция: свои карточки подсвечены, чужие с замком */
+.cg{position:relative}
+.cg-tag{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);z-index:3;display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:9px;font:700 9px/1 var(--f-m,monospace);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.cg-own .cg-tag{background:var(--accent,#f0c477);color:#07080a;box-shadow:0 2px 8px #0008}
+.cg-own .pc{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent,#f0c477) 70%,transparent),0 0 22px color-mix(in srgb,var(--accent,#f0c477) 25%,transparent)}
+.cg-no .cg-tag{background:#1a1e24;color:#8f98a3;border:1px solid #ffffff1c;padding:3px 5px}.cg-no .cg-tag svg{width:11px;height:11px}
+#col-grid .grid{row-gap:16px}
+/* Моя коллекция */
+.mine-hero{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;border:1px solid #a9c7dc29;background:linear-gradient(145deg,#17283b,#101723)}
+.mine-hero>div:first-child{display:flex;flex-direction:column;gap:3px}.mine-hero b{font-size:22px}
+.mine-rar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.mine-rar span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:8px;background:#0b0e12;border-bottom:2px solid var(--rc)}
+.mine-rar b{font-size:15px}.mine-rar small{font-size:8px;color:var(--mut,#8f98a3);text-align:center;line-height:1.1}
+.qs-bar{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;border:1px solid #f0c47755;background:#f0c47710}.qs-bar>div:first-child{display:flex;flex-direction:column;gap:3px}
+.qs-card{position:relative}.qs-card.is-sel .pc{box-shadow:0 0 0 2px #ff7a5a,0 0 20px #ff7a5a55;transform:scale(.97)}.qs-card.is-lock{opacity:.55}
+.qs-badge{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);z-index:3;padding:3px 6px;border-radius:9px;background:#ff7a5a;color:#07080a;font:700 9px/1 var(--f-m,monospace);white-space:nowrap}.qs-badge.is-lock{background:#2a2f37;color:#9aa4b0}
+.qs-foot{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;border:1px solid #ff7a5a66;background:#14100ef2;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 10px 30px #000a}
+.qs-foot{flex-wrap:wrap}.qs-foot>span{flex:1 1 100%;display:flex;align-items:center;gap:5px;font-size:13px}.qs-foot .btn{flex:1 1 0;min-width:0}
+.qs-list{display:flex;flex-wrap:wrap;gap:5px;max-height:30vh;overflow:auto}.qs-list span{padding:4px 8px;border-radius:8px;background:#ffffff0d;font-size:12px}
+/* Контракты: выбор нажатием */
+.tu-slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.tu-slot{position:relative;aspect-ratio:5/7;border-radius:10px;border:1px dashed #ffffff22;background:#0b0e12;padding:0}
+.tu-slot.is-on{border:0;background:none;cursor:pointer}.tu-slot.is-on .pc{width:100%}
+.tu-rm{position:absolute;right:-4px;top:-4px;z-index:3;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#ff7a5a;color:#07080a;font-size:10px;font-weight:700}
+.tu-grid{row-gap:14px}.tu-pick{position:relative}.tu-pick.is-sel .pc{box-shadow:0 0 0 2px var(--accent,#f0c477),0 0 18px color-mix(in srgb,var(--accent,#f0c477) 35%,transparent)}.tu-pick.is-full{opacity:.5}
+.tu-badge{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);z-index:3;padding:3px 7px;border-radius:9px;background:#1a1e24;border:1px solid #ffffff22;font:700 10px/1 var(--f-m,monospace)}
+.tu-pick.is-sel .tu-badge{background:var(--accent,#f0c477);color:#07080a;border-color:transparent}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

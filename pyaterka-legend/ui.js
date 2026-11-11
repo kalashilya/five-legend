@@ -4,7 +4,8 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const nf = n => Math.round(n).toLocaleString('ru-RU');
 const KEY = 'pyaterka-legend-v1', IKEY = KEY + '-img', SKEY = KEY + '-mute';
 let G, IMG = {}, tab = 'home', lastTab = null, sub = 'cards', taskTab = 'd', lbScope = 'all', sheet = null, OV = null, askNew = false, askSell = null, colN = 45, imgMsg = '', snd = 'min', tuSel = [], tuRar = 0;
-const F = { q: '', rar: 'all', role: 'all', team: 'all', own: 'all', sort: 'ovr' };
+const F = { q: '', rar: 'all', role: 'all', team: 'all', own: 'all', sort: 'mine' };
+let QS = null; /* быстрая продажа: { id: сколько копий продать } */
 const now = () => Date.now();
 
 /* ---------- Сохранение: перед переносом и при нечитаемых данных остаётся копия ---------- */
@@ -212,11 +213,12 @@ function colList() {
   const l = ALL.filter(c => (F.rar === 'all' || c.rar === +F.rar) && (F.role === 'all' || c.role === +F.role) && (F.team === 'all' || c.team === F.team)
     && (F.own === 'all' || (F.own === 'mine' ? own(c.id) : F.own === 'sp' ? c.sp : F.own === 'hist' ? c.hist : !own(c.id))) && (!q || c.nick.toLowerCase().includes(q)));
   const lv = c => own(c.id) ? own(c.id).lv : 0;
-  return F.sort === 'lv' ? l.sort((a, b) => lv(b) - lv(a) || b.ovr - a.ovr) : F.sort === 'low' ? l.slice().reverse() : l;
+  return F.sort === 'lv' ? l.sort((a, b) => lv(b) - lv(a) || b.ovr - a.ovr) : F.sort === 'low' ? l.slice().reverse() : F.sort === 'mine' ? l.slice().sort((a, b) => !!own(b.id) - !!own(a.id)) : l;
 }
 function colGrid() {
   const l = colList();
-  return `<p class="sm mut">Найдено: ${l.length}</p><div class="grid">${l.slice(0, colN).map(c => `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`).join('')}</div>${l.length > colN ? '<button class="btn" data-act="more">Показать ещё</button>' : ''}`;
+  const mine = l.filter(c => own(c.id)).length;
+  return `<p class="sm mut">Найдено: ${l.length} · ваших среди них: <b style="color:var(--accent)">${mine}</b>. Ваши карточки подсвечены, остальные — серые с замком.</p><div class="grid">${l.slice(0, colN).map(c => { const o = own(c.id); return `<button class="cg ${o ? 'cg-own' : 'cg-no'}" data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}${o ? ', есть в коллекции' : ', нет в коллекции'}">${ownH(c.id)}<span class="cg-tag">${o ? 'есть' + (o.n > 1 ? ' ×' + o.n : '') : '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1v11H6V10zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>'}</span></button>`; }).join('')}</div>${l.length > colN ? '<button class="btn" data-act="more">Показать ещё</button>' : ''}`;
 }
 const selH = (k, opts, label) => `<select data-f="${k}" aria-label="${label}">${opts.map(([v, n]) => `<option value="${esc(v)}" ${String(F[k]) === String(v) ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>`;
 function vCards() {
@@ -232,7 +234,7 @@ function vCards() {
   </section>
   <div class="collection-tools"><div><small>ПОИСК И ФИЛЬТРЫ</small><b>НАЙДИ СВОЕГО ИГРОКА</b></div><span>${have} / ${ALL.length}</span></div>
   <input type="text" id="col-q" placeholder="Поиск по нику" value="${esc(F.q)}" aria-label="Поиск по нику">
-  <div class="frow">${selH('rar', [['all', 'Любая редкость']].concat(RAR.map((n, i) => [i, n])), 'Редкость')}${selH('role', [['all', 'Любая роль и способность']].concat(RNAME.map((n, i) => [i, n + ' — «' + AB_BASE[i].n + '»'])), 'Роль и способность')}${selH('team', [['all', 'Любая команда']].concat(teams.map(t => [t, t])), 'Команда')}${selH('sort', [['ovr', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки']], 'Сортировка')}</div>
+  <div class="frow">${selH('rar', [['all', 'Любая редкость']].concat(RAR.map((n, i) => [i, n])), 'Редкость')}${selH('role', [['all', 'Любая роль и способность']].concat(RNAME.map((n, i) => [i, n + ' — «' + AB_BASE[i].n + '»'])), 'Роль и способность')}${selH('team', [['all', 'Любая команда']].concat(teams.map(t => [t, t])), 'Команда')}${selH('sort', [['mine', 'Сначала мои'], ['ovr', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки']], 'Сортировка')}</div>
   ${segH('fown', F.own, [['all', 'Все'], ['mine', 'Мои'], ['none', 'Нет'], ['sp', 'Особые'], ['hist', 'Архив']])}
   <div class="plain" id="col-grid">${colGrid()}</div>`;
 }
@@ -255,16 +257,39 @@ function vTu() {
   return `<section class="pn"><h3>Контракт</h3><p class="sm mut">Десять обычных карточек одной редкости обмениваются на одну. Выпадет либо карточка следующей редкости, либо карточка той же редкости с рейтингом не ниже среднего по вложенным. Чем выше средний рейтинг, тем вероятнее следующая редкость.</p>
   ${segH('turar', String(tuRar), RAR.map((n, i) => [String(i), n.slice(0, 5) + (n.length > 5 ? '.' : '')]))}
   <div class="kv"><span>Выбрано</span><span><b>${tuSel.length}</b> из 10</span></div><span class="bar"><i style="width:${tuSel.length * 10}%"></i></span>
-  ${tuSel.length ? `<div class="grid g5">${tuSel.map(id => cardH(CARDS[id], { cls: 'xs' })).join('')}</div>` : ''}
+  <div class="tu-slots" aria-label="Выбранные карточки — нажмите, чтобы убрать">${Array.from({ length: 10 }, (_, i) => tuSel[i] != null ? `<button class="tu-slot is-on" data-act="tuDel" data-id="${tuSel[i]}" aria-label="Убрать ${esc(CARDS[tuSel[i]].nick)}">${cardH(CARDS[tuSel[i]], { cls: 'xs' })}<span class="tu-rm" aria-hidden="true">✕</span></button>` : '<span class="tu-slot"></span>').join('')}</div>
+  ${tuSel.length ? '<p class="sm mut">Нажмите на выбранную карточку, чтобы убрать её.</p>' : ''}
   ${inf.avg ? `<p class="sm">Средний рейтинг: <b class="num">${inf.avg.toFixed(1)}</b>${inf.up ? ` · следующая редкость: примерно <b>${inf.up}</b> · та же редкость сильнее: примерно <b>${inf.same}</b>` : ''}</p>` : ''}
   ${inf.why ? `<p class="${tuRar === 4 ? 'warn' : 'sm mut'}">${inf.why}</p>` : ''}${risky.length ? `<p class="warn">В контракт уйдёт последняя копия игрока из состава: ${risky.map(id => esc(CARDS[id].nick)).join(', ')}.</p>` : ''}
   <div class="rowb"><button class="btn s" data-act="tuFill" ${tuRar === 4 ? 'disabled' : ''}>Добавить слабейшие дубликаты</button><button class="btn s" data-act="tuClear" ${tuSel.length ? '' : 'disabled'}>Очистить</button></div>
   <button class="btn pri" data-act="tuGo" ${inf.ok ? '' : 'disabled'}>Исполнить контракт — отменить нельзя</button></section>
-  <section class="list">${l.length ? l.map(c => { const o = own(c.id), n = cnt(c.id); return `<div class="tu-row"><span class="num" style="font-weight:700;color:${glow(c)}">${c.ovr}</span><span style="min-width:0"><b>${esc(c.nick)}</b><span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)} · копий ${o.n}${o.lv > 1 ? ' · ур. ' + o.lv : ''}</span></span><span class="cnt-b"><button data-act="tuDel" data-id="${c.id}" ${n ? '' : 'disabled'} aria-label="Убрать">−</button><span class="num">${n}</span><button data-act="tuAdd" data-id="${c.id}" ${n < o.n && tuSel.length < 10 ? '' : 'disabled'} aria-label="Добавить">+</button></span></div>`; }).join('') : '<p class="sm mut">Обычных карточек этой редкости у вас нет.</p>'}</section>`;
+  <section class="plain"><h3>Ваши карточки «${RAR[tuRar]}»</h3><p class="sm mut">Нажмите на карточку, чтобы добавить одну копию в контракт.</p>${l.length ? `<div class="grid tu-grid">${l.map(c => { const o = own(c.id), n = cnt(c.id), can = n < o.n && tuSel.length < 10;
+    return `<button class="tu-pick ${n ? 'is-sel' : ''} ${can ? '' : 'is-full'}" data-act="tuAdd" data-id="${c.id}" ${can ? '' : 'aria-disabled="true"'} aria-label="${esc(c.nick)}: в контракте ${n} из ${o.n}">${ownH(c.id, 'xs')}<span class="tu-badge">${n}/${o.n}</span></button>`; }).join('')}</div>` : '<p class="sm mut">Обычных карточек этой редкости у вас нет.</p>'}</section>`;
+}
+/* ---------- Моя коллекция и быстрая продажа ---------- */
+/* цена продажи k копий подряд — так же, как sellOne: последняя копия продаётся с учётом уровня */
+function qsPrice(id, k) { const o = own(id), c = CARDS[id]; if (!o) return 0; let n = o.n, t = 0; for (let i = 0; i < k && n > 0; i++, n--) t += priceOf(c, n === 1 ? o.lv : 1); return t; }
+const qsMax = id => { const o = own(id); return o ? o.n - (inSquads(G, id) ? 1 : 0) : 0; };
+function qsSum() { let n = 0, coins = 0, cards = 0; for (const id in QS || {}) { const k = Math.min(QS[id], qsMax(+id)); if (k > 0) { n += k; cards++; coins += qsPrice(+id, k); } } return { n, coins, cards }; }
+function vMine() {
+  const ids = Object.keys(G.cards).map(Number).filter(id => CARDS[id]), sorted = ids.map(id => CARDS[id]).sort((a, b) => F.sort === 'low' ? a.ovr - b.ovr : F.sort === 'lv' ? own(b.id).lv - own(a.id).lv || b.ovr - a.ovr : F.sort === 'n' ? own(b.id).n - own(a.id).n || b.ovr - a.ovr : (b.ovr + own(b.id).lv) - (a.ovr + own(a.id).lv));
+  const copies = ids.reduce((a, id) => a + own(id).n, 0), dups = ids.reduce((a, id) => a + own(id).n - 1, 0), dupCoins = ids.reduce((a, id) => a + qsPrice(id, own(id).n - 1), 0);
+  const byRar = RAR.map((n, r) => ids.filter(id => CARDS[id].rar === r).length);
+  const q = QS ? qsSum() : null;
+  const head = `<section class="mine-hero"><div><small class="eyebrow">Моя коллекция</small><b>${ids.length} ${plural(ids.length, 'игрок', 'игрока', 'игроков')}</b><span class="sm mut">${copies} ${plural(copies, 'карточка', 'карточки', 'карточек')} · дубликатов ${dups}${dups ? ' · можно продать за ' + nf(dupCoins) : ''}</span></div>
+    <div class="mine-rar">${byRar.map((n, r) => `<span style="--rc:var(--r${r})"><b>${n}</b><small>${RAR[r]}</small></span>`).join('')}</div></section>`;
+  const tools = QS ? `<section class="qs-bar"><div><b>Быстрая продажа</b><span class="sm mut">Нажимайте на карточки, чтобы выбрать. Последняя копия игрока из состава не продаётся.</span></div>
+      <div class="rowb"><button class="btn s" data-act="qsDups" ${dups ? '' : 'disabled'}>Все дубликаты</button><button class="btn s" data-act="qsAll">Всё, кроме составов и особых</button><button class="btn s" data-act="qsNone" ${q.n ? '' : 'disabled'}>Сбросить</button></div></section>`
+    : `<div class="rowb"><button class="btn" data-act="qsOn">Быстрая продажа</button>${dups ? `<button class="btn pri" data-act="qsDupsGo">Продать дубликаты · +${nf(dupCoins)}</button>` : ''}</div>`;
+  const grid = sorted.length ? `<div class="grid">${sorted.map(c => { const o = own(c.id), k = QS ? Math.min(QS[c.id] || 0, qsMax(c.id)) : 0, mx = qsMax(c.id);
+      return QS ? `<button class="qs-card ${k ? 'is-sel' : ''} ${mx ? '' : 'is-lock'}" data-act="qsTog" data-id="${c.id}" aria-pressed="${!!k}" aria-label="${esc(c.nick)}${k ? ': продать ' + k : ''}">${ownH(c.id)}${k ? `<span class="qs-badge">−${k} · +${nf(qsPrice(c.id, k))}</span>` : mx ? '' : '<span class="qs-badge is-lock">в составе</span>'}</button>`
+        : `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`; }).join('')}</div>` : '<p class="sm mut">Карточек пока нет — откройте кейс.</p>';
+  const sel = QS ? `<div class="qs-foot"><span><b>${q.n}</b> ${plural(q.n, 'карточка', 'карточки', 'карточек')} · <i class="coin"></i> +${nf(q.coins)}</span><button class="btn s" data-act="qsOff">Отмена</button><button class="btn pri" data-act="qsAsk" ${q.n ? '' : 'disabled'}>Продать</button></div>` : '';
+  return `${head}${tools}<div class="frow">${selH('sort', [['mine', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки'], ['n', 'Больше копий']], 'Сортировка')}</div>${grid}${sel}`;
 }
 function vCol() {
-  const body = sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : vCards();
-  return `<div class="collection-tabs">${segH('sub', sub, [['cards', 'Карточки'], ['squads', 'Составы'], ['tu', 'Контракты']])}</div>${body}`;
+  const body = sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : sub === 'mine' ? vMine() : vCards();
+  return `<div class="collection-tabs">${segH('sub', sub, [['cards', 'Все карточки'], ['mine', 'Моя коллекция'], ['squads', 'Составы'], ['tu', 'Контракты']])}</div>${body}`;
 }
 
 /* ---------- Профиль ---------- */
@@ -360,6 +385,11 @@ function streakH() {
 }
 function vSheet() {
   if (!sheet) return '';
+  if (sheet.t === 'qsAsk') { const q = qsSum(), l = Object.keys(QS || {}).map(Number).filter(id => Math.min(QS[id], qsMax(id)) > 0);
+    return `<div class="in"><div class="wrap col"><h2>Продать ${q.n} ${plural(q.n, 'карточку', 'карточки', 'карточек')}?</h2><p>Вы получите <b><i class="coin"></i> ${nf(q.coins)}</b> монет. Отменить продажу нельзя.</p>
+      <div class="qs-list">${l.slice(0, 40).map(id => `<span>${esc(CARDS[id].nick)} <b>×${Math.min(QS[id], qsMax(id))}</b></span>`).join('')}${l.length > 40 ? `<span>и ещё ${l.length - 40}</span>` : ''}</div>
+      <div class="rowb"><button class="btn" data-act="close">Отмена</button><button class="btn pri" data-act="qsSell">Продать за ${nf(q.coins)}</button></div></div></div>`; }
+  if (sheet.t === 'qsDone') return `<div class="in"><div class="wrap col"><h2>Продано</h2><p>Продано карточек: <b>${sheet.n}</b>. Получено <b><i class="coin"></i> ${nf(sheet.coins)}</b>.</p><div class="rowb"><button class="btn pri" data-act="close">Отлично</button></div></div></div>`;
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'slot') {
@@ -771,7 +801,7 @@ function autoSquad() {
 const taskByKey = v => { const [k, i] = v.split(':'); return ({ d: G.tasks.d, w: G.tasks.w, s: [G.tasks.s], m: G.season.goals })[k][+i]; };
 const ACT = {
   tab(v) { tab = v; colN = 45; askSell = null; window.scrollTo(0, 0); sfx('tap'); },
-  sub(v) { sub = v; colN = 45; }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
+  sub(v) { sub = v; colN = 45; QS = null; }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
   snd(v) { snd = v; try { localStorage.setItem(SKEY, v); } catch (e) { /* не сохранится */ } sfx('win'); },
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },
@@ -791,6 +821,13 @@ const ACT = {
   cmpPick(v, d) { sheet = { t: 'cmpPick', id: +d.id, q: '' }; }, cmp(v, d) { sheet = { t: 'cmp', a: sheet.id, b: +d.id }; },
   imgDel(v, d) { delete IMG[d.id]; try { localStorage.setItem(IKEY, JSON.stringify(IMG)); } catch (e) { /* хранилище недоступно */ } },
   more() { colN += 45; },
+  qsOn() { QS = {}; }, qsOff() { QS = null; }, qsNone() { QS = {}; },
+  qsTog(v, d) { const id = +d.id, mx = qsMax(id); if (!QS || !mx) return false; if (QS[id]) delete QS[id]; else QS[id] = mx; },
+  qsDups() { QS = {}; for (const id in G.cards) if (own(+id).n > 1) QS[id] = own(+id).n - 1; },
+  qsAll() { QS = {}; for (const id in G.cards) { const c = CARDS[id]; if (c && !c.sp && qsMax(+id) > 0) QS[id] = qsMax(+id); } },
+  qsDupsGo() { QS = {}; for (const id in G.cards) if (own(+id).n > 1) QS[id] = own(+id).n - 1; sheet = { t: 'qsAsk' }; },
+  qsAsk() { if (QS && qsSum().n) sheet = { t: 'qsAsk' }; },
+  qsSell() { if (!QS) { sheet = null; return; } let n = 0, coins = 0; for (const id in QS) { const k = Math.min(QS[id], qsMax(+id)); for (let i = 0; i < k; i++) { coins += sellOne(G, +id); n++; } } QS = null; sheet = { t: 'qsDone', n, coins }; if (n) sfx('stop', 1); },
   claim(v) { claimTask(G, taskByKey(v)); sfx('win'); }, inbox(v) { claimInbox(G, +v); sfx('win'); },
   pick(v) { const r = choosePick(G, +v); if (!r) return; save(); $('#po-stage').innerHTML = `<div class="scan out" id="scan" style="--gl:${glow(r.c)}">${cardH(r.c, { stats: true })}</div>`; $('.po-name').innerHTML = `<b style="color:${glow(r.c)}">${esc(r.c.nick)}</b><span class="sm mut">${r.isNew ? 'Новая карточка в коллекции' : 'Дубликат: пригодится для прокачки'}</span>`; $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose" style="width:100%">Забрать</button>'; burst(glow(r.c), 80, $('#scan')); sfx('stop', r.c.rar); return false; },
   turar(v) { tuRar = +v; tuSel = []; }, tuClear() { tuSel = []; },
@@ -832,7 +869,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   if (e.target.id === 'img-in' && e.target.files && e.target.files[0]) addImage(e.target.files[0], +e.target.dataset.base);
-  if (e.target.dataset && e.target.dataset.f) { F[e.target.dataset.f] = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); }
+  if (e.target.dataset && e.target.dataset.f) { F[e.target.dataset.f] = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); else if (tab === 'col' && sub === 'mine') render(); }
 });
 function start() {
   const r = load();

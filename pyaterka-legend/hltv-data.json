@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "source": "HLTV.org",
   "gameVersion": "CS2",
-  "snapshotDate": "2026-11-10",
+  "snapshotDate": "2026-11-11",
   "periods": {
     "last12m": {
       "from": "2025-11-10",
@@ -26,7 +26,9 @@
       "profileId": 21809,
       "team": "The MongolZ",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/JIT8R_sfNuKRsJVN9C-EKr.png?ixlib=java-2.1.0&s=627ac15b6cc60667f47d01ea43bbdca2&w=400",
-      "profileUrl": "https://www.hltv.org/player/21809/910"
+      "profileUrl": "https://www.hltv.org/player/21809/910",
+      "country": "Монголия",
+      "countryCode": "MN"
     },
     "donk": {
       "profileId": 21167,
@@ -576,7 +578,9 @@
       "profileId": 9816,
       "team": "Natus Vincere",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/7-TvianW79yWk13gdw-Jc5.png?ixlib=java-2.1.0&s=f94eda5a77f332bc02821e6b845ca207&w=400",
-      "profileUrl": "https://www.hltv.org/player/9816/aleksib"
+      "profileUrl": "https://www.hltv.org/player/9816/aleksib",
+      "country": "Финляндия",
+      "countryCode": "FI"
     },
     "iM": {
       "profileId": 14759,
@@ -745,6 +749,70 @@
       "team": "PARIVISION",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/cTLzpQ529TArTb_GRjMofz.png?ixlib=java-2.1.0&s=ca8cc4ae8e2af9bca6974ee63d5b70af&w=400",
       "profileUrl": "https://www.hltv.org/player/23685/zweih"
+    },
+    "1eeR": {
+      "profileId": 21266,
+      "profileUrl": "https://www.hltv.org/player/21266/1eer",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/iRVP7TgSwRXbnvU4QkiZoZ.png?ixlib=java-2.1.0&s=150787ca067d26986a2a5a8dd39e09d3&w=400",
+      "country": "Беларусь",
+      "countryCode": "BY",
+      "team": "PRIVATE"
+    },
+    "adamb": {
+      "profileId": 20878,
+      "profileUrl": "https://www.hltv.org/player/20878/adamb",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/gV9-Ooi9YyMsb6NsWDwnDg.png?ixlib=java-2.1.0&s=38c367eeda648eef0eea01625b731aea&w=400",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "Ninjas in Pyjamas"
+    },
+    "adamS": {
+      "profileId": 19698,
+      "profileUrl": "https://www.hltv.org/player/19698/adams",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/oENlCqHyDTergVTvR0erir.png?ixlib=java-2.1.0&s=3de2dcc4f19110a2a0ac38a1c128e483&w=400",
+      "country": "Румыния",
+      "countryCode": "RO",
+      "team": "Sangal"
+    },
+    "afro": {
+      "profileId": 19926,
+      "profileUrl": "https://www.hltv.org/player/19926/afro",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/0Q_g4jit5lQgQOqBi7xzQ7.png?ixlib=java-2.1.0&s=c816e975e157654bfab176d2157b6bd1&w=400",
+      "country": "Франция",
+      "countryCode": "FR",
+      "team": "Luminosity"
+    },
+    "Ag1l": {
+      "profileId": 21014,
+      "profileUrl": "https://www.hltv.org/player/21014/ag1l",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/QQgFnoHcDy4VUsEXXQW2Is.png?ixlib=java-2.1.0&s=fe96523a5eac73cc495734babdd30c4f&w=400",
+      "country": "Португалия",
+      "countryCode": "PT",
+      "team": null
+    },
+    "alex666": {
+      "profileId": 20112,
+      "profileUrl": "https://www.hltv.org/player/20112/alex666",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/m9FKPOlIg7LXTTfsEPkgxc.png?ixlib=java-2.1.0&s=2642204133782d71283993d3db5a71f9&w=400",
+      "country": "Украина",
+      "countryCode": "UA",
+      "team": "B8"
+    },
+    "aliStair": {
+      "profileId": 11139,
+      "profileUrl": "https://www.hltv.org/player/11139/alistair",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/H0XqQFIq1NrPz-vEBbq1Jq.png?ixlib=java-2.1.0&s=ed1c5d02f01bc461b2933a3b41f38650&w=400",
+      "country": "Австралия",
+      "countryCode": "AU",
+      "team": "FlyQuest"
+    },
+    "Alkaren": {
+      "profileId": 23600,
+      "profileUrl": "https://www.hltv.org/player/23600/alkaren",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/biOoj0RdE1iWdYlNZ2B6zt.png?ixlib=java-2.1.0&s=b39726a7e6894883a3b4d886a23863a2&w=400",
+      "country": "Казахстан",
+      "countryCode": "KZ",
+      "team": "HEROIC"
     }
   }
 }

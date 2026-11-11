@@ -365,7 +365,9 @@ select{width:100%;min-height:40px;padding:6px 8px;font:inherit;font-size:13px;co
 .wo-plate.in{opacity:1;transform:translate(-50%,0)}
 .wo-plate b{display:flex;align-items:center;gap:10px;font:700 26px/1.1 var(--f-d);letter-spacing:.08em;text-transform:uppercase}
 .wo-k{font:700 10px/1 var(--f-m);letter-spacing:.24em;text-transform:uppercase;color:var(--fc)}
-.wo-flag{font-size:30px;line-height:1}
+.wo-flag{font-size:76px;line-height:1;filter:drop-shadow(0 6px 14px rgb(0 0 0 / .7))}
+.wo-plate:has(.wo-flag){background:none;border:0;padding:0;min-width:0}
+.wo-cc{font-size:13cqw!important;background:none!important;padding:0!important}
 .wo-crack{position:absolute;width:56%;max-width:230px;transition:opacity .35s,transform .35s,filter .35s}
 .wo-crack svg{position:absolute;inset:-30% -40%;width:180%;height:160%;fill:none;stroke:#fff;stroke-width:.5;stroke-dasharray:80;stroke-dashoffset:80;filter:drop-shadow(0 0 3px var(--rc));animation:crack .8s .1s ease-out forwards}
 .wo-crack.gone{opacity:0;transform:scale(1.3);filter:blur(6px) brightness(2.5)}
@@ -1342,8 +1344,8 @@ function walkout(x) {
   const plate = html => { const p = $('#wo-plate'); p.className = 'wo-plate'; void p.offsetWidth; p.innerHTML = html; p.className = 'wo-plate in'; };
   const floor = v => { const w = $('#wo'); w.style.setProperty('--fc', v); w.classList.remove('pulse'); void w.offsetWidth; w.classList.add('pulse'); };
   const woCountry = () => { if (!stageOk()) return; floor(`hsl(${hsh(cc) % 360} 70% 52%)`);
-    plate(`<span class="wo-k">Страна</span><b><span class="wo-flag">${flagOf(cc)}</span>${esc(c.hltv.country || cc)}</b>`);
-    $('#wo-cc').textContent = flagOf(cc) + ' ' + cc; sfx('scan'); later(1500, woTeam); };
+    plate(`<span class="wo-flag" role="img" aria-label="${esc(c.hltv.country || cc)}">${flagOf(cc)}</span>`);
+    $('#wo-cc').textContent = flagOf(cc); sfx('scan'); later(1500, woTeam); };
   const woTeam = () => { if (!stageOk()) return; floor(tc);
     plate(`<span class="wo-k">Команда</span><b>${esc(team)}</b>`);
     const t = $('#wo-tm'); t.textContent = team; t.style.background = tc; sfx('scan'); later(1500, woCard); };

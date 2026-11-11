@@ -341,8 +341,8 @@ function walkout(x) {
   const plate = html => { const p = $('#wo-plate'); p.className = 'wo-plate'; void p.offsetWidth; p.innerHTML = html; p.className = 'wo-plate in'; };
   const floor = v => { const w = $('#wo'); w.style.setProperty('--fc', v); w.classList.remove('pulse'); void w.offsetWidth; w.classList.add('pulse'); };
   const woCountry = () => { if (!stageOk()) return; floor(`hsl(${hsh(cc) % 360} 70% 52%)`);
-    plate(`<span class="wo-k">Страна</span><b><span class="wo-flag">${flagOf(cc)}</span>${esc(c.hltv.country || cc)}</b>`);
-    $('#wo-cc').textContent = flagOf(cc) + ' ' + cc; sfx('scan'); later(1500, woTeam); };
+    plate(`<span class="wo-flag" role="img" aria-label="${esc(c.hltv.country || cc)}">${flagOf(cc)}</span>`);
+    $('#wo-cc').textContent = flagOf(cc); sfx('scan'); later(1500, woTeam); };
   const woTeam = () => { if (!stageOk()) return; floor(tc);
     plate(`<span class="wo-k">Команда</span><b>${esc(team)}</b>`);
     const t = $('#wo-tm'); t.textContent = team; t.style.background = tc; sfx('scan'); later(1500, woCard); };

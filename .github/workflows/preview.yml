@@ -1,4 +1,5 @@
 name: Publish arena redesign preview
+# Redeploy the approved browser-playable build from the redesign branch.
 
 on:
   push:

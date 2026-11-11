@@ -25,8 +25,42 @@ const { chromium } = require('playwright');
     }, null, { timeout: 15000 });
     const text = await page.locator('#app').innerText();
     if (!text || text.length < 20) throw new Error('Главный экран пустой');
+    const layouts = [];
+    for (const viewport of [{ width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await page.waitForTimeout(80);
+      const metrics = await page.evaluate(() => {
+        const app = document.querySelector('#app');
+        const hero = document.querySelector('.home-hero');
+        const lineup = document.querySelector('.lineup');
+        const cards = lineup ? [...lineup.children].map(el => {
+          const r = el.getBoundingClientRect();
+          return { left: r.left, right: r.right, width: r.width, center: r.left + r.width / 2, transform: getComputedStyle(el).transform };
+        }) : [];
+        const hr = hero?.getBoundingClientRect();
+        return {
+          width: innerWidth,
+          scrollWidth: document.documentElement.scrollWidth,
+          appReady: app?.dataset.ok === '1',
+          arenaSvg: !!document.querySelector('.arena-art'),
+          heroVisible: !!hr && hr.width > 0 && hr.height > 0,
+          heroInside: !!hr && hr.left >= -1 && hr.right <= innerWidth + 1,
+          lineupCards: cards,
+          scenePosition: getComputedStyle(document.querySelector('#scene')).position
+        };
+      });
+      if (!metrics.appReady || !metrics.arenaSvg || !metrics.heroVisible || !metrics.heroInside) throw new Error('Некорректная сцена/главная при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
+      if (metrics.scrollWidth > viewport.width + 1) throw new Error('Горизонтальный выезд страницы при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
+      if (metrics.scenePosition !== 'fixed') throw new Error('Фон арены должен быть закреплён независимо от прокрутки');
+      for (let i = 0; i < metrics.lineupCards.length; i++) {
+        const card = metrics.lineupCards[i];
+        if (card.width <= 0 || card.transform !== 'none') throw new Error('Нестабильная геометрия карточки состава при ширине ' + viewport.width);
+        if (i && metrics.lineupCards[i - 1].center >= card.center) throw new Error('Нарушен порядок карточек состава при ширине ' + viewport.width);
+      }
+      layouts.push(viewport.width + 'px');
+    }
     if (errors.length) throw new Error('Ошибки браузера: ' + errors.join(' | '));
-    console.log('Browser smoke OK: app started at 390x844; rendered', text.length, 'characters; no page errors.');
+    console.log('Browser smoke OK: app rendered; responsive layouts ' + layouts.join(', ') + '; no overflow, card displacement or page errors.');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

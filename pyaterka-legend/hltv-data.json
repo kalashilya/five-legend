@@ -1619,6 +1619,96 @@
       "team": "Metizport",
       "verifiedAt": "2026-11-11",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/14-4iwtJhTUQu3cUEjeuRB.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C8%2C467%2C467&s=2e7c1e7c5bc59e7d2b686c55bbddc2bc&w=800"
+    },
+    "Maka": {
+      "profileId": 13138,
+      "profileUrl": "https://www.hltv.org/player/13138/maka",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/1W9-kjxnxtc5-lmQyoD1zG.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C0%2C467%2C467&s=53eda59770fd71f72e5cf139c3dd0547&w=800",
+      "country": "Франция",
+      "countryCode": "FR",
+      "team": "Envy",
+      "verifiedAt": "2026-11-11"
+    },
+    "malbsMd": {
+      "profileId": 11617,
+      "profileUrl": "https://www.hltv.org/player/11617/malbsmd",
+      "photo": "https://static.hltv.org/images/playerprofile/thumb/11617/800.jpeg?v=3",
+      "country": "Гватемала",
+      "countryCode": "GT",
+      "team": "Liquid",
+      "verifiedAt": "2026-11-11"
+    },
+    "MartinezSa": {
+      "profileId": 21239,
+      "profileUrl": "https://www.hltv.org/player/21239/martinezsa",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Qk4jbhYKxo8tSp8-OG1097.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C0%2C467%2C467&s=700d9468df28548640503b9d6ad5cd3d&w=800",
+      "country": "Испания",
+      "countryCode": "ES",
+      "team": "HEROIC",
+      "verifiedAt": "2026-11-11"
+    },
+    "MaSvAl": {
+      "profileId": 19874,
+      "profileUrl": "https://www.hltv.org/player/19874/masval",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Vv4y6K8kF0TsFciwZCmIJY.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=116%2C8%2C467%2C467&s=e8319ef8d6598a329e3b3025882d00f8&w=800",
+      "country": "Беларусь",
+      "countryCode": "BY",
+      "team": "magic",
+      "verifiedAt": "2026-11-11"
+    },
+    "Matheos": {
+      "profileId": 24332,
+      "profileUrl": "https://www.hltv.org/player/24332/matheos",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/KMdqOK9qwqy2mlHXwMDIsM.png?bg=3e4c54&h=800&ixlib=java-2.1.0&rect=121%2C4%2C467%2C467&s=25b361f208a7a9a5eda2ee4993be484d&w=800",
+      "country": "Хорватия",
+      "countryCode": "HR",
+      "team": "FOKUS",
+      "verifiedAt": "2026-11-11"
+    },
+    "matios": {
+      "profileId": 20897,
+      "profileUrl": "https://www.hltv.org/player/20897/matios",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/-CUm1Y7a_E1xulyK55YQte.png?ixlib=java-2.1.0&s=b14bd269271c4a2a4fd514f4826d3e28&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "Turma do Pagode",
+      "verifiedAt": "2026-11-11"
+    },
+    "max": {
+      "profileId": 12092,
+      "profileUrl": "https://www.hltv.org/player/12092/max",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/vPT97tKV6UdEu6QPI8oPew.png?ixlib=java-2.1.0&s=4f8932410e2ff307ec8e934b4f63eba5&w=400",
+      "country": "Уругвай",
+      "countryCode": "UY",
+      "team": "9z",
+      "verifiedAt": "2026-11-11"
+    },
+    "maxster": {
+      "profileId": 20879,
+      "profileUrl": "https://www.hltv.org/player/20879/maxster",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/0pYNC4tmfsnk_C6pcmNYqe.png?ixlib=java-2.1.0&s=84dbe3b955507a59972fc74d0370c95a&w=400",
+      "country": "Швеция",
+      "countryCode": "SE",
+      "team": "EYEBALLERS",
+      "verifiedAt": "2026-11-11"
+    },
+    "maxxkor": {
+      "profileId": 21221,
+      "profileUrl": "https://www.hltv.org/player/21221/maxxkor",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Pgr4-l5m73VNEcZhjBvcAU.png?ixlib=java-2.1.0&s=f62376ace851f4f0db4d1ae058b7fc80&w=400",
+      "country": "Аргентина",
+      "countryCode": "AR",
+      "team": "DENDELE",
+      "verifiedAt": "2026-11-11"
+    },
+    "Mercury": {
+      "profileId": 20895,
+      "profileUrl": "https://www.hltv.org/player/20895/mercury",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/I0zCufrR3LZ9HRJSAPMRed.png?ixlib=java-2.1.0&s=fe5e891d3fe2cec5ae87d3aaa30aad7d&w=400",
+      "country": "Китай",
+      "countryCode": "CN",
+      "team": "TYLOO",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

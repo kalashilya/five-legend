@@ -31,7 +31,7 @@ function sim(o, tro, pol, n = N) { let w = 0, r = 0; for (let i = 0; i < n; i++)
 ok('16 полных HLTV-профилей и статистика HLTV подключены к карточкам', () => {
   const profiled = E.ALL.filter(c => c.hltv && c.hltv.photo && c.hltv.country && c.hltv.teamLogo && !c.sp && !c.hist);
   assert.strictEqual(profiled.length, 16);
-  assert.strictEqual(E.ALL.filter(c => c.hltv && c.hltv.photo && !c.sp && !c.hist).length, 27, 'все найденные портреты HLTV должны быть привязаны к карточкам');
+  assert.strictEqual(E.ALL.filter(c => c.hltv && c.hltv.photo && !c.sp && !c.hist).length, 33, 'все найденные портреты HLTV должны быть привязаны к карточкам');
   assert.strictEqual(new Set(E.ALL.filter(c => !c.sp && !c.hist).map(c => c.team)).size, 125, 'в базе должны быть ровно 125 команд HLTV');
   const verified = E.ALL.filter(c => c.hltv && !c.sp && !c.hist), base = E.ALL.filter(c => !c.sp && !c.hist), donk = base.find(c => c.nick === 'donk'), zywoo = base.find(c => c.nick === 'ZywOo');
   assert(donk && zywoo); assert.strictEqual(donk.ovr, 98); assert.strictEqual(donk.st.aim, 97); assert.strictEqual(donk.st.ent, 88);

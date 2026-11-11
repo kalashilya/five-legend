@@ -685,6 +685,36 @@
       "team": "Nemiga",
       "photo": "https://img-cdn.hltv.org/playerbodyshot/VS46puTiOHsKl3-7Q1WYui.png?ixlib=java-2.1.0&s=481f9a7f9dd19cc78b9c4058bc798afc&w=400",
       "profileUrl": "https://www.hltv.org/player/23319/syph0"
+    },
+    "huNter-": {
+      "profileId": 3972,
+      "team": "G2",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/t1LYbcudTc6d2iau4tqN-8.png?ixlib=java-2.1.0&s=baabaae08e34d87461f3f42644f13957&w=400",
+      "profileUrl": "https://www.hltv.org/player/3972/hunter-"
+    },
+    "NertZ": {
+      "profileId": 9436,
+      "team": "G2",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/6NpXCWi632T7Ne7nO372ql.png?ixlib=java-2.1.0&s=a26996dd9356580421735171da527435&w=400",
+      "profileUrl": "https://www.hltv.org/player/9436/nertz"
+    },
+    "r1nkle": {
+      "profileId": 20425,
+      "team": "G2",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/6OpaX4K1fJ7yFMn-rtUrCV.png?ixlib=java-2.1.0&s=623d9bd7021fcb2f5ec3f84b075009c9&w=400",
+      "profileUrl": "https://www.hltv.org/player/20425/r1nkle"
+    },
+    "HeavyGod": {
+      "profileId": 20447,
+      "team": "G2",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/W7ENc6jtdpnlJ98iCkLCFM.png?ixlib=java-2.1.0&s=56e496ebd7376bebbf57761369186fef&w=400",
+      "profileUrl": "https://www.hltv.org/player/20447/heavygod"
+    },
+    "MATYS": {
+      "profileId": 21062,
+      "team": "G2",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/JluNok7czCXoXiPwrhQjgk.png?ixlib=java-2.1.0&s=2eb8d06a59b4c48fb64a4312971c3e8f&w=400",
+      "profileUrl": "https://www.hltv.org/player/21062/matys"
     }
   }
 }

@@ -1374,6 +1374,36 @@ html,body{max-width:100%;overflow-x:clip}
 .arena-world{contain:paint}
 .arena-art{max-width:100%;left:0;right:0}
 
+
+/* ===== FINAL ART PASS: physical armory cases + arena identity ===== */
+.home-shortcut__icon svg{display:block;width:34px;height:34px;overflow:visible;filter:drop-shadow(0 0 7px rgba(126,190,226,.28))}
+.home-shortcut:nth-child(1) .home-shortcut__icon svg{width:38px;height:38px}
+#tabs svg{overflow:visible}
+.section-mast.mast-play .section-mast__icon{background:linear-gradient(145deg,rgba(106,165,204,.24),rgba(7,17,27,.94));border-color:rgba(151,201,231,.42);box-shadow:inset 0 1px rgba(255,255,255,.12),0 0 24px rgba(83,151,194,.12)}
+.section-mast.mast-play .section-mast__icon svg{filter:drop-shadow(0 0 5px rgba(125,190,226,.35))}
+/* Один и тот же физический контейнер во всех местах: магазин, инвентарь и бесплатная награда */
+.pk{isolation:isolate;transform-style:preserve-3d;filter:drop-shadow(0 18px 18px rgba(0,0,0,.66))}
+.pk .lid{overflow:hidden;border:1px solid rgba(226,239,248,.48);border-radius:3px 3px 1px 1px;background:linear-gradient(110deg,#182632 0%,#60798b 13%,#293d4c 29%,#8299a8 47%,#263947 68%,#101b25 100%);box-shadow:inset 0 1px rgba(255,255,255,.48),inset 0 -8px 14px rgba(0,0,0,.48),0 5px 10px rgba(0,0,0,.34)}
+.pk .lid:before{content:"";position:absolute;inset:5px 7%;border:1px solid rgba(226,239,248,.25);background:repeating-linear-gradient(105deg,transparent 0 12px,rgba(255,255,255,.09) 13px 14px,transparent 15px 25px);clip-path:polygon(4% 0,96% 0,100% 100%,0 100%)}
+.pk .lid:after{content:"";position:absolute;left:50%;top:22%;width:28%;height:42%;transform:translateX(-50%);border:1px solid color-mix(in srgb,var(--kc) 70%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--kc) 42%,#fff),color-mix(in srgb,var(--kc) 28%,#07111a));clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 0 14px color-mix(in srgb,var(--kc) 40%,transparent)}
+.pk .box{overflow:hidden;border:1px solid rgba(201,220,233,.34);border-radius:1px 1px 4px 4px;background:linear-gradient(90deg,#07111a 0%,#263b4b 8%,#172b3a 17%,#31495a 49%,#142735 83%,#050d14 100%);box-shadow:inset 0 1px rgba(255,255,255,.3),inset 0 -18px 24px rgba(0,0,0,.62),inset 8px 0 12px rgba(0,0,0,.22),inset -8px 0 12px rgba(0,0,0,.28)}
+.pk .box:before{z-index:3;left:3%;right:3%;height:5px;background:linear-gradient(90deg,transparent,var(--kc) 12%,#e8f0f4 50%,var(--kc) 88%,transparent);box-shadow:0 0 15px color-mix(in srgb,var(--kc) 55%,transparent)}
+.pk .box:after{z-index:2;left:8%;right:8%;bottom:12%;height:5px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--kc) 85%,#fff) 0 2px,transparent 2px 9px);opacity:.72}
+.pk .pk-side{position:absolute;z-index:1;inset:9% 5% 13%;border:1px solid rgba(211,228,239,.2);background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 12% 88%,rgba(0,0,0,.32));pointer-events:none}
+.pk .pk-side:before,.pk .pk-side:after{content:"";position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,rgba(211,228,239,.42) 18% 82%,transparent)}
+.pk .pk-side:before{left:12%}.pk .pk-side:after{right:12%}
+.pk .pk-stamp{position:absolute;z-index:2;left:50%;top:48%;width:25%;aspect-ratio:1;display:grid;place-items:center;transform:translate(-50%,-50%);border:1px solid color-mix(in srgb,var(--kc) 72%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--kc) 45%,#253847),#09131c 72%);box-shadow:0 0 0 3px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.35),0 0 18px color-mix(in srgb,var(--kc) 28%,transparent);color:#edf5fa;font:700 clamp(12px,2.4vw,20px)/1 var(--f-d);text-shadow:0 1px 5px #000}
+.pk .box b{position:absolute;z-index:4;left:0;right:0;bottom:4%;text-align:center;font:700 clamp(7px,1.5vw,10px)/1 var(--f-m);letter-spacing:.18em;color:#dce8ef;text-shadow:0 2px 5px #000}
+.pk .lock{z-index:5;width:18%;aspect-ratio:1;clip-path:none;border:1px solid rgba(245,249,251,.72);border-radius:2px;background:linear-gradient(145deg,#f1f5f7 0%,#8fa8b8 32%,#314b5c 68%,#0a1721 100%);box-shadow:0 0 0 3px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.8),0 0 16px color-mix(in srgb,var(--kc) 42%,transparent)}
+.pk .lock:after{content:"";position:absolute;inset:26%;border:1px solid rgba(5,14,22,.8);background:rgba(5,14,22,.42)}
+.pk.pro .lid,.pk.pro .box{background-color:#3c2d57}.pk.elite .lid,.pk.elite .box{background-color:#51432a}
+#app[data-tab="packs"] .shop{grid-template-columns:minmax(112px,164px) minmax(0,1fr);gap:18px}
+#app[data-tab="packs"] .pk{width:100%;max-width:164px;margin:auto;transform:none;filter:drop-shadow(0 18px 18px rgba(0,0,0,.66))}
+#app[data-tab="packs"] .pk .lid{border-radius:3px 3px 1px 1px}
+#app[data-tab="packs"] .pk .box{border-radius:1px 1px 4px 4px}
+.home-free .pk{max-width:150px}
+@media(max-width:420px){#app[data-tab="packs"] .shop{grid-template-columns:104px minmax(0,1fr);gap:12px}#app[data-tab="packs"] .pk{max-width:112px}.pk .pk-stamp{width:29%}}
+@media(prefers-reduced-motion:reduce){.home-shortcut__icon svg,.section-mast.mast-play .section-mast__icon svg{filter:none}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -1461,41 +1491,7 @@ html,body{max-width:100%;overflow-x:clip}
 <main id="app" class="wrap"><p class="mut" style="padding-block:24px">Загружаем игру…</p></main>
 <nav id="tabs" aria-label="Разделы"><div class="wrap"></div></nav>
 <div id="sheet" hidden></div>
-<div id="over" hidden></div>
-
-
-/* ===== FINAL ART PASS: physical armory cases + arena identity ===== */
-.home-shortcut__icon svg{display:block;width:34px;height:34px;overflow:visible;filter:drop-shadow(0 0 7px rgba(126,190,226,.28))}
-.home-shortcut:nth-child(1) .home-shortcut__icon svg{width:38px;height:38px}
-#tabs svg{overflow:visible}
-.section-mast.mast-play .section-mast__icon{background:linear-gradient(145deg,rgba(106,165,204,.24),rgba(7,17,27,.94));border-color:rgba(151,201,231,.42);box-shadow:inset 0 1px rgba(255,255,255,.12),0 0 24px rgba(83,151,194,.12)}
-.section-mast.mast-play .section-mast__icon svg{filter:drop-shadow(0 0 5px rgba(125,190,226,.35))}
-/* Один и тот же физический контейнер во всех местах: магазин, инвентарь и бесплатная награда */
-.pk{isolation:isolate;transform-style:preserve-3d;filter:drop-shadow(0 18px 18px rgba(0,0,0,.66))}
-.pk .lid{overflow:hidden;border:1px solid rgba(226,239,248,.48);border-radius:3px 3px 1px 1px;background:linear-gradient(110deg,#182632 0%,#60798b 13%,#293d4c 29%,#8299a8 47%,#263947 68%,#101b25 100%);box-shadow:inset 0 1px rgba(255,255,255,.48),inset 0 -8px 14px rgba(0,0,0,.48),0 5px 10px rgba(0,0,0,.34)}
-.pk .lid:before{content:"";position:absolute;inset:5px 7%;border:1px solid rgba(226,239,248,.25);background:repeating-linear-gradient(105deg,transparent 0 12px,rgba(255,255,255,.09) 13px 14px,transparent 15px 25px);clip-path:polygon(4% 0,96% 0,100% 100%,0 100%)}
-.pk .lid:after{content:"";position:absolute;left:50%;top:22%;width:28%;height:42%;transform:translateX(-50%);border:1px solid color-mix(in srgb,var(--kc) 70%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--kc) 42%,#fff),color-mix(in srgb,var(--kc) 28%,#07111a));clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 0 14px color-mix(in srgb,var(--kc) 40%,transparent)}
-.pk .box{overflow:hidden;border:1px solid rgba(201,220,233,.34);border-radius:1px 1px 4px 4px;background:linear-gradient(90deg,#07111a 0%,#263b4b 8%,#172b3a 17%,#31495a 49%,#142735 83%,#050d14 100%);box-shadow:inset 0 1px rgba(255,255,255,.3),inset 0 -18px 24px rgba(0,0,0,.62),inset 8px 0 12px rgba(0,0,0,.22),inset -8px 0 12px rgba(0,0,0,.28)}
-.pk .box:before{z-index:3;left:3%;right:3%;height:5px;background:linear-gradient(90deg,transparent,var(--kc) 12%,#e8f0f4 50%,var(--kc) 88%,transparent);box-shadow:0 0 15px color-mix(in srgb,var(--kc) 55%,transparent)}
-.pk .box:after{z-index:2;left:8%;right:8%;bottom:12%;height:5px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--kc) 85%,#fff) 0 2px,transparent 2px 9px);opacity:.72}
-.pk .pk-side{position:absolute;z-index:1;inset:9% 5% 13%;border:1px solid rgba(211,228,239,.2);background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 12% 88%,rgba(0,0,0,.32));pointer-events:none}
-.pk .pk-side:before,.pk .pk-side:after{content:"";position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,rgba(211,228,239,.42) 18% 82%,transparent)}
-.pk .pk-side:before{left:12%}.pk .pk-side:after{right:12%}
-.pk .pk-stamp{position:absolute;z-index:2;left:50%;top:48%;width:25%;aspect-ratio:1;display:grid;place-items:center;transform:translate(-50%,-50%);border:1px solid color-mix(in srgb,var(--kc) 72%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--kc) 45%,#253847),#09131c 72%);box-shadow:0 0 0 3px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.35),0 0 18px color-mix(in srgb,var(--kc) 28%,transparent);color:#edf5fa;font:700 clamp(12px,2.4vw,20px)/1 var(--f-d);text-shadow:0 1px 5px #000}
-.pk .box b{position:absolute;z-index:4;left:0;right:0;bottom:4%;text-align:center;font:700 clamp(7px,1.5vw,10px)/1 var(--f-m);letter-spacing:.18em;color:#dce8ef;text-shadow:0 2px 5px #000}
-.pk .lock{z-index:5;width:18%;aspect-ratio:1;clip-path:none;border:1px solid rgba(245,249,251,.72);border-radius:2px;background:linear-gradient(145deg,#f1f5f7 0%,#8fa8b8 32%,#314b5c 68%,#0a1721 100%);box-shadow:0 0 0 3px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.8),0 0 16px color-mix(in srgb,var(--kc) 42%,transparent)}
-.pk .lock:after{content:"";position:absolute;inset:26%;border:1px solid rgba(5,14,22,.8);background:rgba(5,14,22,.42)}
-.pk.pro .lid,.pk.pro .box{background-color:#3c2d57}.pk.elite .lid,.pk.elite .box{background-color:#51432a}
-#app[data-tab="packs"] .shop{grid-template-columns:minmax(112px,164px) minmax(0,1fr);gap:18px}
-#app[data-tab="packs"] .pk{width:100%;max-width:164px;margin:auto;transform:none;filter:drop-shadow(0 18px 18px rgba(0,0,0,.66))}
-#app[data-tab="packs"] .pk .lid{border-radius:3px 3px 1px 1px}
-#app[data-tab="packs"] .pk .box{border-radius:1px 1px 4px 4px}
-.home-free .pk{max-width:150px}
-@media(max-width:420px){#app[data-tab="packs"] .shop{grid-template-columns:104px minmax(0,1fr);gap:12px}#app[data-tab="packs"] .pk{max-width:112px}.pk .pk-stamp{width:29%}}
-@media(prefers-reduced-motion:reduce){.home-shortcut__icon svg,.section-mast.mast-play .section-mast__icon svg{filter:none}}
-
-
-<script>
+<div id="over" hidden></div><script>
 window.__cmErr = function (m) {
   var a = document.getElementById('app');
   if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Подробности ошибки:</p><pre class="num sm" style="white-space:pre-wrap;overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</pre></div>';

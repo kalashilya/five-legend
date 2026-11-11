@@ -606,6 +606,14 @@ button:has(>.pc)>.pc{transform:none!important;transition:filter .16s}
  .home-hero__sigil{animation:none}
  .home-shortcut,.btn,.ibtn,.pc{transition:none}
 }
+
+/* Keep the visual hierarchy crisp without expensive full-screen blur layers */
+.pn,.stat,.home-shortcut,.home-lineup,.home-hero{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.home-shortcut:after{content:"";position:absolute;left:14px;right:14px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(168,202,228,.42),transparent);pointer-events:none;opacity:.55;transition:opacity .16s}
+.home-shortcut:hover:after{opacity:1}
+@media(hover:hover) and (pointer:fine){
+ button:has(>.pc):hover>.pc{filter:brightness(1.12) saturate(1.08);box-shadow:0 0 0 1px rgba(183,214,237,.28),0 12px 24px rgba(0,0,0,.42)}
+}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

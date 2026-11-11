@@ -439,7 +439,7 @@ const CARDS = {}, POOL = [[], [], [], [], []], IFP = [[], [], [], [], []], MVPP 
     const [nick, t, role, o, pid, , hist, rawStats, hltv] = row, ovr = Math.min(99, o + add), st = {};
     if (Array.isArray(rawStats) && rawStats.length === SK.length) SK.forEach((k, i) => st[k] = clamp(Math.round(rawStats[i] + add), 40, 99));
     else for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
-    return CARDS[id] = { id, base: pid, nick, team: TM[t], t: Math.min(t, 100), role, ovr, rar, sp, hist: !!hist, st, hltv: hltv || null };
+    return CARDS[id] = { id, base: pid, nick, team: TM[t], t, role, ovr, rar, sp, hist: !!hist, st, hltv: hltv || null };
   };
   PL.forEach(row => { rows[row[4]] = row; POOL[row[5]].push(mk(row[4], row, 0, 0, row[5])); });
   SPM.forEach(pid => { if (rows[pid]) MVPP.push(mk(M_ID + pid, rows[pid], 3, 2, 4)); });

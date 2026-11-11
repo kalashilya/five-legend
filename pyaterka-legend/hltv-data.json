@@ -3690,6 +3690,51 @@
       "countryCode": "RU",
       "team": "Butterfly",
       "verifiedAt": "2026-11-11"
+    },
+    "dan4o": {
+      "profileId": 25011,
+      "profileUrl": "https://www.hltv.org/player/25011/dan4o",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Te3ZN-qq4VAeG2N90dTNfu.png?ixlib=java-2.1.0&s=82f50cb25ef8582334d95021c0b84a8f&w=400",
+      "country": "Казахстан",
+      "countryCode": "KZ",
+      "team": "Omega",
+      "verifiedAt": "2026-11-11"
+    },
+    "executor": {
+      "profileId": 22927,
+      "profileUrl": "https://www.hltv.org/player/22927/executor",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/nvubFwPQxlyKgRHc0uZg_7.png?ixlib=java-2.1.0&s=3a2c98ef72f8462cc031c835b79ed4b2&w=400",
+      "country": "Германия",
+      "countryCode": "DE",
+      "team": "BET-M",
+      "verifiedAt": "2026-11-11"
+    },
+    "Rkzinho": {
+      "profileId": 25087,
+      "profileUrl": "https://www.hltv.org/player/25087/rkzinho",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/_0EEFSN93GqtMxu5dmWYvl.png?ixlib=java-2.1.0&s=bd6ac133d878bab164b3fd72559eda82&w=400",
+      "country": "Бразилия",
+      "countryCode": "BR",
+      "team": "paiN",
+      "verifiedAt": "2026-11-11"
+    },
+    "Joey": {
+      "profileId": 25253,
+      "profileUrl": "https://www.hltv.org/player/25253/joey",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/S39OHh--nzGBwlNnr84USA.png?ixlib=java-2.1.0&s=c5c0e1abac46542b930d44ecb0d50c44&w=400",
+      "country": "Испания",
+      "countryCode": "ES",
+      "team": "Sangal",
+      "verifiedAt": "2026-11-11"
+    },
+    "bnox": {
+      "profileId": 20309,
+      "profileUrl": "https://www.hltv.org/player/20309/bnox",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/hZg1W4tULVOUxrMi_EZ1Nw.png?ixlib=java-2.1.0&s=b7760770bb3a446e9b2ab800374ad980&w=400",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": "Sangal",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

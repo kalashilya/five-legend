@@ -144,12 +144,13 @@ function vHome() {
     <div class="lobby-progress__foot"><span>${collectionHave} / ${collectionTotal} КАРТОЧЕК</span><span>УРОВЕНЬ ${G.lvl} · XP ${xpPct}%</span></div>
   </section>
   <section class="lobby-lower">
-    <div class="lobby-season">
+    <div class="lobby-season is-link" data-act="leagues" role="button" tabindex="0" aria-label="Путь выше: открыть лиги">
       <div class="lobby-season__head"><span class="lobby-kicker">RANKED ROAD</span><b>ПУТЬ ВЫШЕ</b></div>
       <div class="lobby-season__league">${rankH(lg)}<span><small>ТВОЙ ДИВИЗИОН</small><strong>${LEAGUES[lg][0]}</strong></span></div>
       <div class="lobby-season__bar"><i style="width:${prog}%"></i></div>
       <div class="lobby-season__foot"><span>${G.tro} CP</span><span>${nx ? nx[1] - G.tro + ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНЫЙ РАНГ'}</span></div>
       ${low ? `<p class="warn">Опасная зона: до понижения ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}
+      <span class="lg-link">Все лиги и награды ›</span>
     </div>
     <div class="lobby-daily">
       <div class="lobby-daily__head"><span class="lobby-kicker">DAILY REWARD</span><b>СЕРИЯ ВХОДОВ</b></div>
@@ -173,17 +174,18 @@ function sqTabsH() {
   return `<div class="sqtab">${G.squads.map((s, i) => { const inf = squadInfo(s.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id].lv })); return `<button data-act="sq" data-v="${i}" aria-pressed="${G.sqi === i}"><span>Пятёрка ${i + 1}</span><b>${inf ? inf.rating.toFixed(1) : '—'}</b><span>${inf ? 'химия ' + inf.chem + (G.capts[i] != null ? ' · капитан' : ' · без капитана') : 'не собрана'}</span></button>`; }).join('')}</div>`;
 }
 function vPlay() {
-  const info = squadInfo(squadOf(G)), cs = captSlot(G), h = G.season.hist, lg = leagueOf(G), nx = LEAGUES[lg + 1];
+  const info = squadInfo(squadOf(G)), cs = captSlot(G), h = G.season.hist, lg = leagueOf(G.tro), nx = LEAGUES[lg + 1];
   const prog = nx ? Math.max(0, Math.min(100, (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100)) : 100;
   const lineup = G.squad.map((id, i) => id == null
     ? `<button class="match-player is-empty" data-act="slot" data-v="${i}"><span class="match-player__empty">+</span><b>${RNAME[i]}</b><small>СЛОТ ПУСТ</small></button>`
     : `<button class="match-player" data-act="card" data-id="${id}"><span class="match-player__role">${RNAME[i]}</span>${ownH(id, 'xs')}<small>${esc(CARDS[id].nick)}</small></button>`).join('');
-  return `<section class="match-hero">
+  return `<section class="match-hero is-link" data-act="leagues" role="button" tabindex="0" aria-label="Путь на арену: открыть лиги">
     <div class="match-hero__light"></div><div class="match-hero__meta"><span><i></i> LIVE COMPETITIVE</span><b>SEASON ${String(G.season.m % 12 + 1).padStart(2, '0')}</b></div>
     <div class="match-hero__title"><small>ТВОЯ СЛЕДУЮЩАЯ ЦЕЛЬ</small><h2>ПУТЬ НА АРЕНУ</h2><p>Собери пятёрку. Выбери тактику. Забери победу.</p></div>
     <div class="match-hero__rank">${rankH(lg)}<span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><strong>${G.tro}<small> КУБКОВ</small></strong></div>
     <div class="match-hero__progress"><i style="width:${prog}%"></i></div>
     <div class="match-hero__next">${nx ? (nx[1]-G.tro)+ ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНАЯ ЛИГА'}</div>
+    <span class="lg-link">Все лиги и награды ›</span>
   </section>
   <section class="match-roster"><div class="match-heading"><span><small>YOUR ACTIVE ROSTER</small><b>СОСТАВ НА МАТЧ</b></span><button data-act="goSquad">ИЗМЕНИТЬ ↗</button></div>
     <div class="match-roster__grid">${lineup}</div>
@@ -823,6 +825,7 @@ document.addEventListener('click', e => {
   if (fn(b.dataset.v, b.dataset) === false) return;
   save(); render();
 });
+document.addEventListener('keydown', e => { const t = e.target; if ((e.key === 'Enter' || e.key === ' ') && t && t.getAttribute && t.getAttribute('role') === 'button' && t.dataset.act && t.tagName !== 'BUTTON') { e.preventDefault(); t.click(); } });
 document.addEventListener('input', e => {
   if (e.target.id === 'col-q') { F.q = e.target.value; colN = 45; const g = $('#col-grid'); if (g) g.innerHTML = colGrid(); }
   if (e.target.id === 'cmp-q' && sheet && sheet.t === 'cmpPick') { sheet.q = e.target.value; const tmp = document.createElement('div'); tmp.innerHTML = vSheet(); const nl = tmp.querySelector('#cmp-list'), l = $('#cmp-list'); if (nl && l) l.innerHTML = nl.innerHTML; }

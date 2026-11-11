@@ -1,3 +1,4 @@
+// Browser smoke coverage for the approved four-screen arena redesign.
 'use strict';
 const fs = require('fs');
 const http = require('http');
@@ -36,12 +37,16 @@ const { chromium } = require('playwright');
         hero: (() => { const r = document.querySelector('.lobby-hero')?.getBoundingClientRect(); return !!r && r.width > 0 && r.height > 0 && r.left >= -1 && r.right <= innerWidth + 1; })(),
         arena: !!document.querySelector('.arena-art'),
         lineup: !!document.querySelector('.lobby-lineup'),
-        nav: document.querySelectorAll('#tabs button').length
+        nav: document.querySelectorAll('#tabs button').length,
+        overflow: [...document.querySelectorAll('body *')].map(el => { const r=el.getBoundingClientRect(); return { tag:el.tagName, id:el.id, cls:typeof el.className==='string'?el.className.slice(0,100):'', left:Math.round(r.left), right:Math.round(r.right), width:Math.round(r.width), scrollWidth:el.scrollWidth }; }).filter(x => x.width > 0 && (x.left < -1 || x.right > innerWidth + 1)).slice(0,18)
       }));
       if (!metrics.appReady || !metrics.hero || !metrics.arena || !metrics.lineup || metrics.nav !== 5) {
         throw new Error('Главный экран не прошёл проверку при ширине ' + viewport.width + ': ' + JSON.stringify(metrics));
       }
-      if (metrics.scrollWidth > viewport.width + 1) throw new Error('Горизонтальное переполнение главной при ширине ' + viewport.width);
+      if (metrics.scrollWidth > viewport.width + 1) {
+        await page.screenshot({ path: path.join(shotDir, 'overflow-' + viewport.width + '.png'), fullPage: true });
+        throw new Error('Горизонтальное переполнение главной при ширине ' + viewport.width + ': ' + JSON.stringify(metrics.overflow));
+      }
       await page.screenshot({ path: path.join(shotDir, 'home-' + viewport.width + '.png'), fullPage: true });
       layouts.push(viewport.width + 'px');
     }

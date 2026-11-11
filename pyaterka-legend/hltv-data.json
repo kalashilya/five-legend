@@ -3636,6 +3636,60 @@
       "countryCode": "PL",
       "team": "Nordic Partners",
       "verifiedAt": "2026-11-11"
+    },
+    "Temny Prince": {
+      "profileId": 25322,
+      "profileUrl": "https://www.hltv.org/player/25322/temny-prince",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ltH8O6TL2nxf2pu7sOrIK0.png?ixlib=java-2.1.0&s=e743c789570145be2ada0b23a40385d2&w=400",
+      "country": "Казахстан",
+      "countryCode": "KZ",
+      "team": "Just Players",
+      "verifiedAt": "2026-11-11"
+    },
+    "tuxa": {
+      "profileId": 23482,
+      "profileUrl": "https://www.hltv.org/player/23482/tuxa",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/9EjW0jOqpW7TKE3jAaE4WB.png?ixlib=java-2.1.0&s=1bfdb23f81578ae910a44af9302319d7&w=400",
+      "country": "Португалия",
+      "countryCode": "PT",
+      "team": "SAW Youngsters",
+      "verifiedAt": "2026-11-11"
+    },
+    "Quality": {
+      "profileId": 22806,
+      "profileUrl": "https://www.hltv.org/player/22806/quality",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/MlS00Qx2TXKt45dnjfM8GH.png?ixlib=java-2.1.0&s=3d8aa05c1d1b161078b74cdbccf07de0&w=400",
+      "country": "Турция",
+      "countryCode": "TR",
+      "team": "Fire Flux",
+      "verifiedAt": "2026-11-11"
+    },
+    "xEternaLxx": {
+      "profileId": 25500,
+      "profileUrl": "https://www.hltv.org/player/25500/xeternalxx",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/ZzrfYT5QHzSCNfyB7o6bJN.png?ixlib=java-2.1.0&s=bfa4cb6a1a012b93413561ac569033cc&w=400",
+      "country": "Турция",
+      "countryCode": "TR",
+      "team": "Fire Flux",
+      "verifiedAt": "2026-11-11"
+    },
+    "sstiNiX": {
+      "profileId": 21431,
+      "profileUrl": "https://www.hltv.org/player/21431/sstinix",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/CziTzMmKYGfb213UcxpF5R.png?ixlib=java-2.1.0&s=322a5da5a7ac602d42f44d77644796b0&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "Just Players",
+      "verifiedAt": "2026-11-11"
+    },
+    "ayano": {
+      "profileId": 25608,
+      "profileUrl": "https://www.hltv.org/player/25608/ayano",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/baHAWIjuUNLSilEn5SJEOU.png?ixlib=java-2.1.0&s=7b0a1365ed5c0b7ae44d0c8da9162c12&w=400",
+      "country": "Россия",
+      "countryCode": "RU",
+      "team": "Butterfly",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

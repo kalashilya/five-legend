@@ -100,111 +100,69 @@ function tasksH() {
 }
 function vHome() {
   const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], info = squadInfo(squadOf(G)), low = lg > 0 && G.tro - LEAGUES[lg][1] < 30;
-  const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100, st = G.tut;
+  const prog = nx ? Math.max(0, Math.min(100, (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100)) : 100, st = G.tut;
   const collectionHave = Object.keys(G.cards).length, collectionTotal = ALL.length, collectionPct = Math.round(collectionHave / Math.max(1, collectionTotal) * 100), xpPct = Math.round(G.xp / Math.max(1, 100 * G.lvl) * 100);
   const streak = G.streak || { day: 0, last: -1, reward: null }, streakReward = streak.last === mskDay(now()) && streak.reward ? rewardText(streak.reward) : '';
-  const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span class="home-streak__day ${done ? 'is-done' : ''} ${milestone ? 'is-milestone' : ''}">${d}</span>`; }).join('');
-  const tut = st < 3 ? `<section class="pn tutorial"><div class="tutorial__head"><span class="tutorial__mark">01 / ПОДГОТОВКА</span><h3>Первые шаги</h3></div><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
-  const cards = G.squad.map((id, i) => id == null
-    ? `<button data-act="slot" data-v="${i}" aria-label="Пустой слот: ${RNAME[i]}"><div class="slot empty" style="display:block;padding:0"><div class="ph0">+</div><small>${RNAME[i]}</small></div></button>`
-    : `<button data-act="card" data-id="${id}" aria-label="${esc(CARDS[id].nick)}">${ownH(id, 'xs')}</button>`).join('');
-  return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk" style="margin-top:8px">Понятно</button></div>` : ''}${tut}
-  <section class="home-stage">
-    <div class="home-stage__sky"><i class="home-stage__light home-stage__light--one"></i><i class="home-stage__light home-stage__light--two"></i><i class="home-stage__smoke"></i><div class="home-stage__stands"></div><div class="home-stage__truss"></div><div class="home-stage__floor"></div></div>
-    <div class="home-stage__top"><div><span class="home-stage__eyebrow">FIVE LEGENDS · CS2 MANAGER</span><h1>ТВОЯ АРЕНА</h1><p>Собери состав. Задай тактику. Забери победу.</p></div><div class="home-stage__season"><span>СЕЗОН</span><b>${monthName(G.season.m)}</b><small>${LEAGUES[lg][0]}</small></div></div>
-    <div class="home-stage__matchline"><span><i></i> COMPETITIVE MATCH</span><b>BEST OF 1 <em>·</em> до 13 раундов</b></div>
-    <div class="home-stage__teamhead"><span>ТВОЯ ПЯТЁРКА</span><span>${info ? 'РЕЙТИНГ ' + info.rating.toFixed(1) : 'СОСТАВ НЕ СОБРАН'}</span></div>
-    <div class="home-stage__lineup">${cards}</div>
-    <div class="home-stage__bottom"><div class="home-stage__power"><span>БОЕВАЯ ГОТОВНОСТЬ</span><b>${info ? info.chem + '/13' : '—'}</b><small>${info ? 'Химия состава' : 'Заполните пять позиций'}</small></div><div class="home-stage__cta">${info ? '<button class="btn pri go" data-act="fight"><span>НАЧАТЬ МАТЧ</span><i>↗</i></button>' : '<button class="btn pri go" data-act="goSquad"><span>СОБРАТЬ СОСТАВ</span><i>↗</i></button>'}<small>${info ? 'Ваша пятёрка готова к бою' : 'Выберите игроков на каждую роль'}</small></div></div>
-    <div class="home-stage__edge"><span>MAP CONTROL <b>${info ? info.atk.toFixed(1) : '—'}</b></span><span>TEAM DEFENCE <b>${info ? info.def.toFixed(1) : '—'}</b></span><span>RANKED <b>${G.tro} CP</b></span></div>
+  const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span class="lobby-streak__day ${done ? 'is-done' : ''} ${milestone ? 'is-milestone' : ''}">${d}</span>`; }).join('');
+  const lineup = G.squad.map((id, i) => id == null
+    ? `<button class="lobby-slot" data-act="slot" data-v="${i}" aria-label="Выбрать игрока на роль ${RNAME[i]}"><span class="lobby-slot__plus">+</span><b>${RNAME[i]}</b><small>ВЫБРАТЬ</small></button>`
+    : `<button class="lobby-card" data-act="card" data-id="${id}" aria-label="Открыть карточку ${esc(CARDS[id].nick)}"><span class="lobby-card__role">${RNAME[i]}</span>${ownH(id, 'xs')}<span class="lobby-card__open">ОТКРЫТЬ ↗</span></button>`).join('');
+  const quickCase = packCount() ? `ДОСТУПНО ${packCount()} КЕЙС.` : 'КЕЙСЫ И НАГРАДЫ';
+  const tut = st < 3 ? `<section class="lobby-tutorial"><div><span class="lobby-kicker">ПЕРВЫЙ ВЫХОД НА АРЕНУ</span><b>${st === 0 ? 'Открой стартовые кейсы' : st === 1 ? 'Собери свою пятёрку' : 'Сыграй первый матч'}</b><small>Шаг ${st + 1} из 3 · обучение</small></div>${st === 0 ? '<button class="btn pri s" data-act="tab" data-v="packs">ОТКРЫТЬ КЕЙСЫ ↗</button>' : st === 1 ? '<button class="btn pri s" data-act="auto">СОБРАТЬ СОСТАВ ↗</button>' : '<button class="btn pri s" data-act="goSquad">ПЕРЕЙТИ К СОСТАВУ ↗</button>'}</section>` : '';
+  return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk">Понятно</button></div>` : ''}${tut}
+  <section class="lobby-hero">
+    <div class="lobby-hero__art" aria-hidden="true">
+      <div class="lobby-hero__roof"></div><div class="lobby-hero__beam lobby-hero__beam--a"></div><div class="lobby-hero__beam lobby-hero__beam--b"></div>
+      <div class="lobby-hero__crowd"></div><div class="lobby-hero__screen"><span>FIVE</span><b>LEGENDS</b><i>PRO LEAGUE</i></div>
+      <div class="lobby-hero__floor"></div><div class="lobby-hero__glow"></div><div class="lobby-hero__particles"></div>
+    </div>
+    <div class="lobby-hero__content">
+      <div class="lobby-hero__eyebrow"><span><i></i> LIVE ARENA</span><b>SEASON ${String(G.season.m).padStart(2,'0')}</b></div>
+      <div class="lobby-hero__headline"><span>СОЗДАЙ</span><strong>СВОЮ</strong><em>ЛЕГЕНДУ</em></div>
+      <p class="lobby-hero__sub">Твоя команда. Твоя стратегия. Твой путь к вершине.</p>
+      <div class="lobby-hero__rank"><span class="lobby-hero__rankicon">${rankH(lg)}</span><span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><span class="lobby-hero__cups"><strong>${G.tro}</strong><small>КУБКОВ</small></span></div>
+    </div>
+    <div class="lobby-hero__ribbon"><span>CS2 MANAGER</span><i></i><span>5 PLAYERS · 1 LEGEND</span><i></i><span>COMPETITIVE</span></div>
   </section>
-  <section class="home-collection">
-    <div class="home-collection__icon"><span>▤</span><small>ARCHIVE</small></div>
-    <div class="home-collection__main"><div class="home-collection__title"><b>КОЛЛЕКЦИЯ</b><span>${collectionHave} / ${collectionTotal}</span></div><div class="home-collection__track"><i style="width:${collectionPct}%"></i></div><small>${collectionPct}% собрано · профиль ур. ${G.lvl} · ${xpPct}% опыта до следующего уровня</small></div>
-    <button data-act="tab" data-v="col" aria-label="Открыть коллекцию">↗</button>
+  <section class="lobby-command">
+    <div class="lobby-sectionhead"><div><span class="lobby-kicker">YOUR LINEUP</span><h2>БОЕВАЯ ПЯТЁРКА</h2></div><button data-act="goSquad">УПРАВЛЯТЬ СОСТАВОМ <b>↗</b></button></div>
+    <div class="lobby-lineup">${lineup}</div>
+    <div class="lobby-teamstats">
+      <div><small>ОБЩИЙ РЕЙТИНГ</small><b>${info ? info.rating.toFixed(1) : '—'}</b></div>
+      <div><small>ХИМИЯ</small><b>${info ? info.chem + '<i>/13</i>' : '—'}</b></div>
+      <div><small>СИЛА СОСТАВА</small><b>${info ? (info.atk + info.def).toFixed(1) : '—'}</b></div>
+      <button class="lobby-play" data-act="fight" ${info ? '' : 'disabled'}><span>В БОЙ</span><b>↗</b><small>${info ? 'НАЧАТЬ РЕЙТИНГОВЫЙ МАТЧ' : 'ЗАПОЛНИ ПЯТЬ ПОЗИЦИЙ'}</small></button>
+    </div>
   </section>
-  <section class="home-quick">
-    <button class="home-quick__pack" data-act="tab" data-v="packs"><span class="home-quick__art"><i></i><b>5</b></span><span><small>ОТКРЫТИЯ</small><strong>КЕЙСЫ</strong><em>${packCount() ? 'ДОСТУПНО: ' + packCount() : 'МАГАЗИН И НАГРАДЫ'}</em></span><i class="home-quick__arrow">↗</i></button>
-    <button class="home-quick__league" data-act="tab" data-v="play"><span class="home-quick__crest">${rankH(lg)}</span><span><small>ТВОЙ РАНГ</small><strong>${LEAGUES[lg][0]}</strong><em>${G.tro} КУБКОВ · ${nx ? 'ДО СЛЕДУЮЩЕЙ ' + (nx[1] - G.tro) : 'МАКСИМУМ'}</em></span><i class="home-quick__arrow">↗</i></button>
+  <section class="lobby-shortcuts">
+    <button class="lobby-shortcut lobby-shortcut--packs" data-act="tab" data-v="packs"><span class="lobby-shortcut__art"><i></i><b>5</b><em>DROP</em></span><span><small>SUPPLY DROP</small><strong>КЕЙСЫ</strong><em>${quickCase}</em></span><b class="lobby-shortcut__arrow">↗</b></button>
+    <button class="lobby-shortcut lobby-shortcut--collection" data-act="tab" data-v="col"><span class="lobby-shortcut__art"><i></i><b>✦</b><em>PRO</em></span><span><small>PLAYER ARCHIVE</small><strong>КОЛЛЕКЦИЯ</strong><em>${collectionHave} ИЗ ${collectionTotal} ИГРОКОВ</em></span><b class="lobby-shortcut__arrow">↗</b></button>
   </section>
-  <section class="home-lower">
-    <div class="pn home-streak"><div class="kv"><span>ЕЖЕДНЕВНАЯ СЕРИЯ</span><b>ДЕНЬ ${streak.day}/28</b></div><div class="home-streak__grid">${streakCells}</div><p class="sm mut">${streakReward ? 'Сегодня получено: ' + esc(streakReward) : 'Не пропускайте вход — серия приносит монеты и кейсы.'}</p></div>
-    <div class="pn home-free"><div class="shop">${pkH('basic')}<div class="plain"><h3>БЕСПЛАТНЫЙ КЕЙС</h3>${dailyReady(G, now()) ? '<button class="btn pri s" data-act="daily">ЗАБРАТЬ</button>' : '<p class="sm mut">Новая награда после 00:00 МСК.</p>'}${packCount() ? `<button class="btn s" data-act="tab" data-v="packs">МОИ КЕЙСЫ · ${packCount()}</button>` : ''}</div></div></div>
+  <section class="lobby-progress">
+    <div class="lobby-progress__top"><div><span class="lobby-kicker">COLLECT THEM ALL</span><h3>ПРОГРЕСС КОЛЛЕКЦИИ</h3></div><strong>${collectionPct}<small>%</small></strong></div>
+    <div class="lobby-progress__bar"><i style="width:${collectionPct}%"></i><b></b></div>
+    <div class="lobby-progress__foot"><span>${collectionHave} / ${collectionTotal} КАРТОЧЕК</span><span>УРОВЕНЬ ${G.lvl} · XP ${xpPct}%</span></div>
   </section>
-  ${st === 3 ? `<section class="home-tasks">${tasksH()}</section>` : ''}
-  <section class="pn home-league-detail"><div class="kv"><span>ПУТЬ К СЛЕДУЮЩЕЙ ЛИГЕ</span><b>${G.tro} / ${nx ? nx[1] : LEAGUES[lg][1]}</b></div><span class="bar"><i style="width:${prog}%"></i></span><p class="sm mut">${nx ? `До лиги «${nx[0]}» осталось ${nx[1] - G.tro} кубков.` : 'Высшая лига достигнута.'}</p>${low ? `<p class="warn">До понижения в лигу «${LEAGUES[lg - 1][0]}» осталось ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}</section>`;
-}
-
-/* ---------- Матчи ---------- */
-function lbH() {
-  const t = lbTable(G, lbScope, now()), row = x => `<div class="lb ${x.me ? 'me' : ''}"><b>${x.place}</b><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.name)}</span><b>${x.tro}</b></div>`;
-  return `<section class="pn"><h3>Таблица лидеров</h3>${segH('lb', lbScope, [['all', 'Общая'], ['lg', 'Моя лига']])}<div>${t.top.map(row).join('')}${t.me.place > 10 ? '<div class="lb"><span></span><span class="mut">…</span><span></span></div>' + row(t.me) : ''}</div><p class="sm mut">Мест в таблице: ${t.total}. Пока у игры нет сервера, соперники в таблице — боты.</p></section>`;
-}
-function sqTabsH() {
-  return `<div class="sqtab">${G.squads.map((s, i) => { const inf = squadInfo(s.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id].lv })); return `<button data-act="sq" data-v="${i}" aria-pressed="${G.sqi === i}"><span>Пятёрка ${i + 1}</span><b>${inf ? inf.rating.toFixed(1) : '—'}</b><span>${inf ? 'химия ' + inf.chem + (G.capts[i] != null ? ' · капитан' : ' · без капитана') : 'не собрана'}</span></button>`; }).join('')}</div>`;
-}
-function vPlay() {
-  const info = squadInfo(squadOf(G)), cs = captSlot(G), h = G.season.hist;
-  return `<section class="plain"><h3>Состав на матч</h3>${sqTabsH()}<p class="sm mut">${info ? (cs >= 0 ? `Капитан: ${esc(CARDS[G.squad[cs]].nick)}. Он даёт разведку и стартовый импульс 3.` : 'Капитан не назначен: нет разведки, стартовый импульс 2.') : 'В этой пятёрке есть пустые слоты.'}</p>
-  ${info ? '<button class="btn pri go" data-act="fight">Играть</button>' : '<button class="btn go" data-act="goSquad">Соберите пятёрку</button>'}<p class="sm mut">Рейтинговый матч до 13 побед. Победа: +40 монет и +25 кубков, с разницей больше 5 раундов +30. Поражение: +10 монет и −25 кубков, при 0:13 −30.</p></section>
-  ${G.tut === 3 ? lbH() + `<section class="pn"><h3>Сезон «${monthName(G.season.m)}»</h3><p class="sm mut">Сезон длится месяц. В конце выдаются монеты и кейсы по лиге, а часть кубков сбрасывается: чем выше лига, тем больше.</p>${h.length ? '<div class="list">' + h.slice(0, 3).map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет.</p>'}</section>` : ''}`;
-}
-
-/* ---------- Кейсы ---------- */
-function vPacks() {
-  const inv = Object.keys(PACKS).filter(k => G.packs[k] > 0);
-  return `${dailyReady(G, now()) ? `<section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3><button class="btn pri" data-act="daily">Забрать</button></div></div></section>` : ''}
-  ${inv.length ? `<section class="plain"><h3>Ваши кейсы</h3>${inv.map(k => `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${PACKS[k].n} <span class="num mut" style="font-size:15px">×${G.packs[k]}</span></h2><button class="btn pri" data-act="open" data-v="${k}">Открыть</button></div></div></div>`).join('')}</section>` : ''}
-  <section class="plain"><h3>Магазин</h3>${Object.keys(PACKS).map(k => { const P = PACKS[k]; return `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${P.n}</h2><p class="sm mut">${P.d}</p><div class="pill" style="align-self:flex-start"><i class="coin"></i>${nf(P.price)}</div></div></div><div class="odds">${P.odds.map((o, i) => `<span style="--rc:var(--r${i})">${o}%</span>`).join('')}</div><button class="btn" data-act="buy" data-v="${k}" ${G.coins < P.price ? 'disabled' : ''}>${G.coins < P.price ? 'Не хватает монет' : 'Купить и открыть'}</button></div>`; }).join('')}</section>
-  <p class="sm mut">В кейсе пять карточек. Проценты показывают шанс редкости каждой из них: ${RAR.map(x => x.toLowerCase()).join(', ')}. Внутри редкости реже выпадают игроки с высоким рейтингом и из команд выше в таблице. С шансом 7% вместо обычной версии выпадает «${SPN[1]}» (+3 к рейтингу), с шансом 12% вместо высшей редкости выпадает «${SPN[2]}».</p>`;
-}
-
-/* ---------- Коллекция: карточки, составы, контракты ---------- */
-function colList() {
-  const q = F.q.trim().toLowerCase();
-  const l = ALL.filter(c => (F.rar === 'all' || c.rar === +F.rar) && (F.role === 'all' || c.role === +F.role) && (F.team === 'all' || c.team === F.team)
-    && (F.own === 'all' || (F.own === 'mine' ? own(c.id) : F.own === 'sp' ? c.sp : F.own === 'hist' ? c.hist : !own(c.id))) && (!q || c.nick.toLowerCase().includes(q)));
-  const lv = c => own(c.id) ? own(c.id).lv : 0;
-  return F.sort === 'lv' ? l.sort((a, b) => lv(b) - lv(a) || b.ovr - a.ovr) : F.sort === 'low' ? l.slice().reverse() : l;
-}
-function colGrid() {
-  const l = colList();
-  return `<p class="sm mut">Найдено: ${l.length}</p><div class="grid">${l.slice(0, colN).map(c => `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`).join('')}</div>${l.length > colN ? '<button class="btn" data-act="more">Показать ещё</button>' : ''}`;
-}
-const selH = (k, opts, label) => `<select data-f="${k}" aria-label="${label}">${opts.map(([v, n]) => `<option value="${esc(v)}" ${String(F[k]) === String(v) ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>`;
-function vCards() {
-  const have = Object.keys(G.cards).length, teams = [...new Set(ALL.map(c => c.team))].sort((a, b) => a.localeCompare(b));
-  return `<section class="pn"><div class="kv"><span>Собрано</span><span><b>${have}</b> из ${ALL.length}</span></div><span class="bar"><i style="width:${have / ALL.length * 100}%"></i></span></section>
-  <input type="text" id="col-q" placeholder="Поиск по нику" value="${esc(F.q)}" aria-label="Поиск по нику">
-  <div class="frow">${selH('rar', [['all', 'Любая редкость']].concat(RAR.map((n, i) => [i, n])), 'Редкость')}${selH('role', [['all', 'Любая роль и способность']].concat(RNAME.map((n, i) => [i, n + ' — «' + AB_BASE[i].n + '»'])), 'Роль и способность')}${selH('team', [['all', 'Любая команда']].concat(teams.map(t => [t, t])), 'Команда')}${selH('sort', [['ovr', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки']], 'Сортировка')}</div>
-  ${segH('fown', F.own, [['all', 'Все'], ['mine', 'Мои'], ['none', 'Нет'], ['sp', 'Особые'], ['hist', 'Архив']])}
-  <div class="plain" id="col-grid">${colGrid()}</div>`;
-}
-function vSquads() {
-  const sq = squadOf(G), info = squadInfo(sq), rec = bestCapt(G), cap = G.capts[G.sqi], igls = G.squad.filter(id => id != null && CARDS[id].role === 4);
-  const mates = id => G.squad.filter(x => x != null && x !== id && CARDS[x].team === CARDS[id].team).length;
-  return `${sqTabsH()}
-  ${info ? `<div class="stats"><div class="stat"><b>${info.rating.toFixed(1)}</b><span>рейтинг</span></div><div class="stat"><b>${info.atk.toFixed(1)}</b><span>сила в атаке</span></div><div class="stat"><b>${info.def.toFixed(1)}</b><span>сила в защите</span></div></div>` : '<div class="note">В пятёрке есть пустые слоты. Заполните их, чтобы играть.</div>'}
-  <section class="plain">${G.squad.map((id, i) => { if (id == null) return `<button class="slot empty" data-act="slot" data-v="${i}"><span><div class="ph0">+</div></span><span><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 17px/1.2 var(--f-d);text-transform:uppercase">Слот пуст</b></span><span class="sm mut">Выбрать</span></button>`;
-    const c = CARDS[id], off = c.role !== i, m = mates(id); return `<button class="slot" data-act="slot" data-v="${i}"><span>${ownH(id, 'xs')}</span><span style="min-width:0"><span class="eyebrow">${RNAME[i]}</span><b style="display:block;font:600 19px/1.1 var(--f-d);text-transform:uppercase;overflow-wrap:anywhere">${esc(c.nick)} ${cap === id ? '<span class="cap">капитан</span>' : ''}</b><span class="sm mut">${esc(c.team)} · ${m ? 'партнёров по команде: ' + m : 'без партнёров по команде'}</span><span class="${off ? 'warn' : 'sm mut'}" style="display:block">${off ? 'Не своя роль: −5 ко всем показателям, способности отключены' : '«' + AB_BASE[c.role].n + '» и «' + indOf(c).n + '»'}</span></span><span class="sm mut">Сменить</span></button>`; }).join('')}</section>
-  <section class="pn"><h3>Капитан</h3><p class="sm mut">Капитаном может быть только игрок с естественной ролью «Капитан». Он даёт разведку, усиливает «Тайм-аут» и добавляет стартовый импульс.</p>${igls.length ? '<div class="list">' + igls.map(id => `<div class="prow" style="--rc:${glow(CARDS[id])}"><span class="o">${CARDS[id].st.igl + own(id).lv - 1}</span><span><b>${esc(CARDS[id].nick)}</b>${id === rec ? ' <span class="sm" style="color:var(--good)">рекомендуем</span>' : ''}<span class="sm mut" style="display:block">тактика · ${esc(CARDS[id].team)}</span></span>${cap === id ? '<span class="cap">капитан</span>' : `<button class="btn s" data-act="capt" data-id="${id}">Назначить</button>`}</div>`).join('') + '</div>' : '<p class="warn">В пятёрке нет игрока с ролью «Капитан».</p>'}${cap != null ? '<button class="btn s" data-act="capt" data-id="">Играть без капитана</button>' : ''}</section>
-  ${info ? `<section class="pn"><h3>Химия ${info.chem} из 13</h3><p class="sm mut">Игроков из одной команды: ${info.mx}. Два дают +2, три +4, четыре +7, пять +10. ${info.onRole ? 'Все на своих ролях: +3.' : 'Если все пятеро на своих ролях, добавится ещё +3.'} Каждые 4 очка химии дают +1 к силе состава. Химия не растёт от числа матчей.</p></section>` : ''}
-  <button class="btn" data-act="auto">Собрать лучший состав</button>
-  <section class="pn"><h3>Тактические приказы</h3>${DECK.map(k => `<p class="sm"><b>${AC[k].n}</b> <span class="num mut">${AC[k].cost}</span> <span class="mut">— ${AC[k].d}</span></p>`).join('')}</section>`;
-}
-function vTu() {
-  const inf = tuInfo(G, tuSel), cnt = id => tuSel.filter(x => x === id).length;
-  const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !c.sp && c.rar === tuRar).sort((a, b) => a.ovr - b.ovr);
-  const risky = [...new Set(tuSel)].filter(id => own(id) && cnt(id) >= own(id).n && inSquads(G, id));
-  return `<section class="pn"><h3>Контракт</h3><p class="sm mut">Десять обычных карточек одной редкости обмениваются на одну. Выпадет либо карточка следующей редкости, либо карточка той же редкости с рейтингом не ниже среднего по вложенным. Чем выше средний рейтинг, тем вероятнее следующая редкость.</p>
-  ${segH('turar', String(tuRar), RAR.map((n, i) => [String(i), n.slice(0, 5) + (n.length > 5 ? '.' : '')]))}
-  <div class="kv"><span>Выбрано</span><span><b>${tuSel.length}</b> из 10</span></div><span class="bar"><i style="width:${tuSel.length * 10}%"></i></span>
-  ${tuSel.length ? `<div class="grid g5">${tuSel.map(id => cardH(CARDS[id], { cls: 'xs' })).join('')}</div>` : ''}
-  ${inf.avg ? `<p class="sm">Средний рейтинг: <b class="num">${inf.avg.toFixed(1)}</b>${inf.up ? ` · следующая редкость: примерно <b>${inf.up}</b> · та же редкость сильнее: примерно <b>${inf.same}</b>` : ''}</p>` : ''}
-  ${inf.why ? `<p class="${tuRar === 4 ? 'warn' : 'sm mut'}">${inf.why}</p>` : ''}${risky.length ? `<p class="warn">В контракт уйдёт последняя копия игрока из состава: ${risky.map(id => esc(CARDS[id].nick)).join(', ')}.</p>` : ''}
-  <div class="rowb"><button class="btn s" data-act="tuFill" ${tuRar === 4 ? 'disabled' : ''}>Добавить слабейшие дубликаты</button><button class="btn s" data-act="tuClear" ${tuSel.length ? '' : 'disabled'}>Очистить</button></div>
-  <button class="btn pri" data-act="tuGo" ${inf.ok ? '' : 'disabled'}>Исполнить контракт — отменить нельзя</button></section>
-  <section class="list">${l.length ? l.map(c => { const o = own(c.id), n = cnt(c.id); return `<div class="tu-row"><span class="num" style="font-weight:700;color:${glow(c)}">${c.ovr}</span><span style="min-width:0"><b>${esc(c.nick)}</b><span class="sm mut" style="display:block">${RN[c.role]} · ${esc(c.team)} · копий ${o.n}${o.lv > 1 ? ' · ур. ' + o.lv : ''}</span></span><span class="cnt-b"><button data-act="tuDel" data-id="${c.id}" ${n ? '' : 'disabled'} aria-label="Убрать">−</button><span class="num">${n}</span><button data-act="tuAdd" data-id="${c.id}" ${n < o.n && tuSel.length < 10 ? '' : 'disabled'} aria-label="Добавить">+</button></span></div>`; }).join('') : '<p class="sm mut">Обычных карточек этой редкости у вас нет.</p>'}</section>`;
+  <section class="lobby-lower">
+    <div class="lobby-season">
+      <div class="lobby-season__head"><span class="lobby-kicker">RANKED ROAD</span><b>ПУТЬ ВЫШЕ</b></div>
+      <div class="lobby-season__league">${rankH(lg)}<span><small>ТВОЙ ДИВИЗИОН</small><strong>${LEAGUES[lg][0]}</strong></span></div>
+      <div class="lobby-season__bar"><i style="width:${prog}%"></i></div>
+      <div class="lobby-season__foot"><span>${G.tro} CP</span><span>${nx ? nx[1] - G.tro + ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНЫЙ РАНГ'}</span></div>
+      ${low ? `<p class="warn">Опасная зона: до понижения ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}
+    </div>
+    <div class="lobby-daily">
+      <div class="lobby-daily__head"><span class="lobby-kicker">DAILY REWARD</span><b>СЕРИЯ ВХОДОВ</b></div>
+      <strong>${streak.day}<small> / 28 ДНЕЙ</small></strong>
+      <div class="lobby-daily__days">${streakCells}</div>
+      <p>${streakReward ? 'Получено сегодня: ' + esc(streakReward) : 'Заходи каждый день и забирай награды.'}</p>
+    </div>
+  </section>
+  ${st === 3 ? `<section class="lobby-missions"><div class="lobby-sectionhead"><div><span class="lobby-kicker">DAILY OBJECTIVES</span><h2>ЗАДАНИЯ</h2></div><button data-act="tab" data-v="play">ВСЕ ЗАДАНИЯ ↗</button></div>${tasksH()}</section>` : ''}
+  <section class="lobby-free">
+    <div class="lobby-free__art">${pkH('basic')}</div><div class="lobby-free__copy"><span class="lobby-kicker">COMPLIMENTARY DROP</span><h3>БЕСПЛАТНЫЙ КЕЙС</h3><p>${dailyReady(G, now()) ? 'Твоя ежедневная награда уже ждёт.' : 'Следующая награда после 00:00 МСК.'}</p></div>
+    ${dailyReady(G, now()) ? '<button class="btn pri s" data-act="daily">ЗАБРАТЬ ↗</button>' : '<button class="btn s" data-act="tab" data-v="packs">К КЕЙСАМ ↗</button>'}
+  </section>`;
 }
 function vCol() {
   const body = sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : vCards();

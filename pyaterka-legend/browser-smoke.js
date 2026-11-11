@@ -1,3 +1,4 @@
+// Browser smoke coverage for the approved four-screen arena redesign.
 'use strict';
 const fs = require('fs');
 const http = require('http');

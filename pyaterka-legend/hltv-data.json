@@ -3250,6 +3250,24 @@
       "countryCode": "RU",
       "team": "K27",
       "verifiedAt": "2026-11-11"
+    },
+    "POLO": {
+      "profileId": 22474,
+      "profileUrl": "https://www.hltv.org/player/22474/polo",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/W8ZEvc5OJ_VZ3qxMnTMMmh.png?ixlib=java-2.1.0&s=f52d6e5392b739e6c67de4986b544e8e&w=400",
+      "country": "Польша",
+      "countryCode": "PL",
+      "team": null,
+      "verifiedAt": "2026-11-11"
+    },
+    "Infinite": {
+      "profileId": 14619,
+      "profileUrl": "https://www.hltv.org/player/14619/infinite",
+      "photo": "https://img-cdn.hltv.org/playerbodyshot/Sqt2moAXzjIE0TdDhjYHd4.png?ixlib=java-2.1.0&s=c5edd4b584c84a14a85063aa5f0b948c&w=400",
+      "country": "США",
+      "countryCode": "US",
+      "team": "Ludens Gecko",
+      "verifiedAt": "2026-11-11"
     }
   }
 }

@@ -1,5 +1,4 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
-<title>Пятёрка Легенд</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Пятёрка Легенд</title>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"}}</script>
 
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -747,6 +746,33 @@ button:has(>.pc)>.pc{transform:none!important;transition:filter .16s}
 }
 @media(prefers-reduced-motion:reduce){.home-hero__art .art-float{animation:none}}
 
+
+/* ---------- Центрированный HUD и обучающий блок ---------- */
+#hud .wrap{position:relative;justify-content:center}
+#hud .who{flex:0 1 auto;width:max-content;max-width:calc(100% - 76px)}
+#hud .who>div{min-width:0}
+#hud .pill{position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%)}
+.tutorial{width:100%;align-items:stretch;padding:18px 16px 16px;gap:14px}
+.tutorial__head{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+.tutorial__head h3{font-size:15px;letter-spacing:.2em;color:#f0d8ad}
+.tutorial__mark{font:700 9px/1.2 var(--f-m);letter-spacing:.2em;color:var(--accent)}
+.tutorial .steps{width:min(100%,440px);margin:0 auto;gap:9px}
+.tutorial .steps div{min-height:36px;padding:6px 10px;border:1px solid rgb(255 255 255 / .075);background:linear-gradient(90deg,rgb(255 255 255 / .055),rgb(255 255 255 / .018));font-size:13px;line-height:1.3}
+.tutorial .steps i{width:25px;height:25px;border-radius:50%;background:rgb(255 255 255 / .06);border-color:rgb(255 255 255 / .16)}
+.tutorial .steps .ok i{background:var(--go);border-color:transparent}
+.tutorial .steps .now{border-color:rgb(240 169 58 / .42);background:linear-gradient(90deg,rgb(240 169 58 / .14),rgb(240 169 58 / .035))}
+.tutorial .btn,.tutorial>p{width:min(100%,440px);margin-inline:auto}
+#tabs button{gap:5px;padding-top:9px}
+#tabs svg{width:25px;height:25px;overflow:visible}
+#tabs button[aria-current] svg{filter:drop-shadow(0 0 5px rgb(240 169 58 / .24))}
+@media(max-width:380px){
+  #hud .wrap{gap:6px}
+  #hud .who{max-width:calc(100% - 64px);gap:7px}
+  #hud .who b{font-size:14px}
+  #hud .pill{padding:7px 8px;font-size:12px}
+  .tutorial{padding:15px 12px}
+  .tutorial .steps div{font-size:12px}
+}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -1500,7 +1526,7 @@ function vHome() {
   const prog = nx ? (G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100 : 100, st = G.tut;
   const streak = G.streak || { day: 0, last: -1, reward: null }, streakReward = streak.last === mskDay(now()) && streak.reward ? rewardText(streak.reward) : '';
   const streakCells = Array.from({ length: 28 }, (_, i) => { const d = i + 1, done = d <= streak.day, milestone = [7, 14, 21, 28].includes(d); return `<span style="display:grid;place-items:center;min-height:27px;border:1px solid ${milestone ? 'var(--gold)' : 'var(--line)'};border-radius:6px;background:${done ? 'var(--accent)' : 'var(--panel2)'};color:${done ? '#141414' : 'var(--mut)'};font:600 11px var(--f-m)">${d}</span>`; }).join('');
-  const tut = st < 3 ? `<section class="pn"><h3>Первые шаги</h3><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
+  const tut = st < 3 ? `<section class="pn tutorial"><div class="tutorial__head"><span class="tutorial__mark">01 / ПОДГОТОВКА</span><h3>Первые шаги</h3></div><div class="steps"><div class="${st > 0 ? 'ok' : 'now'}"><i>${st > 0 ? '✓' : 1}</i>Откройте стартовые кейсы</div><div class="${st > 1 ? 'ok' : st === 1 ? 'now' : ''}"><i>${st > 1 ? '✓' : 2}</i>Соберите пятёрку из лучших карточек</div><div class="${st === 2 ? 'now' : ''}"><i>3</i>Сыграйте первый матч</div></div>${st === 0 ? '<button class="btn pri" data-act="tab" data-v="packs">К кейсам</button>' : st === 1 ? '<button class="btn pri" data-act="auto">Собрать лучший состав</button>' : '<p class="sm mut">Нажмите «Играть». После первого матча откроются задания, сезон и таблица лидеров.</p>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk" style="margin-top:8px">Понятно</button></div>` : ''}${tut}
   <section class="home-hero"><div class="home-hero__copy"><p class="home-hero__eyebrow">TACTICAL COLLECTION · CS2 UNIVERSE</p><h1>ПЯТЁРКИ<br>ЛЕГЕНД</h1><p class="home-hero__desc">Собирай легендарных игроков, создавай свою пятёрку и доказывай её силу в матчах.</p><div class="home-hero__tags"><span>5 ИГРОКОВ</span><span>СВОЯ КОЛЛЕКЦИЯ</span><span>ТВОЯ СТРАТЕГИЯ</span></div></div><div class="home-hero__artifact" aria-hidden="true"><svg class="home-hero__art" viewBox="0 0 560 390" role="presentation" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="hero-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9e8f2"/><stop offset=".28" stop-color="#668ba6"/><stop offset=".58" stop-color="#1b3449"/><stop offset="1" stop-color="#080f18"/></linearGradient><linearGradient id="hero-screen" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#263f55"/><stop offset="1" stop-color="#09131e"/></linearGradient><linearGradient id="hero-floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#42627b" stop-opacity=".5"/><stop offset="1" stop-color="#07101a" stop-opacity="0"/></linearGradient><radialGradient id="hero-glow"><stop stop-color="#a5d4f0" stop-opacity=".42"/><stop offset="1" stop-color="#72b6df" stop-opacity="0"/></radialGradient><filter id="hero-blur"><feGaussianBlur stdDeviation="13"/></filter></defs>
@@ -1940,10 +1966,10 @@ function endBuild() {
 
 const TABS = {
   home: ['Главная', vHome, '<path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/>'],
-  play: ['Матчи', vPlay, '<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>'],
-  col: ['Коллекция', vCol, '<rect x="3" y="7" width="11" height="14"/><path d="M8 3h13v14"/>'],
-  packs: ['Кейсы', vPacks, '<path d="M3 9h18v11H3zM5 9l2-4h10l2 4M12 9v4"/><path d="M10 13h4"/>'],
-  prof: ['Профиль', vProf, '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/>']
+  play: ['Матчи', vPlay, '<g stroke-width="1.55"><path d="M2.5 6.5h12.2l3.1-2.2h3.7v2.5h-3.4l-2.7 2.1H9.2l-2.1 2H4.8V8.8H2.5z"/><path d="M8.6 8.9l-1.2 4.4 2.2 1.2 1.3-4.5M14.2 6.7l1.1 4.8 2.2 1.2-.6-5.1M4.8 8.8l-.4-2.3M18.1 6.8l2.2 1.2M3 17.5l17-11" stroke-linecap="round" stroke-linejoin="round"/></g>'],
+  col: ['Коллекция', vCol, '<g stroke-width="1.55"><path d="M4 5.5h11.5v15H4z"/><path d="M8 3.5h12v15"/><path d="M7 10h5.5M7 13h5.5"/><circle cx="9.7" cy="8" r="1.1"/></g>'],
+  packs: ['Кейсы', vPacks, '<g stroke-width="1.55"><path d="M3 8.5l2-4h14l2 4v11H3z"/><path d="M3 8.5h18M8 4.5l1 4M16 4.5l-1 4M9 13h6v6H9z"/><path d="M11 13v-2h2v2"/></g>'],
+  prof: ['Профиль', vProf, '<g stroke-width="1.55"><path d="M12 2.5l8 3v5.7c0 5.2-3.4 8.5-8 10.3-4.6-1.8-8-5.1-8-10.3V5.5z"/><circle cx="12" cy="9" r="2.3"/><path d="M7.8 16.2c.8-2.1 2.2-3.1 4.2-3.1s3.4 1 4.2 3.1"/></g>']
 };
 function render() {
   if (!G) return;
@@ -2040,6 +2066,6 @@ function start() {
   save(); render();
 }
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
-})();
+})(); 
 </script>
-</body></html>
+</body></html></body></html>

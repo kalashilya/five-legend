@@ -128,7 +128,7 @@ input[type=text]{width:100%;min-height:44px;padding:10px 12px;font:inherit;color
 .pc .cnt{position:absolute;z-index:6;right:5cqw;bottom:7cqw;font:700 7cqw/1 var(--f-m);padding:1.6cqw 2.6cqw;background:#f4f6f8;color:#0b0d10}
 .pc.no{filter:grayscale(1) brightness(.75);opacity:.55}
 .pc.xs .tm,.pc.xs .tag,.pc.xs .lv,.pc.xs .rk,.pc.xs .cnt{display:none}
-.pc.xs .nk{font-size:15cqw}.pc.xs .ov{font-size:27cqw}.pc.xs .rl{font-size:10cqw}.pc.xs .ft{padding-bottom:9cqw}
+.pc.xs .nk{font-size:min(13cqw,calc(80cqw / var(--nl,6)));letter-spacing:0}.pc.xs .ov{font-size:27cqw}.pc.xs .rl{font-size:10cqw}.pc.xs .ft{padding-bottom:9cqw}
 
 /* ---------- Лобби ---------- */
 .lobby{display:flex;flex-direction:column;gap:12px}
@@ -541,7 +541,7 @@ button:has(>.pc):hover>.pc{transform:translateY(-5px) rotateY(-2deg);filter:drop
 /* Premium surfaces: stable geometry, restrained light, no hover-driven layout transforms */
 .pn,.stat,.home-shortcut,.home-lineup,.home-hero{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .pn{border:1px solid rgba(175,195,216,.12);border-radius:15px;background:linear-gradient(145deg,rgba(21,29,39,.92),rgba(8,12,18,.94));box-shadow:0 12px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.045);clip-path:none}
-.pn:before{height:22px;opacity:.8}
+.pn:before{opacity:.8}
 .stat{border:1px solid rgba(175,195,216,.1);border-bottom:2px solid rgba(175,195,216,.18);border-radius:10px;background:linear-gradient(145deg,rgba(24,32,42,.9),rgba(9,13,19,.94))}
 .home-hero{min-height:236px;padding:clamp(20px,4vw,34px);border:1px solid rgba(183,203,224,.22);border-radius:18px;background:linear-gradient(110deg,rgba(10,17,26,.98) 0%,rgba(15,26,39,.96) 56%,rgba(22,27,34,.94) 100%);box-shadow:0 22px 52px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.09)}
 .home-hero:before{opacity:.42;background:linear-gradient(90deg,transparent 0 54%,rgba(112,161,204,.12) 72%,transparent),repeating-linear-gradient(90deg,transparent 0 59px,rgba(160,190,216,.035) 60px 61px)}
@@ -1835,6 +1835,19 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .net-lost{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:14px;background:#1a1208f2;border:1px solid #f0c47788;box-shadow:0 10px 30px #000a;font-size:13px;white-space:nowrap}.net-lost span{color:#c9c2b2}
 .net-res .net-rec{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:#ffffff0a}.net-res .net-rec b{font:700 24px var(--f-m,monospace);color:#f0c477}.net-why{margin:0;font-weight:600}
 @media (prefers-reduced-motion: reduce){.net-spin{animation-duration:2.4s}}
+/* ---------- Правки вида 12.11: засветы, наложения, обрезанные надписи ---------- */
+.section-mast:after{background:none!important}                 /* был залитый светящийся ромб поверх описания */
+.section-mast__copy{position:relative;z-index:1}
+#sheet .in.card-sh{position:relative}.sh-x{position:sticky;top:10px;z-index:6;display:grid;margin:0 12px -44px auto}
+.lv-page>.btn{margin-left:16px;margin-right:16px}
+.profile-account .rowb{flex-direction:column;align-items:stretch}.profile-account .rowb .btn{width:100%;flex:none}
+@media (max-width:760px){.lobby-hero__screen{opacity:.22}}
+.splash .stat{min-width:0}.splash .stat b{font-size:clamp(15px,4.5vw,24px);white-space:nowrap;line-height:1.05}
+.lv-prep{background:linear-gradient(180deg,#1a222c,#0d1218)!important}
+.lobby-missions .pn>h3:first-child{display:none}
+.lg-chips{justify-content:flex-end}.lg-chips .lg-chip:first-child{min-width:66px;justify-content:center}   /* награды лиг в один ровный столбец */   /* заголовок «Задания» уже есть над блоком */
+@media (max-width:380px){.home-shortcut b{font-size:12px;letter-spacing:.05em}}
+.pc.xs .ft{padding-bottom:17cqw!important}.pc.xs .nk{padding:0 2cqw}   /* ник маленькой карточки — над цветной полосой редкости */   /* кнопки под панелью плана больше не просвечивают */
 /* Плашка «Powered by Netlify» (справа внизу, ~60px) — на бесплатном тарифе её не выключить, поэтому поднимаем нижние кнопки над ней */
 html.nb{--nbb:max(env(safe-area-inset-bottom,0px),60px)}
 html.nb #tabs{padding-bottom:var(--nbb)}

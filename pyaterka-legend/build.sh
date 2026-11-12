@@ -41,7 +41,7 @@ flags = open('vendor/flags.js', encoding='utf-8').read()
 import base64
 bg = 'const BG_SRC = "data:image/jpeg;base64,' + base64.b64encode(open('vendor/stage-bg.jpg','rb').read()).decode() + '";'
 assert '/*THREE*/' in src
-out = src.replace('/*THREE*/', three, 1).replace('/*FLAGS*/', flags, 1).replace('/*BG*/', bg, 1)
+out = src.replace('/*THREE*/', three, 1).replace('/*FLAGS*/', flags, 1).replace('/*BG*/', '', 1)   # фон теперь рисуется кодом (arenaTex)
 open('reveal-lab.html', 'w', encoding='utf-8').write(out)
 # 3D-открытие кейса встраивается в игру целиком (base64), игра запускает его в отдельном слое
 g = open('pyaterka-legend-offline.html', encoding='utf-8').read()

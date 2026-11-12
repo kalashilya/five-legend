@@ -222,7 +222,38 @@ const phMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, b
 scene.add(new THREE.Points(phG, phMat));
 const decoTo = scene.children.length;
 /* фон: картинка турнира на дальнем плане, приглушённая и слегка размытая; декорации арены скрыты, чтобы не спорили с картинкой */
-const bgTex = new THREE.TextureLoader().load(typeof BG_SRC !== 'undefined' ? BG_SRC : ''); bgTex.encoding = THREE.sRGBEncoding;
+/* фон рисуется кодом: турнирная арена без чужих логотипов (раньше — фото со сцены с логотипами организаторов) */
+function arenaTex() {
+  const W = 2048, H = 1152, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  let gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#0b2a52'); gr.addColorStop(.5, '#1d5fa8'); gr.addColorStop(.72, '#0d2f5a'); gr.addColorStop(1, '#04101f'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  const glow = (x, y, r, col) => { const q = g.createRadialGradient(x, y, 0, x, y, r); q.addColorStop(0, col); q.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = q; g.fillRect(x - r, y - r, r * 2, r * 2); };
+  glow(W / 2, H * .5, W * .45, 'rgba(120,190,255,.55)');
+  /* фермы с прожекторами */
+  for (let row = 0; row < 3; row++) { const y = 70 + row * 64; g.fillStyle = 'rgba(150,200,255,.35)'; g.fillRect(0, y, W, 5);
+    for (let x = 24 + row * 15; x < W; x += 52) { glow(x, y + 3, 22, 'rgba(225,240,255,.95)'); } }
+  /* лучи прожекторов */
+  g.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 9; i++) { const x0 = 160 + i * 215, x1 = W / 2 + (i - 4) * 120; const lg = g.createLinearGradient(0, 120, 0, H * .8); lg.addColorStop(0, 'rgba(170,215,255,.22)'); lg.addColorStop(1, 'rgba(170,215,255,0)');
+    g.fillStyle = lg; g.beginPath(); g.moveTo(x0 - 8, 120); g.lineTo(x0 + 8, 120); g.lineTo(x1 + 90, H * .8); g.lineTo(x1 - 90, H * .8); g.closePath(); g.fill(); }
+  g.globalCompositeOperation = 'source-over';
+  /* главный LED-экран: щит с пятёркой */
+  const sx = W * .37, sy = H * .4, sw = W * .26, sh = H * .2;   /* в кадре телефона видна средняя полоса картинки */ g.fillStyle = '#071b36'; g.fillRect(sx, sy, sw, sh);
+  gr = g.createLinearGradient(sx, sy, sx, sy + sh); gr.addColorStop(0, 'rgba(70,150,255,.45)'); gr.addColorStop(1, 'rgba(20,60,130,.2)'); g.fillStyle = gr; g.fillRect(sx, sy, sw, sh);
+  for (let y = sy; y < sy + sh; y += 6) { g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(sx, y, sw, 2); }
+  g.strokeStyle = 'rgba(160,215,255,.9)'; g.lineWidth = 6; g.strokeRect(sx, sy, sw, sh);
+  const cx = W / 2, cy = sy + sh * .5, s = sh * .36; g.beginPath(); g.moveTo(cx, cy - s); g.lineTo(cx + s * .82, cy - s * .62); g.lineTo(cx + s * .82, cy + s * .05); g.quadraticCurveTo(cx + s * .7, cy + s * .75, cx, cy + s); g.quadraticCurveTo(cx - s * .7, cy + s * .75, cx - s * .82, cy + s * .05); g.lineTo(cx - s * .82, cy - s * .62); g.closePath();
+  g.fillStyle = 'rgba(10,25,45,.85)'; g.fill(); g.strokeStyle = '#f0c477'; g.lineWidth = 10; g.stroke();
+  g.fillStyle = '#f6d58f'; g.font = `700 ${Math.round(s * 1.1)}px Oswald, Impact, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('5', cx, cy + s * .08);
+  /* боковые экраны */
+  for (const k of [-1, 1]) { const bx = cx + k * W * .27 - W * .07, by = H * .42; g.fillStyle = 'rgba(40,110,210,.5)'; g.fillRect(bx, by, W * .14, H * .2); g.strokeStyle = 'rgba(150,205,255,.7)'; g.lineWidth = 4; g.strokeRect(bx, by, W * .14, H * .2);
+    for (let i = 0; i < 4; i++) { g.fillStyle = `rgba(200,230,255,${.25 + i * .1})`; g.fillRect(bx + 24, by + 30 + i * 44, W * .14 - 48 - i * 40, 14); } }
+  /* трибуны со зрителями */
+  gr = g.createLinearGradient(0, H * .62, 0, H); gr.addColorStop(0, 'rgba(5,15,30,.2)'); gr.addColorStop(1, 'rgba(2,6,12,.95)'); g.fillStyle = gr; g.fillRect(0, H * .62, W, H * .38);
+  for (let i = 0; i < 2600; i++) { const x = Math.random() * W, t = Math.random(), y = H * .64 + t * H * .34, r = 5 + t * 10; g.fillStyle = `rgba(2,8,16,${.55 + Math.random() * .4})`; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+    if (Math.random() < .03) glow(x, y - r, 8, 'rgba(220,240,255,.8)'); }
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t;
+}
+const bgTex = arenaTex();
 const bgMat = new THREE.MeshBasicMaterial({ map: bgTex, fog: false, color: new THREE.Color(.26, .26, .26), depthWrite: false });
 const bgPlane = new THREE.Mesh(new THREE.PlaneGeometry(40, 22.5), bgMat); bgPlane.position.set(0, 3.4, -16); scene.add(bgPlane);
 R3.localClippingEnabled = true; bgMat.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, 1, 0), .1)];
@@ -552,7 +583,7 @@ function frame() {
   if (S.lid) S.lidT = clamp(S.lidT + dt / (S.lid === 1 ? 1.8 : .8), 0, 1);
   const lt = S.lid === 1 ? easeIO(S.lidT) : easeO(S.lidT); lidPivot.rotation.x = -lt * 1.9 - Math.sin(lt * Math.PI) * .04;
   if (S.light) S.lightT = clamp(S.lightT + dt * 1.2, 0, 1);
-  const chg = S.charge && !S.rise ? 1 : 0; const dimC = 1 - S.riseT * .75; innerLight.intensity = dimC * S.lightT * (4 + chg * 5) * (1 + Math.sin(now * 23) * .05); lidLight.intensity = dimC * S.lightT * 1.8; slotMat.emissive.copy(innerLight.color).multiplyScalar(dimC * S.lightT * (.9 + chg * 1.5));
+  const chg = S.charge && !S.rise ? 1 : 0; const dimC = 1 - S.riseT * .75; innerLight.intensity = dimC * S.lightT * (2.8 + chg * 3.4) * (1 + Math.sin(now * 23) * .05); lidLight.intensity = dimC * S.lightT * 1.1;   /* слабее: углы крышки пересвечивались в белое */ slotMat.emissive.copy(innerLight.color).multiplyScalar(dimC * S.lightT * (.9 + chg * 1.5));
   holoMat.uniforms.a.value = damp(holoMat.uniforms.a.value, S.holo, S.holo ? 3 : 8, dt); holoMat.uniforms.t.value = now; holoMat.uniforms.c.value.set('#7fc4ff'); holo3.lookAt(cam.position); holo3.visible = holoMat.uniforms.a.value > .01;
   cone.material.uniforms.a.value = holoMat.uniforms.a.value * .8; cone.material.uniforms.c.value.set('#7fc4ff'); cone.material.uniforms.t.value = now; cone.visible = holo3.visible;
   if (S.shake > 0) { S.shake = Math.max(0, S.shake - dt * .9); caseG.position.x = Math.sin(now * 70) * .02 * S.shake; }

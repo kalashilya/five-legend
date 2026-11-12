@@ -239,7 +239,14 @@ class Match {
   /* o.capt — слот капитана в составе игрока или -1 */
   constructor(mySq, tro, myRating, o = {}) {
     const mk = (name, sq, capt) => { const info = squadInfo(sq); return { name, sq, info, capt, score: 0, en: capt >= 0 ? 3 : 2, bonusEn: 0, deck: shuffle([...DECK]), hand: [], disc: [], money: START_MONEY, ls: 0, ws: 0, k: [0, 0, 0, 0, 0], d: [0, 0, 0, 0, 0], mv: [0, 0, 0, 0, 0], op: [0, 0, 0, 0, 0], spent: 0, buys: {} }; };
-    this.a = mk('Вы', mySq, o.capt == null ? -1 : o.capt);
+    this.a = mk('Вы', mySq, o.capt == null ? -1 : o.capt); this.pvp = !!o.opp;
+    if (o.opp) {   /* онлайн: соперник — живой игрок со своим составом, его план приходит по сети */
+      this.b = mk(o.opp.name, o.opp.sq, o.opp.capt == null ? -1 : o.opp.capt); this.style = 'tact';
+      this.opp = { name: o.opp.name, tro: o.opp.tro | 0, lg: leagueOf(o.opp.tro | 0), rating: this.b.info.rating }; this.err = 0;
+      this.fav = { A: 'A', D: 'A' }; this.map = o.map || pick(MAPS);
+      this.round = 1; this.sideA = R() < .5 ? 'A' : 'D'; this.over = false; this.hist = []; this.last = null; this.decider = false;
+      this.draw(this.a); this.draw(this.b); this.prep(); return;
+    }
     const btro = Math.max(0, tro + ri(-100, 100)), t = .45 * clamp(64 + btro / 40, 64, 93) + .55 * myRating + rnd(-2, 2), osq = [];
     for (let role = 0; role < 5; role++) {
       const candidates = ALL.filter(x => x.role === role && !x.sp && !osq.some(q => q.c.nick === x.nick));
@@ -265,6 +272,7 @@ class Match {
   capIgl(s) { return s.capt >= 0 ? s.info.e[s.capt].st.igl : 55; }
   /* Соперник решает до игрока и видит только прошлые раунды */
   prep() {
+    if (this.pvp) { this.nx = { plan: { dir: 'S', tempo: 'norm', focus: -1 }, cards: [], slip: false, intel: null }; return; }
     const slip = R() < this.err;
     this.nx = { plan: this.aiPlan(slip), cards: this.aiChoose(slip), slip };
     this.nx.intel = this.recon();
@@ -337,7 +345,7 @@ class Match {
     if (!TEMPOS.includes(plan.tempo)) plan.tempo = 'norm';
     if (!Number.isInteger(plan.focus) || plan.focus < 0 || plan.focus >= 5) plan.focus = -1;
     /* решение по ходу раунда (смена точки, ротация): цена потерянного времени, от 0 до −3 */
-    const mc = clamp(+plan.mc || 0, -3, 0);
+    const mc = clamp(+plan.mc || 0, -3, 0), mcB = clamp(+(this.nx.plan && this.nx.plan.mc) || 0, -3, 0);
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
@@ -363,7 +371,7 @@ class Match {
     const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
     const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + mc + sgn * (dm + swing) / 2;
-    const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) - sgn * (dm + swing) / 2;
+    const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) + mcB - sgn * (dm + swing) / 2;
     const p = 1 / (1 + Math.exp(-(pa - pb) / 9)), win = R() < p;
     const W = win ? a : b, L = win ? b : a; W.score++;
     const open = openAtt ? { team: att, k: 1, v: ri(0, 4) } : { team: def, k: 0, v: 1 };
@@ -379,7 +387,7 @@ class Match {
     W.ws++; W.ls = 0; L.ls++; L.ws = 0;
     const read = pAtt.dir === 'S' || pDef.dir === 'S' ? null : faked ? 'fake' : (pAtt.dir === pDef.dir) === (att === a) ? 'bad' : 'good';
     this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false }, f);
-    this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
+    this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, buyB, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
     if (a.score >= WIN_N || b.score >= WIN_N) { this.over = true; this.won = a.score > b.score; return this.last; }
     this.round++;
     if (this.round === HALF + 1) { this.sideA = sideB; this.last.swap = true; for (const s of [a, b]) { s.money = START_MONEY; s.ls = 0; s.ws = 0; } }

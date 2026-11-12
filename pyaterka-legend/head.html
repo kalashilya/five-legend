@@ -1809,6 +1809,31 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 #sheet .in.st-pop.acc-pop{gap:12px}.acc-pop .acc-logo{width:64px;height:64px;margin:0 auto}.acc-pop h2{text-align:center}.acc-pop .acc-sub{margin:0;text-align:center;font-size:13px;color:#c3ccd6;line-height:1.4}
 .acc-skip{background:none;border:0;color:#9fb2c4;font:600 13px var(--f-d);letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;padding:8px;cursor:pointer}
 
+#sheet .in.acc-page>:not(.lg-top){margin-left:16px;margin-right:16px}
+/* ---------- Онлайн: блок в «Матчах», друзья, поиск, вызов, ожидание хода ---------- */
+.net-box{display:flex;flex-direction:column;gap:10px;border:1px solid #4aa3ff44;background:linear-gradient(140deg,#0f1c2b,#0d1117)}
+.net-h{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}.net-h small{display:block;font:700 10px var(--f-m,monospace);letter-spacing:.16em;color:#6fb7ff}.net-h b{font:700 20px var(--f-d);letter-spacing:.05em}.net-h>span{font-size:12px;color:#97a2ae}
+.net-btns{display:flex;gap:8px;flex-wrap:wrap}.net-btns .btn{flex:1 1 150px;min-height:50px}
+.fr-dot{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;margin-left:4px;border-radius:10px;background:#ff5a5a;color:#fff;font:700 11px/1 var(--f-m,monospace);font-style:normal}
+.fr-add{display:flex;gap:8px;align-items:flex-end}.fr-add .acc-f{flex:1;min-width:0}.fr-add .btn{min-height:50px;flex:none}
+.fr-ok{margin:0;padding:10px 12px;border-radius:10px;background:#3ddc841a;border:1px solid #3ddc8455;color:#a8f0c6;font-size:13px}
+.fr-sec{display:flex;flex-direction:column;gap:6px}.fr-sec h4{margin:4px 0 0;font:700 12px var(--f-d);letter-spacing:.1em;text-transform:uppercase;color:#c3ccd6}
+.fr-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12;min-height:56px}
+.fr-ava{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#1c2836;color:#cfe3ff;font:700 13px var(--f-d);text-transform:uppercase}
+.fr-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.fr-n b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-st{font-size:11px;display:flex;align-items:center;gap:5px}.fr-st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.fr-st.on{color:#3ddc84}.fr-st.off{color:#6d7782}.fr-st.bz{color:#f0c477}
+.fr-rec{flex:none;font:700 12px var(--f-m,monospace);color:#c3ccd6;padding:3px 7px;border-radius:7px;background:#ffffff10}
+.fr-row .btn{flex:none;min-height:40px;padding:0 14px}.fr-x{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:#ffffff10;color:#9aa4b0;font-size:18px;cursor:pointer}
+#sheet .in.st-pop.net-pop{gap:12px;text-align:center}.net-pop h2{text-align:center}.net-pop .acc-sub{margin:0;text-align:center;font-size:13px;color:#c3ccd6;line-height:1.4}.net-msg{margin:4px 0;font-size:15px;line-height:1.45}
+.net-w{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;font-size:14px}.net-w.big{padding:18px}.net-w.big b{font:700 22px var(--f-m,monospace)}
+.net-spin{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid #ffffff2a;border-top-color:#f0c477;animation:netSpin .8s linear infinite}.net-w.big .net-spin{width:26px;height:26px;border-width:3px}
+@keyframes netSpin{to{transform:rotate(360deg)}}
+.lv-prep.on.net-wait{padding-top:14px}
+.net-tag{display:inline-flex;align-items:center;gap:6px;margin-right:auto;font:700 11px var(--f-m,monospace);letter-spacing:.08em;text-transform:uppercase;color:#cfe3ff;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.net-tag i{width:8px;height:8px;border-radius:50%;background:#3ddc84;box-shadow:0 0 8px #3ddc84}
+.net-sp{text-align:center;gap:12px}.net-vs{display:flex;align-items:center;justify-content:center;gap:14px;width:100%}.net-vs div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:12px;border-radius:14px;background:#ffffff0a;border:1px solid #ffffff18}.net-vs b{font:700 18px var(--f-d);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.net-vs span{font-size:12px;color:#97a2ae}.net-vs i{font:700 22px var(--f-d);color:#f0c477;font-style:normal}
+.net-lost{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:14px;background:#1a1208f2;border:1px solid #f0c47788;box-shadow:0 10px 30px #000a;font-size:13px;white-space:nowrap}.net-lost span{color:#c9c2b2}
+.net-res .net-rec{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:#ffffff0a}.net-res .net-rec b{font:700 24px var(--f-m,monospace);color:#f0c477}.net-why{margin:0;font-weight:600}
+@media (prefers-reduced-motion: reduce){.net-spin{animation-duration:2.4s}}
 /* Плашка «Powered by Netlify» (справа внизу, ~60px) — на бесплатном тарифе её не выключить, поэтому поднимаем нижние кнопки над ней */
 html.nb{--nbb:max(env(safe-area-inset-bottom,0px),60px)}
 html.nb #tabs{padding-bottom:var(--nbb)}

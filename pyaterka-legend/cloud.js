@@ -95,11 +95,11 @@ async function authGo(mode, nick, pass) {
     if (!auSet(j)) return sbErr('confirm');
     if (mode === 'up' && AU && !AU.nick) AU.nick = nick;
   } catch (e) { return sbErr(e); }
-  sheet = null; await cloudSync(mode === 'in' && !isFresh(G)); render(); return '';
+  sheet = null; await cloudSync(mode === 'in' && !isFresh(G)); netBoot(); render(); return '';
 }
 async function authOut() {
   try { if (AU) await sbFetch('/auth/v1/logout', { method: 'POST' }, true); } catch (e) { /* выходим и без ответа сервера */ }
-  AU = null; lsSet(AKEY, null); CS = { st: 'off', msg: '', at: 0 }; render();
+  netStop(); AU = null; lsSet(AKEY, null); CS = { st: 'off', msg: '', at: 0 }; render();
 }
 async function topLoad() {
   TOP = { st: 'load', rows: [] }; render();

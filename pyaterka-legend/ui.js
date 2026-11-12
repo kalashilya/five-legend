@@ -525,13 +525,13 @@ function rvCard(x, type) { const c = x.c; return { box: PACKS[type] && ['basic',
 function rvStart() {
   const f = $('#rv3d'); if (!f) return; OV.top = topOf(OV.cards); const me = OV;
   RV = { f, ov: me, ready: false, quiet: false };
-  RV.t = setTimeout(() => { if (RV && RV.ov === me && !RV.ready) rvFallback(); }, 8000);
-  try { f.src = rvUrl(); } catch (e) { rvFallback(); }
+  RV.t = setTimeout(() => { if (RV && RV.ov === me && !RV.ready) rvFallback(false, 'долго грузилось'); }, 20000);   /* медленная сеть или телефон: ждём дольше, а 3D не отключаем насовсем */
+  try { f.src = rvUrl(); } catch (e) { rvFallback(true, 'не запустилось'); }
 }
 function rvDrop() { if (RV) clearTimeout(RV.t); RV = null; const f = $('#rv3d'); if (f) f.remove(); const o = $('#over'); if (o) o.classList.remove('po3d'); }
-function rvFallback() {
-  rvOk.bad = true; rvDrop(); if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
-  $('#po-stage').innerHTML = `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`; $('#po-name').innerHTML = '<span class="mut">Нажмите на кейс, чтобы открыть</span>';
+function rvFallback(perm, why) {
+  if (perm) rvOk.bad = true; rvDrop(); if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
+  $('#po-stage').innerHTML = `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`; $('#po-name').innerHTML = `<span class="mut">Нажмите на кейс, чтобы открыть</span>${why ? `<small class="mut" style="display:block;font-size:10px;opacity:.7">3D-открытие ${esc(why)} — показываем обычное</small>` : ''}`;
 }
 function rvStep(m) {
   if (m.s === 'open') { if (OV.phase !== 'case') return; OV.phase = 'show'; sfx('open'); if (m.w) { sfx('rare'); $('#po-top').textContent = 'Редкий игрок'; }
@@ -545,7 +545,7 @@ addEventListener('message', e => {
   if (RV.ov !== OV || !OV || OV.t !== 'pack') { rvDrop(); return; }
   if (m.t === 'boot') RV.f.contentWindow.postMessage({ t: 'play', p: rvCard(OV.top, OV.type) }, '*');
   else if (m.t === 'ready') { RV.ready = true; clearTimeout(RV.t); if (OV.phase === 'case') $('#po-name').innerHTML = '<span class="mut">Нажмите на кейс, чтобы открыть</span>'; }
-  else if (m.t === 'fail') { if (OV.phase === 'case') rvFallback(); else poDone(); }
+  else if (m.t === 'fail') { if (OV.phase === 'case') rvFallback(true, 'не поддерживается на этом устройстве: ' + String(m.e || '').slice(0, 60)); else poDone(); }
   else if (m.t === 'step') rvStep(m);
   else if (m.t === 'done') { if (stageOk()) topDone(OV.top); }
 });

@@ -4569,99 +4569,90 @@ Object.assign(ACT, {
   instNo() { lsSet(KEY + '-inst-no', String(Date.now() + 7 * 86400000)); }
 });
 /* ---------- Онлайн: друзья, вызов на матч, подбор соперника и матч с живым игроком ----------
-   Связь — Supabase Realtime (WebSocket, протокол Phoenix): общий канал «fl-lobby» с присутствием (кто в игре),
-   личный канал «fl-u-<id>» для приглашений и канал матча «fl-m-<id>».
+   Связь — через базу Supabase (таблицы net_msgs и net_here, см. docs/supabase-online.sql): личный канал «fl-u-<id>»
+   для приглашений и канал матча «fl-m-<id>». (Realtime-WebSocket на настоящем сервере не доставлял сообщения.)
    Матч считает только ведущий (кто пригласил, при подборе — у кого меньше id): второй игрок присылает свой план
    и решения капитана, ведущий разыгрывает раунд и рассылает результат и состояние матча. Повтор раунда
    строится одинаково у обоих (сценарий радара зависит только от результата раунда).
    Онлайн-матчи на интерес: кубки, монеты, опыт и задания не меняются, ведётся только личный счёт с соперником. */
 const NET_V = '1:' + ALL.length;                 /* версия правил: у обоих игроков должна совпадать */
 const NET_BUY = 5000, NET_BUY1 = 8000, NET_CALL = 5000, NET_SPD = 2.4, NET_LOST = 12000, NET_GIVEUP = 60000, NET_INV = 20000;
-const RT = { ws: null, ref: 0, ch: {}, open: false, hb: 0, rt: 0, retry: 0, err: '', st: 'off' };
-const rtErr = e => { RT.err = String(e || '').slice(0, 160); console.warn('[online]', RT.err); if (tab === 'play' && !OV && !sheet) render(); };
+const RT = { ch: {}, open: false, err: '', st: 'off', lob: 0, last: null, here: [], hereK: '', skew: 0, busy: 0, timer: 0 };
+const rtErr = e => { const was = RT.err; RT.err = String(e || '').slice(0, 160); if (RT.err !== was) { console.warn('[online]', RT.err); if (tab === 'play' && !OV && !sheet) render(); } };
 const NET = { on: 0, st: 'idle', qt: 0, mm: null, inv: null, msg: '' };
 let FR = { st: 'off', rows: [], nick: {}, msg: '', err: '' };
 const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
-/* ---------- Realtime: соединение и каналы ---------- */
-const rtUrl = () => SB.url.replace(/^http/, 'ws') + '/realtime/v1/websocket?apikey=' + encodeURIComponent(SB.key) + '&vsn=1.0.0';
-function rtConnect() {
-  if (!AU || RT.ws || typeof WebSocket === 'undefined') return;
-  let ws; try { ws = new WebSocket(rtUrl()); } catch (e) { rtRetry(); return; }
-  RT.ws = ws; RT.st = 'conn';
-  ws.onopen = () => { RT.open = true; RT.st = 'open'; RT.retry = 0; for (const n in RT.ch) rtJoinSend(RT.ch[n]); clearInterval(RT.hb); RT.hb = setInterval(() => rtRaw('phoenix', 'heartbeat', {}), 20000); };
-  ws.onmessage = e => { let m = null; try { m = JSON.parse(e.data); } catch (x) { return; } if (m) rtIn(m); };
-  ws.onclose = e => { if (RT.ws !== ws) return; RT.st = 'closed'; RT.lob = 0; if (e && e.code !== 1000) rtErr('соединение закрыто, код ' + e.code + (e.reason ? ': ' + e.reason : '')); RT.open = false; RT.ws = null; clearInterval(RT.hb); for (const n in RT.ch) RT.ch[n].ok = false; rtRetry(); };
-  ws.onerror = () => { try { ws.close(); } catch (x) { /* уже закрыт */ } };
-}
-function rtRetry() { clearTimeout(RT.rt); if (!AU || !Object.keys(RT.ch).length) return; RT.rt = setTimeout(rtConnect, Math.min(15000, 1000 * 2 ** RT.retry++)); }
-function rtRaw(topic, event, payload, join) {
-  if (!RT.open || !RT.ws) return null; const ref = String(++RT.ref);
-  try { RT.ws.send(JSON.stringify({ topic, event, payload, ref, join_ref: join || null })); } catch (e) { return null; }
-  return ref;
-}
+/* ---------- Связь через базу Supabase (те же запросы, что у сохранений) ----------
+   Сообщения — строки таблицы net_msgs (канал, событие, данные, отправитель); каждый игрок опрашивает новые строки
+   своих каналов: в матче раз в 0,6 с, иначе раз в 1,5 с. «Кто в игре» — таблица net_here: раз в 5 с отметка о себе.
+   Каналы: fl-u-<id> — личный (приглашения, заявки), fl-m-<id> — матч. */
+const rtTbl = e => /relation|does not exist|42P01|net_msgs|net_here|schema cache/i.test(String(e && e.message)) ? 'на сервере нет таблиц онлайна — владельцу запустить docs/supabase-online.sql' : sbErr(e);
+const rtOk = () => { RT.open = true; if (RT.err) { RT.err = ''; if (tab === 'play' && !OV && !sheet) render(); } };
+const srvIso = ms => new Date(Date.now() + RT.skew + ms).toISOString();
 function rtJoin(name, o) {
   const old = RT.ch[name]; if (old) { Object.assign(old, o || {}); return old; }
-  const c = RT.ch[name] = Object.assign({ name, topic: 'realtime:' + name, ok: false, pres: {}, q: [] }, o || {});
-  if (RT.open) rtJoinSend(c); else rtConnect();
-  return c;
+  const c = RT.ch[name] = Object.assign({ name, ok: true, pres: {} }, o || {});
+  if (c.onJoin) setTimeout(() => { if (RT.ch[name] === c) c.onJoin(); }, 0);
+  rtKick(0); return c;
 }
-async function rtJoinSend(c) {
-  try { await auRefresh(); } catch (e) { /* войдём с прежним токеном */ }
-  if (!RT.open || RT.ch[c.name] !== c) return;
-  c.jref = rtRaw(c.topic, 'phx_join', { config: { broadcast: { self: false, ack: false }, presence: { key: c.key || '', enabled: !!c.key }, private: false }, access_token: AU ? AU.at : undefined });
-}
-function rtLeave(name) { const c = RT.ch[name]; if (!c) return; delete RT.ch[name]; if (c.ok) rtRaw(c.topic, 'phx_leave', {}, c.jref); }
+function rtLeave(name) { delete RT.ch[name]; }
 function rtSend(name, ev, p) {
-  const c = RT.ch[name]; if (!c) return false;
-  if (!c.ok) { c.q.push([ev, p]); if (c.q.length > 20) c.q.shift(); return false; }
-  return !!rtRaw(c.topic, 'broadcast', { type: 'broadcast', event: ev, payload: p }, c.jref);
+  if (!AU) return false;
+  sbFetch('/rest/v1/net_msgs', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ ch: name, ev, p: p || {}, frm: AU.uid }) }, true)
+    .then(() => { RT.open = true; }).catch(e => { RT.open = false; rtErr(rtTbl(e)); });
+  return true;
 }
-function rtTrack(name, meta) { const c = RT.ch[name]; if (!c) return; c.meta = meta; if (c.ok) rtRaw(c.topic, 'presence', { type: 'presence', event: 'track', payload: meta }, c.jref); }
-function presAdd(c, j) { for (const k in j || {}) { const ms = (j[k] && j[k].metas) || []; c.pres[k] = (c.pres[k] || []).filter(x => !ms.some(y => y.phx_ref === x.phx_ref)).concat(ms); } }
-function presDel(c, l) { for (const k in l || {}) { const ms = (l[k] && l[k].metas) || [], left = (c.pres[k] || []).filter(x => !ms.some(y => y.phx_ref === x.phx_ref)); if (left.length) c.pres[k] = left; else delete c.pres[k]; } }
-function rtIn(m) {
-  const c = Object.values(RT.ch).find(x => x.topic === m.topic); if (!c) return;
-  const p = m.payload || {};
-  if (m.event === 'phx_reply' && m.ref === c.jref) {
-    if (p.status === 'ok') { c.ok = true; if (c.name === 'fl-lobby') { RT.err = ''; RT.lob = 1; } if (c.meta) rtTrack(c.name, c.meta); const q = c.q; c.q = []; q.forEach(([e, x]) => rtSend(c.name, e, x)); if (c.onJoin) c.onJoin(); }
-    else { c.ok = false; const r = p.response || {}; rtErr('канал ' + c.name.replace(/-[0-9a-f-]{20,}$/, '') + ': ' + (r.reason || r.message || JSON.stringify(r)));
-      if (/token|jwt|expired/i.test(JSON.stringify(r)) && AU) AU.exp = 0; setTimeout(() => { if (RT.ch[c.name] === c && RT.open) rtJoinSend(c); }, 3000); }
-    return;
-  }
-  if (m.event === 'broadcast') { if (c.on) try { c.on(p.event, p.payload || {}); } catch (e) { console.error(e); } return; }
-  if (m.event === 'presence_state') { c.pres = {}; presAdd(c, p); if (c.onPres) c.onPres(); return; }
-  if (m.event === 'presence_diff') { presDel(c, p.leaves); presAdd(c, p.joins); if (c.onPres) c.onPres(); return; }
-  if (m.event === 'system' && p.status && p.status !== 'ok') { rtErr('сервер: ' + (p.message || p.status)); return; }
-  if (m.event === 'phx_error' || m.event === 'phx_close') { if (m.event === 'phx_error') rtErr('ошибка канала ' + c.name.slice(0, 8)); c.ok = false; setTimeout(() => { if (RT.ch[c.name] === c && RT.open) rtJoinSend(c); }, 2000); }
+function rtTrack(name) { if (name === 'fl-lobby') hereUp(); }
+async function hereUp() {
+  if (!AU) return;
+  try {
+    const r = await sbFetch('/rest/v1/net_here?on_conflict=uid', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=representation' }, body: JSON.stringify(Object.assign(netMeta(), { seen: new Date().toISOString() })) }, true);
+    const me = r && r[0]; if (me && me.seen) RT.skew = Date.parse(me.seen) - Date.now();
+    RT.open = true; if (!RT.lob) { RT.lob = 1; RT.err = ''; onlineUi(true); }
+  } catch (e) { RT.lob = 0; RT.open = false; rtErr(rtTbl(e)); }
 }
-/* отправить в личный канал другого игрока: подключаемся на несколько секунд */
-function netPost(uid, ev, p) {
-  const name = 'fl-u-' + uid, mine = AU && uid === AU.uid; if (mine) return;
-  const c = rtJoin(name, {}); rtSend(name, ev, Object.assign({ from: AU.uid, nick: AU.nick }, p || {}));
-  clearTimeout(c.byeT); c.byeT = setTimeout(() => { if (RT.ch[name] === c) rtLeave(name); }, 10000);
+async function hereLoad() {
+  if (!AU) return;
+  try {
+    const rows = await sbFetch(`/rest/v1/net_here?select=uid,nick,st,v,t&seen=gt.${encodeURIComponent(srvIso(-16000))}&limit=500`, { method: 'GET' }, true) || [];
+    rtOk(); RT.here = rows; const k = JSON.stringify(rows.map(x => x.uid + x.st).sort()); if (k !== RT.hereK) { RT.hereK = k; onlineUi(); }
+  } catch (e) { rtErr(rtTbl(e)); }
 }
+async function rtPoll() {
+  RT.timer = 0; if (!AU) return;
+  const chs = Object.keys(RT.ch).filter(n => RT.ch[n].on); if (!chs.length || RT.busy) { rtKick(); return; }
+  RT.busy = 1;
+  try {
+    if (RT.last == null) { const r = await sbFetch('/rest/v1/net_msgs?select=id&order=id.desc&limit=1', { method: 'GET' }, true); RT.last = r && r[0] ? r[0].id : 0; }
+    const r = await sbFetch(`/rest/v1/net_msgs?select=id,ch,ev,p,frm&id=gt.${RT.last}&ch=in.(${chs.join(',')})&order=id.asc&limit=200`, { method: 'GET' }, true) || [];
+    rtOk();
+    for (const m of r) { RT.last = Math.max(RT.last, m.id); if (m.frm === AU.uid) continue; const c = RT.ch[m.ch]; if (c && c.on) try { c.on(m.ev, m.p || {}); } catch (e) { console.error(e); } }
+  } catch (e) { RT.open = false; rtErr(rtTbl(e)); }
+  RT.busy = 0; rtKick();
+}
+function rtKick(ms) { if (RT.timer) { if (ms !== 0) return; clearTimeout(RT.timer); } RT.timer = setTimeout(rtPoll, ms != null ? ms : OV && OV.net ? 600 : document.hidden ? 6000 : 1500); }
+/* отправить в личный канал другого игрока */
+function netPost(uid, ev, p) { if (!AU || uid === AU.uid) return; rtSend('fl-u-' + uid, ev, Object.assign({ from: AU.uid, nick: AU.nick }, p || {})); }
 
-/* ---------- Присутствие и личный канал ---------- */
+/* ---------- «Кто в игре» и личный канал ---------- */
 const netMeta = () => ({ uid: AU.uid, nick: AU.nick, st: NET.st, v: NET_V, t: NET.qt || 0 });
-function netSt(st) { NET.st = st; if (AU && RT.ch['fl-lobby']) { rtTrack('fl-lobby', netMeta()); hereSend(); } }
-/* кто в игре: присутствие сервера + запасной способ — каждый раз в 5 с сообщает о себе в общем канале */
-const SEEN = {};
-function onlineMap() { const c = RT.ch['fl-lobby'], o = {}; if (!c) return o; for (const k in c.pres) { const l = c.pres[k], x = l[l.length - 1]; if (x && x.uid) o[x.uid] = x; }
-  const t = Date.now(); for (const id in SEEN) if (t - SEEN[id]._t < 16000) o[id] = SEEN[id]; if (AU && c.ok) o[AU.uid] = netMeta(); return o; }
-const hereSend = ev => { if (AU && RT.ch['fl-lobby'] && RT.ch['fl-lobby'].ok) rtSend('fl-lobby', ev || 'here', netMeta()); };
-const onlineUi = () => { mmTick(); if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render(); };
-setInterval(() => { if (!AU) return; hereSend(); const t = Date.now(); let ch = 0; for (const id in SEEN) if (t - SEEN[id]._t > 16000) { delete SEEN[id]; ch = 1; } if (ch) onlineUi(); }, 5000);
+function netSt(st) { NET.st = st; if (AU && NET.on) hereUp(); }
+function onlineMap() { const o = {}; for (const x of RT.here) if (x && x.uid) o[x.uid] = x; if (AU && RT.lob) o[AU.uid] = netMeta(); return o; }
+const onlineUi = force => { mmTick(); if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render(); };
+setInterval(() => { if (!AU || !NET.on || document.hidden) return; hereUp(); hereLoad(); }, 5000);
+/* свои старые сообщения убираем, чтобы таблица не росла */
+setInterval(() => { if (!AU || !NET.on) return; sbFetch(`/rest/v1/net_msgs?frm=eq.${AU.uid}&at=lt.${encodeURIComponent(srvIso(-300000))}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }, true).catch(() => {}); }, 90000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && AU && NET.on) { hereUp(); hereLoad(); rtKick(0); } });
 function netBoot() {
-  if (!AU || NET.on) return; NET.on = 1;
-  rtJoin('fl-lobby', { key: AU.uid, meta: netMeta(), onPres: onlineUi, onJoin: () => { hereSend('who'); onlineUi(); },
-    on: (ev, p) => { if ((ev !== 'here' && ev !== 'who') || !p || !p.uid || p.uid === AU.uid) return; const nw = !SEEN[p.uid] || SEEN[p.uid].st !== p.st; SEEN[p.uid] = Object.assign({}, p, { _t: Date.now() }); if (ev === 'who') hereSend(); if (nw) onlineUi(); } });
+  if (!AU || NET.on) return; NET.on = 1; RT.st = 'conn';
   rtJoin('fl-u-' + AU.uid, { on: netInbox });
-  frLoad();
+  hereUp().then(hereLoad); frLoad();
 }
-function netStop() { NET.on = 0; NET.mm = null; NET.inv = null; for (const n in RT.ch) rtLeave(n); clearTimeout(RT.rt); if (RT.ws) { const w = RT.ws; RT.ws = null; RT.open = false; try { w.close(); } catch (e) { /* закрыт */ } } FR = { st: 'off', rows: [], nick: {}, msg: '', err: '' }; }
-/* токен входа живёт час: продлеваем и сообщаем каналам */
-setInterval(async () => { if (!AU || !RT.open) return; try { await auRefresh(); } catch (e) { return; } if (AU) for (const n in RT.ch) if (RT.ch[n].ok) rtRaw(RT.ch[n].topic, 'access_token', { access_token: AU.at }, RT.ch[n].jref); }, 600000);
+function netStop() {
+  if (AU && NET.on) sbFetch(`/rest/v1/net_here?uid=eq.${AU.uid}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }, true).catch(() => {});
+  NET.on = 0; NET.mm = null; NET.inv = null; RT.ch = {}; RT.here = []; RT.lob = 0; RT.last = null; clearTimeout(RT.timer); RT.timer = 0; FR = { st: 'off', rows: [], nick: {}, msg: '', err: '' };
+}
 const squadReady = () => !!squadInfo(squadOf(G));
 function netInbox(ev, p) {
   if (!p || !p.from || p.from === AU.uid) return;
@@ -4872,7 +4863,7 @@ function netMsg(N, ev, p) {
 function netIv(N) {
   if (!OV || OV.net !== N || N.done) { clearInterval(N.iv); return; }
   const t = Date.now();
-  if (t - (N.hbT || 0) > 2000) { N.hbT = t; rtSend(N.ch, 'hb', {}); }
+  if (t - (N.hbT || 0) > 3000) { N.hbT = t; rtSend(N.ch, 'hb', {}); }
   if (N.host) { if (N.last && t - N.lastT > 2500) { N.lastT = t; rtSend(N.ch, N.last.ev, N.last.p); } }
   else {
     if (!OV.m) { if (t - (N.hiT || 0) > 1500) netHi(); }
@@ -4963,7 +4954,7 @@ function netBoxH() {
     : `<p class="sm">Живой соперник, ${NET_BUY / 1000} с на план раунда и ${NET_CALL / 1000} с на решение капитана — без пауз и перемотки.${on ? ` Сейчас в игре: <b>${on}</b>.` : ''}</p>
       <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
       ${ready ? '' : '<p class="sm mut">Сначала соберите пятёрку.</p>'}
-      <p class="net-diag ${RT.lob && RT.open && !RT.err ? 'ok' : RT.err ? 'err' : ''}">${RT.lob && RT.open && !RT.err ? 'Онлайн подключён · видно игроков: ' + Object.keys(onlineMap()).length : RT.err ? 'Онлайн не подключился — ' + esc(RT.err) : RT.st === 'conn' || RT.st === 'open' ? 'Подключаемся к онлайну…' : 'Онлайн не подключён' + (typeof WebSocket === 'undefined' ? ' (браузер не умеет)' : '')}</p>`}</section>`;
+      <p class="net-diag ${RT.lob && RT.open && !RT.err ? 'ok' : RT.err ? 'err' : ''}">${RT.lob && RT.open && !RT.err ? 'Онлайн подключён · видно игроков: ' + Object.keys(onlineMap()).length : RT.err ? 'Онлайн не подключился — ' + esc(RT.err) : RT.st === 'conn' || RT.st === 'open' ? 'Подключаемся к онлайну…' : 'Онлайн не подключён' + ''}</p>`}</section>`;
 }
 function frH() {
   const s = sheet, me = AU && AU.uid, rec = id => { const r = G.pvp && G.pvp[id]; return r && (r.w || r.l) ? `<small class="fr-rec">${r.w}:${r.l}</small>` : ''; };

@@ -8,6 +8,14 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const HLTV = fs.existsSync('hltv-data.json') ? JSON.parse(fs.readFileSync('hltv-data.json', 'utf8')) : { players: {}, snapshotDate: null };
 const teamLogoByName = {}; for (const p of Object.values(HLTV.players || {})) if (p.team && p.teamLogo) teamLogoByName[p.team] = p.teamLogo;
 const OVR_CAP = 92;                       // потолок рейтинга любой карточки
+/* Топ-20 игроков HLTV за прошлый год (по порядку): 1–2 места — 92, 3–7 — 90, 8–20 — 88. Значения фиксированные,
+   бонусы MVP/EVP и формула к ним не применяются. Остальные действующие и архивные карточки — не выше 88. */
+const TOP20 = 'ZywOo donk ropz m0NESY sh1ro molodoy flameZ frozen KSCERATO Spinx Twistzz mezii Senzu XANTARES YEKINDAR xertioN torzsi NiKo iM b1t'.split(' ');
+const top20Ovr = i => i < 2 ? 92 : i < 7 ? 90 : 88;
+/* Топ-5 команд рейтинга HLTV: их игроки вне топ-20 получают 85–88, все прочие игроки — не выше 87, чтобы стоять ниже */
+const TOP_TEAMS = ['Spirit', 'Vitality', 'FURIA', 'MOUZ', 'Falcons'];
+const OTHER_CAP = 88, TOP_TEAM_MIN = 85, REST_CAP = 87;
+const finalOvr = (n, team, raw) => { const i = TOP20.indexOf(n); if (i >= 0) return top20Ovr(i); const v = Math.round(raw); return TOP_TEAMS.includes(team) ? clamp(v, TOP_TEAM_MIN, OTHER_CAP) : clamp(v, 58, REST_CAP); };
 /* Награды HLTV на турнирах: MVP даёт +2, EVP +1 (у MVP отдельного +1 за EVP нет). Бонусы разных турниров складываются. */
 const AWARDS = [
   { event: 'IEM Beijing 2026', mvp: ['xertioN'], evp: ['w0nderful', 'torzsi', 'Spinx', 'b1t', 'Techno', 'PR', 'xelex'] },
@@ -39,7 +47,8 @@ rows.forEach(([rk, pts, name, ros], ti) => {
     const old = reg.cards[n.toLowerCase() + '|' + name.trim()], h = hltvStats(n, role[n]), p = HLTV.players && HLTV.players[n], meta = p && p.profileId ? { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo || teamLogoByName[name.trim()], verifiedAt: HLTV.snapshotDate } : null;
     const o = tb + ((hsh(n) % 400) / 100 - 2) + (STAR[n] || 0) - (role[n] === 4 && !(n in STAR) ? 2.5 : 0);
     const hv = Object.assign({}, old && old.hltv || {}, h && h.hltv || {}, meta || {}); const rawO = h ? h.raw : o + awardBonus(n);   // без потолка: нужен только чтобы упорядочить игроков с равным рейтингом
-    cur.push([n, ti, role[n], h ? h.ovr : Math.round(clamp(rawO, 58, OVR_CAP)), h ? h.st : old && old.st || null, Object.keys(hv).length ? hv : null, rawO]);
+    const t20 = TOP20.indexOf(n), sortKey = t20 >= 0 ? 1000 - t20 : rawO;   // топ-20 при равенстве — в порядке списка HLTV
+    cur.push([n, ti, role[n], finalOvr(n, name.trim(), rawO), h ? h.st : old && old.st || null, Object.keys(hv).length ? hv : null, sortKey]);
   }
 });
 cur.sort((a, b) => b[3] - a[3] || b[6] - a[6] || a[1] - b[1]);
@@ -57,7 +66,8 @@ for (const k in reg.cards) if (!live.has(k)) {                 // архивны
   const c = reg.cards[k]; let ti = TM.indexOf(c.team); if (ti < 0) { ti = TM.length; TM.push(c.team); }
   const p = HLTV.players && HLTV.players[c.nick];
   if (p && p.profileId) c.hltv = Object.assign({}, c.hltv || {}, { source: 'HLTV', profileId: p.profileId, profileUrl: p.profileUrl, photo: p.photo, country: p.country, countryCode: p.countryCode, team: p.team, teamLogo: p.teamLogo || teamLogoByName[c.team], verifiedAt: HLTV.snapshotDate });
-  PL.push([c.nick, ti, c.role, Math.min(OVR_CAP, c.ovr), c.id, c.rar, 1, c.st || null, c.hltv || null]); archived++;
+  const capA = TOP20.includes(c.nick) ? top20Ovr(TOP20.indexOf(c.nick)) : OTHER_CAP;   // архивная версия игрока из топ-20 сохраняет его рейтинг
+  PL.push([c.nick, ti, c.role, Math.min(capA, c.ovr), c.id, c.rar, 1, c.st || null, c.hltv || null]); archived++;
 }
 PL.sort((a, b) => b[3] - a[3] || a[1] - b[1] || a[4] - b[4]);
 fs.writeFileSync('ids.json', JSON.stringify(reg));

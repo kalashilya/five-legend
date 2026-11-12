@@ -1704,6 +1704,29 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .rw-act{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:3;margin-top:4px}.rw-act .btn{width:100%;min-height:52px;font-size:16px}
 @media (prefers-reduced-motion: reduce){.rw-b i{animation:none}}
 @media (prefers-reduced-motion: reduce){.qp-c{transition:none}}
+/* ---- правки по телефону 2026-11-12: одна колонка, крестик по центру, окно «Уровень» ---- */
+.lg-x{display:grid;place-items:center;padding:0;line-height:0;flex:none}.lg-x svg{width:18px;height:18px;display:block}
+@media (max-width:760px){
+  #app[data-tab="home"] .lobby-lower{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+  #app[data-tab="home"] .lobby-season,#app[data-tab="home"] .lobby-daily{min-height:0!important;height:auto!important}
+  #app[data-tab="play"]{display:flex!important;flex-direction:column;gap:14px}
+  #app[data-tab="play"]>*{width:100%!important;max-width:none!important;min-width:0}
+}
+/* серия входов на главной: ячейки шире, кейс помещается в ячейку, подпись не обрезается */
+.lobby-daily .st-grid{gap:6px}.lobby-daily .st-day{min-height:72px;padding:6px 2px 5px;overflow:hidden}
+.lobby-daily .st-day .st-case{width:min(100%,40px)}.lobby-daily .st-day .st-case .pk{width:100%;height:auto}.lobby-daily .st-day b{font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.lobby-daily .st-x{right:-2px;bottom:0;font-size:8px;padding:1px 2px}
+.lobby-daily p{font-size:11px!important}
+/* профиль: блок уровня — кнопка */
+.profile-hero__identity.is-link{cursor:pointer;border-radius:14px;transition:background .2s}.profile-hero__identity.is-link:active{background:#ffffff0a}
+.lv-page{display:flex;flex-direction:column;gap:14px}.lv-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lv-card{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:14px;background:linear-gradient(160deg,#1c2733,#0b1118);border:1px solid #ffffff14}
+.lv-card small{font:700 10px var(--f-m);letter-spacing:.12em;color:var(--mut)}.lv-card b{font:700 26px/1 var(--f-d);color:#f0c477}.lv-card p{margin:0;font-size:12px;line-height:1.35;color:#c3ccd6}.lv-card span{font-size:11px;color:var(--mut)}
+.lv-how{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:14px;background:#0b1118;border:1px solid #ffffff12}.lv-how>b{font:700 14px var(--f-d);letter-spacing:.06em;text-transform:uppercase}
+.lv-g{display:flex;justify-content:space-between;font-size:13px}.lv-g em{font-style:normal;color:#7fe0a0;font-weight:700}
+.lv-row{display:grid;grid-template-columns:1fr auto 40px auto;align-items:center;gap:10px;font-size:12.5px;padding:4px 0;border-top:1px solid #ffffff0d}.lv-row span{color:var(--mut)}.lv-row em{font-style:normal;color:#cfd6de}.lv-row .pk{width:40px;height:40px}
+@media (max-width:380px){.lv-two{grid-template-columns:1fr}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

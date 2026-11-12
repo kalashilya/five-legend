@@ -1705,6 +1705,29 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .rw-act{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:3;margin-top:4px}.rw-act .btn{width:100%;min-height:52px;font-size:16px}
 @media (prefers-reduced-motion: reduce){.rw-b i{animation:none}}
 @media (prefers-reduced-motion: reduce){.qp-c{transition:none}}
+/* ---- правки по телефону 2026-11-12: одна колонка, крестик по центру, окно «Уровень» ---- */
+.lg-x{display:grid;place-items:center;padding:0;line-height:0;flex:none}.lg-x svg{width:18px;height:18px;display:block}
+@media (max-width:760px){
+  #app[data-tab="home"] .lobby-lower{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+  #app[data-tab="home"] .lobby-season,#app[data-tab="home"] .lobby-daily{min-height:0!important;height:auto!important}
+  #app[data-tab="play"]{display:flex!important;flex-direction:column;gap:14px}
+  #app[data-tab="play"]>*{width:100%!important;max-width:none!important;min-width:0}
+}
+/* серия входов на главной: ячейки шире, кейс помещается в ячейку, подпись не обрезается */
+.lobby-daily .st-grid{gap:6px}.lobby-daily .st-day{min-height:72px;padding:6px 2px 5px;overflow:hidden}
+.lobby-daily .st-day .st-case{width:min(100%,40px)}.lobby-daily .st-day .st-case .pk{width:100%;height:auto}.lobby-daily .st-day b{font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.lobby-daily .st-x{right:-2px;bottom:0;font-size:8px;padding:1px 2px}
+.lobby-daily p{font-size:11px!important}
+/* профиль: блок уровня — кнопка */
+.profile-hero__identity.is-link{cursor:pointer;border-radius:14px;transition:background .2s}.profile-hero__identity.is-link:active{background:#ffffff0a}
+.lv-page{display:flex;flex-direction:column;gap:14px}.lv-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lv-card{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:14px;background:linear-gradient(160deg,#1c2733,#0b1118);border:1px solid #ffffff14}
+.lv-card small{font:700 10px var(--f-m);letter-spacing:.12em;color:var(--mut)}.lv-card b{font:700 26px/1 var(--f-d);color:#f0c477}.lv-card p{margin:0;font-size:12px;line-height:1.35;color:#c3ccd6}.lv-card span{font-size:11px;color:var(--mut)}
+.lv-how{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:14px;background:#0b1118;border:1px solid #ffffff12}.lv-how>b{font:700 14px var(--f-d);letter-spacing:.06em;text-transform:uppercase}
+.lv-g{display:flex;justify-content:space-between;font-size:13px}.lv-g em{font-style:normal;color:#7fe0a0;font-weight:700}
+.lv-row{display:grid;grid-template-columns:1fr auto 40px auto;align-items:center;gap:10px;font-size:12.5px;padding:4px 0;border-top:1px solid #ffffff0d}.lv-row span{color:var(--mut)}.lv-row em{font-style:normal;color:#cfd6de}.lv-row .pk{width:40px;height:40px}
+@media (max-width:380px){.lv-two{grid-template-columns:1fr}}
+
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -2972,7 +2995,7 @@ function vPlay() {
     : `<button class="match-player" data-act="card" data-id="${id}"><span class="match-player__role">${RNAME[i]}</span>${ownH(id, 'xs')}<small>${esc(CARDS[id].nick)}</small></button>`).join('');
   return `<section class="match-hero is-link" data-act="leagues" role="button" tabindex="0" aria-label="Путь на арену: открыть лиги">
     <div class="match-hero__light"></div><div class="match-hero__meta"><span><i></i> LIVE COMPETITIVE</span><b>SEASON ${String(G.season.m % 12 + 1).padStart(2, '0')}</b></div>
-    <div class="match-hero__title"><small>ТВОЯ СЛЕДУЮЩАЯ ЦЕЛЬ</small><h2>ПУТЬ НА АРЕНУ</h2><p>Собери пятёрку. Выбери тактику. Забери победу.</p></div>
+    <div class="match-hero__title"><small>ТВОЯ СЛЕДУЮЩАЯ ЦЕЛЬ</small><h2>ПУТЬ НА АРЕНУ</h2><p>Побеждай — получай кубки и поднимайся по лигам.</p></div>
     <div class="match-hero__rank">${rankH(lg)}<span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><strong>${G.tro}<small> КУБКОВ</small></strong></div>
     <div class="match-hero__progress"><i style="width:${prog}%"></i></div>
     <div class="match-hero__next">${nx ? (nx[1]-G.tro)+ ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНАЯ ЛИГА'}</div>
@@ -2982,7 +3005,7 @@ function vPlay() {
     <div class="match-roster__grid">${lineup}</div>
     <div class="match-roster__foot"><span>${info ? 'РЕЙТИНГ ' + info.rating.toFixed(1) : 'СОСТАВ НЕ ГОТОВ'}</span><span>${info ? 'ХИМИЯ ' + info.chem + '/13' : 'НУЖНО 5 ИГРОКОВ'}</span><span>${cs >= 0 ? 'КАПИТАН НАЗНАЧЕН' : 'БЕЗ КАПИТАНА'}</span></div>
   </section>
-  <section class="match-launch"><div class="match-launch__copy"><small>RANKED MATCH · BO1</small><h3>ГОТОВ К ИГРЕ?</h3><p>Матч проходит до 13 побед. Тактические приказы влияют на каждый раунд.</p></div>
+  <section class="match-launch"><div class="match-launch__copy"><small>RANKED MATCH · BO1</small><h3>ГОТОВ К ИГРЕ?</h3><p>Матч до 13 побед. Перед раундом выбираешь план, посреди раунда — решение капитана.</p></div>
     <button class="match-launch__button" data-act="${info ? 'fight' : 'goSquad'}"><span>${info ? 'ВЫЙТИ НА АРЕНУ' : 'СОБРАТЬ ПЯТЁРКУ'}</span><b>↗</b></button>
   </section>
   ${G.tut === 3 ? lbH() + `<section class="pn match-season"><h3>ИСТОРИЯ СЕЗОНОВ</h3><p class="sm mut">Сезон длится месяц. В конце выдаются награды по лиге, часть кубков сбрасывается.</p>${h.length ? '<div class="list">' + h.slice(0,3).map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет.</p>'}</section>` : ''}`;
@@ -3038,7 +3061,7 @@ function vSquads() {
   <section class="pn"><h3>Капитан</h3><p class="sm mut">Капитаном может быть только игрок с естественной ролью «Капитан». Он даёт разведку, усиливает «Тайм-аут» и добавляет стартовый импульс.</p>${igls.length ? '<div class="list">' + igls.map(id => `<div class="prow" style="--rc:${glow(CARDS[id])}"><span class="o">${CARDS[id].st.igl + own(id).lv - 1}</span><span><b>${esc(CARDS[id].nick)}</b>${id === rec ? ' <span class="sm" style="color:var(--good)">рекомендуем</span>' : ''}<span class="sm mut" style="display:block">тактика · ${esc(CARDS[id].team)}</span></span>${cap === id ? '<span class="cap">капитан</span>' : `<button class="btn s" data-act="capt" data-id="${id}">Назначить</button>`}</div>`).join('') + '</div>' : '<p class="warn">В пятёрке нет игрока с ролью «Капитан».</p>'}${cap != null ? '<button class="btn s" data-act="capt" data-id="">Играть без капитана</button>' : ''}</section>
   ${info ? `<section class="pn"><h3>Химия ${info.chem} из 13</h3><p class="sm mut">Игроков из одной команды: ${info.mx}. Два дают +2, три +4, четыре +7, пять +10. ${info.onRole ? 'Все на своих ролях: +3.' : 'Если все пятеро на своих ролях, добавится ещё +3.'} Каждые 4 очка химии дают +1 к силе состава. Химия не растёт от числа матчей.</p></section>` : ''}
   <button class="btn" data-act="auto">Собрать лучший состав</button>
-  <section class="pn"><h3>Тактические приказы</h3>${DECK.map(k => `<p class="sm"><b>${AC[k].n}</b> <span class="num mut">${AC[k].cost}</span> <span class="mut">— ${AC[k].d}</span></p>`).join('')}</section>`;
+`;
 }
 function vTu() {
   const inf = tuInfo(G, tuSel), cnt = id => tuSel.filter(x => x === id).length;
@@ -3089,7 +3112,7 @@ function vProf() {
   const winPct = n ? Math.round(G.w / n * 100) : 0;
   return `<section class="profile-hero" style="${fr >= 0 ? `--profile-rank:${LCOL[fr]}` : ''}">
     <div class="profile-hero__glow"></div><div class="profile-hero__top"><span>PLAYER DOSSIER / FIVE LEGENDS</span><b>FL-${String(G.lvl).padStart(4,'0')}</b></div>
-    <div class="profile-hero__identity"><div class="profile-hero__crest">${rankH(lg)}</div><div><small>ОПЕРАТОР · ${LEAGUES[lg][0]}</small><h2>ЛЕГЕНДА <em>#${G.lvl}</em></h2><span>ТВОЙ ПУТЬ В ПРОФЕССИОНАЛЬНУЮ ЛИГУ</span></div></div>
+    <div class="profile-hero__identity is-link" data-act="lvlInfo" role="button" tabindex="0" aria-label="Что такое уровень и лига"><div class="profile-hero__crest">${rankH(lg)}</div><div><small>ЛИГА «${LEAGUES[lg][0].toUpperCase()}» · ${G.tro} КУБКОВ</small><h2>УРОВЕНЬ <em>${G.lvl}</em></h2><span>ОПЫТ ЗА МАТЧИ · КАЖДЫЙ УРОВЕНЬ — КЕЙС ›</span></div></div>
     <div class="profile-hero__xp"><div><span>ОПЫТ УРОВНЯ</span><b>${G.xp} / ${100*G.lvl} XP</b></div><i><b style="width:${xpPct}%"></b></i></div>
     <div class="profile-hero__stats"><div><strong>${G.tro}</strong><small>КУБКИ</small></div><div><strong>${G.best}</strong><small>РЕКОРД</small></div><div><strong>${winPct}%</strong><small>ПОБЕДЫ</small></div></div>
   </section>
@@ -3135,7 +3158,7 @@ function leaguesH() {
         <h4>Кубки в новом сезоне</h4>${drop}
         <h4>Игроки в лиге</h4><div class="lg-pop"><span class="lg-bar"><i style="width:${Math.max(sh > 0 ? 2 : 0, sh)}%"></i></span><span><b>${fmt(sh)}%</b> · ${cnt[i]} из ${pop.length} в таблице сезона</span></div>
       </div></details>`; }).join('');
-  return `<div class="in lg-page"><div class="lg-top"><div><small class="eyebrow">Лиги</small><b>${LEAGUES[lg][0]} · ${G.tro} ${cupSvg}</b></div><button class="lg-x" data-act="close" aria-label="Закрыть">✕</button></div>
+  return `<div class="in lg-page"><div class="lg-top"><div><small class="eyebrow">Лиги</small><b>${LEAGUES[lg][0]} · ${G.tro} ${cupSvg}</b></div><button class="lg-x" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
     <div class="wrap col lg-sheet"><p class="lg-hint sm mut">Сверху — высшая лига. Нажмите на лигу, чтобы увидеть награды и условия.</p>
     <div class="lg-list">${rows}</div>
     <section class="lg-rules"><h4>Как набираются кубки</h4><p class="sm mut">Победа +25 (+30, если выиграли больше чем на 5 раундов). Поражение −25 (−30 при сухом счёте). Сезон длится месяц.</p>
@@ -3155,7 +3178,8 @@ function lgScroll() {
 /* ---------- Серия входов: окно дня и сетка наград ---------- */
 function stState() { const S = G.streak, p = S.pend; return { S, p, cur: p ? p.day : S.day, done: p ? p.day - 1 : S.day, broke: !!(p && p.day === 1 && S.day > 0 && S.day < 28) }; }
 const stArt = (r, big) => { if (r.pack) { const k = Object.keys(r.pack)[0], n = r.pack[k]; return `<span class="st-case ${k}">${pkH(k)}${n > 1 ? `<i class="st-x">×${n}</i>` : ''}</span>`; } return big ? lgCoins() : '<span class="st-coin"><i class="coin"></i></span>'; };
-const stShort = r => r.pack ? (n => n > 1 ? '×' + n : PACKS[Object.keys(r.pack)[0]].n)(r.pack[Object.keys(r.pack)[0]]) : String(r.coins);
+const ST_SH = { basic: 'Баз.', pro: 'Про', elite: 'Элит' };
+const stShort = r => r.pack ? (k => r.pack[k] > 1 ? '×' + r.pack[k] : ST_SH[k])(Object.keys(r.pack)[0]) : String(r.coins);
 function stGrid(ss) {
   return `<div class="st-grid">${STREAK_REWARDS.map((r, i) => { const d = i + 1, done = d <= ss.done, today = ss.p && d === ss.p.day;
     return `<span class="st-day ${done ? 'is-done' : ''} ${today ? 'is-today' : ''} ${r.pack ? 'is-pack' : ''} ${r.pack && r.pack.elite ? 'is-elite' : ''}"><small>${d}</small>${stArt(r)}<b>${stShort(r)}</b></span>`; }).join('')}</div>`;
@@ -3163,7 +3187,7 @@ function stGrid(ss) {
 function streakH() {
   const ss = stState(), got = sheet.got, day = got ? G.streak.day : ss.cur, r = got || (ss.p ? STREAK_REWARDS[ss.p.day - 1] : G.streak.reward);
   const nextPack = STREAK_REWARDS.findIndex((x, i) => i + 1 > day && x.pack), np = nextPack >= 0 ? STREAK_REWARDS[nextPack] : null;
-  return `<div class="in st-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть">✕</button>
+  return `<div class="in st-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <small class="eyebrow">Серия входов</small><h2>${got ? 'Награда получена' : ss.p ? 'День ' + ss.p.day + ' из 28' : 'День ' + day + ' из 28'}</h2>
     ${ss.broke && !got ? '<p class="sm st-warn">Вчера вход был пропущен — серия начинается заново.</p>' : ''}
     ${r ? `<div class="st-hero ${got ? 'is-got' : ''}">${stArt(r, true)}<b>${esc(rewardText(r))}</b><small>${got ? 'уже у вас' : ss.p ? 'награда за сегодня' : 'получено сегодня'}</small></div>` : ''}
@@ -3172,6 +3196,17 @@ function streakH() {
     ${stGrid(got ? { done: day, p: null } : ss)}
     <p class="sm mut">Заходите каждый день: пропуск дня начинает серию с первого дня. После 28-го дня цикл повторяется.</p>
     <div class="rowb">${ss.p && !got ? '<button class="btn pri" data-act="streakClaim">Забрать награду</button>' : '<button class="btn pri" data-act="close">Отлично</button>'}</div></div>`;
+}
+/* окно «Уровень и лига»: чем они отличаются, как растут, что дают следующие уровни */
+function lvlH() {
+  const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], need = 100 * G.lvl, xpP = clamp(G.xp / need * 100, 0, 100);
+  const next = [1, 2, 3, 4, 5].map(k => G.lvl + k).map(l => `<div class="lv-row"><b>Уровень ${l}</b><span>${100 * (l - 1)} опыта</span>${pkH('basic')}<em>базовый кейс</em></div>`).join('');
+  return `<div class="in lg-page lv-page"><div class="lg-top"><div><small class="eyebrow">Профиль</small><b>Уровень ${G.lvl} · лига «${LEAGUES[lg][0]}»</b></div><button class="lg-x" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
+    <div class="lv-two"><div class="lv-card"><small>УРОВЕНЬ</small><b>${G.lvl}</b><p>Растёт от опыта и никогда не падает. Показывает, сколько ты сыграл.</p><div class="rw-b rw-bx"><i style="width:${xpP.toFixed(1)}%"></i></div><span>${G.xp} / ${need} опыта</span></div>
+      <div class="lv-card"><small>ЛИГА</small><b>${LEAGUES[lg][0]}</b><p>Зависит от кубков: за победу +25 (+30 при разгроме), за поражение −25. Показывает силу.</p><div class="rw-b"><i style="width:${nx ? clamp((G.tro - LEAGUES[lg][1]) / (nx[1] - LEAGUES[lg][1]) * 100, 0, 100).toFixed(1) : 100}%"></i></div><span>${nx ? `до «${nx[0]}» ${nx[1] - G.tro} кубков` : 'высшая лига'}</span></div></div>
+    <div class="lv-how"><b>Как получить опыт</b><div class="lv-g"><span>Победа в матче</span><em>+40</em></div><div class="lv-g"><span>Поражение</span><em>+15</em></div><p class="sm mut">Для уровня N нужно N×100 опыта. За каждый новый уровень — базовый кейс.</p></div>
+    <div class="lv-how"><b>Следующие уровни</b>${next}</div>
+    <button class="btn" data-act="leagues">Все лиги и награды</button></div>`;
 }
 function vSheet() {
   if (!sheet) return '';
@@ -3182,6 +3217,7 @@ function vSheet() {
   if (sheet.t === 'qsDone') return `<div class="in"><div class="wrap col"><h2>Продано</h2><p>Продано карточек: <b>${sheet.n}</b>. Получено <b><i class="coin"></i> ${nf(sheet.coins)}</b>.</p><div class="rowb"><button class="btn pri" data-act="close">Отлично</button></div></div></div>`;
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
+  if (sheet.t === 'lvl') return lvlH();
   if (sheet.t === 'slot') {
     const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i && x != null).map(id => CARDS[id].nick));
     const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((a, b) => (b.role === i) - (a.role === i) || (b.ovr + own(b.id).lv) - (a.ovr + own(a.id).lv)).slice(0, 60);
@@ -3523,6 +3559,7 @@ const ACT = {
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },
   leagues() { sheet = { t: 'leagues', go: 1 }; },
+  lvlInfo() { sheet = { t: 'lvl' }; },
   streak() { sheet = { t: 'streak' }; },
   streakClaim() { const r = claimStreak(G, now()); if (!r) return; sfx('stop', r.pack ? (r.pack.elite ? 4 : r.pack.pro ? 3 : 1) : 0); if (sheet && sheet.t === 'streak') sheet.got = r; else sheet = { t: 'streak', got: r }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },

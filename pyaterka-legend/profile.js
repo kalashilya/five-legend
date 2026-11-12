@@ -40,7 +40,7 @@ function frFormKeep() { const i = document.getElementById('fr-nick'); if (i) FRF
 function profUi() {
   const ae = document.activeElement; if (ae && ae.id === 'fr-nick') return;
   if (sheet && (sheet.t === 'frP' || sheet.t === 'fr')) { render(); return; }
-  if (!OV && !sheet && (tab === 'prof' || tab === 'play')) { frFormKeep(); render(); }
+  if (!OV && !sheet && (tab === 'prof' || tab === 'play' || (tab === 'col' && sub === 'trade'))) { frFormKeep(); render(); }
 }
 function frSecH() {
   if (!AU) return `<section class="pf-friends pn"><div class="profile-section-title"><small>SQUAD MATES</small><h3>ДРУЗЬЯ</h3></div>

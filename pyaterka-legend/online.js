@@ -77,11 +77,12 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && AU
 function netBoot() {
   if (!AU || NET.on) return; NET.on = 1; RT.st = 'conn';
   rtJoin('fl-u-' + AU.uid, { on: netInbox });
-  hereUp().then(hereLoad); frLoad();
+  hereUp().then(hereLoad); frLoad(); trLoad();
 }
 function netStop() {
   if (AU && NET.on) sbFetch(`/rest/v1/net_here?uid=eq.${AU.uid}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }, true).catch(() => {});
   NET.on = 0; NET.mm = null; NET.inv = null; RT.ch = {}; RT.here = []; RT.lob = 0; RT.last = null; clearTimeout(RT.timer); RT.timer = 0; FR = { st: 'off', rows: [], nick: {}, msg: '', err: '' };
+  TR = { st: 'off', inc: [], out: [], hist: [], err: '', at: 0 }; TRD = { to: null, pick: [], msg: '', ok: false, busy: false };
 }
 const squadReady = () => !!squadInfo(squadOf(G));
 function netInbox(ev, p) {
@@ -95,6 +96,7 @@ function netInbox(ev, p) {
   if (ev === 'inv-ok') { const I = NET.inv; if (I && I.out && I.mid === p.mid) netMatch(I.mid, true, I.uid, I.nick); return; }
   if (ev === 'inv-no') { const I = NET.inv; if (I && I.out && I.mid === p.mid) { NET.inv = null; netSt('idle'); sheet = { t: 'netMsg', msg: p.why === 'ver' ? 'У ' + esc(I.nick) + ' другая версия игры. Обновите страницу у обоих.' : p.why === 'busy' ? esc(I.nick) + ' сейчас занят.' : esc(I.nick) + ' отказался от матча.' }; render(); } return; }
   if (ev === 'fr') { frLoad(); return; }
+  if (ev === 'trade') { trLoad(); return; }
   if (ev === 'mm') { const M = NET.mm; if (M && !M.lock && p.v === NET_V) { M.lock = 1; netPost(p.from, 'mm-ok', { mid: p.mid }); netMatch(p.mid, false, p.from, p.nick); } else netPost(p.from, 'mm-no', { mid: p.mid }); return; }
   if (ev === 'mm-ok') { const M = NET.mm; if (M && M.offer === p.mid && !M.lock) { M.lock = 1; netMatch(p.mid, true, p.from, p.nick); } return; }
   if (ev === 'mm-no') { const M = NET.mm; if (M && M.offer === p.mid) M.offer = null; }

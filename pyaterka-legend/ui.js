@@ -73,9 +73,24 @@ function faceH(c) {
   if (u) return `<img class="ph" src="${u}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML='<svg class=&quot;art&quot; viewBox=&quot;0 0 100 100&quot; aria-hidden=&quot;true&quot;><use href=&quot;#sil&quot;/></svg>'">`;
   return `<svg class="art" data-ph="${s}" viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg>`;
 }
+/* Подпись награды на карточке: «MVP · Бухарест», «EVP ×2»; у особой MVP-версии без настоящего MVP — место в топ-20 HLTV */
+const AW_SHORT = s => s.replace(/^(IEM|PGL) /, '').replace(/ \d{4}$/, '');
+function awTag(c) {
+  const a = c.aw && c.aw.a || [], mvp = a.find(x => x[0] === 'MVP'), evp = a.filter(x => x[0] === 'EVP');
+  if (mvp) return 'MVP · ' + AW_SHORT(mvp[1]);
+  if (c.sp) return c.aw && c.aw.top ? 'MVP · №' + c.aw.top + ' HLTV' : SPN[c.sp];
+  return evp.length > 1 ? 'EVP ×' + evp.length : evp.length ? 'EVP · ' + AW_SHORT(evp[0][1]) : '';
+}
+function awH(c) {
+  if (!c.aw) return '';
+  const l = (c.aw.a || []).map(x => `${x[0]} — ${esc(x[1])} <span class="num mut">(+${x[2]})</span>`);
+  if (c.aw.top) l.push(`№${c.aw.top} в топ-20 игроков HLTV за год`);
+  if (c.sp && !(c.aw.a || []).some(x => x[0] === 'MVP')) l.push('Особая MVP-версия — за место среди лучших игроков HLTV');
+  return l.length ? `<div class="ab"><b>Награды</b>${l.join('<br>')}</div>` : '';
+}
 function cardH(c, o = {}) {
   const lv = o.lv || 1, add = lv - 1, presentation = c.ovr + add >= 91 ? 'cinema-legend' : c.ovr + add >= 87 ? 'cinema' : 'standard';
-  return `<div class="pc ${presentation} r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${lv >= 5 ? 'l5' : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:${teamCol(c)}"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span>${c.hist ? '<span class="arc">архив</span>' : ''}<div class="ft">${c.sp ? `<span class="tag">${SPN[c.sp]}</span>` : ''}<span class="nk" style="--nl:${Math.max(6, c.nick.length)}">${esc(c.nick)}</span><span class="tm">${c.hltv && c.hltv.teamLogo ? `<img class="team-logo" src="${esc(c.hltv.teamLogo)}" alt="" loading="lazy">` : ''}<span class="team-name">${esc(!c.hist && c.hltv && c.hltv.team ? c.hltv.team : c.team)}</span>${c.hltv && /^[A-Z]{2}$/.test(c.hltv.countryCode || "") ? `<span class="country" title="${esc(c.hltv.countryCode)}"><b>${[...c.hltv.countryCode].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join("")}</b></span>` : ""}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
+  return `<div class="pc ${presentation} r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${lv >= 5 ? 'l5' : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:${teamCol(c)}"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span>${c.hist ? '<span class="arc">архив</span>' : ''}<div class="ft">${awTag(c) ? `<span class="tag">${esc(awTag(c))}</span>` : ''}<span class="nk" style="--nl:${Math.max(6, c.nick.length)}">${esc(c.nick)}</span><span class="tm">${c.hltv && c.hltv.teamLogo ? `<img class="team-logo" src="${esc(c.hltv.teamLogo)}" alt="" loading="lazy">` : ''}<span class="team-name">${esc(!c.hist && c.hltv && c.hltv.team ? c.hltv.team : c.team)}</span>${c.hltv && /^[A-Z]{2}$/.test(c.hltv.countryCode || "") ? `<span class="country" title="${esc(c.hltv.countryCode)}"><b>${[...c.hltv.countryCode].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join("")}</b></span>` : ""}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
 }
 const ownH = (id, cls) => { const o = own(id); return cardH(CARDS[id], { lv: o ? o.lv : 1, n: o ? o.n : 0, cls, pips: !!o, no: !o }); };
 /* значок кейса: снимок 3D-кейса из сцены открытия; если картинок нет (например, в тестах) — прежний рисованный значок */
@@ -314,7 +329,7 @@ function vProf() {
 function abH(c, lv) {
   const pw = Math.round(abPow(c, lv) * 100), ipw = Math.round(indPow(c, lv) * 100), i = indOf(c);
   const source = c.hltv && c.hltv.last12m ? `HLTV · ${c.hltv.last12m.maps} карт за 12 мес. · обновлено ${c.hltv.snapshotDate}` : 'Предварительные характеристики: статистика HLTV ещё не подключена.';
-  return `<p class="sm mut" style="margin:0 0 8px">${source}</p><div class="ab" style="--rc:${glow(c)}"><b>${AB_BASE[c.role].n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${AB_BASE[c.role].d} Работает только на роли «${RNAME[c.role]}».</div><div class="ab"><b>${i.n} <span class="num mut" style="font-size:12px">${ipw}%</span></b>${i.d}${IND[c.nick] ? '' : ' Индивидуальная способность появится после загрузки статистики HLTV.'}</div>`;
+  return `<p class="sm mut" style="margin:0 0 8px">${source}</p>${awH(c)}<div class="ab" style="--rc:${glow(c)}"><b>${AB_BASE[c.role].n} <span class="num mut" style="font-size:12px">${pw}%</span></b>${AB_BASE[c.role].d} Работает только на роли «${RNAME[c.role]}».</div><div class="ab"><b>${i.n} <span class="num mut" style="font-size:12px">${ipw}%</span></b>${i.d}${IND[c.nick] ? '' : ' Индивидуальная способность появится после загрузки статистики HLTV.'}</div>`;
 }
 /* Лиги: где игрок сейчас, сколько до следующей, награды, доля игроков в каждой лиге */
 const plural = (n, a, b, c) => { const m = Math.abs(n) % 100, k = m % 10; return m > 10 && m < 20 ? c : k === 1 ? a : k > 1 && k < 5 ? b : c; };

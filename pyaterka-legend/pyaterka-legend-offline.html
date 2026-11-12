@@ -1849,6 +1849,40 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .lg-chips{justify-content:flex-end}.lg-chips .lg-chip:first-child{min-width:66px;justify-content:center}   /* награды лиг в один ровный столбец */   /* заголовок «Задания» уже есть над блоком */
 @media (max-width:380px){.home-shortcut b{font-size:12px;letter-spacing:.05em}}
 .pc.xs .ft{padding-bottom:17cqw!important}.pc.xs .nk{padding:0 2cqw}   /* ник маленькой карточки — над цветной полосой редкости */   /* кнопки под панелью плана больше не просвечивают */
+/* ---------- Профиль: шапка с аватаром, друзья, профиль друга, выбор аватара ---------- */
+.ava-b{--ring:#ffffff33;position:relative;flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#fff;background:radial-gradient(circle at 32% 28%,color-mix(in srgb,var(--a1) 92%,#fff),var(--a1) 45%,var(--a2));box-shadow:0 0 0 2px var(--ring),0 4px 14px #0007,inset 0 -6px 12px #0004}
+.ava-b svg{width:58%;height:58%;filter:drop-shadow(0 1px 2px #0008)}
+.ava-b.sm{width:38px;height:38px}.ava-b.md{width:52px;height:52px}.ava-b.lg{width:72px;height:72px;margin:0 auto}.ava-b.xl{width:88px;height:88px;box-shadow:0 0 0 3px var(--ring),0 0 26px color-mix(in srgb,var(--ring) 45%,transparent),0 8px 24px #0009,inset 0 -10px 18px #0004}
+.pf-hero{position:relative;overflow:hidden;isolation:isolate;padding:16px 16px 14px;border-radius:18px;border:1px solid color-mix(in srgb,var(--lc) 40%,#ffffff14);background:linear-gradient(160deg,color-mix(in srgb,var(--lc) 16%,#121a24),#0a1018 70%)}
+.pf-hero__bg{position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 70% at 18% 30%,color-mix(in srgb,var(--lc) 26%,transparent),transparent 70%),repeating-linear-gradient(135deg,transparent 0 18px,#ffffff05 18px 19px)}
+.pf-hero__top{display:flex;justify-content:space-between;align-items:center;font:700 9px var(--f-m);letter-spacing:.16em;color:#a9bccb}
+.pf-edit{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:16px;border:1px solid #ffffff22;background:#ffffff0d;color:#dfe8ef;font:600 12px var(--f-b,system-ui);cursor:pointer}.pf-edit svg{width:15px;height:15px}
+.pf-id{display:flex;align-items:center;gap:16px;margin:16px 0 14px}
+.pf-ava{position:relative;flex:none;padding:0;border:0;background:none;cursor:pointer;border-radius:50%}.pf-ava i{position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f0c477;color:#1a1408;font:700 14px/1 sans-serif;font-style:normal;box-shadow:0 2px 8px #0009}
+.pf-name{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}.pf-name h2{margin:0;font:700 clamp(24px,7vw,32px)/1 var(--f-d);letter-spacing:.03em;overflow-wrap:anywhere}
+.pf-lg{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 6px;border-radius:14px;border:1px solid color-mix(in srgb,var(--lc) 50%,transparent);background:color-mix(in srgb,var(--lc) 14%,#0b1118);color:#eef2f6;font:600 13px var(--f-b,system-ui);cursor:pointer}.pf-lg .rank{width:26px;height:18px}.pf-lg b{color:var(--lc)}.pf-lg span{color:#a9b7c4;font-size:12px}
+.pf-guest{padding:0;border:0;background:none;color:#f0c477;font:600 12px var(--f-b,system-ui);cursor:pointer;text-align:left}
+.pf-xp>div{display:flex;justify-content:space-between;font-size:11px;color:#a9b7c4;margin-bottom:6px}.pf-xp b{color:#e7d8bc}.pf-xp>i,.fp-col>i{display:block;height:6px;border-radius:3px;background:#ffffff12;overflow:hidden}.pf-xp>i>b,.fp-col>i>b{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#7fc6ea,#f0c477)}
+.pf-stats,.fp-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:14px}.fp-stats{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:0}
+.pf-stats>div,.fp-stats>div{min-width:0;padding:10px 4px;border-radius:12px;background:#0a0f16b3;border:1px solid #ffffff12;text-align:center}.pf-stats strong,.fp-stats strong{display:block;font:700 19px/1.1 var(--f-d);color:#f2f5f7}.pf-stats small,.fp-stats small{font:700 8px var(--f-m);letter-spacing:.1em;color:#8f9fad}
+.pf-friends{display:flex;flex-direction:column;gap:10px}.pf-friends .fr-sec{gap:6px}
+.fr-row.is-link{cursor:pointer}.fr-row.is-link:active{background:#ffffff12}.fr-go{flex:none;color:#7d8a96;font-size:22px;line-height:1;margin-left:-2px}
+.fp-page>:not(.lg-top){margin-left:16px;margin-right:16px}
+.fp-head{display:flex;align-items:center;gap:16px;padding:16px;border-radius:16px;background:linear-gradient(150deg,color-mix(in srgb,var(--lc) 16%,#121a24),#0a1018);border:1px solid color-mix(in srgb,var(--lc) 35%,#ffffff14)}
+.fp-head>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}.fp-head h2{margin:0;font:700 26px/1 var(--f-d);overflow-wrap:anywhere}.fp-lg{display:inline-flex;align-items:center;gap:6px;font-size:13px}.fp-lg .rank{width:26px;height:18px}.fp-lg b{color:var(--lc)}
+.fp-col>div{display:flex;justify-content:space-between;font-size:12px;color:#a9b7c4;margin-bottom:6px}.fp-col b{color:#e7d8bc}
+.fp-sq h4{margin:0 0 8px;font:700 12px var(--f-d);letter-spacing:.1em;text-transform:uppercase;color:#c3ccd6}.fp-cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.fp-card{display:flex;flex-direction:column;gap:4px;min-width:0}.fp-card small{font:700 8px var(--f-m);letter-spacing:.06em;color:#8f9fad;text-align:center;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fp-card.is-empty span{display:grid;place-items:center;aspect-ratio:5/7;border-radius:8px;border:1px dashed #ffffff22;color:#6d7782}
+.fp-vs{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:#ffffff0a}.fp-vs b{font:700 22px var(--f-m,monospace);color:#f0c477}
+.fp-act{display:flex;flex-direction:column;gap:8px;padding-bottom:8px}.fp-act .btn{min-height:50px}
+.btn.dan-o{background:transparent;border-color:rgb(255 107 94 / .45);color:#ffb3ab}
+.fr-del h2{text-align:center}.fr-del .net-btns .btn{flex:1 1 120px}
+.ap-page>:not(.lg-top){margin-left:16px;margin-right:16px}
+.ap-prev{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px;background:#ffffff08;border:1px solid #ffffff14}.ap-prev>div{display:flex;flex-direction:column;gap:4px;min-width:0}.ap-prev b{font:700 20px var(--f-d)}.ap-prev span{font-size:12px;color:#97a2ae}
+.ap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
+.ap-i{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;border:1px solid #ffffff14;background:#0c1118;color:#c3ccd6;cursor:pointer}.ap-i small{font-size:11px}.ap-i.on{border-color:#f0c477;background:#f0c4771a;box-shadow:0 0 0 1px #f0c477 inset}.ap-i.on small{color:#f0c477}
+.pf-set-ava{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:6px 12px 6px 8px;border-radius:12px;border:1px solid #ffffff18;background:#ffffff08;color:#e6ecf1;font:500 14px var(--f-b,system-ui);cursor:pointer;text-align:left}.pf-set-ava span{flex:1}.pf-set-ava em{font-style:normal;color:#f0c477;font-size:13px}
+@media (min-width:761px){#app[data-tab="prof"]>.pf-hero,#app[data-tab="prof"]>.pf-friends{grid-column:1/-1}}
 /* Плашка «Powered by Netlify» (справа внизу, ~60px) — на бесплатном тарифе её не выключить, поэтому поднимаем нижние кнопки над ней */
 html.nb{--nbb:max(env(safe-area-inset-bottom,0px),60px)}
 html.nb #tabs{padding-bottom:var(--nbb)}
@@ -3283,16 +3317,12 @@ function vCol() {
 function vProf() {
   const lg = leagueOf(G.tro), fr = G.frame, h = G.season.hist, n = G.w + G.l, xpPct = Math.max(0,Math.min(100,Math.round(G.xp / Math.max(1,100 * G.lvl) * 100)));
   const winPct = n ? Math.round(G.w / n * 100) : 0;
-  return `<section class="profile-hero" style="${fr >= 0 ? `--profile-rank:${LCOL[fr]}` : ''}">
-    <div class="profile-hero__glow"></div><div class="profile-hero__top"><span>PLAYER DOSSIER / FIVE LEGENDS</span><b>FL-${String(G.lvl).padStart(4,'0')}</b></div>
-    <div class="profile-hero__identity is-link" data-act="lvlInfo" role="button" tabindex="0" aria-label="Что такое уровень и лига"><div class="profile-hero__crest">${rankH(lg)}</div><div><small>ЛИГА «${LEAGUES[lg][0].toUpperCase()}» · ${G.tro} КУБКОВ</small><h2>УРОВЕНЬ <em>${G.lvl}</em></h2><span>ОПЫТ ЗА МАТЧИ · КАЖДЫЙ УРОВЕНЬ — КЕЙС ›</span></div></div>
-    <div class="profile-hero__xp"><div><span>ОПЫТ УРОВНЯ</span><b>${G.xp} / ${100*G.lvl} XP</b></div><i><b style="width:${xpPct}%"></b></i></div>
-    <div class="profile-hero__stats"><div><strong>${G.tro}</strong><small>КУБКИ</small></div><div><strong>${G.best}</strong><small>РЕКОРД</small></div><div><strong>${winPct}%</strong><small>ПОБЕДЫ</small></div></div>
-  </section>
+  return `${pfHeroH()}
+  ${frSecH()}
   ${accH()}
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
-  <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
+  <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Аватар</b><button class="pf-set-ava" data-act="avaOpen">${avaH(myAva(), 'sm', LCOL[leagueOf(G.tro)])}<span>«${avaOf(myAva())[2]}»</span><em>Сменить ›</em></button></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
   <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
   ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
 }
@@ -3393,7 +3423,8 @@ function vSheet() {
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
   if (sheet.t === 'auth') return authH();
-  if (/^(fr|net)/.test(sheet.t)) return netSheetH();
+  if (/^(frP|frDel|avaPick)$/.test(sheet.t)) return pfSheetH();
+  if (/^net/.test(sheet.t)) return netSheetH();
   if (sheet.t === 'inst') return instSheetH();
   if (sheet.t === 'sync') return syncH();
   if (sheet.t === 'top') return topH();
@@ -4388,7 +4419,7 @@ function qpTick() {
    Ключ публичный (publishable): доступ к чужим данным закрыт правилами RLS в базе (docs/supabase-schema.sql). */
 const SB = { url: 'https://wsilqaopfvookrekockh.supabase.co', key: 'sb_publishable_gl9HJNpAHj73JX7EUr3p5Q_esEOzWWO', mail: '@players.five-legend-cs.netlify.app' };
 const AKEY = KEY + '-auth', TKEY = KEY + '-at', PKEY = KEY + '-prev';
-let AU = null, CS = { st: 'off', msg: '', at: 0 }, csTimer = 0, auRef = null, TOP = null;
+let LEAD_EXT = true, AU = null, CS = { st: 'off', msg: '', at: 0 }, csTimer = 0, auRef = null, TOP = null;
 const nickOk = n => /^[A-Za-z0-9_]{3,16}$/.test(n);
 const nickMail = n => n.toLowerCase() + SB.mail;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
@@ -4435,7 +4466,9 @@ async function cloudPush() {
   CS.st = 'busy';
   try {
     await sbFetch('/rest/v1/saves', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: AU.uid, data: G, updated_at: at }) }, true);
-    await sbFetch('/rest/v1/leaders', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: AU.uid, nick: AU.nick, tro: G.tro | 0, best: G.best | 0, lvl: Math.max(1, G.lvl | 0), w: G.w | 0, l: G.l | 0, updated_at: at }) }, true);
+    const lead = { id: AU.uid, nick: AU.nick, tro: G.tro | 0, best: G.best | 0, lvl: Math.max(1, G.lvl | 0), w: G.w | 0, l: G.l | 0, updated_at: at }, put = b => sbFetch('/rest/v1/leaders', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(b) }, true);
+    /* аватар и то, что видят друзья (коллекция, состав); если на сервере ещё нет этих колонок — без них */
+    if (LEAD_EXT) { try { await put(Object.assign({ ava: G.ava | 0, pub: pubOf(G) }, lead)); } catch (e) { if (!/column|ava|pub|42703|PGRST204/i.test(String(e.message))) throw e; LEAD_EXT = false; await put(lead); } } else await put(lead);
     CS = { st: 'ok', msg: 'Сохранено в аккаунте в ' + hm(Date.now()), at: Date.now() }; lsSet(TKEY + '-sync', String(Date.now()));
   } catch (e) { CS = { st: 'err', msg: sbErr(e), at: Date.now() }; csTimer = setTimeout(cloudPush, 30000); }
   csDraw();
@@ -4606,7 +4639,7 @@ Object.assign(ACT, {
 const NET_V = '1:' + ALL.length;                 /* версия правил: у обоих игроков должна совпадать */
 const NET_BUY = 5000, NET_BUY1 = 8000, NET_CALL = 5000, NET_SPD = 2.4, NET_LOST = 12000, NET_GIVEUP = 60000, NET_INV = 20000;
 const RT = { ch: {}, open: false, err: '', st: 'off', lob: 0, last: null, here: [], hereK: '', skew: 0, busy: 0, timer: 0 };
-const rtErr = e => { const was = RT.err; RT.err = String(e || '').slice(0, 160); if (RT.err !== was) { console.warn('[online]', RT.err); if (tab === 'play' && !OV && !sheet) render(); } };
+const rtErr = e => { const was = RT.err; RT.err = String(e || '').slice(0, 160); if (RT.err !== was) { console.warn('[online]', RT.err); profUi(); } };
 const NET = { on: 0, st: 'idle', qt: 0, mm: null, inv: null, msg: '' };
 let FR = { st: 'off', rows: [], nick: {}, msg: '', err: '' };
 const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -4616,7 +4649,7 @@ const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
    своих каналов: в матче раз в 0,6 с, иначе раз в 1,5 с. «Кто в игре» — таблица net_here: раз в 5 с отметка о себе.
    Каналы: fl-u-<id> — личный (приглашения, заявки), fl-m-<id> — матч. */
 const rtTbl = e => /relation|does not exist|42P01|net_msgs|net_here|schema cache/i.test(String(e && e.message)) ? 'на сервере нет таблиц онлайна — владельцу запустить docs/supabase-online.sql' : sbErr(e);
-const rtOk = () => { RT.open = true; if (RT.err) { RT.err = ''; if (tab === 'play' && !OV && !sheet) render(); } };
+const rtOk = () => { RT.open = true; if (RT.err) { RT.err = ''; profUi(); } };
 const srvIso = ms => new Date(Date.now() + RT.skew + ms).toISOString();
 function rtJoin(name, o) {
   const old = RT.ch[name]; if (old) { Object.assign(old, o || {}); return old; }
@@ -4667,7 +4700,7 @@ function netPost(uid, ev, p) { if (!AU || uid === AU.uid) return; rtSend('fl-u-'
 const netMeta = () => ({ uid: AU.uid, nick: AU.nick, st: NET.st, v: NET_V, t: NET.qt || 0 });
 function netSt(st) { NET.st = st; if (AU && NET.on) hereUp(); }
 function onlineMap() { const o = {}; for (const x of RT.here) if (x && x.uid) o[x.uid] = x; if (AU && RT.lob) o[AU.uid] = netMeta(); return o; }
-const onlineUi = force => { mmTick(); if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render(); };
+const onlineUi = force => { mmTick(); profUi(); };
 setInterval(() => { if (!AU || !NET.on || document.hidden) return; hereUp(); hereLoad(); }, 5000);
 /* свои старые сообщения убираем, чтобы таблица не росла */
 setInterval(() => { if (!AU || !NET.on) return; sbFetch(`/rest/v1/net_msgs?frm=eq.${AU.uid}&at=lt.${encodeURIComponent(srvIso(-300000))}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }, true).catch(() => {}); }, 90000);
@@ -4715,7 +4748,7 @@ function invGo(uid, nick) {
 function invDrop(say) { const I = NET.inv; if (!I) return; NET.inv = null; if (I.out) { netPost(I.uid, 'inv-x', { mid: I.mid }); netSt('idle'); } else if (say !== false) netPost(I.uid, 'inv-no', { mid: I.mid }); }
 /* список друзей обновляется сам: раз в 10 с при открытом окне, раз в минуту на вкладке «Матчи» (уведомление о заявке могло потеряться) */
 let frT = 0;
-setInterval(() => { if (!AU || OV || document.hidden) return; frT++; if ((sheet && sheet.t === 'fr') || (tab === 'play' && !sheet && frT % 6 === 0)) frLoad(); }, 10000);
+setInterval(() => { if (!AU || OV || document.hidden) return; frT++; if ((tab === 'prof' && !sheet) || (sheet && sheet.t === 'frP') || (tab === 'play' && !sheet && frT % 6 === 0)) frLoad(); }, 10000);
 /* таймеры окон поиска и приглашения; закрыли окно — отменяем */
 setInterval(() => {
   if (NET.mm && !NET.mm.lock) { if (!sheet || sheet.t !== 'netMm') mmStop(); else { mmTick(); const e = $('#mm-t'), s = Math.floor((Date.now() - NET.mm.t0) / 1000); if (e) e.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); } }
@@ -4937,17 +4970,16 @@ async function frLoad() {
   try {
     const rows = await sbFetch(`/rest/v1/friends?select=a,b,st&or=(a.eq.${AU.uid},b.eq.${AU.uid})`, { method: 'GET' }, true) || [];
     const ids = [...new Set(rows.map(r => r.a === AU.uid ? r.b : r.a))];
-    const ns = ids.length ? await sbFetch(`/rest/v1/leaders?select=id,nick,tro&id=in.(${ids.join(',')})`, { method: 'GET' }) || [] : [];
+    const q = c => sbFetch(`/rest/v1/leaders?select=${c}&id=in.(${ids.join(',')})`, { method: 'GET' });
+    let ns = []; if (ids.length) { try { ns = await q('id,nick,tro,ava') || []; } catch (e) { if (!/column|ava|42703|PGRST/i.test(String(e.message))) throw e; ns = await q('id,nick,tro') || []; } }
     FR = Object.assign(FR, { st: 'ok', rows, nick: Object.fromEntries(ns.map(x => [x.id, x])), err: '' });
   } catch (e) { FR.st = 'err'; FR.err = /relation|does not exist|42P01|friends/i.test(String(e.message)) ? 'На сервере ещё нет таблицы друзей. Владельцу игры: запустить docs/supabase-online.sql в Supabase → SQL Editor.' : sbErr(e); }
-  if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render();
+  profUi();
 }
-function frKeep() { const i = document.getElementById('fr-nick'); if (i && sheet) sheet.nick = i.value; }
-function frRender() { frKeep(); render(); }
 const frNick = id => (FR.nick[id] && FR.nick[id].nick) || (G.pvp && G.pvp[id] && G.pvp[id].n) || 'игрок';
 async function frAdd(nick) {
-  nick = String(nick || '').trim(); const s = sheet;
-  const say = (msg, ok) => { if (s) { s.msg = msg; s.ok = !!ok; s.busy = false; } frRender(); };
+  nick = String(nick || '').trim();
+  const say = (msg, ok) => { FRF.msg = msg; FRF.ok = !!ok; FRF.busy = false; profUi(); };
   if (!nickOk(nick)) return say('Ник: от 3 до 16 символов, латиница, цифры и «_».');
   if (nick.toLowerCase() === AU.nick.toLowerCase()) return say('Это ваш ник.');
   try {
@@ -4958,7 +4990,7 @@ async function frAdd(nick) {
     if (ex && ex.a === id) { await frAccept(id); return say(r[0].nick + ' теперь у вас в друзьях.', 1); }
     if (ex) return say('Заявка уже отправлена — ждём, когда ' + r[0].nick + ' примет.');
     await sbFetch('/rest/v1/friends', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ a: AU.uid, b: id, st: 'pending' }) }, true);
-    netPost(id, 'fr', {}); if (s) s.nick = ''; await frLoad(); say('Заявка отправлена ' + r[0].nick + '.', 1);
+    netPost(id, 'fr', {}); FRF.nick = ''; await frLoad(); say('Заявка отправлена ' + r[0].nick + '.', 1);
   } catch (e) { say(/duplicate|23505|409/i.test(String(e.message)) ? 'Заявка уже отправлена.' : /relation|does not exist|42P01/i.test(String(e.message)) ? 'На сервере ещё нет таблицы друзей (docs/supabase-online.sql).' : sbErr(e)); }
 }
 async function frAccept(id) {
@@ -4980,27 +5012,9 @@ function netBoxH() {
   return `<section class="pn net-box"><div class="net-h"><div><small>ONLINE · 1 VS 1</small><b>ОНЛАЙН-МАТЧ</b></div><span>на интерес — без кубков и монет</span></div>
     ${!AU ? `<p class="sm">Сыграйте с друзьями или со случайным игроком в реальном времени. Нужен аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button>`
     : `<p class="sm">Живой соперник, ${NET_BUY / 1000} с на план раунда и ${NET_CALL / 1000} с на решение капитана — без пауз и перемотки.${on ? ` Сейчас в игре: <b>${on}</b>.` : ''}</p>
-      <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
+      <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья в профиле${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
       ${ready ? '' : '<p class="sm mut">Сначала соберите пятёрку.</p>'}
       <p class="net-diag ${RT.lob && RT.open && !RT.err ? 'ok' : RT.err ? 'err' : ''}">${RT.lob && RT.open && !RT.err ? 'Онлайн подключён · видно игроков: ' + Object.keys(onlineMap()).length : RT.err ? 'Онлайн не подключился — ' + esc(RT.err) : RT.st === 'conn' || RT.st === 'open' ? 'Подключаемся к онлайну…' : 'Онлайн не подключён' + ''}</p>`}</section>`;
-}
-function frH() {
-  const s = sheet, me = AU && AU.uid, rec = id => { const r = G.pvp && G.pvp[id]; return r && (r.w || r.l) ? `<small class="fr-rec">${r.w}:${r.l}</small>` : ''; };
-  if (!AU) return `<div class="in lg-page acc-page"><div class="lg-top"><div><small class="eyebrow">Онлайн</small><b>Друзья</b></div>${xBtn}</div><p class="sm">Чтобы добавлять друзей, войдите в аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button></div>`;
-  const oth = r => r.a === me ? r.b : r.a, inc = FR.rows.filter(r => r.st === 'pending' && r.b === me), out = FR.rows.filter(r => r.st === 'pending' && r.a === me), ok = FR.rows.filter(r => r.st === 'ok');
-  const on = onlineMap(), ready = squadReady();
-  const row = (id, right) => `<div class="fr-row"><span class="fr-ava">${esc(frNick(id).slice(0, 2))}</span><div class="fr-n"><b>${esc(frNick(id))}</b>${netStH(id)}</div>${rec(id)}${right}</div>`;
-  const okRows = ok.map(oth).sort((x, y) => (on[y] ? 1 : 0) - (on[x] ? 1 : 0)).map(id => { const o = on[id], can = o && o.st === 'idle' && o.v === NET_V && ready && !OV;
-    return row(id, `<button class="btn pri s" data-act="frCall" data-v="${id}" ${can ? '' : 'disabled'}>Вызвать</button><button class="fr-x" data-act="frDel" data-v="${id}" aria-label="Удалить из друзей">×</button>`); }).join('');
-  return `<div class="in lg-page acc-page fr-page"><div class="lg-top"><div><small class="eyebrow">Онлайн</small><b>Друзья</b></div>${xBtn}</div>
-    <div class="fr-add"><label class="acc-f"><span>Добавить по нику</span><input id="fr-nick" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="16" value="${esc(s.nick || '')}" placeholder="ник друга в игре"></label><button class="btn pri" data-act="frAdd" ${s.busy ? 'disabled' : ''}>${s.busy ? '…' : 'Добавить'}</button></div>
-    ${s.msg ? `<p class="${s.ok ? 'fr-ok' : 'acc-err'}" role="status">${esc(s.msg)}</p>` : ''}
-    ${FR.st === 'err' ? `<p class="acc-err">${esc(FR.err)}</p>` : ''}
-    ${inc.length ? `<div class="fr-sec"><h4>Заявки в друзья</h4>${inc.map(r => row(r.a, `<button class="btn pri s" data-act="frOk" data-v="${r.a}">Принять</button><button class="fr-x" data-act="frDel" data-v="${r.a}" aria-label="Отклонить">×</button>`)).join('')}</div>` : ''}
-    <div class="fr-sec"><h4>Друзья${ok.length ? ' · ' + ok.length : ''}</h4>${okRows || `<p class="sm mut">${FR.st === 'load' ? 'Загружаем…' : 'Пока никого. Добавьте друга по нику — он увидит заявку у себя.'}</p>`}</div>
-    ${out.length ? `<div class="fr-sec"><h4>Отправленные заявки</h4>${out.map(r => row(r.b, `<span class="sm mut">ждёт ответа</span><button class="fr-x" data-act="frDel" data-v="${r.b}" aria-label="Отменить заявку">×</button>`)).join('')}</div>` : ''}
-    ${ready ? '' : '<p class="sm mut">Чтобы вызывать на матч, соберите пятёрку.</p>'}
-    <p class="sm mut">Ваш ник для друзей: <b>${esc(AU.nick)}</b></p></div>`;
 }
 const popX = xBtn.replace('class="lg-x"', 'class="lg-x st-x0"');
 function mmH() {
@@ -5020,20 +5034,153 @@ function invH() {
     <div class="net-btns"><button class="btn pri acc-go" data-act="invYes">Принять</button><button class="btn acc-go" data-act="close">Отказаться</button></div></div>`;
 }
 const netMsgH = () => `<div class="in st-pop net-pop">${popX}<p class="eyebrow">Онлайн</p><p class="net-msg">${sheet.msg || ''}</p><button class="btn pri acc-go" data-act="close">Понятно</button></div>`;
-function netSheetH() { const t = sheet.t; return t === 'fr' ? frH() : t === 'netMm' ? mmH() : t === 'netInv' ? invH() : t === 'netMsg' ? netMsgH() : ''; }
+function netSheetH() { const t = sheet.t; return t === 'netMm' ? mmH() : t === 'netInv' ? invH() : t === 'netMsg' ? netMsgH() : ''; }
 
 Object.assign(ACT, {
-  frOpen() { if (!AU) { sheet = { t: 'auth', mode: 'in' }; return; } sheet = { t: 'fr', nick: '' }; frLoad(); },
-  frAdd() { if (!sheet || sheet.t !== 'fr' || sheet.busy) return false; frKeep(); sheet.busy = true; sheet.msg = ''; frAdd(sheet.nick); },
-  frOk(v) { frAccept(v).catch(e => { if (sheet && sheet.t === 'fr') { sheet.msg = sbErr(e); sheet.ok = false; frRender(); } }); return false; },
-  frDel(v) { frKeep(); frDel(v).catch(e => { if (sheet && sheet.t === 'fr') { sheet.msg = sbErr(e); sheet.ok = false; frRender(); } }); return false; },
   frCall(v) { const o = onlineMap()[v]; if (!o || o.st !== 'idle') return; invGo(v, frNick(v)); },
   netMm() { if (!AU) { sheet = { t: 'auth', mode: 'in' }; return; } mmGo(); },
   invYes() { const I = NET.inv; if (!I || !I.in) return; NET.inv = null; netPost(I.uid, 'inv-ok', { mid: I.mid }); netMatch(I.mid, false, I.uid, I.nick); },
   netCancel() { if (OV && OV.net) netQuit(); }
 });
-/* Enter в поле ника друга = «Добавить» */
-document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'fr-nick' && sheet && sheet.t === 'fr') { e.preventDefault(); if (ACT.frAdd() !== false) render(); } });
+/* ---------- Профиль: аватарки, друзья в профиле, профиль друга, удаление из друзей с подтверждением ----------
+   Аватарка — номер из набора AVA (G.ava, необязательное поле сохранения; старые сохранения — аватарка 0).
+   Чтобы друзья видели аватарку, коллекцию и состав, при отправке в облако в таблицу leaders пишутся ava и pub
+   (колонки добавляет docs/supabase-profile.sql; пока их нет, облако работает как раньше, без этих полей). */
+const AVA = [
+  ['#1f5fa8', '#0b1f3a', 'Прицел', '<circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/>'],
+  ['#c98a1a', '#3a2306', 'Корона', '<path d="M4 17 3 7.5l5 3.5 4-6 4 6 5-3.5-1 9.5z" fill="currentColor"/><rect x="4" y="18.2" width="16" height="2.2" rx="1" fill="currentColor"/>'],
+  ['#d2472b', '#3a0d06', 'Пламя', '<path d="M12 2.5c1 3.6 5.5 5.6 5.5 11a5.5 5.5 0 0 1-11 0c0-2.6 1.3-4.3 2.6-5.6.3 1.8 1.2 2.8 2.2 3.1-.6-3 0-5.8.7-8.5z" fill="currentColor"/>'],
+  ['#e9c13a', '#3b2c05', 'Молния', '<path d="M13.5 2 5 13.5h5.5L9.5 22 19 9.8h-5.6z" fill="currentColor"/>'],
+  ['#6a4fd1', '#170d3a', 'Звезда', '<path d="m12 2.5 2.8 6.1 6.7.7-5 4.5 1.4 6.6L12 17l-5.9 3.4 1.4-6.6-5-4.5 6.7-.7z" fill="currentColor"/>'],
+  ['#2f9d6b', '#06281a', 'Щит', '<path d="M12 2.5 20 5.5v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10v-6z" fill="none" stroke="currentColor" stroke-width="1.9"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" font-family="Oswald, Impact, sans-serif">5</text>'],
+  ['#9aa6b4', '#1a2028', 'Череп', '<path d="M12 3c4.7 0 8 3.1 8 7.3 0 2.3-1 3.9-2.6 4.9V19h-2.6v-2h-1.7v2h-2.2v-2H9.2v2H6.6v-3.8C5 14.2 4 12.6 4 10.3 4 6.1 7.3 3 12 3z" fill="currentColor"/><circle cx="8.8" cy="10.5" r="2" fill="#1a2028"/><circle cx="15.2" cy="10.5" r="2" fill="#1a2028"/><path d="m12 13.2-1.2 2h2.4z" fill="#1a2028"/>'],
+  ['#25a7c9', '#05242e', 'Алмаз', '<path d="M7 4h10l4 5-9 11L3 9z" fill="currentColor"/><path d="M3 9h18M9.5 4 8 9l4 11 4-11-1.5-5" fill="none" stroke="#05242e" stroke-width="1.1"/>'],
+  ['#c23a6b', '#330818', 'Глаз', '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/>'],
+  ['#d7d2c4', '#2a2720', 'Крылья', '<path d="M12 9c-2-3.5-6-5-9.5-4.5 1 2 2 3 3.4 3.6-1.6.1-2.6.6-3.3 1.4 1.7 1.2 3.4 1.6 5 1.3-1 .7-1.6 1.6-1.8 2.7 2.6.3 4.8-.8 6.2-2.6 1.4 1.8 3.6 2.9 6.2 2.6-.2-1.1-.8-2-1.8-2.7 1.6.3 3.3-.1 5-1.3-.7-.8-1.7-1.3-3.3-1.4 1.4-.6 2.4-1.6 3.4-3.6C18 4 14 5.5 12 9z" fill="currentColor"/><path d="M12 9v10" stroke="currentColor" stroke-width="1.6"/>'],
+  ['#8fb03a', '#1c2606', 'Граната', '<rect x="7" y="8.5" width="10" height="12" rx="4.5" fill="currentColor"/><rect x="9.5" y="5" width="5" height="3.5" rx="1" fill="currentColor"/><path d="M14.5 6.5h3.5l1.5 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7.5 12.5h9M7.5 16.5h9" stroke="#1c2606" stroke-width="1"/>'],
+  ['#4a6fe0', '#0c1638', 'Гарнитура', '<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3" y="13" width="4.5" height="7" rx="2" fill="currentColor"/><rect x="16.5" y="13" width="4.5" height="7" rx="2" fill="currentColor"/><path d="M19 20c0 1.5-2 2-4.5 2" fill="none" stroke="currentColor" stroke-width="1.5"/>'],
+  ['#e2a63c', '#3a2606', 'Кубок', '<path d="M7 3.5h10v5a5 5 0 0 1-10 0z" fill="currentColor"/><path d="M7 5H4v1.5A3.5 3.5 0 0 0 7.6 10M17 5h3v1.5A3.5 3.5 0 0 1 16.4 10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 13.5h3v3.5h-3zM7.5 17h9v3.5h-9z" fill="currentColor"/>'],
+  ['#7a8cff', '#141a40', 'Призрак', '<path d="M12 2.5a7 7 0 0 1 7 7v11l-2.4-1.8-2.3 1.8-2.3-1.8-2.3 1.8-2.3-1.8L5 20.5v-11a7 7 0 0 1 7-7z" fill="currentColor"/><circle cx="9.3" cy="10" r="1.6" fill="#141a40"/><circle cx="14.7" cy="10" r="1.6" fill="#141a40"/>'],
+  ['#f07a2e', '#3a1704', 'Мишень', '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/>'],
+  ['#3ec4a0', '#06302a', 'Клинок', '<path d="M19.5 2.5 9 13l2 2L21.5 4.5z" fill="currentColor"/><path d="m6.5 13.5 4 4M8 16l-4.5 4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'],
+  ['#b84cd6', '#2a0838', 'Планета', '<circle cx="12" cy="12" r="5.8" fill="currentColor"/><ellipse cx="12" cy="12" rx="10" ry="3.4" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(-22 12 12)"/>'],
+  ['#ff5a5a', '#3a0b0b', 'Пятёрка', '<text x="12" y="18.5" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" font-family="Oswald, Impact, sans-serif">5</text>']
+];
+const avaOf = i => AVA[(i | 0) >= 0 && (i | 0) < AVA.length ? i | 0 : 0];
+/* круглый значок аватарки; ring — цвет обводки (лига) */
+function avaH(i, cls, ring) {
+  const a = avaOf(i);
+  return `<span class="ava-b ${cls || ''}" style="--a1:${a[0]};--a2:${a[1]}${ring ? ';--ring:' + ring : ''}" role="img" aria-label="Аватар «${a[2]}»"><svg viewBox="0 0 24 24" aria-hidden="true">${a[3]}</svg></span>`;
+}
+const myAva = () => (G && G.ava | 0) || 0;
+const colPct = (have, tot) => Math.round(have / Math.max(1, tot) * 100);
+/* то, что видно друзьям: коллекция и состав */
+const pubOf = g => ({ col: Object.keys(g.cards || {}).length, colT: ALL.length, sq: (g.squad || []).map(id => id == null ? null : [id, (g.cards[id] || {}).lv || 1]), capt: captSlot(g) });
+
+/* ---------- Друзья в профиле ---------- */
+let FRF = { nick: '', msg: '', ok: false, busy: false };
+function frFormKeep() { const i = document.getElementById('fr-nick'); if (i) FRF.nick = i.value; }
+/* перерисовать профиль, не сбивая ввод ника */
+function profUi() {
+  const ae = document.activeElement; if (ae && ae.id === 'fr-nick') return;
+  if (sheet && (sheet.t === 'frP' || sheet.t === 'fr')) { render(); return; }
+  if (!OV && !sheet && (tab === 'prof' || tab === 'play')) { frFormKeep(); render(); }
+}
+function frSecH() {
+  if (!AU) return `<section class="pf-friends pn"><div class="profile-section-title"><small>SQUAD MATES</small><h3>ДРУЗЬЯ</h3></div>
+    <p class="sm">Добавляйте друзей по нику, смотрите их профиль и вызывайте на онлайн-матч. Нужен аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button></section>`;
+  const me = AU.uid, oth = r => r.a === me ? r.b : r.a, inc = FR.rows.filter(r => r.st === 'pending' && r.b === me), out = FR.rows.filter(r => r.st === 'pending' && r.a === me), ok = FR.rows.filter(r => r.st === 'ok');
+  const on = onlineMap(), ready = squadReady();
+  const rec = id => { const r = G.pvp && G.pvp[id]; return r && (r.w || r.l) ? `<small class="fr-rec">${r.w}:${r.l}</small>` : ''; };
+  const ava = id => avaH(FR.nick[id] && FR.nick[id].ava, 'sm', FR.nick[id] ? LCOL[leagueOf(FR.nick[id].tro | 0)] : '');
+  const row = (id, right, open) => `<div class="fr-row ${open ? 'is-link' : ''}" ${open ? `data-act="frView" data-v="${id}" role="button" tabindex="0" aria-label="Профиль ${esc(frNick(id))}"` : ''}>${ava(id)}<div class="fr-n"><b>${esc(frNick(id))}</b>${netStH(id)}</div>${rec(id)}${right}</div>`;
+  const okRows = ok.map(oth).sort((x, y) => (on[y] ? 1 : 0) - (on[x] ? 1 : 0)).map(id => { const o = on[id], can = o && o.st === 'idle' && o.v === NET_V && ready && !OV;
+    return row(id, `<button class="btn pri s" data-act="frCall" data-v="${id}" ${can ? '' : 'disabled'}>Вызвать</button><span class="fr-go" aria-hidden="true">›</span>`, 1); }).join('');
+  return `<section class="pf-friends pn" id="pf-friends"><div class="profile-section-title"><small>SQUAD MATES</small><h3>ДРУЗЬЯ${ok.length ? ' · ' + ok.length : ''}</h3></div>
+    <div class="fr-add"><label class="acc-f"><span>Добавить по нику</span><input id="fr-nick" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="16" value="${esc(FRF.nick || '')}" placeholder="ник друга в игре"></label><button class="btn pri" data-act="frAdd" ${FRF.busy ? 'disabled' : ''}>${FRF.busy ? '…' : 'Добавить'}</button></div>
+    ${FRF.msg ? `<p class="${FRF.ok ? 'fr-ok' : 'acc-err'}" role="status">${esc(FRF.msg)}</p>` : ''}
+    ${FR.st === 'err' ? `<p class="acc-err">${esc(FR.err)}</p>` : ''}
+    ${inc.length ? `<div class="fr-sec"><h4>Заявки в друзья · ${inc.length}</h4>${inc.map(r => row(r.a, `<button class="btn pri s" data-act="frOk" data-v="${r.a}">Принять</button><button class="fr-x" data-act="frNo" data-v="${r.a}" aria-label="Отклонить заявку">×</button>`)).join('')}</div>` : ''}
+    <div class="fr-sec">${okRows || `<p class="sm mut">${FR.st === 'load' ? 'Загружаем…' : 'Пока никого. Добавьте друга по нику — он увидит заявку у себя.'}</p>`}</div>
+    ${out.length ? `<div class="fr-sec"><h4>Отправленные заявки</h4>${out.map(r => row(r.b, `<span class="sm mut">ждёт ответа</span><button class="fr-x" data-act="frNo" data-v="${r.b}" aria-label="Отменить заявку">×</button>`)).join('')}</div>` : ''}
+    <p class="sm mut">Нажмите на друга, чтобы открыть его профиль.${ready ? '' : ' Чтобы вызывать на матч, соберите пятёрку.'}</p></section>`;
+}
+
+/* ---------- Профиль друга (сокращённый) ---------- */
+async function frViewLoad(id) {
+  const s = sheet;
+  try {
+    let r = null;
+    try { r = await sbFetch(`/rest/v1/leaders?select=id,nick,tro,best,lvl,w,l,ava,pub,updated_at&id=eq.${id}`, { method: 'GET' }); }
+    catch (e) { if (!/column|ava|pub|42703|PGRST/i.test(String(e.message))) throw e; r = await sbFetch(`/rest/v1/leaders?select=id,nick,tro,best,lvl,w,l,updated_at&id=eq.${id}`, { method: 'GET' }); }
+    if (sheet !== s) return; s.p = r && r[0] ? r[0] : null; s.st = s.p ? 'ok' : 'none';
+  } catch (e) { if (sheet !== s) return; s.st = 'err'; s.err = sbErr(e); }
+  render();
+}
+function frPH() {
+  const s = sheet, id = s.id, p = s.p || {}, nick = p.nick || frNick(id), lg = leagueOf(p.tro | 0), n = (p.w | 0) + (p.l | 0), pub = p.pub || null;
+  const rec = G.pvp && G.pvp[id], on = onlineMap()[id], can = on && on.st === 'idle' && on.v === NET_V && squadReady() && !OV;
+  const isFr = FR.rows.some(r => r.st === 'ok' && (r.a === id || r.b === id));
+  const sq = pub && Array.isArray(pub.sq) ? pub.sq.map((x, i) => x && CARDS[x[0]] ? `<div class="fp-card"><small>${RNAME[i]}</small>${cardH(CARDS[x[0]], { lv: clamp(x[1] | 0, 1, 5), cls: 'xs' })}</div>` : `<div class="fp-card is-empty"><small>${RNAME[i]}</small><span>—</span></div>`).join('') : '';
+  const body = s.st === 'load' ? '<p class="sm mut" style="text-align:center">Загружаем профиль…</p>' : s.st === 'err' ? `<p class="acc-err">${esc(s.err)}</p>` : s.st === 'none' ? '<p class="sm mut">Профиль не найден.</p>' : `
+    <div class="fp-stats"><div><strong>${p.tro | 0}</strong><small>КУБКИ</small></div><div><strong>${p.best | 0}</strong><small>РЕКОРД</small></div><div><strong>${p.lvl | 0 || 1}</strong><small>УРОВЕНЬ</small></div>
+      <div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${n ? Math.round((p.w | 0) / n * 100) : 0}%</strong><small>ПОБЕДЫ</small></div><div><strong>${pub ? colPct(pub.col | 0, pub.colT | 0) + '%' : '—'}</strong><small>КОЛЛЕКЦИЯ</small></div></div>
+    ${pub ? `<div class="fp-col"><div><span>Коллекция</span><b>${pub.col | 0} из ${pub.colT | 0} карточек</b></div><i><b style="width:${colPct(pub.col | 0, pub.colT | 0)}%"></b></i></div>
+      <div class="fp-sq"><h4>Боевая пятёрка</h4><div class="fp-cards">${sq}</div></div>` : '<p class="sm mut">Коллекция и состав появятся, когда друг зайдёт в игру с новой версией.</p>'}
+    <div class="fp-vs"><span>Личный счёт с вами</span><b>${rec ? rec.w + ':' + rec.l : '0:0'}</b></div>`;
+  return `<div class="in lg-page acc-page fp-page"><div class="lg-top"><div><small class="eyebrow">Профиль друга</small><b>${esc(nick)}</b></div>${xBtn}</div>
+    <div class="fp-head" style="--lc:${LCOL[lg]}">${avaH(p.ava, 'xl', LCOL[lg])}<div><h2>${esc(nick)}</h2><span class="fp-lg">${rankH(lg)}<b>${LEAGUES[lg][0]}</b></span>${netStH(id)}</div></div>
+    ${body}
+    ${isFr ? `<div class="fp-act"><button class="btn pri" data-act="frCall" data-v="${id}" ${can ? '' : 'disabled'}>${can ? 'Вызвать на матч' : on ? 'Сейчас занят' : 'Не в сети'}</button>
+      <button class="btn dan-o" data-act="frDelAsk" data-v="${id}">Удалить из друзей</button></div>` : ''}</div>`;
+}
+function frDelH() {
+  const id = sheet.id, nick = frNick(id), x = FR.nick[id];
+  return `<div class="in st-pop net-pop fr-del">${popX}${avaH(x && x.ava, 'lg', x ? LCOL[leagueOf(x.tro | 0)] : '')}<h2>Удалить из друзей?</h2>
+    <p class="acc-sub"><b>${esc(nick)}</b> пропадёт из вашего списка друзей, а вы — из его. Личный счёт сохранится. Снова добавить можно в любой момент по нику.</p>
+    ${sheet.err ? `<p class="acc-err">${esc(sheet.err)}</p>` : ''}
+    <div class="net-btns"><button class="btn dan acc-go" data-act="frDelYes" data-v="${id}" ${sheet.busy ? 'disabled' : ''}>${sheet.busy ? 'Удаляем…' : 'Удалить'}</button><button class="btn acc-go" data-act="frBack" data-v="${id}">Отмена</button></div></div>`;
+}
+
+/* ---------- Выбор аватарки ---------- */
+function avaPickH() {
+  const cur = sheet.sel == null ? myAva() : sheet.sel, lg = leagueOf(G.tro);
+  return `<div class="in lg-page acc-page ap-page"><div class="lg-top"><div><small class="eyebrow">Настройки профиля</small><b>Аватар</b></div>${xBtn}</div>
+    <div class="ap-prev">${avaH(cur, 'xl', LCOL[lg])}<div><b>${esc(AU ? AU.nick : 'Гость')}</b><span>«${avaOf(cur)[2]}» · обводка — цвет вашей лиги</span></div></div>
+    <div class="ap-grid">${AVA.map((a, i) => `<button class="ap-i ${i === cur ? 'on' : ''}" data-act="avaSel" data-v="${i}" aria-label="${a[2]}" aria-pressed="${i === cur}">${avaH(i, 'md')}<small>${a[2]}</small></button>`).join('')}</div>
+    ${AU ? '<p class="sm mut">Аватар видят друзья в списке и в вашем профиле.</p>' : '<p class="sm mut">Аватар сохранится на этом устройстве. Чтобы его видели друзья, войдите в аккаунт.</p>'}
+    <button class="btn pri acc-go" data-act="avaSave">Сохранить</button></div>`;
+}
+function pfSheetH() { const t = sheet.t; return t === 'frP' ? frPH() : t === 'frDel' ? frDelH() : t === 'avaPick' ? avaPickH() : ''; }
+
+/* ---------- Шапка профиля ---------- */
+function pfHeroH() {
+  const lg = leagueOf(G.tro), n = G.w + G.l, xpPct = clamp(Math.round(G.xp / Math.max(1, 100 * G.lvl) * 100), 0, 100), col = Object.keys(G.cards).length, cp = colPct(col, ALL.length);
+  return `<section class="pf-hero" style="--lc:${LCOL[lg]}"><div class="pf-hero__bg" aria-hidden="true"></div>
+    <div class="pf-hero__top"><span>PLAYER PROFILE</span><button class="pf-edit" data-act="avaOpen" aria-label="Настройки профиля"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Изменить</button></div>
+    <div class="pf-id"><button class="pf-ava" data-act="avaOpen" aria-label="Сменить аватар">${avaH(myAva(), 'xl', LCOL[lg])}<i aria-hidden="true">✎</i></button>
+      <div class="pf-name"><h2>${esc(AU ? AU.nick : 'Гость')}</h2><button class="pf-lg" data-act="lvlInfo">${rankH(lg)}<b>${LEAGUES[lg][0]}</b><span>· уровень ${G.lvl} ›</span></button>
+        ${AU ? '' : '<button class="pf-guest" data-act="authOpen">Войти, чтобы сохранить ник и прогресс ›</button>'}</div></div>
+    <div class="pf-xp"><div><span>Опыт уровня ${G.lvl}</span><b>${G.xp} / ${100 * G.lvl}</b></div><i><b style="width:${xpPct}%"></b></i></div>
+    <div class="pf-stats"><div><strong>${G.tro}</strong><small>КУБКИ</small></div><div><strong>${G.best}</strong><small>РЕКОРД</small></div><div><strong>${n ? Math.round(G.w / n * 100) : 0}%</strong><small>ПОБЕДЫ</small></div><div><strong>${cp}%</strong><small>КОЛЛЕКЦИЯ</small></div></div>
+  </section>`;
+}
+
+Object.assign(ACT, {
+  avaOpen() { sheet = { t: 'avaPick', sel: myAva() }; },
+  avaSel(v) { if (sheet && sheet.t === 'avaPick') sheet.sel = clamp(+v | 0, 0, AVA.length - 1); },
+  avaSave() { if (sheet && sheet.t === 'avaPick') { G.ava = sheet.sel | 0; sheet = null; sfx('tap'); } },
+  frOpen() { if (!AU) { sheet = { t: 'auth', mode: 'in' }; return; } sheet = null; tab = 'prof'; frLoad(); setTimeout(() => { const e = document.getElementById('pf-friends'); if (e) e.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); },
+  frAdd() { if (FRF.busy) return false; frFormKeep(); FRF.busy = true; FRF.msg = ''; frAdd(FRF.nick); },
+  frView(v) { if (!AU) return; sheet = { t: 'frP', id: v, st: 'load' }; frViewLoad(v); },
+  frDelAsk(v) { sheet = { t: 'frDel', id: v }; },
+  frBack(v) { sheet = { t: 'frP', id: v, st: 'load' }; frViewLoad(v); },
+  frDelYes(v) { if (!sheet || sheet.t !== 'frDel' || sheet.busy) return false; const s = sheet; s.busy = true; s.err = '';
+    frDel(v).then(() => { if (sheet === s) sheet = null; FRF.msg = frNick(v) + ' удалён из друзей.'; FRF.ok = true; render(); }).catch(e => { if (sheet === s) { s.busy = false; s.err = sbErr(e); render(); } }); },
+  frNo(v) { frFormKeep(); frDel(v).catch(e => { FRF.msg = sbErr(e); FRF.ok = false; profUi(); }); return false; },
+  frOk(v) { frFormKeep(); frAccept(v).catch(e => { FRF.msg = sbErr(e); FRF.ok = false; profUi(); }); return false; }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'fr-nick' && !sheet) { e.preventDefault(); if (ACT.frAdd() !== false) render(); } });
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
 })();
 </script>

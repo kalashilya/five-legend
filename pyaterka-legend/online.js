@@ -8,7 +8,7 @@
 const NET_V = '1:' + ALL.length;                 /* версия правил: у обоих игроков должна совпадать */
 const NET_BUY = 5000, NET_BUY1 = 8000, NET_CALL = 5000, NET_SPD = 2.4, NET_LOST = 12000, NET_GIVEUP = 60000, NET_INV = 20000;
 const RT = { ch: {}, open: false, err: '', st: 'off', lob: 0, last: null, here: [], hereK: '', skew: 0, busy: 0, timer: 0 };
-const rtErr = e => { const was = RT.err; RT.err = String(e || '').slice(0, 160); if (RT.err !== was) { console.warn('[online]', RT.err); if (tab === 'play' && !OV && !sheet) render(); } };
+const rtErr = e => { const was = RT.err; RT.err = String(e || '').slice(0, 160); if (RT.err !== was) { console.warn('[online]', RT.err); profUi(); } };
 const NET = { on: 0, st: 'idle', qt: 0, mm: null, inv: null, msg: '' };
 let FR = { st: 'off', rows: [], nick: {}, msg: '', err: '' };
 const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -18,7 +18,7 @@ const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
    своих каналов: в матче раз в 0,6 с, иначе раз в 1,5 с. «Кто в игре» — таблица net_here: раз в 5 с отметка о себе.
    Каналы: fl-u-<id> — личный (приглашения, заявки), fl-m-<id> — матч. */
 const rtTbl = e => /relation|does not exist|42P01|net_msgs|net_here|schema cache/i.test(String(e && e.message)) ? 'на сервере нет таблиц онлайна — владельцу запустить docs/supabase-online.sql' : sbErr(e);
-const rtOk = () => { RT.open = true; if (RT.err) { RT.err = ''; if (tab === 'play' && !OV && !sheet) render(); } };
+const rtOk = () => { RT.open = true; if (RT.err) { RT.err = ''; profUi(); } };
 const srvIso = ms => new Date(Date.now() + RT.skew + ms).toISOString();
 function rtJoin(name, o) {
   const old = RT.ch[name]; if (old) { Object.assign(old, o || {}); return old; }
@@ -69,7 +69,7 @@ function netPost(uid, ev, p) { if (!AU || uid === AU.uid) return; rtSend('fl-u-'
 const netMeta = () => ({ uid: AU.uid, nick: AU.nick, st: NET.st, v: NET_V, t: NET.qt || 0 });
 function netSt(st) { NET.st = st; if (AU && NET.on) hereUp(); }
 function onlineMap() { const o = {}; for (const x of RT.here) if (x && x.uid) o[x.uid] = x; if (AU && RT.lob) o[AU.uid] = netMeta(); return o; }
-const onlineUi = force => { mmTick(); if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render(); };
+const onlineUi = force => { mmTick(); profUi(); };
 setInterval(() => { if (!AU || !NET.on || document.hidden) return; hereUp(); hereLoad(); }, 5000);
 /* свои старые сообщения убираем, чтобы таблица не росла */
 setInterval(() => { if (!AU || !NET.on) return; sbFetch(`/rest/v1/net_msgs?frm=eq.${AU.uid}&at=lt.${encodeURIComponent(srvIso(-300000))}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }, true).catch(() => {}); }, 90000);
@@ -117,7 +117,7 @@ function invGo(uid, nick) {
 function invDrop(say) { const I = NET.inv; if (!I) return; NET.inv = null; if (I.out) { netPost(I.uid, 'inv-x', { mid: I.mid }); netSt('idle'); } else if (say !== false) netPost(I.uid, 'inv-no', { mid: I.mid }); }
 /* список друзей обновляется сам: раз в 10 с при открытом окне, раз в минуту на вкладке «Матчи» (уведомление о заявке могло потеряться) */
 let frT = 0;
-setInterval(() => { if (!AU || OV || document.hidden) return; frT++; if ((sheet && sheet.t === 'fr') || (tab === 'play' && !sheet && frT % 6 === 0)) frLoad(); }, 10000);
+setInterval(() => { if (!AU || OV || document.hidden) return; frT++; if ((tab === 'prof' && !sheet) || (sheet && sheet.t === 'frP') || (tab === 'play' && !sheet && frT % 6 === 0)) frLoad(); }, 10000);
 /* таймеры окон поиска и приглашения; закрыли окно — отменяем */
 setInterval(() => {
   if (NET.mm && !NET.mm.lock) { if (!sheet || sheet.t !== 'netMm') mmStop(); else { mmTick(); const e = $('#mm-t'), s = Math.floor((Date.now() - NET.mm.t0) / 1000); if (e) e.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); } }
@@ -339,17 +339,16 @@ async function frLoad() {
   try {
     const rows = await sbFetch(`/rest/v1/friends?select=a,b,st&or=(a.eq.${AU.uid},b.eq.${AU.uid})`, { method: 'GET' }, true) || [];
     const ids = [...new Set(rows.map(r => r.a === AU.uid ? r.b : r.a))];
-    const ns = ids.length ? await sbFetch(`/rest/v1/leaders?select=id,nick,tro&id=in.(${ids.join(',')})`, { method: 'GET' }) || [] : [];
+    const q = c => sbFetch(`/rest/v1/leaders?select=${c}&id=in.(${ids.join(',')})`, { method: 'GET' });
+    let ns = []; if (ids.length) { try { ns = await q('id,nick,tro,ava') || []; } catch (e) { if (!/column|ava|42703|PGRST/i.test(String(e.message))) throw e; ns = await q('id,nick,tro') || []; } }
     FR = Object.assign(FR, { st: 'ok', rows, nick: Object.fromEntries(ns.map(x => [x.id, x])), err: '' });
   } catch (e) { FR.st = 'err'; FR.err = /relation|does not exist|42P01|friends/i.test(String(e.message)) ? 'На сервере ещё нет таблицы друзей. Владельцу игры: запустить docs/supabase-online.sql в Supabase → SQL Editor.' : sbErr(e); }
-  if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render();
+  profUi();
 }
-function frKeep() { const i = document.getElementById('fr-nick'); if (i && sheet) sheet.nick = i.value; }
-function frRender() { frKeep(); render(); }
 const frNick = id => (FR.nick[id] && FR.nick[id].nick) || (G.pvp && G.pvp[id] && G.pvp[id].n) || 'игрок';
 async function frAdd(nick) {
-  nick = String(nick || '').trim(); const s = sheet;
-  const say = (msg, ok) => { if (s) { s.msg = msg; s.ok = !!ok; s.busy = false; } frRender(); };
+  nick = String(nick || '').trim();
+  const say = (msg, ok) => { FRF.msg = msg; FRF.ok = !!ok; FRF.busy = false; profUi(); };
   if (!nickOk(nick)) return say('Ник: от 3 до 16 символов, латиница, цифры и «_».');
   if (nick.toLowerCase() === AU.nick.toLowerCase()) return say('Это ваш ник.');
   try {
@@ -360,7 +359,7 @@ async function frAdd(nick) {
     if (ex && ex.a === id) { await frAccept(id); return say(r[0].nick + ' теперь у вас в друзьях.', 1); }
     if (ex) return say('Заявка уже отправлена — ждём, когда ' + r[0].nick + ' примет.');
     await sbFetch('/rest/v1/friends', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ a: AU.uid, b: id, st: 'pending' }) }, true);
-    netPost(id, 'fr', {}); if (s) s.nick = ''; await frLoad(); say('Заявка отправлена ' + r[0].nick + '.', 1);
+    netPost(id, 'fr', {}); FRF.nick = ''; await frLoad(); say('Заявка отправлена ' + r[0].nick + '.', 1);
   } catch (e) { say(/duplicate|23505|409/i.test(String(e.message)) ? 'Заявка уже отправлена.' : /relation|does not exist|42P01/i.test(String(e.message)) ? 'На сервере ещё нет таблицы друзей (docs/supabase-online.sql).' : sbErr(e)); }
 }
 async function frAccept(id) {
@@ -382,27 +381,9 @@ function netBoxH() {
   return `<section class="pn net-box"><div class="net-h"><div><small>ONLINE · 1 VS 1</small><b>ОНЛАЙН-МАТЧ</b></div><span>на интерес — без кубков и монет</span></div>
     ${!AU ? `<p class="sm">Сыграйте с друзьями или со случайным игроком в реальном времени. Нужен аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button>`
     : `<p class="sm">Живой соперник, ${NET_BUY / 1000} с на план раунда и ${NET_CALL / 1000} с на решение капитана — без пауз и перемотки.${on ? ` Сейчас в игре: <b>${on}</b>.` : ''}</p>
-      <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
+      <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья в профиле${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
       ${ready ? '' : '<p class="sm mut">Сначала соберите пятёрку.</p>'}
       <p class="net-diag ${RT.lob && RT.open && !RT.err ? 'ok' : RT.err ? 'err' : ''}">${RT.lob && RT.open && !RT.err ? 'Онлайн подключён · видно игроков: ' + Object.keys(onlineMap()).length : RT.err ? 'Онлайн не подключился — ' + esc(RT.err) : RT.st === 'conn' || RT.st === 'open' ? 'Подключаемся к онлайну…' : 'Онлайн не подключён' + ''}</p>`}</section>`;
-}
-function frH() {
-  const s = sheet, me = AU && AU.uid, rec = id => { const r = G.pvp && G.pvp[id]; return r && (r.w || r.l) ? `<small class="fr-rec">${r.w}:${r.l}</small>` : ''; };
-  if (!AU) return `<div class="in lg-page acc-page"><div class="lg-top"><div><small class="eyebrow">Онлайн</small><b>Друзья</b></div>${xBtn}</div><p class="sm">Чтобы добавлять друзей, войдите в аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button></div>`;
-  const oth = r => r.a === me ? r.b : r.a, inc = FR.rows.filter(r => r.st === 'pending' && r.b === me), out = FR.rows.filter(r => r.st === 'pending' && r.a === me), ok = FR.rows.filter(r => r.st === 'ok');
-  const on = onlineMap(), ready = squadReady();
-  const row = (id, right) => `<div class="fr-row"><span class="fr-ava">${esc(frNick(id).slice(0, 2))}</span><div class="fr-n"><b>${esc(frNick(id))}</b>${netStH(id)}</div>${rec(id)}${right}</div>`;
-  const okRows = ok.map(oth).sort((x, y) => (on[y] ? 1 : 0) - (on[x] ? 1 : 0)).map(id => { const o = on[id], can = o && o.st === 'idle' && o.v === NET_V && ready && !OV;
-    return row(id, `<button class="btn pri s" data-act="frCall" data-v="${id}" ${can ? '' : 'disabled'}>Вызвать</button><button class="fr-x" data-act="frDel" data-v="${id}" aria-label="Удалить из друзей">×</button>`); }).join('');
-  return `<div class="in lg-page acc-page fr-page"><div class="lg-top"><div><small class="eyebrow">Онлайн</small><b>Друзья</b></div>${xBtn}</div>
-    <div class="fr-add"><label class="acc-f"><span>Добавить по нику</span><input id="fr-nick" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="16" value="${esc(s.nick || '')}" placeholder="ник друга в игре"></label><button class="btn pri" data-act="frAdd" ${s.busy ? 'disabled' : ''}>${s.busy ? '…' : 'Добавить'}</button></div>
-    ${s.msg ? `<p class="${s.ok ? 'fr-ok' : 'acc-err'}" role="status">${esc(s.msg)}</p>` : ''}
-    ${FR.st === 'err' ? `<p class="acc-err">${esc(FR.err)}</p>` : ''}
-    ${inc.length ? `<div class="fr-sec"><h4>Заявки в друзья</h4>${inc.map(r => row(r.a, `<button class="btn pri s" data-act="frOk" data-v="${r.a}">Принять</button><button class="fr-x" data-act="frDel" data-v="${r.a}" aria-label="Отклонить">×</button>`)).join('')}</div>` : ''}
-    <div class="fr-sec"><h4>Друзья${ok.length ? ' · ' + ok.length : ''}</h4>${okRows || `<p class="sm mut">${FR.st === 'load' ? 'Загружаем…' : 'Пока никого. Добавьте друга по нику — он увидит заявку у себя.'}</p>`}</div>
-    ${out.length ? `<div class="fr-sec"><h4>Отправленные заявки</h4>${out.map(r => row(r.b, `<span class="sm mut">ждёт ответа</span><button class="fr-x" data-act="frDel" data-v="${r.b}" aria-label="Отменить заявку">×</button>`)).join('')}</div>` : ''}
-    ${ready ? '' : '<p class="sm mut">Чтобы вызывать на матч, соберите пятёрку.</p>'}
-    <p class="sm mut">Ваш ник для друзей: <b>${esc(AU.nick)}</b></p></div>`;
 }
 const popX = xBtn.replace('class="lg-x"', 'class="lg-x st-x0"');
 function mmH() {
@@ -422,17 +403,11 @@ function invH() {
     <div class="net-btns"><button class="btn pri acc-go" data-act="invYes">Принять</button><button class="btn acc-go" data-act="close">Отказаться</button></div></div>`;
 }
 const netMsgH = () => `<div class="in st-pop net-pop">${popX}<p class="eyebrow">Онлайн</p><p class="net-msg">${sheet.msg || ''}</p><button class="btn pri acc-go" data-act="close">Понятно</button></div>`;
-function netSheetH() { const t = sheet.t; return t === 'fr' ? frH() : t === 'netMm' ? mmH() : t === 'netInv' ? invH() : t === 'netMsg' ? netMsgH() : ''; }
+function netSheetH() { const t = sheet.t; return t === 'netMm' ? mmH() : t === 'netInv' ? invH() : t === 'netMsg' ? netMsgH() : ''; }
 
 Object.assign(ACT, {
-  frOpen() { if (!AU) { sheet = { t: 'auth', mode: 'in' }; return; } sheet = { t: 'fr', nick: '' }; frLoad(); },
-  frAdd() { if (!sheet || sheet.t !== 'fr' || sheet.busy) return false; frKeep(); sheet.busy = true; sheet.msg = ''; frAdd(sheet.nick); },
-  frOk(v) { frAccept(v).catch(e => { if (sheet && sheet.t === 'fr') { sheet.msg = sbErr(e); sheet.ok = false; frRender(); } }); return false; },
-  frDel(v) { frKeep(); frDel(v).catch(e => { if (sheet && sheet.t === 'fr') { sheet.msg = sbErr(e); sheet.ok = false; frRender(); } }); return false; },
   frCall(v) { const o = onlineMap()[v]; if (!o || o.st !== 'idle') return; invGo(v, frNick(v)); },
   netMm() { if (!AU) { sheet = { t: 'auth', mode: 'in' }; return; } mmGo(); },
   invYes() { const I = NET.inv; if (!I || !I.in) return; NET.inv = null; netPost(I.uid, 'inv-ok', { mid: I.mid }); netMatch(I.mid, false, I.uid, I.nick); },
   netCancel() { if (OV && OV.net) netQuit(); }
 });
-/* Enter в поле ника друга = «Добавить» */
-document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'fr-nick' && sheet && sheet.t === 'fr') { e.preventDefault(); if (ACT.frAdd() !== false) render(); } });

@@ -5,7 +5,7 @@
    Ключ публичный (publishable): доступ к чужим данным закрыт правилами RLS в базе (docs/supabase-schema.sql). */
 const SB = { url: 'https://wsilqaopfvookrekockh.supabase.co', key: 'sb_publishable_gl9HJNpAHj73JX7EUr3p5Q_esEOzWWO', mail: '@players.five-legend-cs.netlify.app' };
 const AKEY = KEY + '-auth', TKEY = KEY + '-at', PKEY = KEY + '-prev';
-let AU = null, CS = { st: 'off', msg: '', at: 0 }, csTimer = 0, auRef = null, TOP = null;
+let LEAD_EXT = true, AU = null, CS = { st: 'off', msg: '', at: 0 }, csTimer = 0, auRef = null, TOP = null;
 const nickOk = n => /^[A-Za-z0-9_]{3,16}$/.test(n);
 const nickMail = n => n.toLowerCase() + SB.mail;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
@@ -52,7 +52,9 @@ async function cloudPush() {
   CS.st = 'busy';
   try {
     await sbFetch('/rest/v1/saves', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: AU.uid, data: G, updated_at: at }) }, true);
-    await sbFetch('/rest/v1/leaders', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: AU.uid, nick: AU.nick, tro: G.tro | 0, best: G.best | 0, lvl: Math.max(1, G.lvl | 0), w: G.w | 0, l: G.l | 0, updated_at: at }) }, true);
+    const lead = { id: AU.uid, nick: AU.nick, tro: G.tro | 0, best: G.best | 0, lvl: Math.max(1, G.lvl | 0), w: G.w | 0, l: G.l | 0, updated_at: at }, put = b => sbFetch('/rest/v1/leaders', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(b) }, true);
+    /* аватар и то, что видят друзья (коллекция, состав); если на сервере ещё нет этих колонок — без них */
+    if (LEAD_EXT) { try { await put(Object.assign({ ava: G.ava | 0, pub: pubOf(G) }, lead)); } catch (e) { if (!/column|ava|pub|42703|PGRST204/i.test(String(e.message))) throw e; LEAD_EXT = false; await put(lead); } } else await put(lead);
     CS = { st: 'ok', msg: 'Сохранено в аккаунте в ' + hm(Date.now()), at: Date.now() }; lsSet(TKEY + '-sync', String(Date.now()));
   } catch (e) { CS = { st: 'err', msg: sbErr(e), at: Date.now() }; csTimer = setTimeout(cloudPush, 30000); }
   csDraw();

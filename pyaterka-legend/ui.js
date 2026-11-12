@@ -300,16 +300,12 @@ function vCol() {
 function vProf() {
   const lg = leagueOf(G.tro), fr = G.frame, h = G.season.hist, n = G.w + G.l, xpPct = Math.max(0,Math.min(100,Math.round(G.xp / Math.max(1,100 * G.lvl) * 100)));
   const winPct = n ? Math.round(G.w / n * 100) : 0;
-  return `<section class="profile-hero" style="${fr >= 0 ? `--profile-rank:${LCOL[fr]}` : ''}">
-    <div class="profile-hero__glow"></div><div class="profile-hero__top"><span>PLAYER DOSSIER / FIVE LEGENDS</span><b>FL-${String(G.lvl).padStart(4,'0')}</b></div>
-    <div class="profile-hero__identity is-link" data-act="lvlInfo" role="button" tabindex="0" aria-label="Что такое уровень и лига"><div class="profile-hero__crest">${rankH(lg)}</div><div><small>ЛИГА «${LEAGUES[lg][0].toUpperCase()}» · ${G.tro} КУБКОВ</small><h2>УРОВЕНЬ <em>${G.lvl}</em></h2><span>ОПЫТ ЗА МАТЧИ · КАЖДЫЙ УРОВЕНЬ — КЕЙС ›</span></div></div>
-    <div class="profile-hero__xp"><div><span>ОПЫТ УРОВНЯ</span><b>${G.xp} / ${100*G.lvl} XP</b></div><i><b style="width:${xpPct}%"></b></i></div>
-    <div class="profile-hero__stats"><div><strong>${G.tro}</strong><small>КУБКИ</small></div><div><strong>${G.best}</strong><small>РЕКОРД</small></div><div><strong>${winPct}%</strong><small>ПОБЕДЫ</small></div></div>
-  </section>
+  return `${pfHeroH()}
+  ${frSecH()}
   ${accH()}
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
-  <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
+  <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Аватар</b><button class="pf-set-ava" data-act="avaOpen">${avaH(myAva(), 'sm', LCOL[leagueOf(G.tro)])}<span>«${avaOf(myAva())[2]}»</span><em>Сменить ›</em></button></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
   <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
   ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
 }
@@ -410,7 +406,8 @@ function vSheet() {
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
   if (sheet.t === 'auth') return authH();
-  if (/^(fr|net)/.test(sheet.t)) return netSheetH();
+  if (/^(frP|frDel|avaPick)$/.test(sheet.t)) return pfSheetH();
+  if (/^net/.test(sheet.t)) return netSheetH();
   if (sheet.t === 'inst') return instSheetH();
   if (sheet.t === 'sync') return syncH();
   if (sheet.t === 'top') return topH();

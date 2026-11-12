@@ -18,9 +18,12 @@ const OTHER_CAP = 88, TOP_TEAM_MIN = 85, REST_CAP = 87;
 const finalOvr = (n, team, raw) => { const i = TOP20.indexOf(n); if (i >= 0) return top20Ovr(i); const v = Math.round(raw); return TOP_TEAMS.includes(team) ? clamp(v, TOP_TEAM_MIN, OTHER_CAP) : clamp(v, 58, REST_CAP); };
 /* Награды HLTV на турнирах: MVP даёт +2, EVP +1 (у MVP отдельного +1 за EVP нет). Бонусы разных турниров складываются. */
 const AWARDS = [
-  { event: 'IEM Beijing 2026', mvp: ['xertioN'], evp: ['w0nderful', 'torzsi', 'Spinx', 'b1t', 'Techno', 'PR', 'xelex'] },
-  { event: 'PGL Masters Bucharest 2026', mvp: ['YEKINDAR'], evp: ['molodoy', 'ZywOo', 'PR', 'zorte', 'syph0'] }
+  { event: 'IEM Beijing 2026', ru: 'IEM Пекин 2026', mvp: ['xertioN'], evp: ['w0nderful', 'torzsi', 'Spinx', 'b1t', 'Techno', 'PR', 'xelex'] },
+  { event: 'PGL Masters Bucharest 2026', ru: 'PGL Бухарест 2026', mvp: ['YEKINDAR'], evp: ['molodoy', 'ZywOo', 'PR', 'zorte', 'syph0'] }
 ];
+const awardsOut = () => { const o = {}, put = n => o[n] || (o[n] = {});
+  AWARDS.forEach(e => { e.mvp.forEach(n => (put(n).a = put(n).a || []).push(['MVP', e.ru, 2])); e.evp.forEach(n => { if (!e.mvp.includes(n)) (put(n).a = put(n).a || []).push(['EVP', e.ru, 1]); }); });
+  TOP20.forEach((n, i) => put(n).top = i + 1); return o; };
 const awardBonus = nick => AWARDS.reduce((s, e) => s + (e.mvp.includes(nick) ? 2 : e.evp.includes(nick) ? 1 : 0), 0);
 const hltvStats = (nick, role) => { const p = HLTV.players && HLTV.players[nick]; if (!p || !p.last12m || p.last12m.maps < 80) return null; const a = p.last12m, b = p.last3m, raw = 65 + (a.rating3 - 1) * 85 + awardBonus(nick), ovr = Math.round(clamp(raw, 58, OVR_CAP)), clutch = Math.round(a.closing * .65 + clamp(a.clutchesPer24 * 200, 0, 100) * .35), st = [a.firepower, a.opening, a.utility, a.trading, clutch, role === 4 ? 80 : 50].map(x => Math.round(clamp(x, 40, 99))); return { ovr, raw, st, hltv: Object.assign({ source: 'HLTV', profileId: p.profileId, snapshotDate: HLTV.snapshotDate, last12m: { maps: a.maps, rating3: a.rating3, roundSwing: a.roundSwing } }, b ? { last3m: { maps: b.maps, rating3: b.rating3, roundSwing: b.roundSwing } } : {}) }; };
 const hsh = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
@@ -72,5 +75,6 @@ for (const k in reg.cards) if (!live.has(k)) {                 // архивны
 PL.sort((a, b) => b[3] - a[3] || a[1] - b[1] || a[4] - b[4]);
 fs.writeFileSync('ids.json', JSON.stringify(reg));
 const verified = Object.keys(HLTV.players || {}).filter(n => HLTV.players[n].photo && cur.some(x => x[0] === n)).length;
-fs.writeFileSync('data.js', '/* Составы: Valve global ranking от 11 ноября 2026. HLTV-верифицировано игроков с фото: ' + verified + '. Игроки без фото остаются с затемнённым силуэтом. */\n/* Строка игрока: ник, команда, роль, рейтинг, постоянный номер, редкость, архивная версия, характеристики HLTV или null, источник HLTV или null */\nconst TM=' + JSON.stringify(TM) + ';\nconst PL=' + JSON.stringify(PL) + ';\nconst SPM=' + JSON.stringify(reg.mvp) + ';\n');
+fs.writeFileSync('data.js', '/* Составы: Valve global ranking от 11 ноября 2026. HLTV-верифицировано игроков с фото: ' + verified + '. Игроки без фото остаются с затемнённым силуэтом. */\n/* Строка игрока: ник, команда, роль, рейтинг, постоянный номер, редкость, архивная версия, характеристики HLTV или null, источник HLTV или null */\nconst TM=' + JSON.stringify(TM) + ';\nconst PL=' + JSON.stringify(PL) + ';\nconst SPM=' + JSON.stringify(reg.mvp) + ';\n' +
+  '/* Награды для подписи на карточке: a — [MVP|EVP, турнир, бонус], top — место в топ-20 HLTV за год */\nconst AWD=' + JSON.stringify(awardsOut()) + ';\n');
 console.log(PL.length, 'карточек,', archived, 'архивных,', TM.length, 'команд, особых MVP:', reg.mvp.length);

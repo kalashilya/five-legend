@@ -1,5 +1,11 @@
 # CHANGELOG — «Пятёрка Легенд»
 
+## 2026-11-12 — подпись наград на карточках
+- Добавлено: на карточке под рейтингом — за что награда: «MVP · Бухарест», «MVP · Пекин», «EVP · Пекин», «EVP ×2» (PR). У особых MVP-версий без настоящего MVP — место в топ-20 HLTV («MVP · №1 HLTV»); у yuurih (MVP-версия появилась раньше, в топ-20 не входит) — просто «MVP».
+- Добавлено: в окне карточки блок «Награды»: турнир и бонус (+2 / +1), место в топ-20 HLTV за год.
+- Данные: `gen.js` пишет в `data.js` таблицу `AWD` (награды и место в топ-20), `core.js` добавляет её в карточку (`c.aw`, у архивных нет).
+- Файлы: pyaterka-legend/gen.js, data.js, core.js, ui.js, test.js, pyaterka-legend-offline.html и match-lab.html (сборка), CHANGELOG.md, PROJECT_STATE.md.
+
 ## 2026-11-12 — рейтинги по топ-20 HLTV и топ-5 команд (вторая переработка)
 - Изменено: топ-20 игроков HLTV за прошлый год получают фиксированный рейтинг по порядку: 1–2 места — 92 (ZywOo, donk); 3–7 — 90 (ropz, m0NESY, sh1ro, molodoy, flameZ); 8–20 — 88 (frozen, KSCERATO, Spinx, Twistzz, mezii, Senzu, XANTARES, YEKINDAR, xertioN, torzsi, NiKo, iM, b1t).
 - Изменено: игроки топ-5 команд HLTV (Spirit, Vitality, FURIA, MOUZ, Falcons) вне топ-20 — от 85 до 88; все прочие — не выше 87; архивные — не выше 88.

@@ -100,6 +100,12 @@ ok('«Игрок недели» из старых сохранений стан�
   assert(!g.cards[W + pid] && !g.cards[W + pid2] && !g.orphans[W + pid] && !g.orphans[W + pid2]);
   assert.deepStrictEqual(g.squads[0].slice(0, 2), [pid, pid2]); assert.strictEqual(g.coins, 5);
 });
+ok('награды турниров записаны в карточки для подписи: MVP, EVP, место в топ-20', () => {
+  const b = n => E.ALL.find(c => c.nick === n && !c.sp && !c.hist);
+  assert.deepStrictEqual(b('YEKINDAR').aw.a, [['MVP', 'PGL Бухарест 2026', 2]]); assert.strictEqual(b('YEKINDAR').aw.top, 15);
+  assert.deepStrictEqual(b('xertioN').aw.a, [['MVP', 'IEM Пекин 2026', 2]]); assert.strictEqual(b('PR').aw.a.length, 2);
+  assert.strictEqual(b('ZywOo').aw.top, 1); assert(E.MVPP.find(c => c.nick === 'YEKINDAR').aw); assert(E.ALL.filter(c => c.hist).every(c => !c.aw));
+});
 ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
   assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);
   const g = E.migrate({ v: 2, coins: 'x', cards: { 5: { n: 1, lv: 9 }, 987654: { n: 2, lv: 1 } }, squads: [[5, 987654, null, null, null]] }, NOW);

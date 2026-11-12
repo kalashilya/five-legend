@@ -123,56 +123,85 @@ function rdEvent(S, e) {
 function lvBtns() {
   const c = $('#mbtn'); if (!c) return;
   if (OV.askQuit) { c.innerHTML = '<button class="btn dan s" data-act="quitYes">Сдаться — поражение</button><button class="btn s" data-act="quitNo">Играть дальше</button>'; return; }
-  c.innerHTML = `<button class="lv-b" data-act="spd" aria-label="Скорость">×${LV.spd}</button><button class="lv-b" data-act="pause" aria-label="${LV.paused ? 'Продолжить' : 'Пауза'}">${LV.paused ? '▶' : '❚❚'}</button>${LV.ph === 'round' ? '<button class="lv-b" data-act="skipRound" aria-label="Досмотреть раунд">⏭</button>' : LV.ph === 'buy' && LV.min && !M3C ? '<button class="lv-b wide" data-act="prepOpen">План</button><button class="lv-b wide go" data-act="goRound">Начать ›</button>' : ''}<button class="lv-b wide q" data-act="quitAsk">Сдаться</button>`;
+  c.innerHTML = `<button class="lv-b" data-act="spd" aria-label="Скорость">×${LV.spd}</button><button class="lv-b" data-act="pause" aria-label="${LV.paused ? 'Продолжить' : 'Пауза'}">${LV.paused ? '▶' : '❚❚'}</button>${LV.ph === 'round' ? '<button class="lv-b" data-act="skipRound" aria-label="Досмотреть раунд">⏭</button>' : ''}<button class="lv-b wide q" data-act="quitAsk">Сдаться</button>`;
 }
-/* ---------- Подготовка к раунду: закупка, направление, темп, приказы ---------- */
+/* ---------- Подготовка к раунду: быстрый план (три карточки) или решение капитана по ходу раунда ---------- */
 function planDraw() {
-  const m = OV.m, atk = m.sideA === 'A', p = $('#prep'); if (!p) return;
-  if (M3C && !m.over && LV.ph === 'buy' && LV.min) { qpDraw(p); mmDraw(); lvBtns(); return; }
-  if (m.over || LV.ph !== 'buy' || LV.min) { p.className = 'lv-prep'; p.innerHTML = ''; mmDraw(); lvBtns(); return; }
-  const a = m.a, pistol = m.isPistol() || m.decider, auto = m.buyOf(a, OV.sel), cur = m.decider ? 'full' : m.buyOf(a, OV.sel, OV.plan.buy), eco = OV.sel.includes('eco');
-  const buyB = k => { const B = BUY[k], can = a.money >= B.c, on = cur === k; return `<button class="pb ${on ? 'on' : ''} ${k === auto ? 'rec' : ''}" data-act="buyT" data-v="${k}" ${can && !eco ? '' : 'disabled'} aria-pressed="${on}"><b>${k === 'full' ? 'Полная' : k === 'force' ? 'Форс' : 'Эко'}</b><small>${B.c ? '$' + nf(B.c) : 'копим'}</small></button>`; };
-  const hex = (v, ic, t, s) => `<button class="hx ${OV.plan.dir === v ? 'on' : ''}" data-act="dir" data-v="${v}" aria-pressed="${OV.plan.dir === v}"><span class="hx-i" aria-hidden="true">${ic}</span><b>${t}</b><small>${s}</small></button>`;
-  const dirs = atk ? hex('A', 'A', 'Штурм A', 'вся команда на A') + hex('S', '⇄', 'Через центр', 'разделиться, точка позже') + hex('B', 'B', 'Штурм B', 'вся команда на B')
-    : hex('A', 'A', 'Стек A', '3 на A, 1 мид, 1 на B') + hex('S', '◎', 'Ровно', '2 на A, 1 мид, 2 на B') + hex('B', 'B', 'Стек B', '3 на B, 1 мид, 1 на A');
-  const cost = OV.sel.reduce((s, k) => s + AC[k].cost, 0), ctx = { side: m.sideA, behind: a.score < m.b.score, cap: m.capIgl(a) };
-  const cards = a.hand.map(k => { const on = OV.sel.includes(k), v = acVal(k, a, ctx), dis = !on && cost + AC[k].cost > a.en; return `<button class="ac2 ${on ? 'on' : ''} ${dis ? 'dis' : ''}" data-act="sel" data-v="${k}" aria-pressed="${on}" ${dis ? 'aria-disabled="true"' : ''} title="${esc(AC[k].d)}"><span class="c">${AC[k].cost}</span><b>${AC[k].n}</b>${k === 'fake' || k === 'eco' ? '' : `<small class="${v < 0 ? 'neg' : 'pos'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</small>`}</button>`; }).join('');
-  const it = m.nx.intel, fx = OV.plan.focus >= 0 ? a.info.e[OV.plan.focus].c.nick : '';
-  p.className = 'lv-prep on'; LV.tuned = true;
-  p.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${atk ? 'Атака · T' : 'Защита · CT'} · раунд ${m.round}</small><b>Подготовка к раунду</b></div><button class="pp-min" data-act="prepMin" aria-label="Свернуть и посмотреть карту">▾</button></div>
-    <div class="pp-money"><span>Деньги команды <b>$${nf(a.money)}</b></span><span class="mut">${pistol ? (m.decider ? 'Решающий раунд: полная закупка' : 'Пистолетный раунд') : 'Рекомендуем: ' + (auto === 'full' ? 'полную' : auto === 'force' ? 'форс' : 'эко')}</span></div>
-    ${pistol ? '' : `<div class="pp-buy">${buyB('full')}${buyB('force')}${buyB('eco')}</div>`}${eco ? '<p class="sm mut pp-n">Приказ «Эко-раунд» — команда не закупается.</p>' : ''}
-    <div class="pp-dir">${dirs}</div>
-    ${segH('tempo', OV.plan.tempo, [['fast', 'Быстро'], ['norm', 'Обычно'], ['slow', 'Медленно']])}
-    <div class="pp-en"><span>Приказы</span><span class="en2">${[1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i class="${i <= a.en - cost ? 'on' : i <= a.en ? 'use' : ''}"></i>`).join('')}</span><b>${a.en - cost}/8</b></div>
-    <div class="pp-cards">${cards}</div>
-    <div class="pp-foc"><span>Ставка на игрока</span>${a.info.e.map((e, i) => `<button class="${OV.plan.focus === i ? 'on' : ''}" data-act="focus" data-v="${i}" aria-pressed="${OV.plan.focus === i}">${esc(e.c.nick)}</button>`).join('')}</div>
-    ${it ? `<p class="sm mut pp-n"><b>Разведка:</b> ${esc(it.t)}</p>` : ''}
-    <button class="btn pri pp-go" data-act="goRound">Следующий раунд <span id="ppt"></span></button>`;
-  mmDraw(); lvBtns();
+  const m = OV.m, p = $('#prep'); if (!p) return;
+  if (!m.over && LV.ph === 'buy') { qpDraw(p); mmDraw(); lvBtns(); return; }
+  if (LV.ask) { callDraw(); return; }
+  p.className = 'lv-prep'; p.innerHTML = ''; mmDraw(); lvBtns();
 }
-function handDraw() { planDraw(); }
 function mmDraw() { document.querySelectorAll('#rowA .pl').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i));
-  if (M3C) { const q = LV.min && !LV.tuned && QP[OV.m.sideA][LV.qr]; M3C.plan(OV.m.sideA, LV.ph !== 'buy' || OV.m.over ? null : q ? { dir: q.dir, tempo: q.tempo } : OV.plan); }
-  const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, OV.plan) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
+  const q = LV.min && !LV.tuned && QP[OV.m.sideA][LV.qr], shown = q ? { dir: q.dir, tempo: q.tempo } : OV.plan;
+  if (M3C) M3C.plan(OV.m.sideA, LV.ph !== 'buy' || OV.m.over ? null : shown);
+  const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, shown) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
 function lvBuy(first) {
-  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY; LV.min = !!M3C; LV.tuned = false; LV.kd = null;
+  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY; LV.min = true; LV.tuned = false; LV.kd = null;
   document.querySelectorAll('.pl').forEach(c => c.classList.remove('dead', 'hit')); document.querySelectorAll('[id^="hp-"]').forEach(h => h.style.width = '100%');
   $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#rdc').innerHTML = ''; const tp = $('#rd-top'); if (tp) tp.innerHTML = '';
   LV.S = rdIdle(); OV.sel = OV.sel.filter(k => m.a.hand.includes(k)); if (!m.canPlay(m.a, OV.sel)) OV.sel = [];
   lvHud(); planDraw();
 }
+/* ---------- Решение по ходу раунда ----------
+   В части раундов (не в пистолетных) перед выходом на точку игра останавливается и спрашивает капитана:
+   атака — «доигрываем здесь или уходим на другую точку» по разведке; защита — «держим или ротация» по звуку шагов.
+   Разведка верна в 75% (атака) и 70% (защита). Выбор меняет направление в расчёте раунда (угадал усиленную точку
+   или нет — та же цена, что и в плане до раунда), за смену точки — штраф за потерянное время. */
+function callFor(m) {
+  if (m.isPistol() || m.round < 2 || LV.lastCall === m.round - 1 || Math.random() > .4) return null;
+  const atk = m.sideA === 'A', cur = OV.plan.dir, tr = m.nx.plan.dir, oth = d => d === 'A' ? 'B' : 'A';
+  if (atk) {
+    const seen = Math.random() < .75 ? tr : ['A', 'S', 'B'].filter(x => x !== tr)[Math.floor(Math.random() * 2)];
+    const hint = seen === 'S' ? 'защита стоит ровно: по двое на A и B' : `на ${seen} стоят трое, на ${oth(seen)} — один`;
+    const opts = cur === 'S' ? [{ t: 'Выход на A', s: 'вся команда идёт на A', dir: 'A' }, { t: 'Выход на B', s: 'вся команда идёт на B', dir: 'B' }]
+      : [{ t: 'Доигрываем на ' + cur, s: 'продолжаем выход по плану', dir: cur }, { t: 'Уходим на ' + oth(cur), s: 'быстрая смена точки, теряем время', dir: oth(cur), tempo: 'fast', mc: -1.2 }];
+    return { atk, q: 'Разведка: ' + hint, opts, def: 0 };
+  }
+  const seen = tr === 'S' ? (Math.random() < .5 ? 'A' : 'B') : Math.random() < .7 ? tr : oth(tr);
+  const opts = cur === seen ? [{ t: 'Держим стек ' + seen, s: 'остаёмся как стоим', dir: cur }, { t: 'Растягиваемся', s: 'по двое на точках', dir: 'S', mc: -.4 }]
+    : [{ t: 'Держим позиции', s: 'не верим, стоим по плану', dir: cur }, { t: 'Ротация на ' + seen, s: 'двое бегут на ' + seen + ', поздно', dir: seen, mc: -.6, rot: seen }];
+  return { atk, q: tr === 'S' ? 'Слышно: шаги с двух сторон, больше на ' + seen : 'Слышно: атака идёт на ' + seen, opts, def: 0 };
+}
 function lvPlay() {
   const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [];
   LV.kd = { a: { k: [...m.a.k], d: [...m.a.d] }, b: { k: [...m.b.k], d: [...m.b.d] } };
+  const call = callFor(m);
+  if (call) {
+    /* первая часть раунда: расстановка до выхода, без расчёта (результата ещё нет) */
+    const fake = { sideA: m.sideA, plan: Object.assign({}, OV.plan), planB: m.nx.plan, kills: [], end: 'elim', round: m.round, buyA: m.decider ? 'full' : m.buyOf(m.a, sel, OV.plan.buy), buyB: m.decider ? 'full' : m.buyOf(m.b, m.nx.cards), mine: sel, theirs: [] };
+    LV.pre = { sel, call, S: fake }; LV.last = fake; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.ask = 0; LV.S = rdScript(fake, m.map.n); LV.ev0 = LV.S.ev; LV.S.ev = []; LV.ei = 0; LV.callT = Math.max(2.5, LV.S.tEx - .15); LV.lastCall = m.round;
+    rdDotsBuild(LV.S); rdDotsAt(LV.S, 0); planDraw(); lvKD();
+    $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>'; $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[OV.plan.dir]}, ${TEMPON[OV.plan.tempo]}</span></div>`;
+    setTimeout(() => { if (LV && LV.ph === 'round' && !LV.ask) $('#bn').innerHTML = ''; }, 2200);
+    return;
+  }
   const L = m.play(sel, OV.plan);
-  OV.sel = []; LV.last = L; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.S = rdScript(L, m.map.n); LV.ei = 0; rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
+  OV.sel = []; LV.pre = null; LV.last = L; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.S = rdScript(L, m.map.n); LV.ei = 0; rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
   taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
   planDraw(); lvKD();
   const tg = (pl, cut) => pl.length ? pl.map(k => k === cut ? `<s>${AC[k].n}</s>` : AC[k].n).join(', ') : 'без приказов';
   $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>';
   $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[L.plan.dir]}, ${TEMPON[L.plan.tempo]} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
   setTimeout(() => { if (LV && LV.ph === 'round') $('#bn').innerHTML = ''; }, 2600);
+}
+function callDraw() {
+  const p = $('#prep'), c = LV.pre && LV.pre.call; if (!p || !c) return;
+  p.className = 'lv-prep on qp call';
+  p.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${c.atk ? 'Атака' : 'Защита'} · решение капитана</small><b>${esc(c.q)}</b></div><div class="qp-ring" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" id="qpg" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span id="qpt"></span></div></div>
+    <div class="call-o">${c.opts.map((o, i) => `<button class="call-b ${i ? 'alt' : ''}" data-act="mc" data-v="${i}"><b>${esc(o.t)}</b><small>${esc(o.s)}${o.mc ? ' · штраф за время' : ''}</small></button>`).join('')}</div>
+    <p class="sm mut call-n">Разведка не всегда точна. Нет ответа — ${esc(c.opts[c.def].t.toLowerCase())}.</p>`;
+  qpTick();
+}
+function callPick(i) {
+  const m = OV.m, pre = LV.pre; if (!pre || m.over) return; const o = pre.call.opts[i] || pre.call.opts[pre.call.def];
+  const st = pre.S.plan.dir, plan = Object.assign({}, OV.plan, { dir: o.dir }, o.tempo ? { tempo: o.tempo } : {}, o.mc ? { mc: o.mc } : {});
+  const S0 = LV.S, t0 = LV.rt, L = m.play(pre.sel, plan);
+  const atk = m.sideA === 'A' ? true : false, opt = { perm: S0.perm, tEx: S0.tEx, t0, stDir: atk ? st : undefined, defDir: atk ? undefined : st, rotTo: !atk && o.rot ? o.rot : undefined };
+  OV.sel = []; LV.pre = null; LV.ask = 0; LV.last = L; LV.S = rdScript(L, m.map.n, opt); LV.ei = 0; while (LV.ei < LV.S.ev.length && LV.S.ev[LV.ei].t < t0) LV.ei++;
+  rdDotsBuild(LV.S); taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
+  const p = $('#prep'); if (p) { p.className = 'lv-prep'; p.innerHTML = ''; } lvBtns(); sfx('tap');
+  const bn = $('#bn'); if (bn) { const h = `<div class="banner n sm"><b>${esc(o.t)}</b></div>`; bn.innerHTML = h; setTimeout(() => { if (bn.innerHTML === h) bn.innerHTML = ''; }, 1500); }
 }
 function lvKill(k, e) {
   const L = LV.last, m = OV.m, kt = k.byA ? 'a' : 'b', vt = k.byA ? 'b' : 'a', K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
@@ -205,15 +234,17 @@ function lvTick(ts) {
   const dt = Math.min(100, ts - (LV.ts || ts)); LV.ts = ts;
   if (!LV.paused) {
     LV.t -= dt;
-    if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; if (M3C) qpTick(); if (LV.t <= 0) { if (M3C && LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } }
+    if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; qpTick(); if (LV.t <= 0) { if (LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } }
+    else if (LV.ph === 'round' && LV.ask) { LV.t -= 0; LV.at -= dt; LV.t = LV.at; qpTick(); if (LV.at <= 0) callPick(LV.pre.call.def); }
     else if (LV.ph === 'round') { const S = LV.S; LV.rt += dt / 1000 * LV.spd;
+      if (LV.pre && LV.rt >= LV.callT) { LV.rt = LV.callT; LV.ask = 1; LV.at = LV.T = 7000; LV.t = 7000; callDraw(); sfx('scan'); }
       while (LV.ei < S.ev.length && S.ev[LV.ei].t <= LV.rt) rdEvent(S, S.ev[LV.ei++]);
       /* часы раунда; после закладки — таймер бомбы 40 с */
       const rc = $('#rdc'); if (rc && !LV.bd && !/вышло/.test(rc.textContent)) { let h;
         if (S.plantT != null && LV.rt >= S.plantT) { const b = Math.max(0, Math.ceil(40 * (S.bombT - LV.rt) / Math.max(.1, S.bombT - S.plantT))); h = `<span class="bomb">C4 · 0:${String(b).padStart(2, '0')}</span>`; }
-        else { const left = Math.max(0, Math.ceil(115 - LV.rt * 115 / S.T)); h = `<span>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</span>`; }
+        else { const left = Math.max(0, Math.ceil(115 - LV.rt * 115 / 22)); h = `<span>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</span>`; }
         if (rc.innerHTML !== h) rc.innerHTML = h; }
-      if (LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); rdDotsAt(S, S.T); lvEnd(); } }
+      if (!LV.pre && LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); rdDotsAt(S, S.T); lvEnd(); } }
     else { LV.t -= dt * (LV.spd - 1); if (LV.t <= 0) lvNext(); }
   }
   if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' ? 0 : LV.S.T; if (M3C) M3C.frame(t, LV.paused ? 0 : dt / 1000, LV.ph, LV.spd); else { rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); } }

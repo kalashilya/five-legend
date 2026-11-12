@@ -184,7 +184,7 @@ const M3D = (() => {
       UT = []; clearBomb();
       const L = LV && LV.ph === 'round' ? LV.last : null;
       /* гранаты из постановки раунда: дым, молотов, флешки */
-      if (L) UT = (S.ut || []).map(u => ({ t: u.t, f: () => u.k === 'smoke' ? smoke(u.p, 9) : u.k === 'fire' ? fire(u.p, 4.5) : flashbang(u.p) }));
+      if (L) UT = (S.ut || []).filter(u => u.t >= (LV.rt || 0) - .01).map(u => ({ t: u.t, f: () => u.k === 'smoke' ? smoke(u.p, 9) : u.k === 'fire' ? fire(u.p, 4.5) : flashbang(u.p) }));
       planClear();
       for (const d of S.dots) { const p = P3[d.team + d.i], q = rdPos(d, 0); p.g.position.set(X(q[0]), 0, Z(q[1])); p.last = q; }
     }
@@ -266,7 +266,7 @@ function liveGo() {
   liveBuild();
 }
 
-/* ---------- Быстрый план: три карточки, одно нажатие — раунд пошёл; «Тонкая настройка» — полная подготовка ---------- */
+/* ---------- Быстрый план: три карточки, одно нажатие — раунд пошёл (к карточке сам добавляется подходящий приказ) ---------- */
 const QP = {
   A: [{ n: 'Раш B', d: 'Быстро всей командой на B', ic: 'B', dir: 'B', tempo: 'fast', card: 'tempo', ac: '#ff8a3d' }, { n: 'Дефолт', d: 'Разведка по карте, точка по ходу', ic: '⇄', dir: 'S', tempo: 'norm', card: 'nades', ac: '#f2c14e' }, { n: 'Сплит A', d: 'Медленно, с двух сторон на A', ic: 'A', dir: 'A', tempo: 'slow', card: 'fake', ac: '#ff5a5a' }],
   D: [{ n: 'Стек A', d: 'Трое на A, по одному на мид и B', ic: 'A', dir: 'A', tempo: 'norm', card: 'stack', ac: '#4aa3ff' }, { n: 'Ровно', d: 'Двое на каждой точке, один на миде', ic: '◎', dir: 'S', tempo: 'norm', card: 'cross', ac: '#7fe0d0' }, { n: 'Стек B', d: 'Трое на B, по одному на мид и A', ic: 'B', dir: 'B', tempo: 'norm', card: 'stack', ac: '#8f7bff' }]
@@ -281,7 +281,7 @@ function qpDraw(el) {
   el.className = 'lv-prep on qp';
   el.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${atk ? 'Атака · T' : 'Защита · CT'} · раунд ${m.round} · ${kind}</small><b>Выберите план</b></div><div class="qp-ring" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" id="qpg" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span id="qpt"></span></div></div>
     <div class="qp-cards">${L.map((p, i) => `<button class="qp-c ${i === ri ? 'rec' : ''}" data-act="qp" data-v="${i}" style="--ac:${p.ac}">${i === ri ? '<span class="qp-r">совет</span>' : ''}<span class="qp-i">${p.ic}</span><b>${p.n}</b><small>${p.d}</small>${qpCan(m, p.card) ? `<em>+ ${esc(AC[p.card].n)}</em>` : ''}</button>`).join('')}</div>
-    <div class="qp-f"><span>Деньги <b>$${nf(m.a.money)}</b> · приказы ${m.a.en}/8</span><button class="btn s" data-act="prepOpen">Тонкая настройка</button></div>`;
+    <div class="qp-f"><span>Деньги <b>$${nf(m.a.money)}</b> · приказы ${m.a.en}/8</span></div>`;
   qpTick();
 }
 function qpTick() {

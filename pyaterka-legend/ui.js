@@ -648,17 +648,33 @@ function finishMatch() {
   const m = OV.m; OV.st = 'end'; OV.reward = applyResult(G, m.won, m.a.score, m.b.score);
   taskAdd(G, matchEvent(G, m)); delete G.live; if (G.tut < 3) G.tut = 3; refresh(G, now()); save(); endBuild();
 }
+/* награда за матч: монеты, кубки с прогрессом лиги, опыт с прогрессом уровня, кейсы, выполненные задания */
+function rwBlock(r) {
+  const lg = leagueOf(G.tro), nx = LEAGUES[lg + 1], from = LEAGUES[lg][1], pct = nx ? clamp((G.tro - from) / (nx[1] - from) * 100, 0, 100) : 100;
+  const need = 100 * G.lvl, xpP = clamp(G.xp / need * 100, 0, 100), lv0 = OV.lv0 || {};
+  const tasks = allTasks(G).filter(t => taskDone(t) && !t.claimed && !(OV.tk0 && OV.tk0.has(t.t + '|' + t.n)));
+  const caseOf = p => /Про/.test(p) ? 'pro' : /Элит/i.test(p) ? 'elite' : 'basic';
+  return `<div class="pn rw-box"><h3>Награда за матч</h3>
+    <div class="rw-top"><div class="rw-t rw-c"><svg class="rw-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#e9b949"/><circle cx="12" cy="12" r="7" fill="none" stroke="#a8761c" stroke-width="1.6"/><path d="M12 7.5v9M9.6 9.6h3.6a1.6 1.6 0 0 1 0 3.2h-2.4a1.6 1.6 0 0 0 0 3.2h3.6" fill="none" stroke="#7a5310" stroke-width="1.5" stroke-linecap="round"/></svg><b>+${r.coins}</b><span>монет · всего ${nf(G.coins)}</span></div>
+      <div class="rw-t ${r.tro >= 0 ? 'up' : 'dn'}">${cupSvg}<b>${r.tro >= 0 ? '+' : '−'}${Math.abs(r.tro)}</b><span>кубков · всего ${G.tro}</span></div>
+      <div class="rw-t rw-e"><i class="rw-xp">XP</i><b>+${r.xp}</b><span>опыта</span></div></div>
+    <div class="rw-bar"><div class="rw-bh"><span>Лига «${LEAGUES[lg][0]}»</span><span>${nx ? `до «${nx[0]}» ${nx[1] - G.tro} кубков` : 'высшая лига'}</span></div><div class="rw-b"><i style="width:${pct.toFixed(1)}%"></i></div></div>
+    <div class="rw-bar"><div class="rw-bh"><span>Уровень ${G.lvl}${lv0.lvl && G.lvl > lv0.lvl ? ' · новый!' : ''}</span><span>${G.xp} / ${need} опыта</span></div><div class="rw-b rw-bx"><i style="width:${xpP.toFixed(1)}%"></i></div></div>
+    ${r.packs.length ? `<div class="rw-cases">${r.packs.map(p => `<div class="rw-case">${pkH(caseOf(p))}<span>${esc(p[0].toUpperCase() + p.slice(1))}</span></div>`).join('')}</div><p class="sm mut">Кейсы уже во вкладке «Кейсы».</p>` : ''}
+    ${tasks.length ? `<div class="rw-tasks"><b>Выполнены задания</b>${tasks.map(t => `<div class="rw-task"><span>${esc(t.t)}</span><em>${rewardText(t.r)}</em></div>`).join('')}<p class="sm mut">Заберите награду в заданиях на главной.</p></div>` : ''}
+  </div>`;
+}
 function endBuild() {
   const m = OV.m, r = OV.reward, mv = m.mvp(), rep = m.report(), by = rep.eco.buys, bq = k => by[k] ? by[k][1] + ' из ' + by[k][0] : '—';
   const mine = `<table class="tbl sd-${m.sideA}"><tr><th>Вы</th><th>У</th><th>С</th><th>MVP</th><th>1-е</th></tr>${rep.players.slice().sort((p, q) => q.k - p.k).map(p => `<tr class="${m.won && p.nick === mv.nick ? 'star' : ''}"><td>${esc(p.nick)}</td><td>${p.k}</td><td>${p.d}</td><td>${p.mv}</td><td>${p.op}</td></tr>`).join('')}</table>`;
   const opp = `<table class="tbl sd-${other(m.sideA)}"><tr><th>${esc(m.b.name)}</th><th>У</th><th>С</th><th>MVP</th></tr>${m.b.info.e.map((x, i) => ({ n: x.c.nick, k: m.b.k[i], d: m.b.d[i], v: m.b.mv[i] })).sort((p, q) => q.k - p.k).map(p => `<tr class="${!m.won && p.n === mv.nick ? 'star' : ''}"><td>${esc(p.n)}</td><td>${p.k}</td><td>${p.d}</td><td>${p.v}</td></tr>`).join('')}</table>`;
   $('#mt').innerHTML = `<p class="res-t ${m.won ? 'w' : 'l'}">${m.won ? 'Победа' : 'Поражение'}</p><p class="eyebrow" style="text-align:center">${m.a.score}:${m.b.score} · ${m.map.n} · лучший игрок ${esc(mv.nick)}, ${mv.k} уб.</p>
-  <div class="stats"><div class="stat"><b>${r.tro >= 0 ? '+' : '−'}${Math.abs(r.tro)}</b><span>кубки</span></div><div class="stat"><b>+${r.coins}</b><span>монеты</span></div><div class="stat"><b>+${r.xp}</b><span>опыт</span></div></div>${r.packs.map(p => `<p class="sm">Награда: ${p}.</p>`).join('')}
+  ${rwBlock(r)}
   ${rep.moments.length ? `<div class="pn rep"><h3>Ключевые моменты</h3><ul>${rep.moments.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
   <div class="pn rep"><h3>Выводы</h3><ul>${rep.notes.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
   <div class="pn">${mine}<p class="sm mut">У — убийства, С — смерти, MVP — лучший в раунде, 1-е — первые убийства.</p></div><div class="pn">${opp}</div>
   <div class="pn"><h3>Экономика</h3><p class="sm">Потрачено: $${nf(rep.eco.spent)}. Выиграно раундов: с полной закупкой ${bq('full')}, на форсе ${bq('force')}, на эко ${bq('eco')}, пистолетных ${bq('pistol')}.</p></div>
-  <button class="btn pri" data-act="ovClose">Продолжить</button>`;
+  <div class="rw-act"><button class="btn pri" data-act="ovClose">Продолжить</button></div>`;
   $('#over').scrollTop = 0; sfx(m.won ? 'win' : 'lose');
 }
 
@@ -752,17 +768,13 @@ const ACT = {
   poTap() { return poTap(); },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase === 'show' && RV && RV.ready) { RV.quiet = true; RV.f.contentWindow.postMessage({ t: 'skip' }, '*'); return false; } if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
-  fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: RD_POOL.map(n => MAPS.find(x => x.n === n)).filter(Boolean), ban: [], vt: 0, sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1, buy: null }, reward: null, askQuit: false, built: false }; G.live = { sa: 0, sb: 0 }; },
+  fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: RD_POOL.map(n => MAPS.find(x => x.n === n)).filter(Boolean), ban: [], vt: 0, sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1, buy: null }, reward: null, askQuit: false, built: false, tk0: new Set(allTasks(G).filter(taskDone).map(t => t.t + '|' + t.n)), lv0: { tro: G.tro, lvl: G.lvl, xp: G.xp, coins: G.coins } }; G.live = { sa: 0, sb: 0 }; },
   ban(v) { vetoBan(+v); return false; },
-  sel(v) { if (!OV || OV.st !== 'live') return false; const m = OV.m, i = OV.sel.indexOf(v); if (i >= 0) OV.sel.splice(i, 1); else if (m.canPlay(m.a, OV.sel.concat(v))) OV.sel.push(v); else return false; sfx('tap'); handDraw(); return false; },
-  dir(v) { if (OV && OV.st === 'live' && LV.ph === 'buy') { OV.plan.dir = v; sfx('tap'); planDraw(); } return false; },
-  tempo(v) { if (OV && OV.st === 'live') { OV.plan.tempo = v; if (LV.ph === 'buy') planDraw(); } return false; },
   focus(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; planDraw(); } return false; },
-  buyT(v) { if (OV && OV.st === 'live' && LV.ph === 'buy' && ['full', 'force', 'eco'].includes(v)) { OV.plan.buy = OV.plan.buy === v ? null : v; planDraw(); lvKD(); } return false; },
-  prepMin() { if (LV) { LV.min = true; planDraw(); } return false; }, prepOpen() { if (LV) { LV.min = false; planDraw(); } return false; },
-  skipRound() { if (LV && LV.ph === 'round') LV.rt = LV.S.T; return false; },
+  skipRound() { if (LV && LV.ph === 'round' && !LV.ask) LV.rt = LV.pre ? LV.callT : LV.S.T; return false; },
   pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
-  qp(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy' && M3C && QP[OV.m.sideA][+v]) { qpApply(+v); LV.tuned = true; LV.t = 0; sfx('tap'); } return false; },
+  mc(v) { if (LV && LV.ask) callPick(+v); return false; },
+  qp(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy' && QP[OV.m.sideA][+v]) { qpApply(+v); LV.tuned = true; LV.t = 0; sfx('tap'); } return false; },
   goRound() { if (LV && LV.ph === 'buy' && OV && OV.st === 'live') LV.t = 0; return false; },
   spd() { if (LV) { LV.spd = LV.spd === 1 ? 2 : 1; lvBtns(); } return false; },
   quitAsk() { OV.askQuit = true; lvBtns(); return false; }, quitNo() { OV.askQuit = false; lvBtns(); return false; },

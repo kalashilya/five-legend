@@ -64,12 +64,6 @@ function pickIn(rar) {
 function openPack(type) {
   const P = PACKS[type], out = []; let best = 0;
   for (let i = 0; i < 5; i++) { let r = rollRar(P.odds); if (i === 4 && best < P.min) r = Math.max(r, P.min); best = Math.max(best, r); out.push(pickIn(r)); }
-  // ВРЕМЕННЫЙ ТЕСТ: кейс «Про» гарантирует хотя бы одного игрока с рейтингом 87+.
-  // Остальные четыре карточки и все остальные кейсы используют обычные вероятности.
-  if (type === 'pro' && !out.some(c => c.ovr >= 87)) {
-    const highRated = ALL.filter(c => c.ovr >= 87);
-    if (highRated.length) out[ri(0, out.length - 1)] = pick(highRated);
-  }
   return shuffle(out);
 }
 
@@ -255,6 +249,8 @@ class Match {
     if (!DIRS.includes(plan.dir)) plan.dir = 'S';
     if (!TEMPOS.includes(plan.tempo)) plan.tempo = 'norm';
     if (!Number.isInteger(plan.focus) || plan.focus < 0 || plan.focus >= 5) plan.focus = -1;
+    /* решение по ходу раунда (смена точки, ротация): цена потерянного времени, от 0 до −3 */
+    const mc = clamp(+plan.mc || 0, -3, 0);
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
@@ -279,7 +275,7 @@ class Match {
     const stake = 3 * T_OPEN[pAtt.tempo], swing = openAtt ? stake : -stake * (1 - .5 * Math.min(1, ent.pw));
     const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
-    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + sgn * (dm + swing) / 2;
+    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + mc + sgn * (dm + swing) / 2;
     const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) - sgn * (dm + swing) / 2;
     const p = 1 / (1 + Math.exp(-(pa - pb) / 9)), win = R() < p;
     const W = win ? a : b, L = win ? b : a; W.score++;

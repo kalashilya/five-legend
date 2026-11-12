@@ -151,12 +151,6 @@ function pickIn(rar) {
 function openPack(type) {
   const P = PACKS[type], out = []; let best = 0;
   for (let i = 0; i < 5; i++) { let r = rollRar(P.odds); if (i === 4 && best < P.min) r = Math.max(r, P.min); best = Math.max(best, r); out.push(pickIn(r)); }
-  // ВРЕМЕННЫЙ ТЕСТ: кейс «Про» гарантирует хотя бы одного игрока с рейтингом 87+.
-  // Остальные четыре карточки и все остальные кейсы используют обычные вероятности.
-  if (type === 'pro' && !out.some(c => c.ovr >= 87)) {
-    const highRated = ALL.filter(c => c.ovr >= 87);
-    if (highRated.length) out[ri(0, out.length - 1)] = pick(highRated);
-  }
   return shuffle(out);
 }
 
@@ -342,6 +336,8 @@ class Match {
     if (!DIRS.includes(plan.dir)) plan.dir = 'S';
     if (!TEMPOS.includes(plan.tempo)) plan.tempo = 'norm';
     if (!Number.isInteger(plan.focus) || plan.focus < 0 || plan.focus >= 5) plan.focus = -1;
+    /* решение по ходу раунда (смена точки, ротация): цена потерянного времени, от 0 до −3 */
+    const mc = clamp(+plan.mc || 0, -3, 0);
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
@@ -366,7 +362,7 @@ class Match {
     const stake = 3 * T_OPEN[pAtt.tempo], swing = openAtt ? stake : -stake * (1 - .5 * Math.min(1, ent.pw));
     const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
-    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + sgn * (dm + swing) / 2;
+    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + mc + sgn * (dm + swing) / 2;
     const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) - sgn * (dm + swing) / 2;
     const p = 1 / (1 + Math.exp(-(pa - pb) / 9)), win = R() < p;
     const W = win ? a : b, L = win ? b : a; W.score++;
@@ -872,11 +868,12 @@ function rdPlanOf(M) {
    сначала ищется естественный контакт; если его нет — атакующий (до закладки) или ретейкер (после) идёт на соперника. */
 const RD_V = { ct: 12, run: 11.5, ex: { fast: 12, norm: 10.2, slow: 8.6 }, pause: { fast: .1, norm: 1, slow: 2.2 }, hunt: 10.5, back: 9 };
 const RD_MOVE = RD_V;
-function rdScript(L, mapN) {
+function rdScript(L, mapN, opt) {
+  opt = opt || {};   /* продолжение раунда после решения по ходу: stDir/defDir — исходный план расстановки, perm — те же роли, tEx — момент выхода, t0 — с какого момента идут события, rotTo — ротация защиты */
   const M = rdMap(mapN), P = rdPlanOf(M), g = rdGeo(M), aAtt = L.sideA === 'A', attPlan = (aAtt ? L.plan : L.planB) || { dir: 'S', tempo: 'norm' }, defPlan = (aAtt ? L.planB : L.plan) || { dir: 'S' };
   let sd = ((L.round || 1) * 2654435761) >>> 0; for (const ch of mapN) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0;
   const rnd = () => { sd = (sd + 0x6D2B79F5) | 0; let t = Math.imul(sd ^ sd >>> 15, 1 | sd); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
-  const dir = attPlan.dir === 'A' || attPlan.dir === 'B' ? attPlan.dir : 'S', site = dir !== 'S' ? dir : rnd() < .5 ? 'A' : 'B', oth = site === 'A' ? 'B' : 'A';
+  const dir = attPlan.dir === 'A' || attPlan.dir === 'B' ? attPlan.dir : 'S', coin = rnd(), site = dir !== 'S' ? dir : coin < .5 ? 'A' : 'B', oth = site === 'A' ? 'B' : 'A';
   const tempo = RD_V.ex[attPlan.tempo] ? attPlan.tempo : 'norm', kills = L.kills || [], timeR = L.end === 'time', plants = L.end === 'bomb' || L.end === 'defuse' || !!L.planted;
   const sc = M.n[site], sR = g.nr[site] || 8, F = 1;
   const dots = [];
@@ -893,7 +890,7 @@ function rdScript(L, mapN) {
 
   /* кто где стоит: роли внутри расстановки распределяются так, чтобы пары из движка (кто кого убьёт) оказались на одном участке.
      Снайпер и капитан по возможности остаются на своих местах */
-  const posts = P.ct[defPlan.dir] || P.ct.S, tp0 = P.t[dir] || P.t.S;
+  const stDir = opt.stDir || dir, posts = P.ct[opt.defDir || defPlan.dir] || P.ct.S, tp0 = P.t[stDir] || P.t.S;
   const zT = R => { if (!R.lurk) return site; const q = M.n[R.r[R.s]], dA = rdD(q, M.n.A), dB = rdD(q, M.n.B), dM = M.tr && M.tr.M ? rdD(q, M.n[M.tr.M[M.tr.M.length - 1]]) : 1e9; return dM < Math.min(dA, dB) ? 'M' : dA < dB ? 'A' : 'B'; };
   const PERM = []; (function pm(a, k) { if (k === a.length) { PERM.push(a.slice()); return; } for (let i = k; i < a.length; i++) { [a[k], a[i]] = [a[i], a[k]]; pm(a, k + 1); [a[k], a[i]] = [a[i], a[k]]; } })([0, 1, 2, 3, 4], 0);
   const pairs = (L.kills || []).map((k, j) => { const ta = (k.byA ? 'a' : 'b') === (aAtt ? 'a' : 'b'); return { t: ta ? k.k : k.v, c: ta ? k.v : k.k, w: j < 2 ? 1.6 : j < 5 ? 1 : .6 }; });
@@ -902,6 +899,7 @@ function rdScript(L, mapN) {
   for (let a = 0; a < PERM.length; a++) for (let b = 0; b < PERM.length; b++) { let sc2 = 0; for (const q of pairs) sc2 += q.w * fit(ctzs[b][q.c], tz[a][q.t]);
     for (let i = 0; i < 5; i++) { if (PERM[a][i] === i) sc2 += i === 0 || i === 4 ? .5 : .15; if (PERM[b][i] === i) sc2 += i === 0 ? .5 : .15; }
     if (sc2 > bs) { bs = sc2; best = [a, b]; } }
+  if (opt.perm) best = opt.perm;
   const tpOf = i => tp0[PERM[best[0]][i]], postOf = i => posts[PERM[best[1]][i]];
   /* защита: на позиции */
   C_.forEach(d => { const po = postOf(d.i), q = rdSnap(M, po.p, .9), t = go(d, F + d.i * .07 + rnd() * .2, q, RD_V.ct * d.sp); d.post = po; d.postT = t; d.goal = q; d.lk.push([t, 1e9, po.look]); });
@@ -909,7 +907,7 @@ function rdScript(L, mapN) {
   /* атака: выход на места ожидания */
   const used = {};
   T_.forEach(d => { const R = tpOf(d.i), st = R.r.slice(0, R.s + 1), key = st[st.length - 1], k = used[key] = (used[key] == null ? 0 : used[key] + 1);
-    d.lurk = !!R.lurk; d.rest = R.r.slice(R.s + 1);
+    d.lurk = !!R.lurk; d.rest = stDir === dir ? R.r.slice(R.s + 1) : [];
     const Pp = rdTrim(rdChain(M, pEnd(d), st, null, 'T'), k * 2.8); d.stArr = walk(d, F + .15 + d.i * .08 + rnd() * .2, Pp, RD_V.run * d.sp);
     const nx = d.rest.length ? M.n[d.rest[0]] : sc; d.lk.push([d.stArr, 1e9, nx]); d.goal = pEnd(d); });
 
@@ -918,7 +916,7 @@ function rdScript(L, mapN) {
   const planter = plants ? T_.slice().sort((x, y) => ((dieIdx(y) < 0 ? 99 : dieIdx(y)) - (y.lurk ? .5 : 0)) - ((dieIdx(x) < 0 ? 99 : dieIdx(x)) - (x.lurk ? .5 : 0)))[0] : null;
 
   /* выход на точку */
-  const tEx = Math.max(...T_.filter(d => !d.lurk).map(d => d.stArr)) + RD_V.pause[tempo] + rnd() * .4, vEx = RD_V.ex[tempo];
+  let tEx = Math.max(...T_.filter(d => !d.lurk).map(d => d.stArr)) + RD_V.pause[tempo] + rnd() * .4; if (opt.tEx != null) tEx = opt.tEx; const vEx = RD_V.ex[tempo];
   const order = T_.filter(d => !d.lurk).sort((x, y) => [1, 2, 4, 0, 3].indexOf(x.i) - [1, 2, 4, 0, 3].indexOf(y.i));
   const fsl = P.fs[site]; let fi = planter ? 1 : 0;
   const finalOf = d => rdSnap(M, d === planter ? fsl[0] : fsl[Math.min(fsl.length - 1, fi++)], .9);
@@ -933,6 +931,9 @@ function rdScript(L, mapN) {
   const othC = C_.filter(d => d.post.s === oth).sort((x, y) => x.i - y.i), anchor = othC.length ? othC[0] : null;
   const rotSpot = d => { const Pp = rdPath(M, pEnd(d), sc, 'CT'); let k = 1; for (let i = 0; i <= 60; i++) { const q = rdAlong(Pp, i / 60); if (rdD(q, sc) < sR + 4) { k = i / 60; break; } } return rdTrim(Pp, rdLen(Pp) * (1 - k)); };
   const rk = [];
+  /* ротация защиты по решению капитана: все, кроме якоря и игрока на миде, идут на выбранную точку */
+  if (opt.rotTo && opt.t0 != null) { const rc = M.n[opt.rotTo], rs = P.fs[opt.rotTo]; let q = 1, an = C_.filter(d => d.post.s !== opt.rotTo && d.post.s !== 'M').sort((x, y) => x.i - y.i)[0];
+    C_.forEach(d => { if (d.post.s === opt.rotTo || d.post.s === 'M' || d === an) return; cut(d, opt.t0 + .2); const t = go(d, opt.t0 + .2 + rnd() * .3, rdSnap(M, rs[q++ % rs.length], .9), RD_V.ct * d.sp); d.goal = pEnd(d); d.lk.push([t, 1e9, rc]); d.post = Object.assign({}, d.post, { s: opt.rotTo }); }); }
   C_.forEach((d, n) => { if (d.post.s === site || d === anchor) return; const t0 = tc - .4 + n * .3 + rnd() * .3; let Pp = rotSpot(d); for (let q = 0; q < 6 && rk.some(c => rdD(c, Pp[Pp.length - 1]) < 2.4); q++) Pp = rdTrim(Pp, 2.6); rk.push(Pp[Pp.length - 1]); const t = walk(d, t0, Pp, RD_V.ct * d.sp); d.goal = pEnd(d); d.lk.push([t, 1e9, sc]); });
 
   /* убийства */
@@ -940,7 +941,7 @@ function rdScript(L, mapN) {
   const buyOf = d => d.team === 'a' ? L.buyA : L.buyB, range = d => { const b = buyOf(d); return b === 'pistol' || b === 'eco' ? 22 : d.i === 0 && b === 'full' ? 46 : 30; };
   const sees = (K, V, t) => { const a = rdPos(K, t), b = rdPos(V, t); return rdD(a, b) <= range(K) && rdLos(M, a, b); };
   let plantT = null; const plantEst = () => { if (!planter) return null; const a = arrive(planter, rdSnap(M, fsl[0], .9), tEx, .8); return a == null ? null : a + .9; };
-  let tPrev = 1.8;
+  let tPrev = Math.max(1.8, (opt.t0 || 0) + .3);
   kills.forEach((k, j) => {
     const K = find(k.byA ? 'a' : 'b', k.k), V = find(k.byA ? 'b' : 'a', k.v); if (!K || !V || V.dt != null) return;
     let t0 = tPrev + (j ? .25 + rnd() * .55 : .3 + rnd() * .6);
@@ -975,12 +976,14 @@ function rdScript(L, mapN) {
   else if (L.end === 'defuse') { const bp = rdSnap(M, fsl[0], .9), cs = C_.filter(d => d.dt == null), df = cs.sort((x, y) => rdD(rdPos(x, lastK), bp) - rdD(rdPos(y, lastK), bp))[0];
     let td = Math.max(plantT + 1.5, lastK + 1.2); if (df) { const t0 = Math.max(lastK + .3, plantT + .4); cut(df, t0); const a = go(df, t0, [bp[0] + 1.2, bp[1] + .6], RD_V.hunt * df.sp); df.lk.push([a, 1e9, bp]); td = Math.max(td, a + 1.6); }
     ev.push({ t: td, type: 'defuse', site }); T = td + 1.3; bombT = Math.max(bombT, td + 1.5); }
-  else if (timeR) { const tt = Math.max(lastK + 2, 16); ev.push({ t: tt, type: 'time' }); T = tt + 1.2; }
+  else if (timeR) { const tt = Math.max(lastK + 2, 20.8); ev.push({ t: tt, type: 'time' }); T = tt + 1.2; }
   else { T = lastK + 1.6; if (plantT != null) { T = Math.max(T, plantT + 1.6); bombT = Math.max(bombT, T + 2); } }
   T = Math.max(T, 12);
   /* длинный раунд сжимаем до 22 с: всё ускоряется одинаково, совпадения по времени сохраняются */
-  if (T > 22) { const k = 22 / T, sc1 = x => x * k; for (const d of dots) { d.wp.forEach(w => { w[0] *= k; }); d.lk.forEach(l => { l[0] *= k; if (l[1] < 1e8) l[1] *= k; }); if (d.dt != null) d.dt *= k; if (d.stArr) d.stArr *= k; if (d.postT) d.postT *= k; if (d.arr) d.arr *= k; }
-    ev.forEach(e => { e.t = sc1(e.t); }); tc = sc1(tc); if (plantT != null) plantT = sc1(plantT); if (bombT != null) bombT = sc1(bombT); T = 22; }
+  const b0 = opt.t0 || 0;   /* при продолжении раунда сжимается только то, что после решения */
+  if (T > Math.max(22, b0 + 9)) { const TT = Math.max(22, b0 + 9), k = (TT - b0) / (T - b0), sc1 = x => x <= b0 ? x : b0 + (x - b0) * k;
+    for (const d of dots) { d.wp.forEach(w => { w[0] = sc1(w[0]); }); d.lk.forEach(l => { l[0] = sc1(l[0]); if (l[1] < 1e8) l[1] = sc1(l[1]); }); if (d.dt != null) d.dt = sc1(d.dt); if (d.stArr) d.stArr = sc1(d.stArr); if (d.postT) d.postT = sc1(d.postT); if (d.arr) d.arr = sc1(d.arr); }
+    ev.forEach(e => { e.t = sc1(e.t); }); tc = sc1(tc); if (plantT != null) plantT = sc1(plantT); if (bombT != null) bombT = sc1(bombT); T = TT; }
   ev.sort((x, y) => x.t - y.t);
   /* гранаты: дым/молотов/флешка выхода + дым в начале раунда */
   const ut = [];
@@ -990,7 +993,7 @@ function rdScript(L, mapN) {
   /* убийство сквозь дым — для значка в килфиде */
   for (const e of ev) if (e.type === 'kill') { const K = find(e.k.byA ? 'a' : 'b', e.k.k), V = find(e.k.byA ? 'b' : 'a', e.k.v); if (!K || !V) continue; const a = rdPos(K, e.t - .01), b = V.dp;
     e.sm = ut.some(u => u.k === 'smoke' && e.t > u.t + .4 && e.t < u.t + 8.5 && (() => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, k = clamp(((u.p[0] - a[0]) * dx + (u.p[1] - a[1]) * dy) / l, 0, 1); return Math.hypot(a[0] + dx * k - u.p[0], a[1] + dy * k - u.p[1]) < 3; })()); }
-  return { dots, ev, T, site, tc, plantT, bombT, aAtt, ut, planter: planter ? planter.team + planter.i : null };
+  return { dots, ev, T, site, tc, plantT, bombT, aAtt, perm: best, tEx, ut, planter: planter ? planter.team + planter.i : null };
 }
 
 /* ---------- План на карте до раунда: куда пойдёт ваша команда ---------- */

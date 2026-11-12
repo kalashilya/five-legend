@@ -1,2 +1,29 @@
-{ "name": "Пятёрка Легенд", "short_name": "Пятёрка", "start_url": "/", "scope": "/", "display": "standalone", "orientation": "portrait", "background_color": "#07080a", "theme_color": "#07080a",
-  "icons": [{ "src": "icon-180.png", "sizes": "180x180", "type": "image/png" }, { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }] }
+{
+ "name": "Пятёрка Легенд",
+ "short_name": "Пятёрка",
+ "start_url": "/",
+ "scope": "/",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#07080a",
+ "theme_color": "#07080a",
+ "icons": [
+  {
+   "src": "icon-180.png",
+   "sizes": "180x180",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ],
+ "id": "/",
+ "description": "Карточная игра по CS2: собирай пятёрку легенд, открывай кейсы и выигрывай матчи.",
+ "lang": "ru",
+ "categories": [
+  "games"
+ ]
+}

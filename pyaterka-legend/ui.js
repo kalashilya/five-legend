@@ -112,6 +112,7 @@ function vHome() {
   const tut = st < 3 ? `<section class="lobby-tutorial"><div><span class="lobby-kicker">ПЕРВЫЙ ВЫХОД НА АРЕНУ</span><b>${st === 0 ? 'Открой стартовые кейсы' : st === 1 ? 'Собери свою пятёрку' : 'Сыграй первый матч'}</b><small>Шаг ${st + 1} из 3 · обучение</small></div>${st === 0 ? '<button class="btn pri s" data-act="tab" data-v="packs">ОТКРЫТЬ КЕЙСЫ ↗</button>' : st === 1 ? '<button class="btn pri s" data-act="auto">СОБРАТЬ СОСТАВ ↗</button>' : '<button class="btn pri s" data-act="fight">СЫГРАТЬ ПЕРВЫЙ МАТЧ ↗</button>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk">Понятно</button></div>` : ''}${tut}
   ${AU ? '' : `<section class="home-acc"><div><b>Сохрани прогресс в аккаунте</b><span>Ник и пароль — и карточки не потеряются, можно играть с любого телефона.</span></div><button class="btn pri s" data-act="authOpen">Войти</button></section>`}
+  ${instH()}
   <section class="lobby-hero">
     <div class="lobby-hero__art" aria-hidden="true">
       <div class="lobby-hero__roof"></div><div class="lobby-hero__beam lobby-hero__beam--a"></div><div class="lobby-hero__beam lobby-hero__beam--b"></div>
@@ -408,6 +409,7 @@ function vSheet() {
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
   if (sheet.t === 'auth') return authH();
+  if (sheet.t === 'inst') return instSheetH();
   if (sheet.t === 'sync') return syncH();
   if (sheet.t === 'top') return topH();
   if (sheet.t === 'slot') {
@@ -825,7 +827,7 @@ function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
-  cloudStart(); save(); render(); introGo(r === 'new');
+  cloudStart(); installStart(); save(); render(); introGo(r === 'new');
 }
 /* заставка: пока игра грузится — лёгкая фаза; когда готова — показ (~2,7 с), затем пролёт в игру. Нажатие пропускает */
 function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; el.classList.add('out'); setTimeout(() => el.remove(), 800); }

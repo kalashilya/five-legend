@@ -1,8 +1,8 @@
 {
  "name": "Пятёрка Легенд",
  "short_name": "Пятёрка",
- "start_url": "/",
- "scope": "/",
+ "start_url": "./",
+ "scope": "./",
  "display": "standalone",
  "orientation": "portrait",
  "background_color": "#07080a",
@@ -20,7 +20,7 @@
    "purpose": "any maskable"
   }
  ],
- "id": "/",
+ "id": "./",
  "description": "Карточная игра по CS2: собирай пятёрку легенд, открывай кейсы и выигрывай матчи.",
  "lang": "ru",
  "categories": [

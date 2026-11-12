@@ -118,8 +118,9 @@ function accH() {
     <p class="sm">Сейчас прогресс хранится только на этом устройстве. Войдите или создайте аккаунт — тогда карточки, монеты и кубки не потеряются и будут доступны с любого телефона.</p>
     <div class="rowb"><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button><button class="btn s" data-act="topOpen">Рейтинг игроков</button></div></section>`;
 }
-/* окно входа при заходе в игру: раз в день, пока игрок не вошёл */
-const authAskDue = () => lsGet(KEY + '-ask') !== String(mskDay(now()));
+/* окно входа при каждом открытии игры, пока игрок не вошёл (один раз за запуск) */
+let authAsked = false;
+const authAskDue = () => !authAsked;
 function authH() {
   const s = sheet;
   if (s.pop) return `<div class="in st-pop acc-pop">${xBtn.replace('class="lg-x"', 'class="lg-x st-x0"')}

@@ -827,6 +827,8 @@ function start() {
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
   cloudStart(); save(); render(); introGo(r === 'new');
 }
-/* заставка: не меньше 2,5 с (при первом запуске — 2,9 с), нажатие пропускает */
-function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; el.classList.add('out'); setTimeout(() => el.remove(), 700); }
-function introGo(first) { const el = document.getElementById('intro'); if (!el) return; el.addEventListener('click', introHide); const min = noMotion() ? 300 : first ? 2900 : 2500; setTimeout(introHide, Math.max(0, min - performance.now())); }
+/* заставка: пока игра грузится — лёгкая фаза; когда готова — показ (~2,7 с), затем пролёт в игру. Нажатие пропускает */
+function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; el.classList.add('out'); setTimeout(() => el.remove(), 800); }
+function introGo(first) { const el = document.getElementById('intro'); if (!el) return; el.addEventListener('click', introHide);
+  /* два кадра — чтобы первая отрисовка игры закончилась и анимация шла на свободном потоке */
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add('go'); setTimeout(introHide, noMotion() ? 350 : first ? 3300 : 2800); })); }

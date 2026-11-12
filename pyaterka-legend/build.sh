@@ -25,7 +25,7 @@ window.addEventListener('unhandledrejection', function (e) {
 (function () {
 'use strict';
 X
-cat data.js core.js meta.js radar.js ui.js live.js live3d.js cloud.js install.js
+cat data.js core.js meta.js radar.js ui.js live.js live3d.js cloud.js install.js online.js
 echo "try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }"
 echo '})();'; echo '</script>'; } > pyaterka-legend.html
 { echo '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="Пятёрка Легенд"><meta name="theme-color" content="#07080a"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-180.png"><link rel="manifest" href="manifest.webmanifest"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>'; cat pyaterka-legend.html; echo '</body></html>'; } > pyaterka-legend-offline.html

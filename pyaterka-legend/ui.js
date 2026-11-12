@@ -197,6 +197,7 @@ function vPlay() {
   <section class="match-launch"><div class="match-launch__copy"><small>RANKED MATCH · BO1</small><h3>ГОТОВ К ИГРЕ?</h3><p>Матч до 13 побед. Перед раундом выбираешь план, посреди раунда — решение капитана.</p></div>
     <button class="match-launch__button" data-act="${info ? 'fight' : 'goSquad'}"><span>${info ? 'ВЫЙТИ НА АРЕНУ' : 'СОБРАТЬ ПЯТЁРКУ'}</span><b>↗</b></button>
   </section>
+  ${netBoxH()}
   ${G.tut === 3 ? lbH() + `<section class="pn match-season"><h3>ИСТОРИЯ СЕЗОНОВ</h3><p class="sm mut">Сезон длится месяц. В конце выдаются награды по лиге, часть кубков сбрасывается.</p>${h.length ? '<div class="list">' + h.slice(0,3).map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет.</p>'}</section>` : ''}`;
 }
 
@@ -409,6 +410,7 @@ function vSheet() {
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
   if (sheet.t === 'auth') return authH();
+  if (/^(fr|net)/.test(sheet.t)) return netSheetH();
   if (sheet.t === 'inst') return instSheetH();
   if (sheet.t === 'sync') return syncH();
   if (sheet.t === 'top') return topH();
@@ -643,6 +645,7 @@ const T_BUY = 12000, T_BUY1 = 16000, T_KILL = 150, T_END = 2200, T_HALF = 2200; 
 let LV = null;
 const sideName = s => s === 'A' ? 'в атаке' : 'в защите';
 function matchBuild() {
+  if (OV.net) { netBuild(); return; }
   const o = $('#over'), m = OV.m, q = m.opp;
   o.innerHTML = `<div class="mt"><div class="mt-bg"></div><div class="wrap mt-in" id="mt"><div class="splash"><h1>Матч найден</h1><div class="pn" style="width:100%;text-align:left"><div class="kv"><span>Соперник</span><span>${rankH(q.lg)}</span></div><h2>${esc(q.name)}</h2><div class="stats"><div class="stat"><b>${q.rating.toFixed(1)}</b><span>рейтинг состава</span></div><div class="stat"><b>${LEAGUES[q.lg][0]}</b><span>лига</span></div><div class="stat"><b>${q.tro}</b><span>кубки</span></div></div></div><span class="vs"><span class="x">VS</span></span><p class="eyebrow">Вы · рейтинг ${m.a.info.rating.toFixed(1)} · ${G.tro} кубков</p></div></div></div>`;
   o.hidden = false; o.scrollTop = 0; OV.built = true; sfx('found');
@@ -665,7 +668,7 @@ function vetoBan(i) {
   next();
 }
 function finishMatch() {
-  const m = OV.m; OV.st = 'end'; OV.reward = applyResult(G, m.won, m.a.score, m.b.score);
+  const m = OV.m; if (OV.net) { netFinish(); return; } OV.st = 'end'; OV.reward = applyResult(G, m.won, m.a.score, m.b.score);
   taskAdd(G, matchEvent(G, m)); delete G.live; if (G.tut < 3) G.tut = 3; refresh(G, now()); save(); endBuild();
 }
 /* награда за матч: монеты, кубки с прогрессом лиги, опыт с прогрессом уровня, кейсы, выполненные задания */
@@ -690,7 +693,7 @@ function endBuild() {
   const mine = `<table class="tbl sd-${m.sideA}"><tr><th>Вы</th><th>У</th><th>С</th><th>MVP</th><th>1-е</th></tr>${rep.players.slice().sort((p, q) => q.k - p.k).map(p => `<tr class="${m.won && p.nick === mv.nick ? 'star' : ''}"><td>${esc(p.nick)}</td><td>${p.k}</td><td>${p.d}</td><td>${p.mv}</td><td>${p.op}</td></tr>`).join('')}</table>`;
   const opp = `<table class="tbl sd-${other(m.sideA)}"><tr><th>${esc(m.b.name)}</th><th>У</th><th>С</th><th>MVP</th></tr>${m.b.info.e.map((x, i) => ({ n: x.c.nick, k: m.b.k[i], d: m.b.d[i], v: m.b.mv[i] })).sort((p, q) => q.k - p.k).map(p => `<tr class="${!m.won && p.n === mv.nick ? 'star' : ''}"><td>${esc(p.n)}</td><td>${p.k}</td><td>${p.d}</td><td>${p.v}</td></tr>`).join('')}</table>`;
   $('#mt').innerHTML = `<p class="res-t ${m.won ? 'w' : 'l'}">${m.won ? 'Победа' : 'Поражение'}</p><p class="eyebrow" style="text-align:center">${m.a.score}:${m.b.score} · ${m.map.n} · лучший игрок ${esc(mv.nick)}, ${mv.k} уб.</p>
-  ${rwBlock(r)}
+  ${OV.net ? netResH() : rwBlock(r)}
   ${rep.moments.length ? `<div class="pn rep"><h3>Ключевые моменты</h3><ul>${rep.moments.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
   <div class="pn rep"><h3>Выводы</h3><ul>${rep.notes.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
   <div class="pn">${mine}<p class="sm mut">У — убийства, С — смерти, MVP — лучший в раунде, 1-е — первые убийства.</p></div><div class="pn">${opp}</div>
@@ -793,15 +796,15 @@ const ACT = {
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
   fight() { const sq = squadOf(G), info = squadInfo(sq); if (!info) return; OV = { t: 'match', st: 'found', m: new Match(sq, G.tro, info.rating, { capt: captSlot(G) }), maps: RD_POOL.map(n => MAPS.find(x => x.n === n)).filter(Boolean), ban: [], vt: 0, sel: [], plan: { dir: 'S', tempo: 'norm', focus: -1, buy: null }, reward: null, askQuit: false, built: false, tk0: new Set(allTasks(G).filter(taskDone).map(t => t.t + '|' + t.n)), lv0: { tro: G.tro, lvl: G.lvl, xp: G.xp, coins: G.coins } }; G.live = { sa: 0, sb: 0 }; },
   ban(v) { vetoBan(+v); return false; },
-  focus(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; planDraw(); } return false; },
-  skipRound() { if (LV && LV.ph === 'round' && !LV.ask) LV.rt = LV.pre ? LV.callT : LV.S.T; return false; },
-  pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
+  focus(v) { if (OV && OV.st === 'live' && !OV.net && LV && LV.ph === 'buy') { OV.plan.focus = OV.plan.focus === +v ? -1 : +v; planDraw(); } return false; },
+  skipRound() { if (LV && !OV.net && LV.ph === 'round' && !LV.ask) LV.rt = LV.pre ? LV.callT : LV.S.T; return false; },
+  pause() { if (LV && !OV.net) { LV.paused = !LV.paused; lvBtns(); } return false; },
   mc(v) { if (LV && LV.ask) callPick(+v); return false; },
-  qp(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy' && QP[OV.m.sideA][+v]) { qpApply(+v); LV.tuned = true; LV.t = 0; sfx('tap'); } return false; },
+  qp(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy' && !LV.sent && QP[OV.m.sideA][+v]) { qpApply(+v); LV.tuned = true; LV.t = 0; sfx('tap'); if (OV.net) netPlanSend(); } return false; },
   goRound() { if (LV && LV.ph === 'buy' && OV && OV.st === 'live') LV.t = 0; return false; },
-  spd() { if (LV) { LV.spd = LV.spd === 1 ? 2 : 1; lvBtns(); } return false; },
+  spd() { if (LV && !OV.net) { LV.spd = LV.spd === 1 ? 2 : 1; lvBtns(); } return false; },
   quitAsk() { OV.askQuit = true; lvBtns(); return false; }, quitNo() { OV.askQuit = false; lvBtns(); return false; },
-  quitYes() { applyResult(G, false, OV.m.a.score, OV.m.b.score); delete G.live; OV = null; LV = null; },
+  quitYes() { if (OV.net) { netQuit(); return; } applyResult(G, false, OV.m.a.score, OV.m.b.score); delete G.live; OV = null; LV = null; },
   newAsk() { askNew = true; }, newNo() { askNew = false; },
   newYes() { askNew = false; try { backup('-before-reset', localStorage.getItem(KEY) || ''); } catch (e) { /* копия не сохранилась */ } G = newProfile(now()); tab = 'home'; tuSel = []; }
 };
@@ -827,7 +830,7 @@ function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
-  cloudStart(); installStart(); save(); render(); introGo(r === 'new');
+  cloudStart(); installStart(); netBoot(); save(); render(); introGo(r === 'new');
 }
 /* заставка: пока игра грузится — лёгкая фаза; когда готова — показ (~2,7 с), затем пролёт в игру. Нажатие пропускает */
 function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; el.classList.add('out'); setTimeout(() => el.remove(), 800); }

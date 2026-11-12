@@ -123,6 +123,7 @@ function rdEvent(S, e) {
 function lvBtns() {
   const c = $('#mbtn'); if (!c) return;
   if (OV.askQuit) { c.innerHTML = '<button class="btn dan s" data-act="quitYes">Сдаться — поражение</button><button class="btn s" data-act="quitNo">Играть дальше</button>'; return; }
+  if (OV.net) { c.innerHTML = `<span class="net-tag"><i></i>Онлайн · ${esc(OV.net.opNick)}</span><button class="lv-b wide q" data-act="quitAsk">Сдаться</button>`; return; }
   c.innerHTML = `<button class="lv-b" data-act="spd" aria-label="Скорость">×${LV.spd}</button><button class="lv-b" data-act="pause" aria-label="${LV.paused ? 'Продолжить' : 'Пауза'}">${LV.paused ? '▶' : '❚❚'}</button>${LV.ph === 'round' ? '<button class="lv-b" data-act="skipRound" aria-label="Досмотреть раунд">⏭</button>' : ''}<button class="lv-b wide q" data-act="quitAsk">Сдаться</button>`;
 }
 /* ---------- Подготовка к раунду: быстрый план (три карточки) или решение капитана по ходу раунда ---------- */
@@ -137,11 +138,12 @@ function mmDraw() { document.querySelectorAll('#rowA .pl').forEach((c, i) => c.c
   if (M3C) M3C.plan(OV.m.sideA, LV.ph !== 'buy' || OV.m.over ? null : shown);
   const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, shown) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
 function lvBuy(first) {
-  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY; LV.min = true; LV.tuned = false; LV.kd = null;
+  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = OV.net ? (first ? NET_BUY1 : NET_BUY) : first ? T_BUY1 : T_BUY; LV.min = true; LV.tuned = false; LV.kd = null; LV.sent = 0;
   document.querySelectorAll('.pl').forEach(c => c.classList.remove('dead', 'hit')); document.querySelectorAll('[id^="hp-"]').forEach(h => h.style.width = '100%');
   $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#rdc').innerHTML = ''; const tp = $('#rd-top'); if (tp) tp.innerHTML = '';
   LV.S = rdIdle(); OV.sel = OV.sel.filter(k => m.a.hand.includes(k)); if (!m.canPlay(m.a, OV.sel)) OV.sel = [];
   lvHud(); planDraw();
+  if (OV.net && OV.net.host) netBuySent();
 }
 /* ---------- Решение по ходу раунда ----------
    В части раундов (не в пистолетных) перед выходом на точку игра останавливается и спрашивает капитана:
@@ -150,7 +152,11 @@ function lvBuy(first) {
    или нет — та же цена, что и в плане до раунда), за смену точки — штраф за потерянное время. */
 function callFor(m) {
   if (m.isPistol() || m.round < 2 || LV.lastCall === m.round - 1 || Math.random() > .4) return null;
-  const atk = m.sideA === 'A', cur = OV.plan.dir, tr = m.nx.plan.dir, oth = d => d === 'A' ? 'B' : 'A';
+  return callGen(m.sideA === 'A', OV.plan.dir, m.nx.plan.dir);
+}
+/* варианты решения для капитана: atk — он в атаке, cur — его план, tr — настоящий план соперника */
+function callGen(atk, cur, tr) {
+  const oth = d => d === 'A' ? 'B' : 'A';
   if (atk) {
     const seen = Math.random() < .75 ? tr : ['A', 'S', 'B'].filter(x => x !== tr)[Math.floor(Math.random() * 2)];
     const hint = seen === 'S' ? 'защита стоит ровно: по двое на A и B' : `на ${seen} стоят трое, на ${oth(seen)} — один`;
@@ -166,19 +172,20 @@ function callFor(m) {
 function lvPlay() {
   const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [];
   LV.kd = { a: { k: [...m.a.k], d: [...m.a.d] }, b: { k: [...m.b.k], d: [...m.b.d] } };
-  const call = callFor(m);
+  const call = OV.net ? netCall(m) : callFor(m);
   if (call) {
     /* первая часть раунда: расстановка до выхода, без расчёта (результата ещё нет) */
     const fake = { sideA: m.sideA, plan: Object.assign({}, OV.plan), planB: m.nx.plan, kills: [], end: 'elim', round: m.round, buyA: m.decider ? 'full' : m.buyOf(m.a, sel, OV.plan.buy), buyB: m.decider ? 'full' : m.buyOf(m.b, m.nx.cards), mine: sel, theirs: [] };
-    LV.pre = { sel, call, S: fake }; LV.last = fake; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.ask = 0; LV.S = rdScript(fake, m.map.n); LV.ev0 = LV.S.ev; LV.S.ev = []; LV.ei = 0; LV.callT = Math.max(2.5, LV.S.tEx - .15); LV.lastCall = m.round;
+    LV.pre = OV.net ? { sel, call: call.me, op: call.op, S: fake } : { sel, call, S: fake }; LV.last = fake; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.ask = 0; LV.S = rdScript(fake, m.map.n); LV.ev0 = LV.S.ev; LV.S.ev = []; LV.ei = 0; LV.callT = Math.max(2.5, LV.S.tEx - .15); LV.lastCall = m.round;
     rdDotsBuild(LV.S); rdDotsAt(LV.S, 0); planDraw(); lvKD();
     $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>'; $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[OV.plan.dir]}, ${TEMPON[OV.plan.tempo]}</span></div>`;
     setTimeout(() => { if (LV && LV.ph === 'round' && !LV.ask) $('#bn').innerHTML = ''; }, 2200);
+    if (OV.net) netAfterPlay();
     return;
   }
   const L = m.play(sel, OV.plan);
   OV.sel = []; LV.pre = null; LV.last = L; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.S = rdScript(L, m.map.n); LV.ei = 0; rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
-  taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
+  if (OV.net) netAfterPlay(); else { taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save(); }
   planDraw(); lvKD();
   const tg = (pl, cut) => pl.length ? pl.map(k => k === cut ? `<s>${AC[k].n}</s>` : AC[k].n).join(', ') : 'без приказов';
   $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>';
@@ -193,15 +200,19 @@ function callDraw() {
     <p class="sm mut call-n">Разведка не всегда точна. Нет ответа — ${esc(c.opts[c.def].t.toLowerCase())}.</p>`;
   qpTick();
 }
-function callPick(i) {
-  const m = OV.m, pre = LV.pre; if (!pre || m.over) return; const o = pre.call.opts[i] || pre.call.opts[pre.call.def];
-  const st = pre.S.plan.dir, plan = Object.assign({}, OV.plan, { dir: o.dir }, o.tempo ? { tempo: o.tempo } : {}, o.mc ? { mc: o.mc } : {});
+/* who: 'op' — решение принимал соперник по сети (только у ведущего онлайн-матча) */
+function callPick(i, who) {
+  const m = OV.m, pre = LV.pre; if (!pre || m.over) return;
+  if (OV.net && !OV.net.host) { netGuestMc(i); return; }
+  const op = who === 'op', c = op ? pre.op : pre.call; if (!c) return; const o = c.opts[i] || c.opts[c.def];
+  const chg = p => Object.assign({}, p, { dir: o.dir }, o.tempo ? { tempo: o.tempo } : {}, o.mc ? { mc: o.mc } : {});
+  const st = op ? pre.S.planB.dir : pre.S.plan.dir, plan = op ? OV.plan : chg(OV.plan); if (op) m.nx.plan = chg(m.nx.plan);
   const S0 = LV.S, t0 = LV.rt, L = m.play(pre.sel, plan);
-  const atk = m.sideA === 'A' ? true : false, opt = { perm: S0.perm, tEx: S0.tEx, t0, stDir: atk ? st : undefined, defDir: atk ? undefined : st, rotTo: !atk && o.rot ? o.rot : undefined };
+  const atk = (m.sideA === 'A') !== op, opt = { perm: S0.perm, tEx: S0.tEx, t0, stDir: atk ? st : undefined, defDir: atk ? undefined : st, rotTo: !atk && o.rot ? o.rot : undefined };
   OV.sel = []; LV.pre = null; LV.ask = 0; LV.last = L; LV.S = rdScript(L, m.map.n, opt); LV.ei = 0; while (LV.ei < LV.S.ev.length && LV.S.ev[LV.ei].t < t0) LV.ei++;
-  rdDotsBuild(LV.S); taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
+  rdDotsBuild(LV.S); if (OV.net) netAfterPick(L, opt, op ? 'соперник: ' + o.t : o.t); else { taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save(); }
   const p = $('#prep'); if (p) { p.className = 'lv-prep'; p.innerHTML = ''; } lvBtns(); sfx('tap');
-  const bn = $('#bn'); if (bn) { const h = `<div class="banner n sm"><b>${esc(o.t)}</b></div>`; bn.innerHTML = h; setTimeout(() => { if (bn.innerHTML === h) bn.innerHTML = ''; }, 1500); }
+  const bn = $('#bn'); if (bn) { const h = `<div class="banner n sm"><b>${esc(op ? 'Соперник принял решение' : o.t)}</b></div>`; bn.innerHTML = h; setTimeout(() => { if (bn.innerHTML === h) bn.innerHTML = ''; }, 1500); }
 }
 function lvKill(k, e) {
   const L = LV.last, m = OV.m, kt = k.byA ? 'a' : 'b', vt = k.byA ? 'b' : 'a', K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
@@ -227,17 +238,23 @@ function lvNext() {
   if (m.over) { finishMatch(); return; }
   if (LV.ph === 'end' && L.swap) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = `<div class="banner n"><b>Смена сторон</b><span>Вы теперь ${sideName(m.sideA)} · деньги сброшены</span></div>`; lvHud(); return; }
   if (LV.ph === 'end' && m.decider) { LV.ph = 'half'; LV.t = T_HALF; $('#bn').innerHTML = '<div class="banner n"><b>12:12</b><span>Решающий раунд, полная закупка у обеих команд</span></div>'; return; }
+  if (OV.net && !OV.net.host) { netGuestNext(); return; }
   lvBuy(false);
 }
 function lvTick(ts) {
   if (!OV || OV.t !== 'match' || OV.st !== 'live' || !LV) { m3Stop(); return; }
   const dt = Math.min(100, ts - (LV.ts || ts)); LV.ts = ts;
-  if (!LV.paused) {
+  if (OV.net) netTick();
+  if (!LV.paused && !(OV.net && OV.net.frz)) {
     LV.t -= dt;
-    if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; qpTick(); if (LV.t <= 0) { if (LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } }
+    if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; qpTick(); if (LV.t <= 0) { if (OV.net) netBuyEnd(); else { if (LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } } }
+    else if (LV.ph === 'wait') { /* онлайн: ждём ход ведущего */ }
+    else if (LV.ph === 'round' && LV.ask === 2) { LV.at -= dt; if (LV.at <= 0 && OV.net && OV.net.host && LV.pre) callPick(LV.pre.op.def, 'op'); }
     else if (LV.ph === 'round' && LV.ask) { LV.t -= 0; LV.at -= dt; LV.t = LV.at; qpTick(); if (LV.at <= 0) callPick(LV.pre.call.def); }
     else if (LV.ph === 'round') { const S = LV.S; LV.rt += dt / 1000 * LV.spd;
-      if (LV.pre && LV.rt >= LV.callT) { LV.rt = LV.callT; LV.ask = 1; LV.at = LV.T = 7000; LV.t = 7000; callDraw(); sfx('scan'); }
+      if (LV.pre && LV.rt >= LV.callT) { LV.rt = LV.callT;
+        if (!LV.pre.call) { LV.ask = 2; LV.at = NET_CALL + 4000; netWaitDraw('Капитан соперника принимает решение…'); }
+        else { LV.ask = 1; LV.at = LV.T = OV.net ? NET_CALL : 7000; LV.t = LV.T; callDraw(); sfx('scan'); } }
       while (LV.ei < S.ev.length && S.ev[LV.ei].t <= LV.rt) rdEvent(S, S.ev[LV.ei++]);
       /* часы раунда; после закладки — таймер бомбы 40 с */
       const rc = $('#rdc'); if (rc && !LV.bd && !/вышло/.test(rc.textContent)) { let h;

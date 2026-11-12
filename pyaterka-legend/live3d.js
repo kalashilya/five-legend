@@ -47,7 +47,9 @@ const M3D = (() => {
         g.strokeStyle = 'rgba(40,32,22,.28)'; g.lineWidth = 2; for (let k = 0; k <= w; k += 64) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k, w); g.moveTo(0, k); g.lineTo(w, k); g.stroke(); } });
       flT.wrapS = flT.wrapT = THREE.RepeatWrapping;
       const flM = new THREE.MeshStandardMaterial({ map: flT, color: new THREE.Color(TH.floor || 0xffffff), roughness: .95 });
-      for (const r of GEO.rects) { const w = r[2] - r[0], d = r[3] - r[1], g2 = new THREE.BoxGeometry(w, .12, d), uv = g2.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, uv.getX(k) * w / 6, uv.getY(k) * d / 6); const f = new THREE.Mesh(g2, flM); f.position.set(X((r[0] + r[2]) / 2), .06, Z((r[1] + r[3]) / 2)); f.receiveShadow = true; scene.add(f); }
+      /* карты, снятые с радара полосами (сотня зон): один общий пол под всей картой — стены всё равно закрывают непроходимое */
+      const floorRects = RM.union ? [[-8, -8, 108, 108]] : GEO.rects;
+      for (const r of floorRects) { const w = r[2] - r[0], d = r[3] - r[1], g2 = new THREE.BoxGeometry(w, .12, d), uv = g2.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, uv.getX(k) * w / 6, uv.getY(k) * d / 6); const f = new THREE.Mesh(g2, flM); f.position.set(X((r[0] + r[2]) / 2), .06, Z((r[1] + r[3]) / 2)); f.receiveShadow = true; scene.add(f); }
       /* стены: клетки 2×2 снаружи зон, слитые в полосы; высота по кварталам */
       const C = 2, hq = (x, y) => { let h = ((Math.floor(x / 9) * 73856093) ^ (Math.floor(y / 9) * 19349663) ^ seed) >>> 0; h = (h ^ h >>> 13) * 1274126177 >>> 0; return h / 4294967296; }, runs = [];
       for (let y = -8; y < 108; y += C) { let cur = null; for (let x = -8; x < 108; x += C) { const c = [x + C / 2, y + C / 2], ok = out(c) >= .95, h = ok ? 2.8 + Math.round(hq(c[0], c[1]) * 3) * .9 : 0;

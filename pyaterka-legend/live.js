@@ -52,6 +52,7 @@ function lvKD() {
 }
 /* ---------- Игроки на карте ---------- */
 function rdDotsBuild(S) {
+  if (M3C) { M3C.teams(S); LV.dEl = []; return; }
   const m = OV.m, g = $('#avas'); if (!g) return;
   g.innerHTML = S.dots.map((d, n) => { const tm = d.team === 'a' ? m.a : m.b, c = tm.info.e[d.i].c, src = faceSrc(c);
     return `<div class="ava ${d.side === 'T' ? 't' : 'ct'} ${d.team === 'a' ? 'me' : 'op'}" id="ava${n}"><span class="ava-in"><span class="ava-ph">${src ? `<img src="${esc(src)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<i>${esc(c.nick.slice(0, 2))}</i></span><b>${esc(c.nick)}</b><span class="ava-x" aria-hidden="true"></span></span></div>`; }).join('');
@@ -79,25 +80,27 @@ function rdIdle() {
 }
 function rdFx(html, ms) { const g = $('#rd-fx'); if (!g) return; const w = document.createElementNS('http://www.w3.org/2000/svg', 'g'); w.innerHTML = html; g.appendChild(w); setTimeout(() => w.remove(), ms); }
 function rdEvent(S, e) {
-  const M = rdMap(OV.m.map.n), sp = M.n[e.site || S.site];
+  const M = rdMap(OV.m.map.n), sp = M.n[e.site || S.site], top = $('#rd-top') || {}, rc = $('#rdc') || {};
+  if (M3C) M3C.ev(e);
   if (e.type === 'kill') {
     const kd = S.dots.find(d => d.team === (e.k.byA ? 'a' : 'b') && d.i === e.k.k), vd = S.dots.find(d => d.team === (e.k.byA ? 'b' : 'a') && d.i === e.k.v);
     if (kd && vd) { const a = rdPos(kd, e.t), b = rdPos(vd, e.t); rdFx(`<line class="rd-shot ${kd.side === 'T' ? 't' : 'ct'}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`, 600); }
     lvKill(e.k);
-  } else if (e.type === 'plant') { $('#rd-top').innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">C4</text></g>`; $('#rdc').innerHTML = '<span class="bomb">Бомба заложена</span>'; sfx('scan'); }
-  else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); $('#rd-top').innerHTML = ''; }
-  else if (e.type === 'defuse') { $('#rd-top').innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">✓</text></g>`; $('#rdc').innerHTML = '<span>Бомба обезврежена</span>'; }
-  else if (e.type === 'time') $('#rdc').innerHTML = '<span>Время вышло</span>';
+  } else if (e.type === 'plant') { top.innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">C4</text></g>`; rc.innerHTML = '<span class="bomb">Бомба заложена</span>'; sfx('scan'); }
+  else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); top.innerHTML = ''; }
+  else if (e.type === 'defuse') { top.innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">✓</text></g>`; rc.innerHTML = '<span>Бомба обезврежена</span>'; }
+  else if (e.type === 'time') rc.innerHTML = '<span>Время вышло</span>';
 }
 /* ---------- Кнопки внизу ---------- */
 function lvBtns() {
   const c = $('#mbtn'); if (!c) return;
   if (OV.askQuit) { c.innerHTML = '<button class="btn dan s" data-act="quitYes">Сдаться — поражение</button><button class="btn s" data-act="quitNo">Играть дальше</button>'; return; }
-  c.innerHTML = `<button class="lv-b" data-act="spd" aria-label="Скорость">×${LV.spd}</button><button class="lv-b" data-act="pause" aria-label="${LV.paused ? 'Продолжить' : 'Пауза'}">${LV.paused ? '▶' : '❚❚'}</button>${LV.ph === 'round' ? '<button class="lv-b" data-act="skipRound" aria-label="Досмотреть раунд">⏭</button>' : LV.ph === 'buy' && LV.min ? '<button class="lv-b wide" data-act="prepOpen">План</button><button class="lv-b wide go" data-act="goRound">Начать ›</button>' : ''}<button class="lv-b wide q" data-act="quitAsk">Сдаться</button>`;
+  c.innerHTML = `<button class="lv-b" data-act="spd" aria-label="Скорость">×${LV.spd}</button><button class="lv-b" data-act="pause" aria-label="${LV.paused ? 'Продолжить' : 'Пауза'}">${LV.paused ? '▶' : '❚❚'}</button>${LV.ph === 'round' ? '<button class="lv-b" data-act="skipRound" aria-label="Досмотреть раунд">⏭</button>' : LV.ph === 'buy' && LV.min && !M3C ? '<button class="lv-b wide" data-act="prepOpen">План</button><button class="lv-b wide go" data-act="goRound">Начать ›</button>' : ''}<button class="lv-b wide q" data-act="quitAsk">Сдаться</button>`;
 }
 /* ---------- Подготовка к раунду: закупка, направление, темп, приказы ---------- */
 function planDraw() {
   const m = OV.m, atk = m.sideA === 'A', p = $('#prep'); if (!p) return;
+  if (M3C && !m.over && LV.ph === 'buy' && LV.min) { qpDraw(p); mmDraw(); lvBtns(); return; }
   if (m.over || LV.ph !== 'buy' || LV.min) { p.className = 'lv-prep'; p.innerHTML = ''; mmDraw(); lvBtns(); return; }
   const a = m.a, pistol = m.isPistol() || m.decider, auto = m.buyOf(a, OV.sel), cur = m.decider ? 'full' : m.buyOf(a, OV.sel, OV.plan.buy), eco = OV.sel.includes('eco');
   const buyB = k => { const B = BUY[k], can = a.money >= B.c, on = cur === k; return `<button class="pb ${on ? 'on' : ''} ${k === auto ? 'rec' : ''}" data-act="buyT" data-v="${k}" ${can && !eco ? '' : 'disabled'} aria-pressed="${on}"><b>${k === 'full' ? 'Полная' : k === 'force' ? 'Форс' : 'Эко'}</b><small>${B.c ? '$' + nf(B.c) : 'копим'}</small></button>`; };
@@ -107,7 +110,7 @@ function planDraw() {
   const cost = OV.sel.reduce((s, k) => s + AC[k].cost, 0), ctx = { side: m.sideA, behind: a.score < m.b.score, cap: m.capIgl(a) };
   const cards = a.hand.map(k => { const on = OV.sel.includes(k), v = acVal(k, a, ctx), dis = !on && cost + AC[k].cost > a.en; return `<button class="ac2 ${on ? 'on' : ''} ${dis ? 'dis' : ''}" data-act="sel" data-v="${k}" aria-pressed="${on}" ${dis ? 'aria-disabled="true"' : ''} title="${esc(AC[k].d)}"><span class="c">${AC[k].cost}</span><b>${AC[k].n}</b>${k === 'fake' || k === 'eco' ? '' : `<small class="${v < 0 ? 'neg' : 'pos'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</small>`}</button>`; }).join('');
   const it = m.nx.intel, fx = OV.plan.focus >= 0 ? a.info.e[OV.plan.focus].c.nick : '';
-  p.className = 'lv-prep on';
+  p.className = 'lv-prep on'; LV.tuned = true;
   p.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${atk ? 'Атака · T' : 'Защита · CT'} · раунд ${m.round}</small><b>Подготовка к раунду</b></div><button class="pp-min" data-act="prepMin" aria-label="Свернуть и посмотреть карту">▾</button></div>
     <div class="pp-money"><span>Деньги команды <b>$${nf(a.money)}</b></span><span class="mut">${pistol ? (m.decider ? 'Решающий раунд: полная закупка' : 'Пистолетный раунд') : 'Рекомендуем: ' + (auto === 'full' ? 'полную' : auto === 'force' ? 'форс' : 'эко')}</span></div>
     ${pistol ? '' : `<div class="pp-buy">${buyB('full')}${buyB('force')}${buyB('eco')}</div>`}${eco ? '<p class="sm mut pp-n">Приказ «Эко-раунд» — команда не закупается.</p>' : ''}
@@ -121,11 +124,11 @@ function planDraw() {
   mmDraw(); lvBtns();
 }
 function handDraw() { planDraw(); }
-function mmDraw() { const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, OV.plan) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; document.querySelectorAll('#rowA .pl').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); }
+function mmDraw() { document.querySelectorAll('#rowA .pl').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, OV.plan) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
 function lvBuy(first) {
-  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY; LV.min = false; LV.kd = null;
+  const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY; LV.min = !!M3C; LV.tuned = false; LV.kd = null;
   document.querySelectorAll('.pl').forEach(c => c.classList.remove('dead', 'hit')); document.querySelectorAll('[id^="hp-"]').forEach(h => h.style.width = '100%');
-  $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#rd-top').innerHTML = ''; $('#rdc').innerHTML = '';
+  $('#feed').innerHTML = ''; $('#bn').innerHTML = ''; $('#rdc').innerHTML = ''; const tp = $('#rd-top'); if (tp) tp.innerHTML = '';
   LV.S = rdIdle(); OV.sel = OV.sel.filter(k => m.a.hand.includes(k)); if (!m.canPlay(m.a, OV.sel)) OV.sel = [];
   lvHud(); planDraw();
 }
@@ -165,17 +168,17 @@ function lvNext() {
   lvBuy(false);
 }
 function lvTick(ts) {
-  if (!OV || OV.t !== 'match' || OV.st !== 'live' || !LV) return;
+  if (!OV || OV.t !== 'match' || OV.st !== 'live' || !LV) { m3Stop(); return; }
   const dt = Math.min(100, ts - (LV.ts || ts)); LV.ts = ts;
   if (!LV.paused) {
     LV.t -= dt;
-    if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; if (LV.t <= 0) lvPlay(); }
+    if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; if (M3C) qpTick(); if (LV.t <= 0) { if (M3C && LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } }
     else if (LV.ph === 'round') { const S = LV.S; LV.rt += dt / 1000 * LV.spd;
       while (LV.ei < S.ev.length && S.ev[LV.ei].t <= LV.rt) rdEvent(S, S.ev[LV.ei++]);
       const left = Math.max(0, Math.ceil(115 - LV.rt * 115 / S.T)), rc = $('#rdc'); if (rc && !rc.querySelector('.bomb') && !/обезврежена|вышло/.test(rc.textContent)) rc.innerHTML = `<span>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</span>`;
       if (LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); rdDotsAt(S, S.T); lvEnd(); } }
     else { LV.t -= dt * (LV.spd - 1); if (LV.t <= 0) lvNext(); }
   }
-  if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' ? 0 : LV.S.T; rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); }
+  if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' ? 0 : LV.S.T; if (M3C) M3C.frame(t, LV.paused ? 0 : dt / 1000, LV.ph, LV.spd); else { rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); } }
   requestAnimationFrame(lvTick);
 }

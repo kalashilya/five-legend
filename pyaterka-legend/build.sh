@@ -3,6 +3,7 @@ cd "$(dirname "$0")"
 { cat head.html
 echo '<!--RV3D-->'
 echo '<!--CASEIMG-->'
+echo '<!--THREE3D-->'
 cat <<'X'
 <script>
 window.__cmErr = function (m) {
@@ -23,7 +24,7 @@ window.addEventListener('unhandledrejection', function (e) {
 (function () {
 'use strict';
 X
-cat data.js core.js meta.js radar.js ui.js live.js
+cat data.js core.js meta.js radar.js ui.js live.js live3d.js
 echo "try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }"
 echo '})();'; echo '</script>'; } > pyaterka-legend.html
 { echo '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>'; cat pyaterka-legend.html; echo '</body></html>'; } > pyaterka-legend-offline.html
@@ -49,6 +50,9 @@ assert g.count('<!--CASEIMG-->') == 1
 ci = ','.join('"%s":"data:image/webp;base64,%s"' % (k, base64.b64encode(open('vendor/case-%s.webp' % k, 'rb').read()).decode()) for k in ('basic', 'pro', 'elite'))
 g = g.replace('<!--CASEIMG-->', '<script>window.CASE_IMG={' + ci + '};</script>', 1)
 g = g.replace('<!--RV3D-->', '<script>window.RV_SRC="' + base64.b64encode(out.encode('utf-8')).decode() + '";</script>', 1)
+# Three.js для 3D-матча — прямо в игре (без интернета)
+assert g.count('<!--THREE3D-->') == 1 and '</script' not in three.lower() and '<!--' not in three
+g = g.replace('<!--THREE3D-->', '<script>' + three + '</script>', 1)
 open('pyaterka-legend-offline.html', 'w', encoding='utf-8').write(g)
 PY
 

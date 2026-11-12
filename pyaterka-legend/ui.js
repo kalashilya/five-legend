@@ -638,7 +638,7 @@ function vetoBan(i) {
   const mark = k => { OV.ban.push(k); $('#map' + k).classList.add('ban'); sfx('tap'); OV.vt++; };
   mark(i); const left = () => OV.maps.map((_, k) => k).filter(k => !OV.ban.includes(k));
   const next = () => {
-    if (left().length === 1) { const p = left()[0], m = OV.m; m.map = OV.maps[p]; $('#map' + p).classList.add('pick'); $('#veto-t').textContent = 'Играем ' + m.map.n; $('#veto-d').textContent = `Вы начинаете ${sideName(m.sideA)}. Перед каждым раундом выберите точку, темп и приказы — план появится на радаре.`; sfx('win'); later(1900, liveBuild); return; }
+    if (left().length === 1) { const p = left()[0], m = OV.m; m.map = OV.maps[p]; $('#map' + p).classList.add('pick'); $('#veto-t').textContent = 'Играем ' + m.map.n; $('#veto-d').textContent = `Вы начинаете ${sideName(m.sideA)}. Перед каждым раундом выберите точку, темп и приказы — план появится на радаре.`; sfx('win'); later(1900, liveGo); return; }
     if (OV.vt % 2) { $('#veto-t').textContent = 'Соперник банит…'; later(800, () => { mark(pick(left())); next(); }); }
     else $('#veto-t').textContent = 'Забаньте ещё одну карту';
   };
@@ -762,6 +762,7 @@ const ACT = {
   prepMin() { if (LV) { LV.min = true; planDraw(); } return false; }, prepOpen() { if (LV) { LV.min = false; planDraw(); } return false; },
   skipRound() { if (LV && LV.ph === 'round') LV.rt = LV.S.T; return false; },
   pause() { if (LV) { LV.paused = !LV.paused; lvBtns(); } return false; },
+  qp(v) { if (OV && OV.st === 'live' && LV && LV.ph === 'buy' && M3C && QP[OV.m.sideA][+v]) { qpApply(+v); LV.tuned = true; LV.t = 0; sfx('tap'); } return false; },
   goRound() { if (LV && LV.ph === 'buy' && OV && OV.st === 'live') LV.t = 0; return false; },
   spd() { if (LV) { LV.spd = LV.spd === 1 ? 2 : 1; lvBtns(); } return false; },
   quitAsk() { OV.askQuit = true; lvBtns(); return false; }, quitNo() { OV.askQuit = false; lvBtns(); return false; },

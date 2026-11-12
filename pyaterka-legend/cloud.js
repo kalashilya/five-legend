@@ -6,6 +6,8 @@
 const SB = { url: 'https://wsilqaopfvookrekockh.supabase.co', key: 'sb_publishable_gl9HJNpAHj73JX7EUr3p5Q_esEOzWWO', mail: '@players.five-legend-cs.netlify.app' };
 const AKEY = KEY + '-auth', TKEY = KEY + '-at', PKEY = KEY + '-prev';
 let LEAD_EXT = true, AU = null, CS = { st: 'off', msg: '', at: 0 }, csTimer = 0, auRef = null, TOP = null;
+/* владелец игры: только ему видна общая таблица всех игроков (на сервере то же правило — docs/supabase-private.sql) */
+const ADMIN_UID = '33a107e3-b72d-4111-b0dc-60835d86ac2c', isAdmin = () => !!AU && AU.uid === ADMIN_UID;
 const nickOk = n => /^[A-Za-z0-9_]{3,16}$/.test(n);
 const nickMail = n => n.toLowerCase() + SB.mail;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
@@ -105,7 +107,7 @@ async function authOut() {
 }
 async function topLoad() {
   TOP = { st: 'load', rows: [] }; render();
-  try { const r = await sbFetch('/rest/v1/leaders?select=id,nick,tro,lvl,w,l&order=tro.desc,lvl.desc&limit=50', { method: 'GET' }); TOP = { st: 'ok', rows: r || [] }; }
+  try { const r = await sbFetch('/rest/v1/leaders?select=id,nick,tro,lvl,w,l&order=tro.desc,lvl.desc&limit=500', { method: 'GET' }, true); TOP = { st: 'ok', rows: r || [] }; }
   catch (e) { TOP = { st: 'err', msg: sbErr(e), rows: [] }; }
   render();
 }
@@ -115,10 +117,10 @@ function accH() {
   if (AU) return `<section class="profile-account pn"><div class="profile-section-title"><small>ACCOUNT</small><h3>АККАУНТ</h3></div>
     <p class="sm">Вы вошли как <b>${esc(AU.nick)}</b>. Прогресс сохраняется в аккаунте — можно играть с любого устройства.</p>
     <p class="acc-st ${CS.st}" id="cs-st">${esc(CS.msg || '')}</p>
-    <div class="rowb"><button class="btn s" data-act="topOpen">Рейтинг игроков</button><button class="btn s" data-act="syncNow">Сохранить сейчас</button><button class="btn s" data-act="authOut">Выйти</button></div></section>`;
+    <div class="rowb">${isAdmin() ? '<button class="btn s" data-act="topOpen">Все игроки · только для вас</button>' : ''}<button class="btn s" data-act="syncNow">Сохранить сейчас</button><button class="btn s" data-act="authOut">Выйти</button></div></section>`;
   return `<section class="profile-account pn"><div class="profile-section-title"><small>ACCOUNT</small><h3>АККАУНТ</h3></div>
     <p class="sm">Сейчас прогресс хранится только на этом устройстве. Войдите или создайте аккаунт — тогда карточки, монеты и кубки не потеряются и будут доступны с любого телефона.</p>
-    <div class="rowb"><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button><button class="btn s" data-act="topOpen">Рейтинг игроков</button></div></section>`;
+    <div class="rowb"><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button></div></section>`;
 }
 /* окно входа при каждом открытии игры, пока игрок не вошёл (один раз за запуск) */
 let authAsked = false;
@@ -151,11 +153,14 @@ function syncH() {
     <div class="rowb"><button class="btn pri" data-act="syncCloud">Взять из аккаунта</button><button class="btn s" data-act="syncLocal">Оставить с устройства</button></div></div>`;
 }
 function topH() {
-  const T = TOP || { st: 'load', rows: [] }, me = AU && AU.uid;
-  const rows = T.rows.map((r, i) => `<div class="lb ${r.id === me ? 'me' : ''}"><b>${i + 1}</b><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.nick)} <small class="mut">ур. ${r.lvl}</small></span><b>${r.tro}</b></div>`).join('');
-  return `<div class="in lg-page acc-page"><div class="lg-top"><div><small class="eyebrow">Онлайн</small><b>Рейтинг игроков</b></div>${xBtn}</div>
-    ${T.st === 'load' ? '<p class="sm mut">Загружаем…</p>' : T.st === 'err' ? `<p class="acc-err">${esc(T.msg)}</p>` : T.rows.length ? `<div>${rows}</div>` : '<p class="sm mut">Пока никого нет — станьте первым.</p>'}
-    ${AU ? '' : '<p class="sm mut">Чтобы попасть в рейтинг, войдите в аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button>'}
+  if (!isAdmin()) return `<div class="in lg-page acc-page"><div class="lg-top"><div><small class="eyebrow">Онлайн</small><b>Все игроки</b></div>${xBtn}</div><p class="sm mut">Раздел доступен только владельцу игры.</p></div>`;
+  const T = TOP || { st: 'load', rows: [] }, me = AU.uid, on = typeof onlineMap === 'function' ? onlineMap() : {};
+  const m = T.rows.reduce((s, r) => s + (r.w | 0) + (r.l | 0), 0);
+  const rows = T.rows.map((r, i) => `<div class="lb adm ${r.id === me ? 'me' : ''}"><b>${i + 1}</b><span class="adm-n"><span>${on[r.id] ? '<i class="adm-on" title="в игре"></i>' : ''}${esc(r.nick)}</span><small class="mut">ур. ${r.lvl} · ${r.w | 0}–${r.l | 0}</small></span><b>${r.tro}</b></div>`).join('');
+  return `<div class="in lg-page acc-page"><div class="lg-top"><div><small class="eyebrow">Только для владельца</small><b>Все игроки</b></div>${xBtn}</div>
+    ${T.st === 'ok' ? `<div class="adm-sum"><div><strong>${T.rows.length}</strong><small>ИГРОКОВ</small></div><div><strong>${Object.keys(on).length}</strong><small>СЕЙЧАС В ИГРЕ</small></div><div><strong>${m}</strong><small>МАТЧЕЙ</small></div></div>` : ''}
+    ${T.st === 'load' ? '<p class="sm mut">Загружаем…</p>' : T.st === 'err' ? `<p class="acc-err">${esc(T.msg)}</p>` : T.rows.length ? `<div>${rows}</div>` : '<p class="sm mut">Пока никого нет.</p>'}
+    <p class="sm mut">Сортировка по кубкам. Победы–поражения — за рейтинговые матчи. Этот список видите только вы.</p>
     <button class="btn s" data-act="topOpen">Обновить</button></div>`;
 }
 /* действия (подключаются в ACT в ui.js) */
@@ -168,7 +173,7 @@ const ACT_ACC = {
   syncNow() { cloudPush(); return false; },
   syncCloud() { const cg = sheet && sheet.cg; sheet = null; if (cg) useCloud(cg); },
   syncLocal() { sheet = null; cloudPush(); },
-  topOpen() { sheet = { t: 'top' }; topLoad(); return false; }
+  topOpen() { if (!isAdmin()) return false; sheet = { t: 'top' }; topLoad(); return false; }
 };
 function authKeep() { const n = document.getElementById('au-nick'), p = document.getElementById('au-pass'); if (n) sheet.nick = n.value; if (p) sheet.pass = p.value; }
 /* при запуске: восстановить сессию и сверить прогресс; при сворачивании — отправить без ожидания */

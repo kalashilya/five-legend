@@ -67,8 +67,8 @@ async function frViewLoad(id) {
   const s = sheet;
   try {
     let r = null;
-    try { r = await sbFetch(`/rest/v1/leaders?select=id,nick,tro,best,lvl,w,l,ava,pub,updated_at&id=eq.${id}`, { method: 'GET' }); }
-    catch (e) { if (!/column|ava|pub|42703|PGRST/i.test(String(e.message))) throw e; r = await sbFetch(`/rest/v1/leaders?select=id,nick,tro,best,lvl,w,l,updated_at&id=eq.${id}`, { method: 'GET' }); }
+    try { r = await sbFetch(`/rest/v1/leaders?select=id,nick,tro,best,lvl,w,l,ava,pub,updated_at&id=eq.${id}`, { method: 'GET' }, true); }
+    catch (e) { if (!/column|ava|pub|42703|PGRST/i.test(String(e.message))) throw e; r = await sbFetch(`/rest/v1/leaders?select=id,nick,tro,best,lvl,w,l,updated_at&id=eq.${id}`, { method: 'GET' }, true); }
     if (sheet !== s) return; s.p = r && r[0] ? r[0] : null; s.st = s.p ? 'ok' : 'none';
   } catch (e) { if (sheet !== s) return; s.st = 'err'; s.err = sbErr(e); }
   render();
@@ -101,7 +101,7 @@ function frDelH() {
 /* ---------- Выбор аватарки ---------- */
 function avaPickH() {
   const cur = sheet.sel == null ? myAva() : sheet.sel, lg = leagueOf(G.tro);
-  return `<div class="in lg-page acc-page ap-page"><div class="lg-top"><div><small class="eyebrow">Настройки профиля</small><b>Аватар</b></div>${xBtn}</div>
+  return `<div class="in lg-page acc-page ap-page"><div class="lg-top"><div><small class="eyebrow">Профиль</small><b>Аватар</b></div>${xBtn}</div>
     <div class="ap-prev">${avaH(cur, 'xl', LCOL[lg])}<div><b>${esc(AU ? AU.nick : 'Гость')}</b><span>«${avaOf(cur)[2]}» · обводка — цвет вашей лиги</span></div></div>
     <div class="ap-grid">${AVA.map((a, i) => `<button class="ap-i ${i === cur ? 'on' : ''}" data-act="avaSel" data-v="${i}" aria-label="${a[2]}" aria-pressed="${i === cur}">${avaH(i, 'md')}<small>${a[2]}</small></button>`).join('')}</div>
     ${AU ? '<p class="sm mut">Аватар видят друзья в списке и в вашем профиле.</p>' : '<p class="sm mut">Аватар сохранится на этом устройстве. Чтобы его видели друзья, войдите в аккаунт.</p>'}
@@ -113,8 +113,8 @@ function pfSheetH() { const t = sheet.t; return t === 'frP' ? frPH() : t === 'fr
 function pfHeroH() {
   const lg = leagueOf(G.tro), n = G.w + G.l, xpPct = clamp(Math.round(G.xp / Math.max(1, 100 * G.lvl) * 100), 0, 100), col = Object.keys(G.cards).length, cp = colPct(col, ALL.length);
   return `<section class="pf-hero" style="--lc:${LCOL[lg]}"><div class="pf-hero__bg" aria-hidden="true"></div>
-    <div class="pf-hero__top"><span>PLAYER PROFILE</span><button class="pf-edit" data-act="avaOpen" aria-label="Настройки профиля"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Изменить</button></div>
-    <div class="pf-id"><button class="pf-ava" data-act="avaOpen" aria-label="Сменить аватар">${avaH(myAva(), 'xl', LCOL[lg])}<i aria-hidden="true">✎</i></button>
+    <div class="pf-hero__top"><span>PLAYER PROFILE</span><button class="pf-edit" data-act="avaOpen" aria-label="Сменить аватар"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Изменить</button></div>
+    <div class="pf-id"><span class="pf-ava">${avaH(myAva(), 'xl', LCOL[lg])}</span>
       <div class="pf-name"><h2>${esc(AU ? AU.nick : 'Гость')}</h2><button class="pf-lg" data-act="lvlInfo">${rankH(lg)}<b>${LEAGUES[lg][0]}</b><span>· уровень ${G.lvl} ›</span></button>
         ${AU ? '' : '<button class="pf-guest" data-act="authOpen">Войти, чтобы сохранить ник и прогресс ›</button>'}</div></div>
     <div class="pf-xp"><div><span>Опыт уровня ${G.lvl}</span><b>${G.xp} / ${100 * G.lvl}</b></div><i><b style="width:${xpPct}%"></b></i></div>

@@ -1,0 +1,17 @@
+# Публикация игры на Netlify: при каждом обновлении на GitHub сайт пересобирается сам.
+# На сайт попадает только готовый файл игры (как index.html), исходники и документы не публикуются.
+[build]
+  command = "mkdir -p dist && cp pyaterka-legend/pyaterka-legend-offline.html dist/index.html"
+  publish = "dist"
+
+# Браузер всегда проверяет, нет ли новой версии, — после обновления друзья сразу получают её
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Старая ссылка на файл тоже открывает игру
+[[redirects]]
+  from = "/pyaterka-legend/pyaterka-legend-offline.html"
+  to = "/"
+  status = 301

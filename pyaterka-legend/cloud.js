@@ -19,6 +19,7 @@ function sbErr(e) {
   if (/invalid login|invalid_credentials|invalid grant/i.test(m)) return 'Неверный ник или пароль.';
   if (/password/i.test(m) && /(6|characters|short|weak)/i.test(m)) return 'Пароль слишком короткий: нужно хотя бы 6 символов.';
   if (/rate|too many|429/i.test(m)) return 'Слишком много попыток. Подождите минуту.';
+  if (/signups? (are|is) disabled|signup_disabled|email_provider_disabled|provider.*disabled/i.test(m)) return 'На сервере выключена регистрация по почте. Владельцу игры: Supabase → Authentication → Sign In / Providers → Email — включить «Enable Email provider» и «Allow new users to sign up», выключить только «Confirm email».';
   if (/confirm/i.test(m)) return 'На сервере включено подтверждение почты — вход по нику не сработает. Нужно выключить «Confirm email» в Supabase.';
   if (/relation|does not exist|42P01/i.test(m)) return 'На сервере не созданы таблицы игры (нужно запустить docs/supabase-schema.sql).';
   return 'Ошибка сервера: ' + m.slice(0, 120);

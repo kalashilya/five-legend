@@ -339,7 +339,7 @@ async function frLoad() {
   try {
     const rows = await sbFetch(`/rest/v1/friends?select=a,b,st&or=(a.eq.${AU.uid},b.eq.${AU.uid})`, { method: 'GET' }, true) || [];
     const ids = [...new Set(rows.map(r => r.a === AU.uid ? r.b : r.a))];
-    const q = c => sbFetch(`/rest/v1/leaders?select=${c}&id=in.(${ids.join(',')})`, { method: 'GET' });
+    const q = c => sbFetch(`/rest/v1/leaders?select=${c}&id=in.(${ids.join(',')})`, { method: 'GET' }, true);
     let ns = []; if (ids.length) { try { ns = await q('id,nick,tro,ava') || []; } catch (e) { if (!/column|ava|42703|PGRST/i.test(String(e.message))) throw e; ns = await q('id,nick,tro') || []; } }
     FR = Object.assign(FR, { st: 'ok', rows, nick: Object.fromEntries(ns.map(x => [x.id, x])), err: '' });
   } catch (e) { FR.st = 'err'; FR.err = /relation|does not exist|42P01|friends/i.test(String(e.message)) ? 'На сервере ещё нет таблицы друзей. Владельцу игры: запустить docs/supabase-online.sql в Supabase → SQL Editor.' : sbErr(e); }
@@ -352,7 +352,9 @@ async function frAdd(nick) {
   if (!nickOk(nick)) return say('Ник: от 3 до 16 символов, латиница, цифры и «_».');
   if (nick.toLowerCase() === AU.nick.toLowerCase()) return say('Это ваш ник.');
   try {
-    const r = await sbFetch(`/rest/v1/leaders?select=id,nick&nick=ilike.${encodeURIComponent(nick.replace(/_/g, '\\_'))}&limit=1`, { method: 'GET' });
+    /* поиск по точному нику — функция на сервере (общий список игроков закрыт); если её ещё нет — прежний запрос */
+    let r; try { r = await sbFetch('/rest/v1/rpc/find_player', { method: 'POST', body: JSON.stringify({ q: nick }) }, true); }
+    catch (e) { if (!/find_player|PGRST202|404|function/i.test(String(e.message))) throw e; r = await sbFetch(`/rest/v1/leaders?select=id,nick&nick=ilike.${encodeURIComponent(nick.replace(/_/g, '\\_'))}&limit=1`, { method: 'GET' }, true); }
     if (!r || !r.length) return say('Игрок не найден. Он должен хотя бы раз зайти в игру со своим аккаунтом.');
     const id = r[0].id, ex = FR.rows.find(x => (x.a === id && x.b === AU.uid) || (x.a === AU.uid && x.b === id));
     if (ex && ex.st === 'ok') return say(r[0].nick + ' уже у вас в друзьях.');

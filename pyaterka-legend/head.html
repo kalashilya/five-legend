@@ -1848,6 +1848,8 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .lg-chips{justify-content:flex-end}.lg-chips .lg-chip:first-child{min-width:66px;justify-content:center}   /* награды лиг в один ровный столбец */   /* заголовок «Задания» уже есть над блоком */
 @media (max-width:380px){.home-shortcut b{font-size:12px;letter-spacing:.05em}}
 .pc.xs .ft{padding-bottom:17cqw!important}.pc.xs .nk{padding:0 2cqw}   /* ник маленькой карточки — над цветной полосой редкости */   /* кнопки под панелью плана больше не просвечивают */
+.lb.adm .adm-n{display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}.adm-n>span{display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.adm-on{flex:none;width:7px;height:7px;border-radius:50%;background:#3ddc84}
+.adm-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.adm-sum>div{padding:10px 4px;border-radius:12px;background:#ffffff0a;border:1px solid #ffffff14;text-align:center}.adm-sum strong{display:block;font:700 20px var(--f-d)}.adm-sum small{font:700 8px var(--f-m);letter-spacing:.1em;color:#8f9fad}
 /* ---------- Профиль: шапка с аватаром, друзья, профиль друга, выбор аватара ---------- */
 .ava-b{--ring:#ffffff33;position:relative;flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#fff;background:radial-gradient(circle at 32% 28%,color-mix(in srgb,var(--a1) 92%,#fff),var(--a1) 45%,var(--a2));box-shadow:0 0 0 2px var(--ring),0 4px 14px #0007,inset 0 -6px 12px #0004}
 .ava-b svg{width:58%;height:58%;filter:drop-shadow(0 1px 2px #0008)}
@@ -1857,7 +1859,7 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .pf-hero__top{display:flex;justify-content:space-between;align-items:center;font:700 9px var(--f-m);letter-spacing:.16em;color:#a9bccb}
 .pf-edit{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:16px;border:1px solid #ffffff22;background:#ffffff0d;color:#dfe8ef;font:600 12px var(--f-b,system-ui);cursor:pointer}.pf-edit svg{width:15px;height:15px}
 .pf-id{display:flex;align-items:center;gap:16px;margin:16px 0 14px}
-.pf-ava{position:relative;flex:none;padding:0;border:0;background:none;cursor:pointer;border-radius:50%}.pf-ava i{position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f0c477;color:#1a1408;font:700 14px/1 sans-serif;font-style:normal;box-shadow:0 2px 8px #0009}
+.pf-ava{position:relative;flex:none;border-radius:50%}.pf-ava i{position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f0c477;color:#1a1408;font:700 14px/1 sans-serif;font-style:normal;box-shadow:0 2px 8px #0009}
 .pf-name{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}.pf-name h2{margin:0;font:700 clamp(24px,7vw,32px)/1 var(--f-d);letter-spacing:.03em;overflow-wrap:anywhere}
 .pf-lg{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 6px;border-radius:14px;border:1px solid color-mix(in srgb,var(--lc) 50%,transparent);background:color-mix(in srgb,var(--lc) 14%,#0b1118);color:#eef2f6;font:600 13px var(--f-b,system-ui);cursor:pointer}.pf-lg .rank{width:26px;height:18px}.pf-lg b{color:var(--lc)}.pf-lg span{color:#a9b7c4;font-size:12px}
 .pf-guest{padding:0;border:0;background:none;color:#f0c477;font:600 12px var(--f-b,system-ui);cursor:pointer;text-align:left}
@@ -1880,7 +1882,6 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .ap-prev{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px;background:#ffffff08;border:1px solid #ffffff14}.ap-prev>div{display:flex;flex-direction:column;gap:4px;min-width:0}.ap-prev b{font:700 20px var(--f-d)}.ap-prev span{font-size:12px;color:#97a2ae}
 .ap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
 .ap-i{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;border:1px solid #ffffff14;background:#0c1118;color:#c3ccd6;cursor:pointer}.ap-i small{font-size:11px}.ap-i.on{border-color:#f0c477;background:#f0c4771a;box-shadow:0 0 0 1px #f0c477 inset}.ap-i.on small{color:#f0c477}
-.pf-set-ava{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:6px 12px 6px 8px;border-radius:12px;border:1px solid #ffffff18;background:#ffffff08;color:#e6ecf1;font:500 14px var(--f-b,system-ui);cursor:pointer;text-align:left}.pf-set-ava span{flex:1}.pf-set-ava em{font-style:normal;color:#f0c477;font-size:13px}
 @media (min-width:761px){#app[data-tab="prof"]>.pf-hero,#app[data-tab="prof"]>.pf-friends{grid-column:1/-1}}
 /* Плашка «Powered by Netlify» (справа внизу, ~60px) — на бесплатном тарифе её не выключить, поэтому поднимаем нижние кнопки над ней */
 html.nb{--nbb:max(env(safe-area-inset-bottom,0px),60px)}

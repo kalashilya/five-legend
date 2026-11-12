@@ -61,6 +61,7 @@ function normalize(G, now) {
   { const p = G.streak.pend; G.streak.pend = p && Number.isInteger(p.d) && Number.isInteger(p.day) && p.day >= 1 && p.day <= 28 ? { d: p.d, day: p.day } : null; G.streak.shown = Number.isInteger(G.streak.shown) ? G.streak.shown : -1; }
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
+  { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { next: Number.isFinite(c.next) ? Math.max(0, c.next) : 0, used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
   for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !Number.isFinite(+o.n) || !(+o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
@@ -141,6 +142,37 @@ function giveReward(G, r) {
   if (r.pick != null) { const pool = POOL[r.pick], ids = []; for (let i = 0; i < 3; i++) ids.push(pick(pool).id); G.picks.push(ids); }
 }
 const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object.keys(r.pack).map(k => 'кейс «' + PACKS[k].n + '»' + (r.pack[k] > 1 ? ' ×' + r.pack[k] : '')).join(', ') : '', r.pick != null ? 'карточка на выбор («' + RAR[r.pick] + '»)' : ''].filter(Boolean).join(' + ');
+/* ---------- Взлом бомбы C4 (страница кейсов) ----------
+   Игрок набирает на бомбе 6 цифр. Попытка — раз в 4 часа (и удачная, и нет). Каждый код даёт награду один раз на профиль.
+   В игре хранятся не коды, а их отпечатки: открыв файл игры, код не прочитать. Новый код: node tools/code-hash.js 123456.
+   Состояние в G.c4: next — когда можно пробовать снова (мс), used — отпечатки уже взломанных кодов; едет в облако вместе с сохранением. */
+const C4_WAIT = 4 * 3600000;
+const c4Hash = d => hsh('C4|' + d + '|5L').toString(36) + hsh(d.split('').reverse().join('') + '#PL').toString(36);
+const C4_CODES = {
+  'j1i1to526ipz': { r: { pack: { elite: 3 } } },
+  'ccqavd16fj31s': { r: { pick: 4 } },
+  '1t2w7dx16ws5ik': { r: { coins: 10000 } },
+  '17vkzbj19aby2': { r: { pack: { pro: 5 } } },
+  '19e1t1snv3q7f': { r: { coins: 5000, pack: { elite: 2 } } },
+  '1foj0zfpvlh4u': { r: { pack: { pro: 2 }, pick: 3 } },
+  '1snytyf15qc14i': { r: { pack: { basic: 1, pro: 1, elite: 1 } } },
+  'fr7l2j44qaae': { r: { coins: 7777 } },
+  'tv3tk411gwizj': { r: { coins: 3000, pack: { pro: 3 } } },
+  '43ndplmgmacc': { r: { pack: { elite: 1 }, pick: 4 } }
+};
+const c4Left = (G, nowTs) => Math.max(0, (G.c4.next || 0) - nowTs);
+/* итог: ok — код верный и награда выдана; used — код уже взломан (попытка не тратится); wait — попытка ещё не восстановилась */
+function c4Try(G, digits, nowTs) {
+  const d = String(digits || '');
+  if (!/^\d{6}$/.test(d)) return { ok: false, bad: true, why: 'Нужно набрать 6 цифр.' };
+  const left = c4Left(G, nowTs); if (left > 0) return { ok: false, wait: left, why: 'Бомба остывает. Следующая попытка позже.' };
+  const h = c4Hash(d), c = C4_CODES[h];
+  if (c && G.c4.used.includes(h)) return { ok: false, used: true, why: 'Этот код вы уже взломали.' };
+  G.c4.next = nowTs + C4_WAIT;
+  if (!c) return { ok: false, why: 'Код не угадан' };
+  G.c4.used.push(h); giveReward(G, c.r);
+  return { ok: true, r: c.r, text: rewardText(c.r) };
+}
 /* Серия входов: 28 календарных дней по Москве. Пропуск дня сбрасывает цикл.
    Награду дня нужно забрать (окно при первом входе за день или кнопка внизу главной). Монеты растут внутри каждой недели,
    кейсы «Про» на 7, 14 и 21 (×2) день, «Элитный» на 28-й, «Базовый» на 4, 11 и 24 день. */
@@ -238,4 +270,4 @@ function lbTable(G, scope, now) {
 const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro).length + 1;
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
-  migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
+  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, C4_CODES, C4_WAIT, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };

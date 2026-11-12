@@ -9,7 +9,7 @@ let QS = null; /* быстрая продажа: { id: сколько копий
 const now = () => Date.now();
 
 /* ---------- Сохранение: перед переносом и при нечитаемых данных остаётся копия ---------- */
-function save() { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) { /* без хранилища игра идёт до закрытия страницы */ } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) { /* без хранилища игра идёт до закрытия страницы */ } cloudQueue(); }
 function backup(sfx, raw) { try { localStorage.setItem(KEY + sfx, raw); } catch (e) { /* копия не поместилась */ } }
 function load() {
   try { const v = localStorage.getItem(SKEY); snd = v === '1' || v === 'off' ? 'off' : v === 'full' ? 'full' : 'min'; } catch (e) { /* звук по умолчанию */ }
@@ -305,6 +305,7 @@ function vProf() {
   </section>
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
+  ${accH()}
   <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
   <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Фото игроков берутся из папки photos рядом с файлом игры. Прогресс хранится в этом браузере.</p>
   ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
@@ -405,6 +406,9 @@ function vSheet() {
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
+  if (sheet.t === 'auth') return authH();
+  if (sheet.t === 'sync') return syncH();
+  if (sheet.t === 'top') return topH();
   if (sheet.t === 'slot') {
     const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i && x != null).map(id => CARDS[id].nick));
     const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((a, b) => (b.role === i) - (a.role === i) || (b.ovr + own(b.id).lv) - (a.ovr + own(a.id).lv)).slice(0, 60);
@@ -674,6 +678,7 @@ function rwBlock(r) {
     <div class="rw-bar"><div class="rw-bh"><span>Лига «${LEAGUES[lg][0]}»</span><span>${nx ? `до «${nx[0]}» ${nx[1] - G.tro} кубков` : 'высшая лига'}</span></div><div class="rw-b"><i style="width:${pct.toFixed(1)}%"></i></div></div>
     <div class="rw-bar"><div class="rw-bh"><span>Уровень ${G.lvl}${lv0.lvl && G.lvl > lv0.lvl ? ' · новый!' : ''}</span><span>${G.xp} / ${need} опыта</span></div><div class="rw-b rw-bx"><i style="width:${xpP.toFixed(1)}%"></i></div></div>
     ${r.packs.length ? `<div class="rw-cases">${r.packs.map(p => `<div class="rw-case">${pkH(caseOf(p))}<span>${esc(p[0].toUpperCase() + p.slice(1))}</span></div>`).join('')}</div><p class="sm mut">Кейсы уже во вкладке «Кейсы».</p>` : ''}
+    ${AU ? '' : '<div class="rw-acc"><span>Прогресс хранится только на этом устройстве.</span><button class="btn s" data-act="authOpen">Сохранить в аккаунт</button></div>'}
     ${tasks.length ? `<div class="rw-tasks"><b>Выполнены задания</b>${tasks.map(t => `<div class="rw-task"><span>${esc(t.t)}</span><em>${rewardText(t.r)}</em></div>`).join('')}<p class="sm mut">Заберите награду в заданиях на главной.</p></div>` : ''}
   </div>`;
 }
@@ -818,5 +823,5 @@ function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
-  save(); render();
+  cloudStart(); save(); render();
 }

@@ -124,7 +124,9 @@ function planDraw() {
   mmDraw(); lvBtns();
 }
 function handDraw() { planDraw(); }
-function mmDraw() { document.querySelectorAll('#rowA .pl').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i)); const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, OV.plan) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
+function mmDraw() { document.querySelectorAll('#rowA .pl').forEach((c, i) => c.classList.toggle('foc', OV.plan.focus === i));
+  if (M3C) { const q = LV.min && !LV.tuned && QP[OV.m.sideA][LV.qr]; M3C.plan(OV.m.sideA, LV.ph !== 'buy' || OV.m.over ? null : q ? { dir: q.dir, tempo: q.tempo } : OV.plan); }
+  const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, OV.plan) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
 function lvBuy(first) {
   const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = first ? T_BUY1 : T_BUY; LV.min = !!M3C; LV.tuned = false; LV.kd = null;
   document.querySelectorAll('.pl').forEach(c => c.classList.remove('dead', 'hit')); document.querySelectorAll('[id^="hp-"]').forEach(h => h.style.width = '100%');

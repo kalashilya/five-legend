@@ -28,9 +28,8 @@ const M3D = (() => {
     const ctex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = R3.capabilities.getMaxAnisotropy(); TEX.push(t); return t; };
     let seed = 0; for (const ch of MAPN) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
     const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
-    const RM = rdMap(MAPN), W = 8.6, X = u => u - 50, Z = v => v - 50;
-    const SEG = RM.e.map(([a, b]) => [RM.n[a], RM.n[b]]);
-    const dist = p => Math.min(...SEG.map(([a, b]) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l)); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); }));
+    const RM = rdMap(MAPN), GEO = rdGeo(RM), X = u => u - 50, Z = v => v - 50;
+    const out = p => -rdFree(RM, p);   /* насколько точка снаружи прохода (<0 — внутри) */
 
     /* земля */
     const groundT = ctex(1024, 1024, (g, w) => { g.fillStyle = TH.g; g.fillRect(0, 0, w, w); for (let i = 0; i < 9000; i++) { g.fillStyle = Math.random() < .5 ? TH.g2 : 'rgba(255,255,255,.06)'; g.globalAlpha = .3; const r = Math.random() * 6; g.beginPath(); g.arc(Math.random() * w, Math.random() * w, r, 0, 7); g.fill(); } g.globalAlpha = 1; });
@@ -40,13 +39,14 @@ const M3D = (() => {
     const stT = ctex(256, 256, (g, w) => { g.fillStyle = '#7a756b'; g.fillRect(0, 0, w, w); for (let i = 0; i < 2200; i++) { const v = 90 + Math.random() * 60 | 0; g.fillStyle = `rgb(${v},${v - 4},${v - 10})`; g.fillRect(Math.random() * w, Math.random() * w, 2 + Math.random() * 3, 2 + Math.random() * 3); } g.strokeStyle = 'rgba(0,0,0,.18)'; g.lineWidth = 2; for (let y = 0; y < w; y += 32) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); } });
     stT.wrapS = stT.wrapT = THREE.RepeatWrapping;
     const stMat = new THREE.MeshStandardMaterial({ map: stT, color: new THREE.Color(TH.st).multiplyScalar(.78), roughness: .95 }), curbMat = new THREE.MeshStandardMaterial({ color: TH.curb, roughness: .9 });
-    const road = (wd, y, mat) => { for (const [a, b] of SEG) { const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); const r = new THREE.Mesh(new THREE.BoxGeometry(L, .12, wd), mat); r.position.set(X((a[0] + b[0]) / 2), y, Z((a[1] + b[1]) / 2)); r.rotation.y = -Math.atan2(dy, dx); r.receiveShadow = true; scene.add(r); }
-      for (const k in RM.n) { const p = RM.n[k], c = new THREE.Mesh(new THREE.CylinderGeometry(wd / 2, wd / 2, .12, 24), mat); c.position.set(X(p[0]), y, Z(p[1])); c.receiveShadow = true; scene.add(c); } };
-    road(W + 1.4, .04, curbMat); road(W, .1, stMat);
+    /* проходы: своя ширина у каждого, площадки у узлов (точки, респауны, мид) */
+    const road = (pad, y, mat) => { for (const sg of GEO.segs) { const a = sg.a, b = sg.b, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); const r = new THREE.Mesh(new THREE.BoxGeometry(L, .12, sg.h * 2 + pad), mat); r.position.set(X((a[0] + b[0]) / 2), y, Z((a[1] + b[1]) / 2)); r.rotation.y = -Math.atan2(dy, dx); r.receiveShadow = true; scene.add(r); }
+      for (const c of GEO.circ) if (c.r > 0) { const m = new THREE.Mesh(new THREE.CylinderGeometry(c.r + pad / 2, c.r + pad / 2, .12, 28), mat); m.position.set(X(c.c[0]), y, Z(c.c[1])); m.receiveShadow = true; scene.add(m); } };
+    road(1.4, .04, curbMat); road(0, .1, stMat);
     /* дома: инстансы коробок с крышами, детали на крышах */
     const lots = [];
-    for (let y = -14; y < 114; y += 4.4) for (let x = -14; x < 114; x += 4.4) { const cx = x + rnd() * 1.4, cy = y + rnd() * 1.4, w = 3.2 + rnd() * 1.6, d = 3.2 + rnd() * 1.6; if (dist([cx + w / 2, cy + d / 2]) < W / 2 + 2.6 + Math.max(w, d) * .25) continue; const edge = Math.max(Math.abs(cx - 50), Math.abs(cy - 50)) > 56; if (edge && rnd() < .5) continue; if (rnd() < .07) continue;
-      const near = dist([cx + w / 2, cy + d / 2]); lots.push({ x: cx, y: cy, w, d, h: (near < 12 ? 3.2 : 4.5) + rnd() * (near < 12 ? 3.4 : 6) }); }
+    for (let y = -14; y < 114; y += 4.4) for (let x = -14; x < 114; x += 4.4) { const cx = x + rnd() * 1.4, cy = y + rnd() * 1.4, w = 3.2 + rnd() * 1.6, d = 3.2 + rnd() * 1.6; if (out([cx + w / 2, cy + d / 2]) < 2.6 + Math.max(w, d) * .25) continue; const edge = Math.max(Math.abs(cx - 50), Math.abs(cy - 50)) > 56; if (edge && rnd() < .5) continue; if (rnd() < .07) continue;
+      const near = out([cx + w / 2, cy + d / 2]) + 4.3; lots.push({ x: cx, y: cy, w, d, h: (near < 12 ? 3.2 : 4.5) + rnd() * (near < 12 ? 3.4 : 6) }); }
     const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, .5, 0);
     const bodies = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .88, metalness: 0 }), lots.length), roofs = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .9 }), lots.length);
     const det = [], o = new THREE.Object3D(), col = new THREE.Color();
@@ -58,7 +58,7 @@ const M3D = (() => {
       const a = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0xb9b6ad, roughness: .6, metalness: .3 }), acs.length); acs.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.set(.9, .6, .7); o.updateMatrix(); a.setMatrixAt(i, o.matrix); }); a.castShadow = true; scene.add(a);
       const dm = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: TH.dome, roughness: .35, metalness: .5 }), dms.length); dms.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.setScalar(d.r); o.updateMatrix(); dm.setMatrixAt(i, o.matrix); }); dm.castShadow = true; scene.add(dm); }
     /* ящики и деревья у дорог */
-    { const cr = [], tr = []; for (let i = 0; i < 260; i++) { const p = [rnd() * 100, rnd() * 100], d = dist(p); if (d > W / 2 - 1.8 && d < W / 2 - .5 && cr.length < 55) cr.push(p); else if (d > W / 2 + .4 && d < W / 2 + 2.2 && tr.length < 40 && rnd() < .5) tr.push(p); }
+    { const cr = [], tr = []; for (let i = 0; i < 260; i++) { const p = [rnd() * 100, rnd() * 100], d = out(p); if (d > -1.8 && d < -.6 && cr.length < 30) cr.push(p); else if (d > .4 && d < 2.2 && tr.length < 40 && rnd() < .5) tr.push(p); }
       const cm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .85 }), cr.length); cr.forEach((p, i) => { const s = 1.2 + rnd() * .5; o.position.set(X(p[0]), .1, Z(p[1])); o.scale.set(s, s * (rnd() < .3 ? 2 : 1), s); o.rotation.y = rnd(); o.updateMatrix(); cm.setMatrixAt(i, o.matrix); }); cm.castShadow = cm.receiveShadow = true; scene.add(cm);
       const tm = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1.4, 0), new THREE.MeshStandardMaterial({ color: TH.tree, roughness: .9, flatShading: true }), tr.length), trunk = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x6b4b2a }), tr.length);
       tr.forEach((p, i) => { o.rotation.set(0, rnd() * 3, 0); o.position.set(X(p[0]), 3.2, Z(p[1])); o.scale.set(1.3, .9, 1.3); o.updateMatrix(); tm.setMatrixAt(i, o.matrix); o.position.y = 0; o.scale.set(.3, 3, .3); o.updateMatrix(); trunk.setMatrixAt(i, o.matrix); }); tm.castShadow = trunk.castShadow = true; scene.add(tm, trunk); }
@@ -67,6 +67,12 @@ const M3D = (() => {
     const siteLight = {};
     for (const s of ['A', 'B']) { const p = RM.n[s], pl = new THREE.Mesh(new THREE.PlaneGeometry(9.5, 9.5), new THREE.MeshStandardMaterial({ map: siteT(s), roughness: .6, emissive: 0xff3030, emissiveIntensity: .08 })); pl.rotation.x = -Math.PI / 2; pl.position.set(X(p[0]), .2, Z(p[1])); pl.receiveShadow = true; scene.add(pl);
       const l = new THREE.PointLight(0xff3b30, 0, 20, 2); l.position.set(X(p[0]), 3, Z(p[1])); scene.add(l); siteLight[s] = l; }
+    /* укрытия по карте: ящики, будка, фургон, машины */
+    if (RM.props && RM.props.length) { const pm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .8 }), RM.props.length); RM.props.forEach(([x, y, w, d, h], i) => { o.position.set(X(x), .1, Z(y)); o.scale.set(w, h, d); o.rotation.set(0, 0, 0); o.updateMatrix(); pm.setMatrixAt(i, o.matrix); pm.setColorAt(i, col.setHex([0x8b6a3f, 0x6f7a80, 0x9a8a6a][i % 3])); }); pm.castShadow = pm.receiveShadow = true; if (pm.instanceColor) pm.instanceColor.needsUpdate = true; scene.add(pm); }
+    /* названия мест на земле — как на радаре; разворачиваются вместе с камерой */
+    const LBL = []; let lblK = '';
+    for (const [k, txt] of RM.lb || []) { const p = RM.n[k]; if (!p) continue; const tx = ctex(512, 96, (g, w, h) => { g.clearRect(0, 0, w, h); g.font = '700 56px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 10; g.strokeStyle = 'rgba(0,0,0,.55)'; g.strokeText(txt.toUpperCase(), w / 2, h / 2); g.fillStyle = 'rgba(255,255,255,.92)'; g.fillText(txt.toUpperCase(), w / 2, h / 2); });
+      const lm = new THREE.Mesh(new THREE.PlaneGeometry(8, 1.5), new THREE.MeshBasicMaterial({ map: tx, transparent: true, opacity: .7, depthWrite: false })); lm.position.set(X(p[0]), .16, Z(p[1])); lm.userData.p = [X(p[0]), Z(p[1])]; lm.renderOrder = 2; scene.add(lm); LBL.push(lm); }
     for (const [k, c] of [['TS', 0xf2c14e], ['CTS', 0x4aa3ff]]) { const p = RM.n[k], z = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: .28, depthWrite: false })); z.rotation.x = -Math.PI / 2; z.position.set(X(p[0]), .22, Z(p[1])); scene.add(z); }
 
     /* игроки: фигурка, кольцо на земле, табличка с фото и ником */
@@ -116,6 +122,8 @@ const M3D = (() => {
       for (let i = 0; i < 14; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotT, color: i % 2 ? 0xff7a1a : 0xffc04a, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false })); s.position.set((Math.random() - .5) * 4, Math.random() * .6, (Math.random() - .5) * 4); grp.add(s); sp.push(s); }
       FX.push({ t: 0, d: life, f: (k, T) => { const a = k > .85 ? (1 - k) / .15 : Math.min(1, k * 8); l.intensity = 4 * a * (1 + .3 * Math.sin(T * 30)); sp.forEach((s, i) => { s.scale.setScalar((1.2 + Math.sin(T * 12 + i) * .5) * a + .01); s.position.y = (T * 2 + i * .3) % 1.6; s.material.opacity = a; }); }, end: () => kill(grp, sp.map(s => s.material)) });
     }
+    function flashbang(p) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotT, color: 0xffffff, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false })); s.position.set(X(p[0]), 2.5, Z(p[1])); scene.add(s); const l = new THREE.PointLight(0xffffff, 0, 26, 2); l.position.set(X(p[0]), 3, Z(p[1])); scene.add(l);
+      FX.push({ t: 0, d: .55, f: k => { const a = k < .15 ? k / .15 : 1 - (k - .15) / .85; s.scale.setScalar(2 + a * 9); s.material.opacity = a; l.intensity = 14 * a; }, end: () => { kill(s, [s.material]); scene.remove(l); } }); }
     let bomb = null, shake = 0;
     const bombMats = [new THREE.MeshStandardMaterial({ color: 0x3a3f2c, roughness: .6 }), new THREE.BoxGeometry(.7, .35, .5), new THREE.SphereGeometry(.12, 8, 6)];
     function clearBomb() { if (bomb) { scene.remove(bomb.g); bomb.led.material.dispose(); bomb = null; } for (const s of ['A', 'B']) siteLight[s].intensity = 0; }
@@ -126,31 +134,40 @@ const M3D = (() => {
       FX.push({ t: 0, d: 1.3, f: k => { s.scale.setScalar(2 + k * 22); s.material.opacity = 1 - k; l.intensity = 30 * (1 - k); }, end: () => { kill(s, [s.material, geo]); scene.remove(l); } }); }
 
     /* камера: в подготовке — вся карта, в раунде — за живыми игроками */
-    const CAM = { x: 0, z: 30, d: 140, tx: 0, tz: 8, td: 92 };
+    const CAM = { x: 0, z: 0, d: 150, tx: 0, tz: 0, td: 92 };
     let S = null, UT = [], T = 0, vw = 0, vh = 0;
-    function fit() { const w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight; if (w === vw && h === vh) return; vw = w; vh = h; R3.setSize(w, h, false); cam.aspect = w / h; cam.fov = w / h < .8 ? 46 : 36; cam.updateProjectionMatrix(); }
+    function fit() { const w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight; if (w === vw && h === vh) return; vw = w; vh = h; R3.setSize(w, h, false); cam.aspect = w / h; cam.fov = w / h < .8 ? 54 : 38; cam.updateProjectionMatrix(); }
+    /* поворот карты: респаун атаки всегда снизу экрана на телефоне (на широком экране — справа) */
+    const TSd = (() => { const v = [RM.n.TS[0] - 50, RM.n.TS[1] - 50]; return Math.abs(v[0]) > Math.abs(v[1]) ? [Math.sign(v[0]), 0] : [0, Math.sign(v[1])]; })();
+    const NB = Object.keys(RM.n).map(k => [X(RM.n[k][0]), Z(RM.n[k][1]), GEO.nr[k] || 4]);
     function camFrame(dt, t, ph) {
-      const pr = cam.aspect < .8 ? 1.55 : 1;
-      if (ph === 'round' && S) { const al = S.dots.filter(d => d.dt == null || t < d.dt).map(d => rdPos(d, t)); if (al.length) { const xs = al.map(p => X(p[0])), zs = al.map(p => Z(p[1])), x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);
-        CAM.tx = (x0 + x1) / 2; CAM.tz = (z0 + z1) / 2 + 4; CAM.td = Math.max(50, Math.max((x1 - x0) * pr * .9, (z1 - z0)) * 1.25 + 30); } }
-      else { CAM.tx = 0; CAM.tz = 8; CAM.td = 92 * pr * .86; }
+      const port = cam.aspect < .8, dn = port ? TSd : [-TSd[1], TSd[0]], rt = [dn[1], -dn[0]], tanH = Math.tan(cam.fov * Math.PI / 360);
+      const box = P => { let h0 = 1e9, h1 = -1e9, v0 = 1e9, v1 = -1e9; for (const [x, z, r] of P) { const h = x * rt[0] + z * rt[1], v = x * dn[0] + z * dn[1]; h0 = Math.min(h0, h - r); h1 = Math.max(h1, h + r); v0 = Math.min(v0, v - r); v1 = Math.max(v1, v + r); } return [h0, h1, v0, v1]; };
+      /* расстояние, при котором рамка влезает в видимую часть экрана (сверху табло, снизу составы или план) */
+      const need = (eh, ev, fv) => Math.max(eh * (port ? .8 : .95) / (2 * tanH * cam.aspect), ev * Math.sin(.95) / (2 * tanH * fv)) * 1.04;
+      let b = null, fv = .62, sh = .06;
+      if (ph === 'round' && S) { const al = S.dots.filter(d => d.dt == null || t < d.dt).map(d => { const p = rdPos(d, t); return [X(p[0]), Z(p[1]), 6]; }); if (al.length) b = box(al); fv = .66; sh = .02; }
+      if (!b) { b = box(NB); if (ph === 'buy') { fv = port ? .6 : .6; sh = .1; } }
+      const lk = dn.join(); if (lk !== lblK) { lblK = lk; const a = Math.atan2(-rt[1], rt[0]); for (const l of LBL) { l.rotation.set(-Math.PI / 2, 0, a); l.position.x = l.userData.p[0] + dn[0] * 2.4; l.position.z = l.userData.p[1] + dn[1] * 2.4; } }
+      const hc = (b[0] + b[1]) / 2, vc = (b[2] + b[3]) / 2, ev = b[3] - b[2];
+      CAM.td = Math.max(ph === 'round' ? 52 : 60, need(b[1] - b[0], ev, fv)); const vsh = ev * sh + CAM.td * .0;
+      CAM.tx = rt[0] * hc + dn[0] * (vc + vsh); CAM.tz = rt[1] * hc + dn[1] * (vc + vsh);
+      CAM.td = Math.min(CAM.td, 175);
       CAM.x = damp(CAM.x, CAM.tx, 1.6, dt); CAM.z = damp(CAM.z, CAM.tz, 1.6, dt); CAM.d = damp(CAM.d, CAM.td, 1.3, dt);
-      const tilt = .95, sx = shake > 0 ? (Math.random() - .5) * shake : 0; shake = Math.max(0, shake - dt * 2);
-      cam.position.set(CAM.x + sx + Math.sin(T * .12) * 1.5, CAM.d * Math.sin(tilt), CAM.z + CAM.d * Math.cos(tilt)); cam.lookAt(CAM.x, 0, CAM.z);
+      const tilt = .95, sx = shake > 0 ? (Math.random() - .5) * shake : 0, sw = Math.sin(T * .12) * 1.5 + sx; shake = Math.max(0, shake - dt * 2);
+      cam.position.set(CAM.x + rt[0] * sw + dn[0] * CAM.d * Math.cos(tilt), CAM.d * Math.sin(tilt), CAM.z + rt[1] * sw + dn[1] * CAM.d * Math.cos(tilt)); cam.lookAt(CAM.x, 0, CAM.z);
       sun.target.position.set(CAM.x, 0, CAM.z); sun.position.set(CAM.x - 62, 46, CAM.z + 30); sun.target.updateMatrixWorld();
+      scene.fog.near = CAM.d * .95; scene.fog.far = CAM.d * 2.6;
     }
 
     /* новый расклад игроков (подготовка или раунд); в раунде — гранаты по плану атаки */
     function teams(S0) {
       S = S0; for (const k in P3) dropP(k); S.dots.forEach(d => { P3[d.team + d.i] = playerMesh(d.team, d.i, d.side); });
       UT = []; clearBomb();
-      const L = LV && LV.ph === 'round' ? LV.last : null, site = S.site;
-      if (L && RM.tr[site] && RM.n[site]) {
-        const at = L.sideA === 'A' ? L.plan : L.planB, path = rdPts(RM, RM.tr[site][0]), entry = path[path.length - 2] || path[0], sp = RM.n[site];
-        UT = [{ t: S.tc - .6, f: () => smoke([lerp(entry[0], sp[0], .55), lerp(entry[1], sp[1], .55)], 9) }, { t: S.tc + .4, f: () => fire([lerp(entry[0], sp[0], .3), lerp(entry[1], sp[1], .3)], 4.5) }];
-        if (at && at.dir === 'S' && RM.tr.M) UT.push({ t: S.tc - 1.2, f: () => smoke(RM.n[RM.tr.M[RM.tr.M.length - 1]], 8) });
-        UT.sort((a, b) => a.t - b.t);
-      }
+      const L = LV && LV.ph === 'round' ? LV.last : null;
+      /* гранаты из постановки раунда: дым, молотов, флешки */
+      if (L) UT = (S.ut || []).map(u => ({ t: u.t, f: () => u.k === 'smoke' ? smoke(u.p, 9) : u.k === 'fire' ? fire(u.p, 4.5) : flashbang(u.p) }));
+      planClear();
       for (const d of S.dots) { const p = P3[d.team + d.i], q = rdPos(d, 0); p.g.position.set(X(q[0]), 0, Z(q[1])); p.last = q; }
     }
     function ev(e) {
@@ -165,7 +182,8 @@ const M3D = (() => {
       if (!alive) return; fit(); T += dt;
       if (ph === 'round') while (UT.length && UT[0].t <= t) UT.shift().f();
       if (S) for (const d of S.dots) { const p = P3[d.team + d.i]; if (!p) continue; const q = rdPos(d, t), dx = q[0] - (p.last ? p.last[0] : q[0]), dz = q[1] - (p.last ? p.last[1] : q[1]), mv = Math.hypot(dx, dz) > .005; p.g.position.set(X(q[0]), 0, Z(q[1]));
-        if (mv) p.ang = Math.atan2(dx, dz); p.fig.rotation.y = damp(p.fig.rotation.y, p.ang, 10, dt); p.last = q;
+        const lk = !p.dead && rdLook(d, t); if (lk && (lk.f || !mv)) p.ang = Math.atan2(lk.p[0] - q[0], lk.p[1] - q[1]); else if (mv) p.ang = Math.atan2(dx, dz);
+        let da = p.ang - p.fig.rotation.y; da = Math.atan2(Math.sin(da), Math.cos(da)); p.fig.rotation.y += da * (1 - Math.exp(-12 * dt)); p.last = q;
         const dead = d.dt != null && t >= d.dt; if (dead && !p.dead) { p.dead = true; p.ring.material.color.set(0x555555); p.tag.material.opacity = .45; }
         if (p.dead) { p.fig.rotation.x = damp(p.fig.rotation.x, -Math.PI / 2, 9, dt); p.fig.position.y = damp(p.fig.position.y, .35, 9, dt); }
         else p.fig.position.y = mv ? Math.abs(Math.sin(T * 9 + d.i)) * .08 : 0;
@@ -179,11 +197,26 @@ const M3D = (() => {
     function dispose() {
       alive = false;
       scene.traverse(x => { if (x.geometry) x.geometry.dispose(); const ms = Array.isArray(x.material) ? x.material : x.material ? [x.material] : []; for (const mt of ms) { if (mt.map) mt.map.dispose(); mt.dispose(); } });
-      for (const t of TEX) t.dispose(); for (const x of bombMats) x.dispose();
+      for (const t of TEX) t.dispose(); for (const x of bombMats) x.dispose(); planMat.T.dispose(); planMat.CT.dispose();
       R3.dispose(); try { R3.forceContextLoss(); } catch (e) { /* не поддерживается */ }
     }
+    /* план своей команды на земле до начала раунда: маршруты (атака) или позиции (защита) */
+    const PL = new THREE.Group(); scene.add(PL);
+    const planMat = { T: new THREE.MeshBasicMaterial({ color: 0xffd35a, transparent: true, opacity: .85, depthWrite: false }), CT: new THREE.MeshBasicMaterial({ color: 0x59b2ff, transparent: true, opacity: .85, depthWrite: false }) };
+    function planClear() { for (const c of PL.children.slice()) { PL.remove(c); c.geometry.dispose(); } }
+    function plan(sideA, pl) {
+      planClear(); if (!pl) return; const fake = { sideA, plan: pl, planB: { dir: 'S', tempo: 'norm' }, kills: [], end: 'elim', round: m.round || 1 }, S0 = rdScript(fake, MAPN), atk = sideA === 'A', mt = planMat[atk ? 'T' : 'CT'];
+      const seg = (a, b, w) => { const L = rdD(a, b); if (L < .2) return; const g2 = new THREE.PlaneGeometry(L, w), me = new THREE.Mesh(g2, mt); me.rotation.x = -Math.PI / 2; me.rotation.z = -Math.atan2(b[1] - a[1], b[0] - a[0]); me.position.set(X((a[0] + b[0]) / 2), .2, Z((a[1] + b[1]) / 2)); me.renderOrder = 3; PL.add(me); };
+      const dotM = (p, r) => { const g2 = new THREE.CircleGeometry(r, 20), me = new THREE.Mesh(g2, mt); me.rotation.x = -Math.PI / 2; me.position.set(X(p[0]), .21, Z(p[1])); me.renderOrder = 3; PL.add(me); };
+      const site = pl.dir === 'A' || pl.dir === 'B' ? pl.dir : null;
+      for (const d of S0.dots.filter(x => x.team === 'a')) { const upTo = atk ? (site ? 1e9 : d.stArr + .01) : d.postT + .01, w = d.wp.filter(x => x[0] <= upTo).map(x => [x[1], x[2]]);
+        /* пунктир: отрезки по 1.6 с промежутком 1.1 */
+        let carry = 0; for (let i = 1; i < w.length; i++) { const a = w[i - 1], b = w[i], L = rdD(a, b); let s0 = carry; while (s0 < L) { const s1 = Math.min(L, s0 + 1.6), k0 = s0 / L, k1 = s1 / L; seg([a[0] + (b[0] - a[0]) * k0, a[1] + (b[1] - a[1]) * k0], [a[0] + (b[0] - a[0]) * k1, a[1] + (b[1] - a[1]) * k1], d.lurk ? .35 : .55); s0 = s1 + 1.1; } carry = s0 - L; }
+        if (w.length) dotM(w[w.length - 1], atk ? .8 : 1.3); }
+      if (atk && site) { const c = RM.n[site], g2 = new THREE.RingGeometry(10, 10.8, 48), me = new THREE.Mesh(g2, mt); me.rotation.x = -Math.PI / 2; me.position.set(X(c[0]), .22, Z(c[1])); PL.add(me); }
+    }
     fit(); R3.render(scene, cam);
-    return { teams, ev, frame, dispose };
+    return { teams, ev, frame, dispose, plan };
   }
   return { make };
 })();

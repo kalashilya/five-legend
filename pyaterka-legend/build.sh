@@ -7,6 +7,7 @@ echo '<!--THREE3D-->'
 cat <<'X'
 <script>
 window.__cmErr = function (m) {
+  var it = document.getElementById('intro'); if (it) it.remove();
   var a = document.getElementById('app');
   if (a && !a.dataset.ok) a.innerHTML = '<div class="card"><h2>Игра не запустилась</h2><p class="sm">Подробности ошибки:</p><pre class="num sm" style="white-space:pre-wrap;overflow-wrap:anywhere">' + String(m).replace(/</g, '&lt;') + '</pre></div>';
 };

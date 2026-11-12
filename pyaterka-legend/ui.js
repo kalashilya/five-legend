@@ -728,6 +728,7 @@ function render() {
   } else app.classList.remove('enter');
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()) };
   $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${dots[k] ? '<span class="dot"></span>' : ''}</button>`).join('');
+  if (!sheet && !OV && tab === 'home' && !AU && authAskDue()) { lsSet(KEY + '-ask', String(mskDay(now()))); sheet = { t: 'auth', mode: 'up', pop: 1 }; }
   if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
   if (sheet && sheet.t === 'leagues' && sheet.go) { sheet.go = 0; lgScroll(); }
@@ -824,5 +825,8 @@ function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
-  cloudStart(); save(); render();
+  cloudStart(); save(); render(); introGo(r === 'new');
 }
+/* заставка: не меньше 2,5 с (при первом запуске — 2,9 с), нажатие пропускает */
+function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; el.classList.add('out'); setTimeout(() => el.remove(), 700); }
+function introGo(first) { const el = document.getElementById('intro'); if (!el) return; el.addEventListener('click', introHide); const min = noMotion() ? 300 : first ? 2900 : 2500; setTimeout(introHide, Math.max(0, min - performance.now())); }

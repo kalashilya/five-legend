@@ -7,7 +7,8 @@
    Онлайн-матчи на интерес: кубки, монеты, опыт и задания не меняются, ведётся только личный счёт с соперником. */
 const NET_V = '1:' + ALL.length;                 /* версия правил: у обоих игроков должна совпадать */
 const NET_BUY = 5000, NET_BUY1 = 8000, NET_CALL = 5000, NET_SPD = 2.4, NET_LOST = 12000, NET_GIVEUP = 60000, NET_INV = 20000;
-const RT = { ws: null, ref: 0, ch: {}, open: false, hb: 0, rt: 0, retry: 0 };
+const RT = { ws: null, ref: 0, ch: {}, open: false, hb: 0, rt: 0, retry: 0, err: '', st: 'off' };
+const rtErr = e => { RT.err = String(e || '').slice(0, 160); console.warn('[online]', RT.err); if (tab === 'play' && !OV && !sheet) render(); };
 const NET = { on: 0, st: 'idle', qt: 0, mm: null, inv: null, msg: '' };
 let FR = { st: 'off', rows: [], nick: {}, msg: '', err: '' };
 const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -17,10 +18,10 @@ const rtUrl = () => SB.url.replace(/^http/, 'ws') + '/realtime/v1/websocket?apik
 function rtConnect() {
   if (!AU || RT.ws || typeof WebSocket === 'undefined') return;
   let ws; try { ws = new WebSocket(rtUrl()); } catch (e) { rtRetry(); return; }
-  RT.ws = ws;
-  ws.onopen = () => { RT.open = true; RT.retry = 0; for (const n in RT.ch) rtJoinSend(RT.ch[n]); clearInterval(RT.hb); RT.hb = setInterval(() => rtRaw('phoenix', 'heartbeat', {}), 25000); };
+  RT.ws = ws; RT.st = 'conn';
+  ws.onopen = () => { RT.open = true; RT.st = 'open'; RT.retry = 0; for (const n in RT.ch) rtJoinSend(RT.ch[n]); clearInterval(RT.hb); RT.hb = setInterval(() => rtRaw('phoenix', 'heartbeat', {}), 20000); };
   ws.onmessage = e => { let m = null; try { m = JSON.parse(e.data); } catch (x) { return; } if (m) rtIn(m); };
-  ws.onclose = () => { if (RT.ws !== ws) return; RT.open = false; RT.ws = null; clearInterval(RT.hb); for (const n in RT.ch) RT.ch[n].ok = false; rtRetry(); };
+  ws.onclose = e => { if (RT.ws !== ws) return; RT.st = 'closed'; RT.lob = 0; if (e && e.code !== 1000) rtErr('соединение закрыто, код ' + e.code + (e.reason ? ': ' + e.reason : '')); RT.open = false; RT.ws = null; clearInterval(RT.hb); for (const n in RT.ch) RT.ch[n].ok = false; rtRetry(); };
   ws.onerror = () => { try { ws.close(); } catch (x) { /* уже закрыт */ } };
 }
 function rtRetry() { clearTimeout(RT.rt); if (!AU || !Object.keys(RT.ch).length) return; RT.rt = setTimeout(rtConnect, Math.min(15000, 1000 * 2 ** RT.retry++)); }
@@ -35,7 +36,9 @@ function rtJoin(name, o) {
   if (RT.open) rtJoinSend(c); else rtConnect();
   return c;
 }
-function rtJoinSend(c) {
+async function rtJoinSend(c) {
+  try { await auRefresh(); } catch (e) { /* войдём с прежним токеном */ }
+  if (!RT.open || RT.ch[c.name] !== c) return;
   c.jref = rtRaw(c.topic, 'phx_join', { config: { broadcast: { self: false, ack: false }, presence: { key: c.key || '', enabled: !!c.key }, private: false }, access_token: AU ? AU.at : undefined });
 }
 function rtLeave(name) { const c = RT.ch[name]; if (!c) return; delete RT.ch[name]; if (c.ok) rtRaw(c.topic, 'phx_leave', {}, c.jref); }
@@ -51,14 +54,16 @@ function rtIn(m) {
   const c = Object.values(RT.ch).find(x => x.topic === m.topic); if (!c) return;
   const p = m.payload || {};
   if (m.event === 'phx_reply' && m.ref === c.jref) {
-    if (p.status === 'ok') { c.ok = true; if (c.meta) rtTrack(c.name, c.meta); const q = c.q; c.q = []; q.forEach(([e, x]) => rtSend(c.name, e, x)); if (c.onJoin) c.onJoin(); }
-    else { c.ok = false; setTimeout(() => { if (RT.ch[c.name] === c && RT.open) rtJoinSend(c); }, 3000); }
+    if (p.status === 'ok') { c.ok = true; if (c.name === 'fl-lobby') { RT.err = ''; RT.lob = 1; } if (c.meta) rtTrack(c.name, c.meta); const q = c.q; c.q = []; q.forEach(([e, x]) => rtSend(c.name, e, x)); if (c.onJoin) c.onJoin(); }
+    else { c.ok = false; const r = p.response || {}; rtErr('канал ' + c.name.replace(/-[0-9a-f-]{20,}$/, '') + ': ' + (r.reason || r.message || JSON.stringify(r)));
+      if (/token|jwt|expired/i.test(JSON.stringify(r)) && AU) AU.exp = 0; setTimeout(() => { if (RT.ch[c.name] === c && RT.open) rtJoinSend(c); }, 3000); }
     return;
   }
   if (m.event === 'broadcast') { if (c.on) try { c.on(p.event, p.payload || {}); } catch (e) { console.error(e); } return; }
   if (m.event === 'presence_state') { c.pres = {}; presAdd(c, p); if (c.onPres) c.onPres(); return; }
   if (m.event === 'presence_diff') { presDel(c, p.leaves); presAdd(c, p.joins); if (c.onPres) c.onPres(); return; }
-  if (m.event === 'phx_error' || m.event === 'phx_close') { c.ok = false; setTimeout(() => { if (RT.ch[c.name] === c && RT.open) rtJoinSend(c); }, 2000); }
+  if (m.event === 'system' && p.status && p.status !== 'ok') { rtErr('сервер: ' + (p.message || p.status)); return; }
+  if (m.event === 'phx_error' || m.event === 'phx_close') { if (m.event === 'phx_error') rtErr('ошибка канала ' + c.name.slice(0, 8)); c.ok = false; setTimeout(() => { if (RT.ch[c.name] === c && RT.open) rtJoinSend(c); }, 2000); }
 }
 /* отправить в личный канал другого игрока: подключаемся на несколько секунд */
 function netPost(uid, ev, p) {
@@ -380,7 +385,8 @@ function netBoxH() {
     ${!AU ? `<p class="sm">Сыграйте с друзьями или со случайным игроком в реальном времени. Нужен аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button>`
     : `<p class="sm">Живой соперник, ${NET_BUY / 1000} с на план раунда и ${NET_CALL / 1000} с на решение капитана — без пауз и перемотки.${on ? ` Сейчас в игре: <b>${on}</b>.` : ''}</p>
       <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
-      ${ready ? '' : '<p class="sm mut">Сначала соберите пятёрку.</p>'}`}</section>`;
+      ${ready ? '' : '<p class="sm mut">Сначала соберите пятёрку.</p>'}
+      <p class="net-diag ${RT.lob && RT.open && !RT.err ? 'ok' : RT.err ? 'err' : ''}">${RT.lob && RT.open && !RT.err ? 'Онлайн подключён · видно игроков: ' + Object.keys(onlineMap()).length : RT.err ? 'Онлайн не подключился — ' + esc(RT.err) : RT.st === 'conn' || RT.st === 'open' ? 'Подключаемся к онлайну…' : 'Онлайн не подключён' + (typeof WebSocket === 'undefined' ? ' (браузер не умеет)' : '')}</p>`}</section>`;
 }
 function frH() {
   const s = sheet, me = AU && AU.uid, rec = id => { const r = G.pvp && G.pvp[id]; return r && (r.w || r.l) ? `<small class="fr-rec">${r.w}:${r.l}</small>` : ''; };

@@ -180,7 +180,7 @@ input[type=text]{width:100%;min-height:44px;padding:10px 12px;font:inherit;color
 #fx{position:fixed;inset:0;z-index:60;pointer-events:none}
 .flash{position:fixed;inset:0;z-index:59;background:#fff;pointer-events:none;animation:fl .6s ease-out forwards}
 @keyframes fl{from{opacity:.75}to{opacity:0}}
-.po{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:12px;padding-block:calc(16px + env(safe-area-inset-top,0px)) 20px;position:relative;z-index:1}
+.po{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;gap:12px;padding-block:calc(16px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-bottom,0px));position:relative;z-index:1}
 .po-bg{position:fixed;inset:0;background:radial-gradient(70% 45% at 50% 38%,color-mix(in srgb,var(--gl,#8fa3b8) 30%,transparent),transparent 70%),linear-gradient(180deg,#0d0f12,#050607);transition:--gl .4s}
 .po-stage{position:relative;width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:340px}
 .po-next-hit{position:absolute;inset:0;z-index:8;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation}.po-next-hit:focus-visible{outline:2px solid var(--gold);outline-offset:-4px;border-radius:12px}.po-pk{width:62%;max-width:250px;animation:bob 2.4s ease-in-out infinite}
@@ -1421,7 +1421,7 @@ html,body{max-width:100%;overflow-x:clip}
 .rv3d{position:fixed;inset:0;width:100%;height:100%;border:0;display:block;z-index:0;background:#020812}
 #over.po3d{background:#020812;overflow:hidden}
 #over.po3d .po-bg{display:none}
-#over.po3d .po{pointer-events:none;justify-content:space-between}
+#over.po3d .po{pointer-events:none;justify-content:space-between;height:100%;min-height:0}
 #over.po3d .po button,#over.po3d .po [data-act]{pointer-events:auto}
 #over.po3d .po-stage{min-height:0;flex:1}
 #over.po3d .po-name,#over.po3d #po-top{text-shadow:0 1px 3px #000,0 0 14px #000}

@@ -50,8 +50,18 @@ const indPow = (c, lv) => abPow(c, lv) * (indOf(c).mult || 1);
 const PACKS = {
   basic: { n: 'Базовый', price: 400, odds: [62, 27, 9, 1.8, .2], min: 0, d: 'Пять карточек, чаще всего ширпотреб.' },
   pro: { n: 'Про', price: 1200, odds: [30, 40, 23, 6, 1], min: 2, d: 'Минимум одна «Запрещённое» или выше.' },
-  elite: { n: 'Элитный', price: 4000, odds: [0, 40, 42, 14, 4], min: 3, d: 'Минимум одна «Засекреченное» или выше.' }
+  elite: { n: 'Элитный', price: 4000, odds: [0, 40, 42, 14, 4], min: 3, d: 'Минимум одна «Засекреченное» или выше.' },
+  /* ограниченный кейс на час: 20 карточек — 1 гарантированно 87+, 2 гарантированно 85+, 17 по шансам odds.
+     Экономика: быстрая продажа всех 20 карточек в среднем ≈ 12 тыс. монет (максимум возможный ≈ 60 тыс. при 20 «Тайных») — меньше цены 100 тыс., монеты из кейса не «размножаются» */
+  limit: { n: 'Легендарный', price: 100000, odds: [0, 20, 45, 25, 10], min: 0, n20: 20, g: [87, 85, 85], from: Date.UTC(2026, 10, 12, 14, 45), to: Date.UTC(2026, 10, 12, 15, 45), d: '20 карточек: 1 гарантированно 87+, 2 гарантированно 85+, остальные 17 — по шансам ниже.' }
 };
+const packOn = (k, t) => { const P = PACKS[k]; return !P.from || (t >= P.from && t < P.to); };
+/* карточка с рейтингом не ниже th: среди «Засекреченных» и «Тайных», чем выше рейтинг — тем реже */
+function pickMinOvr(th) {
+  const pool = POOL[3].concat(POOL[4]).filter(c => c.ovr >= th); let tot = 0;
+  const w = pool.map(c => { const x = 1 / (1 + .35 * (c.ovr - th)) * (c.rar === 4 ? .6 : 1); tot += x; return x; });
+  let r = R() * tot; for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; } return pool[0];
+}
 const IF_CH = .07, MVP_CH = .12;
 function rollRar(odds) { let r = R() * 100; for (let i = 0; i < 5; i++) { r -= odds[i]; if (r <= 0) return i; } return 0; }
 function pickIn(rar) {
@@ -63,6 +73,7 @@ function pickIn(rar) {
 }
 function openPack(type) {
   const P = PACKS[type], out = []; let best = 0;
+  if (P.n20) { for (const th of P.g) out.push(pickMinOvr(th)); while (out.length < P.n20) out.push(pickIn(rollRar(P.odds))); return shuffle(out); }
   for (let i = 0; i < 5; i++) { let r = rollRar(P.odds); if (i === 4 && best < P.min) r = Math.max(r, P.min); best = Math.max(best, r); out.push(pickIn(r)); }
   return shuffle(out);
 }

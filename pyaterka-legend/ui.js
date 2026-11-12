@@ -75,7 +75,7 @@ function faceH(c) {
 }
 function cardH(c, o = {}) {
   const lv = o.lv || 1, add = lv - 1, presentation = c.ovr + add >= 91 ? 'cinema-legend' : c.ovr + add >= 87 ? 'cinema' : 'standard';
-  return `<div class="pc ${presentation} r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${lv >= 5 ? 'l5' : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:${teamCol(c)}"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span>${c.hist ? '<span class="arc">архив</span>' : ''}<div class="ft">${c.sp ? `<span class="tag">${SPN[c.sp]}</span>` : ''}<span class="nk">${esc(c.nick)}</span><span class="tm">${c.hltv && c.hltv.teamLogo ? `<img class="team-logo" src="${esc(c.hltv.teamLogo)}" alt="" loading="lazy">` : ''}<span class="team-name">${esc(!c.hist && c.hltv && c.hltv.team ? c.hltv.team : c.team)}</span>${c.hltv && /^[A-Z]{2}$/.test(c.hltv.countryCode || "") ? `<span class="country" title="${esc(c.hltv.countryCode)}"><b>${[...c.hltv.countryCode].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join("")}</b></span>` : ""}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
+  return `<div class="pc ${presentation} r${c.rar} ${c.sp ? 'sp' + c.sp : ''} ${lv >= 5 ? 'l5' : ''} ${o.cls || ''} ${o.no ? 'no' : ''}" style="--tc:${teamCol(c)}"><span class="mg">${esc(c.nick.slice(0, 2))}</span>${faceH(c)}<span class="sh"></span><div class="hd"><span class="ov">${c.ovr + add}</span><span class="rl">${RN[c.role]}</span></div><span class="rk">#${c.t + 1}</span>${c.hist ? '<span class="arc">архив</span>' : ''}<div class="ft">${c.sp ? `<span class="tag">${SPN[c.sp]}</span>` : ''}<span class="nk" style="--nl:${Math.max(6, c.nick.length)}">${esc(c.nick)}</span><span class="tm">${c.hltv && c.hltv.teamLogo ? `<img class="team-logo" src="${esc(c.hltv.teamLogo)}" alt="" loading="lazy">` : ''}<span class="team-name">${esc(!c.hist && c.hltv && c.hltv.team ? c.hltv.team : c.team)}</span>${c.hltv && /^[A-Z]{2}$/.test(c.hltv.countryCode || "") ? `<span class="country" title="${esc(c.hltv.countryCode)}"><b>${[...c.hltv.countryCode].map(ch => String.fromCodePoint(127397 + ch.charCodeAt(0))).join("")}</b></span>` : ""}</span>${o.stats ? `<span class="sg">${SK.map(k => `<span><b>${c.st[k] + add}</b>${SS[k]}</span>`).join('')}</span>` : ''}${o.pips ? `<span class="lv">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>${o.n > 1 ? `<span class="cnt">×${o.n}</span>` : ''}</div>`;
 }
 const ownH = (id, cls) => { const o = own(id); return cardH(CARDS[id], { lv: o ? o.lv : 1, n: o ? o.n : 0, cls, pips: !!o, no: !o }); };
 /* значок кейса: снимок 3D-кейса из сцены открытия; если картинок нет (например, в тестах) — прежний рисованный значок */
@@ -151,7 +151,7 @@ function vHome() {
       <div class="lobby-season__head"><span class="lobby-kicker">RANKED ROAD</span><b>ПУТЬ ВЫШЕ</b></div>
       <div class="lobby-season__league">${rankH(lg)}<span><small>ТВОЙ ДИВИЗИОН</small><strong>${LEAGUES[lg][0]}</strong></span></div>
       <div class="lobby-season__bar"><i style="width:${prog}%"></i></div>
-      <div class="lobby-season__foot"><span>${G.tro} CP</span><span>${nx ? nx[1] - G.tro + ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНЫЙ РАНГ'}</span></div>
+      <div class="lobby-season__foot"><span>${G.tro} КУБКОВ</span><span>${nx ? nx[1] - G.tro + ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНЫЙ РАНГ'}</span></div>
       ${low ? `<p class="warn">Опасная зона: до понижения ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}
       <span class="lg-link">Все лиги и награды ›</span>
     </div>
@@ -163,7 +163,7 @@ function vHome() {
       <button class="lobby-daily__more" data-act="streak">Все награды серии ›</button>
     </div>
   </section>
-  ${st === 3 ? `<section class="lobby-missions"><div class="lobby-sectionhead"><div><span class="lobby-kicker">DAILY OBJECTIVES</span><h2>ЗАДАНИЯ</h2></div><button data-act="tab" data-v="play">ВСЕ ЗАДАНИЯ ↗</button></div>${tasksH()}</section>` : ''}
+  ${st === 3 ? `<section class="lobby-missions"><div class="lobby-sectionhead"><div><span class="lobby-kicker">DAILY OBJECTIVES</span><h2>ЗАДАНИЯ</h2></div></div>${tasksH()}</section>` : ''}
   <section class="lobby-free">
     <div class="lobby-free__art">${pkH('basic')}</div><div class="lobby-free__copy"><span class="lobby-kicker">COMPLIMENTARY DROP</span><h3>БЕСПЛАТНЫЙ КЕЙС</h3><p>${dailyReady(G, now()) ? 'Твоя ежедневная награда уже ждёт.' : 'Следующая награда после 00:00 МСК.'}</p></div>
     ${dailyReady(G, now()) ? '<button class="btn pri s" data-act="daily">ЗАБРАТЬ ↗</button>' : '<button class="btn s" data-act="tab" data-v="packs">К КЕЙСАМ ↗</button>'}
@@ -171,7 +171,7 @@ function vHome() {
 }
 function lbH() {
   const t = lbTable(G, lbScope, now()), row = x => `<div class="lb ${x.me ? 'me' : ''}"><b>${x.place}</b><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.name)}</span><b>${x.tro}</b></div>`;
-  return `<section class="pn"><h3>Таблица лидеров</h3>${segH('lb', lbScope, [['all', 'Общая'], ['lg', 'Моя лига']])}<div>${t.top.map(row).join('')}${t.me.place > 10 ? '<div class="lb"><span></span><span class="mut">…</span><span></span></div>' + row(t.me) : ''}</div><p class="sm mut">Мест в таблице: ${t.total}. Пока у игры нет сервера, соперники в таблице — боты.</p></section>`;
+  return `<section class="pn"><h3>Таблица лидеров</h3>${segH('lb', lbScope, [['all', 'Общая'], ['lg', 'Моя лига']])}<div>${t.top.map(row).join('')}${t.me.place > 10 ? '<div class="lb"><span></span><span class="mut">…</span><span></span></div>' + row(t.me) : ''}</div><p class="sm mut">Мест в таблице: ${t.total}. Это сезонная таблица с соперниками-ботами; живые игроки — в «Рейтинге игроков» в профиле.</p></section>`;
 }
 function sqTabsH() {
   return `<div class="sqtab">${G.squads.map((s, i) => { const inf = squadInfo(s.map(id => id == null ? null : { c: CARDS[id], lv: G.cards[id].lv })); return `<button data-act="sq" data-v="${i}" aria-pressed="${G.sqi === i}"><span>Пятёрка ${i + 1}</span><b>${inf ? inf.rating.toFixed(1) : '—'}</b><span>${inf ? 'химия ' + inf.chem + (G.capts[i] != null ? ' · капитан' : ' · без капитана') : 'не собрана'}</span></button>`; }).join('')}</div>`;
@@ -310,7 +310,7 @@ function vProf() {
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
   <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
-  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Фото игроков берутся из папки photos рядом с файлом игры. Прогресс хранится в этом браузере.</p>
+  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
   ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
 }
 
@@ -441,7 +441,7 @@ function vSheet() {
     if (!G.squad.includes(c.id)) act += `<button class="btn" data-act="put" data-id="${c.id}" data-v="${c.role}">Поставить в пятёрку ${G.sqi + 1} на роль «${RNAME[c.role]}»</button>`;
   } else act = '<p class="sm mut">Этой карточки у вас пока нет. Она выпадает из кейсов.</p>';
   const pic = `<div class="rowb"><label class="btn s" for="img-in" tabindex="0">${IMG[c.base] ? 'Заменить фото' : 'Добавить фото'}</label>${IMG[c.base] ? `<button class="btn s" data-act="imgDel" data-id="${c.base}">Убрать фото</button>` : ''}</div><input type="file" id="img-in" accept="image/*" data-base="${c.base}" hidden><p class="sm mut">${imgMsg || `Фото хранится в этом браузере. Чтобы оно было у всех, положите файл ${esc(slug(c.nick))}.png в папку photos.`}</p>`;
-  return `<div class="in"><div class="wrap col"><div class="insp"><div class="tilt">${cardH(c, { lv, pips: !!o, stats: true })}</div></div><div class="plain" style="text-align:center;gap:4px"><p class="eyebrow" style="color:${glow(c)}">${rarName(c)}${c.hist ? ' · архивная версия' : ''}</p><h2 style="overflow-wrap:anywhere">${esc(c.nick)}</h2><p class="sm mut">${RNAME[c.role]} · ${esc(c.team)} · ${o ? 'копий ' + o.n + ', уровень ' + o.lv : 'нет в коллекции'}</p></div>
+  return `<div class="in card-sh"><button class="lg-x sh-x" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button><div class="wrap col"><div class="insp"><div class="tilt">${cardH(c, { lv, pips: !!o, stats: true })}</div></div><div class="plain" style="text-align:center;gap:4px"><p class="eyebrow" style="color:${glow(c)}">${rarName(c)}${c.hist ? ' · архивная версия' : ''}</p><h2 style="overflow-wrap:anywhere">${esc(c.nick)}</h2><p class="sm mut">${RNAME[c.role]} · ${esc(c.team)} · ${o ? 'копий ' + o.n + ', уровень ' + o.lv : 'нет в коллекции'}</p></div>
   <div class="plain" style="--rc:${glow(c)}">${SK.map(k => `<div class="attr"><span class="mut">${SN[k]}</span><span class="bar"><i style="width:${c.st[k] + add}%"></i></span><b>${c.st[k] + add}</b></div>`).join('')}</div>
   ${abH(c, lv)}${act}<button class="btn s" data-act="cmpPick" data-id="${c.id}">Сравнить с другой карточкой</button>${pic}<button class="btn" data-act="close">Закрыть</button></div></div>`;
 }
@@ -586,21 +586,21 @@ function walkout(x) {
     <div class="wo-crack">${pkH(OV.type)}<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 50L8 6M50 50L96 14M50 50L92 88M50 50L12 94M50 50L50 0M50 50L0 54M50 50L100 58"/></svg></div>
     <div class="wo-card" id="wo-card"></div></div>`;
   $('#po-name').innerHTML = ''; sfx('rare');
-  const plate = html => { const p = $('#wo-plate'); p.className = 'wo-plate'; void p.offsetWidth; p.innerHTML = html; p.className = 'wo-plate in'; };
-  const floor = v => { const w = $('#wo'); w.style.setProperty('--fc', v); w.classList.remove('pulse'); void w.offsetWidth; w.classList.add('pulse'); };
+  const plate = html => { const p = $('#wo-plate'); if (!p) return; p.className = 'wo-plate'; void p.offsetWidth; p.innerHTML = html; p.className = 'wo-plate in'; };
+  const floor = v => { const w = $('#wo'); if (!w) return; w.style.setProperty('--fc', v); w.classList.remove('pulse'); void w.offsetWidth; w.classList.add('pulse'); };
   const woCountry = () => { if (!stageOk()) return; floor(`hsl(${hsh(cc) % 360} 70% 52%)`);
     plate(`<span class="wo-flag" role="img" aria-label="${esc(c.hltv.country || cc)}">${flagOf(cc)}</span>`);
-    $('#wo-cc').textContent = flagOf(cc); sfx('scan'); later(1500, woTeam); };
+    { const e = $('#wo-cc'); if (e) e.textContent = flagOf(cc); } sfx('scan'); later(1500, woTeam); };
   const woTeam = () => { if (!stageOk()) return; floor(tc);
     plate(`<span class="wo-k">Команда</span><b>${esc(team)}</b>`);
-    const t = $('#wo-tm'); t.textContent = team; t.style.background = tc; sfx('scan'); later(1500, woCard); };
-  const woCard = () => { if (!stageOk()) return; floor(col); $('#wo-plate').className = 'wo-plate';
-    $('#wo-card').classList.add('rim');
+    const t = $('#wo-tm'); if (t) { t.textContent = team; t.style.background = tc; } sfx('scan'); later(1500, woCard); };
+  const woCard = () => { if (!stageOk()) return; floor(col); { const wp = $('#wo-plate'); if (wp) wp.className = 'wo-plate'; }
+    $('#wo-card')?.classList.add('rim');
     later(450, () => { if (!stageOk()) return; flashNow();
-      $('#wo-card').innerHTML = `<div class="wo-face">${cardH(c, { stats: true })}</div>`; $('#wo').classList.add('done');
+      if (!$('#wo-card')) return; $('#wo-card').innerHTML = `<div class="wo-face">${cardH(c, { stats: true })}</div>`; $('#wo')?.classList.add('done');
       burst(col, 160, $('#wo-card')); sfx('stop', 4); later(900, () => topDone(x)); }); };
-  later(900, () => { if (!stageOk()) return; flashNow(); $('.wo-crack').classList.add('gone'); burst('#ffffff', 40, $('#wo'));
-    $('#wo-card').innerHTML = `<div class="wo-back pc r${c.rar} ${c.sp ? 'sp' + c.sp : ''}"><span class="wo-cc" id="wo-cc"></span><span class="wo-tm" id="wo-tm"></span></div>`;
+  later(900, () => { if (!stageOk()) return; flashNow(); $('.wo-crack')?.classList.add('gone'); burst('#ffffff', 40, $('#wo'));
+    if (!$('#wo-card')) return; $('#wo-card').innerHTML = `<div class="wo-back pc r${c.rar} ${c.sp ? 'sp' + c.sp : ''}"><span class="wo-cc" id="wo-cc"></span><span class="wo-tm" id="wo-tm"></span></div>`;
     later(1000, () => cc ? woCountry() : woTeam());
   });
 }
@@ -657,7 +657,7 @@ function vetoBuild() {
 }
 /* баны по очереди: игрок, соперник, игрок, соперник — остаётся одна карта */
 function vetoBan(i) {
-  if (OV.st !== 'veto' || OV.vt % 2 || OV.ban.includes(i)) return;
+  if (OV.st !== 'veto' || OV.vt % 2 || OV.ban.includes(i) || OV.ban.length >= OV.maps.length - 1) return;   /* карта уже выбрана — нажатие на неё ничего не делает */
   const mark = k => { OV.ban.push(k); $('#map' + k).classList.add('ban'); sfx('tap'); OV.vt++; };
   mark(i); const left = () => OV.maps.map((_, k) => k).filter(k => !OV.ban.includes(k));
   const next = () => {

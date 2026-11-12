@@ -1809,6 +1809,18 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 #sheet .in.st-pop.acc-pop{gap:12px}.acc-pop .acc-logo{width:64px;height:64px;margin:0 auto}.acc-pop h2{text-align:center}.acc-pop .acc-sub{margin:0;text-align:center;font-size:13px;color:#c3ccd6;line-height:1.4}
 .acc-skip{background:none;border:0;color:#9fb2c4;font:600 13px var(--f-d);letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;padding:8px;cursor:pointer}
 
+/* Плашка «Powered by Netlify» (справа внизу, ~60px) — на бесплатном тарифе её не выключить, поэтому поднимаем нижние кнопки над ней */
+html.nb{--nbb:max(env(safe-area-inset-bottom,0px),60px)}
+html.nb #tabs{padding-bottom:var(--nbb)}
+html.nb #app{padding-bottom:calc(112px + var(--nbb))}
+html.nb .po{padding-bottom:calc(16px + var(--nbb))}
+html.nb #sheet .in{padding-bottom:calc(14px + var(--nbb))}
+html.nb #sheet .in.st-pop{padding-bottom:18px}html.nb #sheet:has(.st-pop){padding-bottom:var(--nbb)}
+html.nb .mt-in{padding-bottom:calc(10px + var(--nbb))}
+html.nb .lv-prep{padding-bottom:calc(14px + var(--nbb))}
+html.nb .m3-hud{padding-bottom:calc(8px + var(--nbb))}
+html.nb .rw-act{bottom:calc(10px + var(--nbb))}
+html.nb .qs-foot{bottom:calc(76px + var(--nbb))}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">

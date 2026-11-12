@@ -9,7 +9,7 @@ let QS = null; /* быстрая продажа: { id: сколько копий
 const now = () => Date.now();
 
 /* ---------- Сохранение: перед переносом и при нечитаемых данных остаётся копия ---------- */
-function save() { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) { /* без хранилища игра идёт до закрытия страницы */ } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) { /* без хранилища игра идёт до закрытия страницы */ } cloudQueue(); }
 function backup(sfx, raw) { try { localStorage.setItem(KEY + sfx, raw); } catch (e) { /* копия не поместилась */ } }
 function load() {
   try { const v = localStorage.getItem(SKEY); snd = v === '1' || v === 'off' ? 'off' : v === 'full' ? 'full' : 'min'; } catch (e) { /* звук по умолчанию */ }
@@ -111,6 +111,7 @@ function vHome() {
   const quickCase = packCount() ? `ДОСТУПНО ${packCount()} КЕЙС.` : 'КЕЙСЫ И НАГРАДЫ';
   const tut = st < 3 ? `<section class="lobby-tutorial"><div><span class="lobby-kicker">ПЕРВЫЙ ВЫХОД НА АРЕНУ</span><b>${st === 0 ? 'Открой стартовые кейсы' : st === 1 ? 'Собери свою пятёрку' : 'Сыграй первый матч'}</b><small>Шаг ${st + 1} из 3 · обучение</small></div>${st === 0 ? '<button class="btn pri s" data-act="tab" data-v="packs">ОТКРЫТЬ КЕЙСЫ ↗</button>' : st === 1 ? '<button class="btn pri s" data-act="auto">СОБРАТЬ СОСТАВ ↗</button>' : '<button class="btn pri s" data-act="fight">СЫГРАТЬ ПЕРВЫЙ МАТЧ ↗</button>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk">Понятно</button></div>` : ''}${tut}
+  ${AU ? '' : `<section class="home-acc"><div><b>Сохрани прогресс в аккаунте</b><span>Ник и пароль — и карточки не потеряются, можно играть с любого телефона.</span></div><button class="btn pri s" data-act="authOpen">Войти</button></section>`}
   <section class="lobby-hero">
     <div class="lobby-hero__art" aria-hidden="true">
       <div class="lobby-hero__roof"></div><div class="lobby-hero__beam lobby-hero__beam--a"></div><div class="lobby-hero__beam lobby-hero__beam--b"></div>
@@ -303,6 +304,7 @@ function vProf() {
     <div class="profile-hero__xp"><div><span>ОПЫТ УРОВНЯ</span><b>${G.xp} / ${100*G.lvl} XP</b></div><i><b style="width:${xpPct}%"></b></i></div>
     <div class="profile-hero__stats"><div><strong>${G.tro}</strong><small>КУБКИ</small></div><div><strong>${G.best}</strong><small>РЕКОРД</small></div><div><strong>${winPct}%</strong><small>ПОБЕДЫ</small></div></div>
   </section>
+  ${accH()}
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
   <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
@@ -405,6 +407,9 @@ function vSheet() {
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
+  if (sheet.t === 'auth') return authH();
+  if (sheet.t === 'sync') return syncH();
+  if (sheet.t === 'top') return topH();
   if (sheet.t === 'slot') {
     const i = sheet.slot, used = new Set(G.squad.filter((x, k) => k !== i && x != null).map(id => CARDS[id].nick));
     const l = Object.keys(G.cards).map(id => CARDS[id]).filter(c => !used.has(c.nick)).sort((a, b) => (b.role === i) - (a.role === i) || (b.ovr + own(b.id).lv) - (a.ovr + own(a.id).lv)).slice(0, 60);
@@ -520,13 +525,13 @@ function rvCard(x, type) { const c = x.c; return { box: PACKS[type] && ['basic',
 function rvStart() {
   const f = $('#rv3d'); if (!f) return; OV.top = topOf(OV.cards); const me = OV;
   RV = { f, ov: me, ready: false, quiet: false };
-  RV.t = setTimeout(() => { if (RV && RV.ov === me && !RV.ready) rvFallback(); }, 8000);
-  try { f.src = rvUrl(); } catch (e) { rvFallback(); }
+  RV.t = setTimeout(() => { if (RV && RV.ov === me && !RV.ready) rvFallback(false, 'долго грузилось'); }, 20000);   /* медленная сеть или телефон: ждём дольше, а 3D не отключаем насовсем */
+  try { f.src = rvUrl(); } catch (e) { rvFallback(true, 'не запустилось'); }
 }
 function rvDrop() { if (RV) clearTimeout(RV.t); RV = null; const f = $('#rv3d'); if (f) f.remove(); const o = $('#over'); if (o) o.classList.remove('po3d'); }
-function rvFallback() {
-  rvOk.bad = true; rvDrop(); if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
-  $('#po-stage').innerHTML = `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`; $('#po-name').innerHTML = '<span class="mut">Нажмите на кейс, чтобы открыть</span>';
+function rvFallback(perm, why) {
+  if (perm) rvOk.bad = true; rvDrop(); if (!OV || OV.t !== 'pack' || OV.phase !== 'case') return;
+  $('#po-stage').innerHTML = `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`; $('#po-name').innerHTML = `<span class="mut">Нажмите на кейс, чтобы открыть</span>${why ? `<small class="mut" style="display:block;font-size:10px;opacity:.7">3D-открытие ${esc(why)} — показываем обычное</small>` : ''}`;
 }
 function rvStep(m) {
   if (m.s === 'open') { if (OV.phase !== 'case') return; OV.phase = 'show'; sfx('open'); if (m.w) { sfx('rare'); $('#po-top').textContent = 'Редкий игрок'; }
@@ -540,7 +545,7 @@ addEventListener('message', e => {
   if (RV.ov !== OV || !OV || OV.t !== 'pack') { rvDrop(); return; }
   if (m.t === 'boot') RV.f.contentWindow.postMessage({ t: 'play', p: rvCard(OV.top, OV.type) }, '*');
   else if (m.t === 'ready') { RV.ready = true; clearTimeout(RV.t); if (OV.phase === 'case') $('#po-name').innerHTML = '<span class="mut">Нажмите на кейс, чтобы открыть</span>'; }
-  else if (m.t === 'fail') { if (OV.phase === 'case') rvFallback(); else poDone(); }
+  else if (m.t === 'fail') { if (OV.phase === 'case') rvFallback(true, 'не поддерживается на этом устройстве: ' + String(m.e || '').slice(0, 60)); else poDone(); }
   else if (m.t === 'step') rvStep(m);
   else if (m.t === 'done') { if (stageOk()) topDone(OV.top); }
 });
@@ -674,6 +679,7 @@ function rwBlock(r) {
     <div class="rw-bar"><div class="rw-bh"><span>Лига «${LEAGUES[lg][0]}»</span><span>${nx ? `до «${nx[0]}» ${nx[1] - G.tro} кубков` : 'высшая лига'}</span></div><div class="rw-b"><i style="width:${pct.toFixed(1)}%"></i></div></div>
     <div class="rw-bar"><div class="rw-bh"><span>Уровень ${G.lvl}${lv0.lvl && G.lvl > lv0.lvl ? ' · новый!' : ''}</span><span>${G.xp} / ${need} опыта</span></div><div class="rw-b rw-bx"><i style="width:${xpP.toFixed(1)}%"></i></div></div>
     ${r.packs.length ? `<div class="rw-cases">${r.packs.map(p => `<div class="rw-case">${pkH(caseOf(p))}<span>${esc(p[0].toUpperCase() + p.slice(1))}</span></div>`).join('')}</div><p class="sm mut">Кейсы уже во вкладке «Кейсы».</p>` : ''}
+    ${AU ? '' : '<div class="rw-acc"><span>Прогресс хранится только на этом устройстве.</span><button class="btn s" data-act="authOpen">Сохранить в аккаунт</button></div>'}
     ${tasks.length ? `<div class="rw-tasks"><b>Выполнены задания</b>${tasks.map(t => `<div class="rw-task"><span>${esc(t.t)}</span><em>${rewardText(t.r)}</em></div>`).join('')}<p class="sm mut">Заберите награду в заданиях на главной.</p></div>` : ''}
   </div>`;
 }
@@ -818,5 +824,5 @@ function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
-  save(); render();
+  cloudStart(); save(); render();
 }

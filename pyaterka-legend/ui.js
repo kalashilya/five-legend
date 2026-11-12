@@ -26,7 +26,7 @@ function load() {
 const own = id => G.cards[id];
 const packCount = () => G.packs.basic + G.packs.pro + G.packs.elite;
 const RCOL = ['#b0c3d9', '#6c8cff', '#a274ff', '#e45cf2', '#ff5a5a'];
-const glow = c => c.sp === 1 ? '#ff8a3d' : c.sp === 2 ? '#f2c14e' : RCOL[c.rar];
+const glow = c => c.sp ? '#f2c14e' : RCOL[c.rar];
 const teamCol = c => `hsl(${hsh(c.team) % 360} 75% 58%)`;
 const rarName = c => c.sp ? SPN[c.sp] : RAR[c.rar];
 const noMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };

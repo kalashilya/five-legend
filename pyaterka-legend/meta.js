@@ -34,7 +34,25 @@ function cleanTask(t) {
   if (!r) return null;
   return Object.assign({}, t, { n: Math.max(1, Math.floor(t.n)), p: Number.isFinite(t.p) ? clamp(Math.floor(t.p), 0, Math.floor(t.n)) : 0, r, claimed: t.claimed === true });
 }
+/* «Игрок недели» убран из игры. Уже выпавшие карточки не пропадают: они становятся обычной карточкой того же игрока
+   (копии складываются с имеющимися, уровень берётся наибольший), составы, капитаны и выборы заменяются на неё. */
+function convertWeekly(G) {
+  const base = id => { id = +id; return id >= W_ID && id < M_ID && CARDS[id - W_ID] ? id - W_ID : null; };
+  if (G.cards && typeof G.cards === 'object') for (const id of Object.keys(G.cards)) {
+    const b = base(id), o = G.cards[id]; if (b == null || !o || !Number.isFinite(+o.n) || !(+o.n >= 1)) continue;
+    const t = G.cards[b];
+    if (t && Number.isFinite(+t.n) && +t.n >= 1) { t.n = Math.floor(t.n) + Math.floor(o.n); t.lv = Math.max(clamp(t.lv | 0, 1, 5), clamp(o.lv | 0, 1, 5)); }
+    else G.cards[b] = { n: Math.floor(o.n), lv: clamp(o.lv | 0, 1, 5) };
+    delete G.cards[id];
+  }
+  const m = x => { if (x == null) return x; const b = base(x); return b == null ? x : b; };
+  if (Array.isArray(G.squad)) G.squad = G.squad.map(m);
+  if (Array.isArray(G.squads)) G.squads = G.squads.map(s => Array.isArray(s) ? s.map(m) : s);
+  if (Array.isArray(G.capts)) G.capts = G.capts.map(m);
+  if (Array.isArray(G.picks)) G.picks = G.picks.map(p => Array.isArray(p) ? p.map(m) : p);
+}
 function normalize(G, now) {
+  convertWeekly(G);
   const num = (k, v) => { if (typeof G[k] !== 'number' || !isFinite(G[k])) G[k] = v; };
   num('coins', 0); num('tro', 0); num('best', G.tro); num('xp', 0); num('lvl', 1); num('daily', -1); num('w', 0); num('l', 0); num('tut', 3); num('frame', -1); num('sqi', 0);
   G.coins = Math.max(0, Math.round(G.coins)); G.tro = Math.max(0, Math.round(G.tro)); G.best = Math.max(G.tro, Math.round(G.best)); G.w = Math.max(0, Math.floor(G.w)); G.l = Math.max(0, Math.floor(G.l)); G.lvl = Math.max(1, Math.floor(G.lvl)); G.xp = Math.max(0, Math.min(100 * G.lvl - 1, Math.floor(G.xp))); G.tut = clamp(G.tut | 0, 0, 3); G.frame = clamp(G.frame | 0, -1, 6); G.sqi = clamp(G.sqi | 0, 0, 2);
@@ -83,7 +101,7 @@ const inSquads = (G, id) => G.squads.some(s => s.includes(+id));
 /* ---------- Продажа: цена зависит от редкости, рейтинга и уровня (формула предложена, не утверждена) ---------- */
 function priceOf(c, lv) {
   const pool = POOL[c.rar], mn = Math.min(...pool.map(x => x.ovr)), mx = Math.max(...pool.map(x => x.ovr));
-  const rel = mx > mn ? clamp((c.ovr - (c.sp ? 3 : 0) - mn) / (mx - mn), 0, 1) : .5;
+  const rel = mx > mn ? clamp(((c.sp ? c.o : c.ovr) - mn) / (mx - mn), 0, 1) : .5;
   return Math.round(sellVal(c) * (.9 + .2 * rel) * (1 + .25 * ((lv || 1) - 1)));
 }
 const sellNeedsConfirm = (G, id) => { const o = G.cards[id]; return !!o && o.n === 1 && (inSquads(G, id) || !!CARDS[id].sp); };
@@ -219,5 +237,5 @@ function lbTable(G, scope, now) {
 }
 const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro).length + 1;
 
-if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, IFP, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
+if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
   migrate, normalize, newProfile, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };

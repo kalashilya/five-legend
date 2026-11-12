@@ -43,7 +43,7 @@ ok('16 полных HLTV-профилей и статистика HLTV подк�
   assert.strictEqual(E.indOf(junior).n, 'Снайпер'); assert.strictEqual(E.indOf(leakz).n, 'Трейдер');
 });
 console.log('1. Карточки и база');
-ok('718 карточек (jL — архивная Vitality), номера уникальны, особые версии на месте', () => { assert.strictEqual(E.ALL.length, 718); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 718); assert.strictEqual(E.MVPP.length, 8); assert.strictEqual(E.IFP.flat().length, 56); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
+ok('713 карточек (jL — архивная Vitality), номера уникальны, особые версии MVP на месте, «Игрока недели» нет', () => { assert.strictEqual(E.ALL.length, 713); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 713); assert.strictEqual(E.MVPP.length, 9); assert(!E.ALL.some(c => c.sp === 1 || c.id >= E.W_ID && c.id < E.M_ID)); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
 ok('редкости 388/152/78/28/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [388, 152, 78, 28, 8]));
 ok('у каждой карточки шесть показателей от 40 до 99', () => E.ALL.forEach(c => Object.values(c.st).forEach(v => assert(v >= 40 && v <= 99))));
 ok('обновление базы: трансфер создаёт новую карточку, старая остаётся архивной с тем же номером', () => {
@@ -77,9 +77,21 @@ ok('версия 1 переносится: особые карточки, сос
   const v1 = { v: 1, coins: 777, tro: 640, best: 700, xp: 30, lvl: 4, cards: { 0: { n: 2, lv: 3 }, 1000: { n: 1, lv: 1 }, 2003: { n: 1, lv: 2 }, 16: { n: 1, lv: 1 }, 26: { n: 1, lv: 1 }, 2: { n: 1, lv: 1 }, 18: { n: 3, lv: 1 } }, squad: [2003, 1000, 26, 2, 18], packs: { basic: 1, pro: 0, elite: 2 }, daily: NOW - 3600000, w: 9, l: 4 };
   const g = E.migrate(JSON.parse(JSON.stringify(v1)), NOW);
   assert.strictEqual(g.v, 2); assert.strictEqual(g.coins, 777); assert.strictEqual(g.streak.pend.day, 1); assert.strictEqual(g.lvl, 4); assert.strictEqual(g.tro, 640);
-  assert.deepStrictEqual(g.cards[0], { n: 2, lv: 3 }); assert(g.cards[E.W_ID] && g.cards[E.M_ID + 3].lv === 2); assert(!g.cards[1000] && !g.cards[2003]);
-  assert.deepStrictEqual(g.squad, [E.M_ID + 3, E.W_ID, 26, 2, 18]); assert.strictEqual(E.CARDS[E.M_ID + 3].nick, E.CARDS[3].nick);
+  assert.deepStrictEqual(g.cards[0], { n: 3, lv: 3 }); assert(!g.cards[E.W_ID] && g.cards[E.M_ID + 3].lv === 2); assert(!g.cards[1000] && !g.cards[2003]);   // «Игрок недели» (1000) стал обычной карточкой 0: копии сложились
+  assert.deepStrictEqual(g.squad, [E.M_ID + 3, 0, 26, 2, 18]); assert.strictEqual(E.CARDS[E.M_ID + 3].nick, E.CARDS[3].nick);
   assert.strictEqual(g.capts[0], 18); assert.strictEqual(g.tut, 3); assert.strictEqual(E.dailyReady(g, NOW), false); assert.strictEqual(g.tasks.d.length, 4);
+});
+ok('потолок рейтинга 92 у всех карточек, включая особые MVP и архивные', () => {
+  assert.strictEqual(Math.max(...E.ALL.map(c => c.ovr)), 92); assert(E.ALL.every(c => c.ovr <= 92 && c.ovr >= 58));
+  assert(E.MVPP.every(c => c.sp === 2 && c.ovr === Math.min(92, c.o + 3)) && E.ALL.filter(c => c.hist).every(c => c.ovr <= 92));
+  const zy = E.ALL.find(c => c.nick === 'ZywOo' && !c.hist && !c.sp); assert(zy.hltv && zy.hltv.last12m && zy.ovr === 92);   // рейтинг 1.38 за 12 мес. + EVP упёрлись в потолок
+});
+ok('«Игрок недели» из старых сохранений становится обычной карточкой: копии, уровень, состав, капитан, выбор', () => {
+  const W = E.W_ID, pid = E.POOL[1][0].id, pid2 = E.POOL[2][0].id, pid3 = E.POOL[3][0].id;
+  const g = E.migrate({ v: 2, coins: 5, cards: { [pid]: { n: 1, lv: 2 }, [W + pid]: { n: 2, lv: 4 }, [W + pid2]: { n: 1, lv: 3 }, [pid3]: { n: 1, lv: 1 } }, squads: [[W + pid, W + pid2, null, null, null], [], []], capts: [], picks: [[W + pid, pid2, pid3]], season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW);
+  assert(g); assert.deepStrictEqual(g.cards[pid], { n: 3, lv: 4 }); assert.deepStrictEqual(g.cards[pid2], { n: 1, lv: 3 });
+  assert(!g.cards[W + pid] && !g.cards[W + pid2] && !g.orphans[W + pid] && !g.orphans[W + pid2]);
+  assert.deepStrictEqual(g.squads[0].slice(0, 2), [pid, pid2]); assert.strictEqual(g.coins, 5);
 });
 ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
   assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);
@@ -144,7 +156,7 @@ console.log('5. Контракт');
 ok('10 обычных карточек одной редкости дают одну карточку той же или следующей редкости', () => {
   const g = E.newProfile(NOW), pool = E.POOL[0].slice(0, 6); pool.forEach(c => { g.cards[c.id] = { n: 2, lv: 1 }; });
   const ids = pool.slice(0, 5).flatMap(c => [c.id, c.id]); let inf = E.tuInfo(g, ids.slice(0, 9)); assert.strictEqual(inf.ok, false);
-  assert.strictEqual(E.tuInfo(g, ids.slice(0, 9).concat(E.POOL[1][0].id)).ok, false); assert.strictEqual(E.tuInfo(g, ids.slice(0, 9).concat(E.IFP[1][0].id)).ok, false);
+  assert.strictEqual(E.tuInfo(g, ids.slice(0, 9).concat(E.POOL[1][0].id)).ok, false); assert.strictEqual(E.tuInfo(g, ids.slice(0, 9).concat(E.MVPP[0].id)).ok, false);
   inf = E.tuInfo(g, ids); assert(inf.ok && /–/.test(inf.up)); const before = Object.values(g.cards).reduce((s, o) => s + o.n, 0), r = E.tuRun(g, ids);
   assert(r && !r.c.sp && (r.c.rar === 0 || r.c.rar === 1)); assert.strictEqual(Object.values(g.cards).reduce((s, o) => s + o.n, 0), before - 9); assert.strictEqual(E.tuRun(g, ids), null);
   let up = 0; for (let i = 0; i < 2000; i++) { const g2 = E.newProfile(NOW); pool.forEach(c => { g2.cards[c.id] = { n: 2, lv: 1 }; }); const x = E.tuRun(g2, ids); if (x.up) up++; else assert(x.c.ovr >= Math.ceil(inf.avg)); } assert(Math.abs(up / 2000 - inf.p) < .05);

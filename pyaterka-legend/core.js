@@ -4,21 +4,21 @@ const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.f
 const hsh = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 const RN = ['AWP', 'ENT', 'SUP', 'LRK', 'IGL'], RNAME = ['Снайпер', 'Энтри', 'Саппорт', 'Люркер', 'Капитан'];
 const SK = ['aim', 'ent', 'clu', 'utl', 'pos', 'igl'], SN = { aim: 'Стрельба', ent: 'Опенинг', clu: 'Клатч', utl: 'Гранаты', pos: 'Позиция', igl: 'Тактика' }, SS = { aim: 'СТР', ent: 'ОПН', clu: 'КЛЧ', utl: 'ГРН', pos: 'ПОЗ', igl: 'ТАК' };
-const RAR = ['Ширпотреб', 'Армейское', 'Запрещённое', 'Засекреченное', 'Тайное'], SPN = ['', 'Игрок недели', 'MVP'];
+const RAR = ['Ширпотреб', 'Армейское', 'Запрещённое', 'Засекреченное', 'Тайное'], SPN = ['', '', 'MVP'];
 const PROF = [{ aim: 4, pos: 4, ent: -2, utl: -3, igl: -3 }, { ent: 6, aim: 2, clu: -3, pos: -3, igl: -2 }, { utl: 7, pos: 1, ent: -4, aim: -2 }, { clu: 6, pos: 3, ent: -3, utl: -3, igl: -3 }, { igl: 10, utl: 3, aim: -5, ent: -3, clu: -3 }];
-const W_ID = 100000, M_ID = 200000;      // номера особых версий: «Игрок недели» и MVP
-const CARDS = {}, POOL = [[], [], [], [], []], IFP = [[], [], [], [], []], MVPP = [];
+const W_ID = 100000, M_ID = 200000;      // номера особых версий: «Игрок недели» (убраны, нужны только для переноса старых сохранений) и MVP
+const OVR_CAP = 92;                      // потолок рейтинга любой карточки (тот же, что в gen.js)
+const CARDS = {}, POOL = [[], [], [], [], []], MVPP = [];
 (function build() {
   const rows = {};
   const mk = (id, row, add, sp, rar) => {
-    const [nick, t, role, o, pid, , hist, rawStats, hltv] = row, ovr = Math.min(99, o + add), st = {};
+    const [nick, t, role, o, pid, , hist, rawStats, hltv] = row, ovr = Math.min(OVR_CAP, o + add), st = {};
     if (Array.isArray(rawStats) && rawStats.length === SK.length) SK.forEach((k, i) => st[k] = clamp(Math.round(rawStats[i] + add), 40, 99));
     else for (const k of SK) st[k] = clamp(ovr + (PROF[role][k] || 0) + (hsh(nick + k) % 7) - 3, 40, 99);
-    return CARDS[id] = { id, base: pid, nick, team: TM[t], t, role, ovr, rar, sp, hist: !!hist, st, hltv: hltv || null };
+    return CARDS[id] = { id, base: pid, nick, team: TM[t], t, role, ovr, o, rar, sp, hist: !!hist, st, hltv: hltv || null };
   };
   PL.forEach(row => { rows[row[4]] = row; POOL[row[5]].push(mk(row[4], row, 0, 0, row[5])); });
   SPM.forEach(pid => { if (rows[pid]) MVPP.push(mk(M_ID + pid, rows[pid], 3, 2, 4)); });
-  SPW.forEach(pid => { if (rows[pid]) { const r2 = Math.min(4, rows[pid][5] + 1); IFP[r2].push(mk(W_ID + pid, rows[pid], 3, 1, r2)); } });
 })();
 const ALL = Object.values(CARDS).sort((a, b) => b.ovr - a.ovr || a.id - b.id);
 
@@ -62,11 +62,10 @@ function pickMinOvr(th) {
   const w = pool.map(c => { const x = 1 / (1 + .35 * (c.ovr - th)) * (c.rar === 4 ? .6 : 1); tot += x; return x; });
   let r = R() * tot; for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; } return pool[0];
 }
-const IF_CH = .07, MVP_CH = .12;
+const MVP_CH = .12;
 function rollRar(odds) { let r = R() * 100; for (let i = 0; i < 5; i++) { r -= odds[i]; if (r <= 0) return i; } return 0; }
 function pickIn(rar) {
   if (rar === 4 && R() < MVP_CH) return pick(MVPP);
-  if (IFP[rar].length && R() < IF_CH) return pick(IFP[rar]);
   const pool = POOL[rar], mn = Math.min(...pool.map(c => c.ovr)); let tot = 0;
   const w = pool.map(c => { const x = 1 / ((1 + .3 * (c.ovr - mn)) * (1 + (100 - c.t) / 100)); tot += x; return x; });
   let r = R() * tot; for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; } return pool[0];

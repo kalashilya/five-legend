@@ -43,7 +43,7 @@ ok('16 полных HLTV-профилей и статистика HLTV подк�
   assert.strictEqual(E.indOf(junior).n, 'Снайпер'); assert.strictEqual(E.indOf(leakz).n, 'Трейдер');
 });
 console.log('1. Карточки и база');
-ok('713 карточек (jL — архивная Vitality), номера уникальны, особые версии MVP на месте, «Игрока недели» нет', () => { assert.strictEqual(E.ALL.length, 713); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 713); assert.strictEqual(E.MVPP.length, 9); assert(!E.ALL.some(c => c.sp === 1 || c.id >= E.W_ID && c.id < E.M_ID)); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
+ok('718 карточек (jL — архивная Vitality), номера уникальны, особые версии MVP на месте, «Игрока недели» нет', () => { assert.strictEqual(E.ALL.length, 718); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 718); assert.strictEqual(E.MVPP.length, 14); assert(!E.ALL.some(c => c.sp === 1 || c.id >= E.W_ID && c.id < E.M_ID)); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
 ok('редкости 388/152/78/28/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [388, 152, 78, 28, 8]));
 ok('у каждой карточки шесть показателей от 40 до 99', () => E.ALL.forEach(c => Object.values(c.st).forEach(v => assert(v >= 40 && v <= 99))));
 ok('обновление базы: трансфер создаёт новую карточку, старая остаётся архивной с тем же номером', () => {
@@ -85,6 +85,13 @@ ok('потолок рейтинга 92 у всех карточек, включ�
   assert.strictEqual(Math.max(...E.ALL.map(c => c.ovr)), 92); assert(E.ALL.every(c => c.ovr <= 92 && c.ovr >= 58));
   assert(E.MVPP.every(c => c.sp === 2 && c.ovr === Math.min(92, c.o + 3)) && E.ALL.filter(c => c.hist).every(c => c.ovr <= 92));
   const zy = E.ALL.find(c => c.nick === 'ZywOo' && !c.hist && !c.sp); assert(zy.hltv && zy.hltv.last12m && zy.ovr === 92);   // рейтинг 1.38 за 12 мес. + EVP упёрлись в потолок
+});
+ok('топ-20 HLTV: 92 / 90 / 88, прочие не выше 88, игроки топ-5 команд не ниже 85, остальные не выше 87', () => {
+  const T = 'ZywOo donk ropz m0NESY sh1ro molodoy flameZ frozen KSCERATO Spinx Twistzz mezii Senzu XANTARES YEKINDAR xertioN torzsi NiKo iM b1t'.split(' '), base = E.ALL.filter(c => !c.sp && !c.hist), TT = ['Spirit', 'Vitality', 'FURIA', 'MOUZ', 'Falcons'];
+  T.forEach((n, i) => assert.strictEqual(base.find(c => c.nick === n).ovr, i < 2 ? 92 : i < 7 ? 90 : 88, n));
+  assert(E.ALL.filter(c => !c.sp && !T.includes(c.nick)).every(c => c.ovr <= 88)); assert(E.ALL.filter(c => T.includes(c.nick) && !c.sp).every(c => c.ovr <= 92));
+  assert(base.filter(c => TT.includes(c.team) && !T.includes(c.nick)).every(c => c.ovr >= 85 && c.ovr <= 88));
+  assert(base.filter(c => !TT.includes(c.team) && !T.includes(c.nick)).every(c => c.ovr <= 87));
 });
 ok('«Игрок недели» из старых сохранений становится обычной карточкой: копии, уровень, состав, капитан, выбор', () => {
   const W = E.W_ID, pid = E.POOL[1][0].id, pid2 = E.POOL[2][0].id, pid3 = E.POOL[3][0].id;

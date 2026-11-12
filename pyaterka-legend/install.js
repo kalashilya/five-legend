@@ -3,6 +3,7 @@
    iPhone: Apple не даёт сайтам ставить себя сами — показываем короткую подсказку с тремя шагами.
    Уже установлено (открыто с иконки) — плашку не показываем. */
 let INST = null;
+if (/(^|\.)netlify\.app$/.test(location.hostname)) document.documentElement.classList.add('nb');
 const isStandalone = () => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } };
 const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const isAndroid = () => /Android/i.test(navigator.userAgent);

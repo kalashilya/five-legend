@@ -113,9 +113,10 @@ function rdEvent(S, e) {
     const kd = S.dots.find(d => d.team === (e.k.byA ? 'a' : 'b') && d.i === e.k.k), vd = S.dots.find(d => d.team === (e.k.byA ? 'b' : 'a') && d.i === e.k.v);
     if (kd && vd) { const a = rdPos(kd, e.t), b = rdPos(vd, e.t); rdFx(`<line class="rd-shot ${kd.side === 'T' ? 't' : 'ct'}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`, 600); }
     lvKill(e.k, e);
-  } else if (e.type === 'plant') { top.innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">C4</text></g>`; rc.innerHTML = '<span class="bomb">Бомба заложена</span>'; sfx('scan'); }
-  else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); top.innerHTML = ''; }
-  else if (e.type === 'defuse') { top.innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">✓</text></g>`; rc.innerHTML = '<span>Бомба обезврежена</span>'; }
+  } else if (e.type === 'plant') { top.innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">C4</text></g>`; sfx('scan');
+    const bn = $('#bn'); if (bn && LV) { const h = `<div class="banner n sm"><b>Бомба заложена</b><span>точка ${e.site || S.site} · у защиты 40 секунд</span></div>`; bn.innerHTML = h; setTimeout(() => { if (bn.innerHTML === h) bn.innerHTML = ''; }, 1800); } }
+  else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); top.innerHTML = ''; if (LV) LV.bd = 1; rc.innerHTML = '<span class="bomb">Бомба взорвана</span>'; }
+  else if (e.type === 'defuse') { top.innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">✓</text></g>`; rc.innerHTML = '<span>Бомба обезврежена</span>'; if (LV) LV.bd = 1; }
   else if (e.type === 'time') rc.innerHTML = '<span>Время вышло</span>';
 }
 /* ---------- Кнопки внизу ---------- */
@@ -165,7 +166,7 @@ function lvPlay() {
   const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [];
   LV.kd = { a: { k: [...m.a.k], d: [...m.a.d] }, b: { k: [...m.b.k], d: [...m.b.d] } };
   const L = m.play(sel, OV.plan);
-  OV.sel = []; LV.last = L; LV.ph = 'round'; LV.rt = 0; LV.S = rdScript(L, m.map.n); LV.ei = 0; rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
+  OV.sel = []; LV.last = L; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.S = rdScript(L, m.map.n); LV.ei = 0; rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
   taskAdd(G, roundEvent(L)); G.live = { sa: m.a.score, sb: m.b.score }; save();
   planDraw(); lvKD();
   const tg = (pl, cut) => pl.length ? pl.map(k => k === cut ? `<s>${AC[k].n}</s>` : AC[k].n).join(', ') : 'без приказов';
@@ -207,7 +208,11 @@ function lvTick(ts) {
     if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; if (M3C) qpTick(); if (LV.t <= 0) { if (M3C && LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } }
     else if (LV.ph === 'round') { const S = LV.S; LV.rt += dt / 1000 * LV.spd;
       while (LV.ei < S.ev.length && S.ev[LV.ei].t <= LV.rt) rdEvent(S, S.ev[LV.ei++]);
-      const left = Math.max(0, Math.ceil(115 - LV.rt * 115 / S.T)), rc = $('#rdc'); if (rc && !rc.querySelector('.bomb') && !/обезврежена|вышло/.test(rc.textContent)) rc.innerHTML = `<span>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</span>`;
+      /* часы раунда; после закладки — таймер бомбы 40 с */
+      const rc = $('#rdc'); if (rc && !LV.bd && !/вышло/.test(rc.textContent)) { let h;
+        if (S.plantT != null && LV.rt >= S.plantT) { const b = Math.max(0, Math.ceil(40 * (S.bombT - LV.rt) / Math.max(.1, S.bombT - S.plantT))); h = `<span class="bomb">C4 · 0:${String(b).padStart(2, '0')}</span>`; }
+        else { const left = Math.max(0, Math.ceil(115 - LV.rt * 115 / S.T)); h = `<span>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</span>`; }
+        if (rc.innerHTML !== h) rc.innerHTML = h; }
       if (LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); rdDotsAt(S, S.T); lvEnd(); } }
     else { LV.t -= dt * (LV.spd - 1); if (LV.t <= 0) lvNext(); }
   }

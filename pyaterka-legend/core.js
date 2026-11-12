@@ -224,7 +224,10 @@ class Match {
   /* Кто кого убил: первое убийство — исход первой дуэли, победитель раунда теряет от 0 до 4 игроков */
   feed(win, pa, pb, sideA, open) {
     const a = this.a, b = this.b, W = win ? a : b, L = win ? b : a, wSide = win ? sideA : other(sideA);
-    const r = R(), end = wSide === 'A' ? (r < .3 ? 'bomb' : 'elim') : (r < .22 ? 'defuse' : r < .32 ? 'time' : 'elim');
+    /* как кончился раунд (на победителя и деньги не влияет): атака чаще побеждает взрывом бомбы или добивает защиту уже после закладки,
+       защита — не даёт заложить, разминирует или держит до конца времени */
+    const r = R(), end = wSide === 'A' ? (r < .5 ? 'bomb' : 'elim') : (r < .3 ? 'defuse' : r < .42 ? 'time' : 'elim');
+    const planted = end === 'bomb' || end === 'defuse' || (end === 'elim' && wSide === 'A' && R() < .55);
     const gap = Math.abs(pa - pb), firstW = open.team === W;
     const surv = clamp(Math.round(rnd(.6, 3.2) + gap / 9 + (R() < .12 ? -1.5 : 0)), 1, firstW ? 5 : 4);
     const lSurv = end === 'elim' ? 0 : end === 'bomb' ? ri(0, 2) : end === 'time' ? ri(1, 2) : ri(0, 1);
@@ -243,7 +246,7 @@ class Match {
     let top = null; for (const key in cnt) if ((key[0] === 'a') === (W === a) && (!top || cnt[key] > cnt[top])) top = key;
     const ti = top ? +top[1] : wp(W, [0, 1, 2, 3, 4]), frags = top ? cnt[top] : 0; W.mv[ti]++;
     const lastAlive = surv === 1 ? pick([0, 1, 2, 3, 4]) : -1;
-    return { kills, end, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && lastAlive === ti, lastAlive, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
+    return { kills, end, planted, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && lastAlive === ti, lastAlive, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
   }
   /* Разыграть раунд: mine — приказы игрока, plan — направление, темп и ставка на игрока */
   play(mine, plan) {

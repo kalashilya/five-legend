@@ -24,7 +24,7 @@ const M3D = (() => {
     scene.background = new THREE.Color(TH.sky); scene.fog = new THREE.Fog(TH.fog, 90, 210);
     scene.add(new THREE.HemisphereLight(0xb8cce2, 0x3a2e22, .38));
     const sun = new THREE.DirectionalLight(0xffe2b8, 2.25); sun.position.set(-62, 46, 30); sun.castShadow = true;
-    const SM = MOB ? 1536 : 2048; sun.shadow.mapSize.set(SM, SM); Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 10, far: 220 }); sun.shadow.bias = -.0006; sun.shadow.normalBias = .03; scene.add(sun, sun.target);
+    const SM = MOB ? 1536 : 2048; sun.shadow.mapSize.set(SM, SM); Object.assign(sun.shadow.camera, { left: -74, right: 74, top: 74, bottom: -74, near: 10, far: 200 }); sun.shadow.bias = -.0006; sun.shadow.normalBias = .03; scene.add(sun, sun.target);
     const ctex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = R3.capabilities.getMaxAnisotropy(); TEX.push(t); return t; };
     let seed = 0; for (const ch of MAPN) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
     const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
@@ -84,9 +84,9 @@ const M3D = (() => {
       tr.forEach((p, i) => { o.rotation.set(0, rnd() * 3, 0); o.position.set(X(p[0]), 3.2, Z(p[1])); o.scale.set(1.3, .9, 1.3); o.updateMatrix(); tm.setMatrixAt(i, o.matrix); o.position.y = 0; o.scale.set(.3, 3, .3); o.updateMatrix(); trunk.setMatrixAt(i, o.matrix); }); tm.castShadow = trunk.castShadow = true; scene.add(tm, trunk); }
     /* точки A/B и респауны */
     const siteT = s => ctex(256, 256, (g, w) => { g.fillStyle = '#c4252b'; g.fillRect(0, 0, w, w); g.strokeStyle = '#fff'; g.lineWidth = 12; g.strokeRect(10, 10, w - 20, w - 20); g.fillStyle = '#fff'; g.font = '700 190px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(s, w / 2, w / 2 + 10); });
-    const siteLight = {};
+    const sitePl = {};
     for (const s of ['A', 'B']) { const p = RM.n[s], pl = new THREE.Mesh(new THREE.PlaneGeometry(9.5, 9.5), new THREE.MeshStandardMaterial({ map: siteT(s), roughness: .6, emissive: 0xff3030, emissiveIntensity: .08 })); pl.rotation.x = -Math.PI / 2; pl.position.set(X(p[0]), .2, Z(p[1])); pl.receiveShadow = true; scene.add(pl);
-      const l = new THREE.PointLight(0xff3b30, 0, 20, 2); l.position.set(X(p[0]), 3, Z(p[1])); scene.add(l); siteLight[s] = l; }
+      sitePl[s] = pl; }
     /* укрытия по карте: ящики, будка, фургон, машины */
     if (RM.props && RM.props.length) { const pm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .8 }), RM.props.length); RM.props.forEach(([x, y, w, d, h], i) => { o.position.set(X(x), .1, Z(y)); o.scale.set(w, h, d); o.rotation.set(0, 0, 0); o.updateMatrix(); pm.setMatrixAt(i, o.matrix); pm.setColorAt(i, col.setHex([0x8b6a3f, 0x6f7a80, 0x9a8a6a][i % 3])); }); pm.castShadow = pm.receiveShadow = true; if (pm.instanceColor) pm.instanceColor.needsUpdate = true; scene.add(pm); }
     for (const [k, c] of [['TS', 0xf2c14e], ['CTS', 0x4aa3ff]]) { const p = RM.n[k], z = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: .28, depthWrite: false })); z.rotation.x = -Math.PI / 2; z.position.set(X(p[0]), .22, Z(p[1])); scene.add(z); }
@@ -119,13 +119,17 @@ const M3D = (() => {
     const FX = [];
     const dotT = ctex(64, 64, (g, w) => { const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.35, 'rgba(255,255,255,.5)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, w, w); });
     const smokeT = ctex(128, 128, (g, w) => { for (let i = 0; i < 26; i++) { const x = 64 + (Math.random() - .5) * 60, y = 64 + (Math.random() - .5) * 60, r = 20 + Math.random() * 26, gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(235,238,242,.5)'); gr.addColorStop(1, 'rgba(235,238,242,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, w); } });
-    const flash = new THREE.PointLight(0xffd28a, 0, 14, 2); scene.add(flash);
+    /* свет эффектов: постоянный набор из 4 ламп (новые лампы перекомпилируют все шейдеры — отсюда подлагивания), радиус короткий — не светит сквозь стены */
+    const flash = new THREE.PointLight(0xffd28a, 0, 6, 2); scene.add(flash);
+    const LP = [0, 1, 2].map(() => { const l = new THREE.PointLight(0xffffff, 0, 8, 2); scene.add(l); return { l, own: null, at: 0 }; });
+    let lpN = 0; const lamp = (c, x, y, z, dist) => { const q = LP.find(e => !e.own) || LP.slice().sort((a, b) => a.at - b.at)[0], tok = {}; q.own = tok; q.at = ++lpN; q.l.color.set(c); q.l.position.set(x, y, z); q.l.distance = dist; q.l.intensity = 0;
+      return { set: v => { if (q.own === tok) q.l.intensity = v; }, off: () => { if (q.own === tok) { q.l.intensity = 0; q.own = null; } } }; };
     const kill = (o3, mats) => { scene.remove(o3); for (const x of mats) x.dispose(); };
     function tracer(a, b, side) {
       const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(X(a[0]), 1.15, Z(a[1])), new THREE.Vector3(X(b[0]), 1.1, Z(b[1]))]);
       const ln = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: side === 'T' ? 0xffe39a : 0xb8dcff, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false })); scene.add(ln);
       const mf = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotT, color: 0xffcc66, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); mf.position.set(X(a[0]), 1.2, Z(a[1])); mf.scale.setScalar(2.4); scene.add(mf);
-      flash.position.set(X(a[0]), 2, Z(a[1])); flash.intensity = 6;
+      flash.position.set(X(a[0]), 1.6, Z(a[1])); flash.intensity = 3;
       FX.push({ t: 0, d: .35, f: k => { ln.material.opacity = 1 - k; mf.material.opacity = 1 - k; mf.scale.setScalar(2.4 * (1 - k * .5)); }, end: () => { kill(ln, [ln.material, geo]); kill(mf, [mf.material]); } });
     }
     function smoke(p, life, tint) {
@@ -134,20 +138,20 @@ const M3D = (() => {
       FX.push({ t: 0, d: life, f: k => sp.forEach((s, i) => { const g = Math.min(1, k * 6); s.scale.setScalar(2 + g * (5.5 + i % 3)); s.material.opacity = Math.min(.85, g) * (k > .8 ? (1 - k) / .2 : 1); }), end: () => kill(grp, sp.map(s => s.material)) });
     }
     function fire(p, life) {
-      const grp = new THREE.Group(); grp.position.set(X(p[0]), .3, Z(p[1])); scene.add(grp); const l = new THREE.PointLight(0xff7a1a, 0, 12, 2); l.position.y = 1.5; grp.add(l); const sp = [];
+      const grp = new THREE.Group(); grp.position.set(X(p[0]), .3, Z(p[1])); scene.add(grp); const l = lamp(0xff7a1a, X(p[0]), 1.6, Z(p[1]), 7); const sp = [];
       for (let i = 0; i < 14; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotT, color: i % 2 ? 0xff7a1a : 0xffc04a, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false })); s.position.set((Math.random() - .5) * 4, Math.random() * .6, (Math.random() - .5) * 4); grp.add(s); sp.push(s); }
-      FX.push({ t: 0, d: life, f: (k, T) => { const a = k > .85 ? (1 - k) / .15 : Math.min(1, k * 8); l.intensity = 4 * a * (1 + .3 * Math.sin(T * 30)); sp.forEach((s, i) => { s.scale.setScalar((1.2 + Math.sin(T * 12 + i) * .5) * a + .01); s.position.y = (T * 2 + i * .3) % 1.6; s.material.opacity = a; }); }, end: () => kill(grp, sp.map(s => s.material)) });
+      FX.push({ t: 0, d: life, f: (k, T) => { const a = k > .85 ? (1 - k) / .15 : Math.min(1, k * 8); l.set(2.6 * a * (1 + .3 * Math.sin(T * 30))); sp.forEach((s, i) => { s.scale.setScalar((1.2 + Math.sin(T * 12 + i) * .5) * a + .01); s.position.y = (T * 2 + i * .3) % 1.6; s.material.opacity = a; }); }, end: () => { l.off(); kill(grp, sp.map(s => s.material)); } });
     }
-    function flashbang(p) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotT, color: 0xffffff, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false })); s.position.set(X(p[0]), 2.5, Z(p[1])); scene.add(s); const l = new THREE.PointLight(0xffffff, 0, 26, 2); l.position.set(X(p[0]), 3, Z(p[1])); scene.add(l);
-      FX.push({ t: 0, d: .55, f: k => { const a = k < .15 ? k / .15 : 1 - (k - .15) / .85; s.scale.setScalar(2 + a * 9); s.material.opacity = a; l.intensity = 14 * a; }, end: () => { kill(s, [s.material]); scene.remove(l); } }); }
+    function flashbang(p) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotT, color: 0xffffff, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false })); s.position.set(X(p[0]), 2.5, Z(p[1])); scene.add(s); const l = lamp(0xffffff, X(p[0]), 2.6, Z(p[1]), 10);
+      FX.push({ t: 0, d: .55, f: k => { const a = k < .15 ? k / .15 : 1 - (k - .15) / .85; s.scale.setScalar(2 + a * 9); s.material.opacity = a; l.set(7 * a); }, end: () => { l.off(); kill(s, [s.material]); } }); }
     let bomb = null, shake = 0;
     const bombMats = [new THREE.MeshStandardMaterial({ color: 0x3a3f2c, roughness: .6 }), new THREE.BoxGeometry(.7, .35, .5), new THREE.SphereGeometry(.12, 8, 6)];
-    function clearBomb() { if (bomb) { scene.remove(bomb.g); bomb.led.material.dispose(); bomb = null; } for (const s of ['A', 'B']) siteLight[s].intensity = 0; }
+    function clearBomb() { if (bomb) { scene.remove(bomb.g); bomb.led.material.dispose(); bomb = null; } for (const s of ['A', 'B']) sitePl[s].material.emissiveIntensity = .08; }
     function plantBomb(site) { const p = RM.n[site]; if (!p) return; clearBomb(); const g = new THREE.Group(), b = new THREE.Mesh(bombMats[1], bombMats[0]), led = new THREE.Mesh(bombMats[2], new THREE.MeshBasicMaterial({ color: 0xff2a1a }));
       b.position.y = .4; led.position.set(.2, .62, 0); g.add(b, led); g.position.set(X(p[0]) + 1.5, 0, Z(p[1]) - 1.2); scene.add(g); bomb = { g, led, site, t: 0 }; }
     function boom(site) { const p = RM.n[site]; if (!p) return; const geo = new THREE.SphereGeometry(1, 20, 14), s = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffb02e, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); s.position.set(X(p[0]), 1, Z(p[1])); scene.add(s);
-      const l = new THREE.PointLight(0xffa040, 30, 60, 2); l.position.set(X(p[0]), 6, Z(p[1])); scene.add(l); clearBomb(); smoke(p, 6, 0x4a4440); shake = 1.4;
-      FX.push({ t: 0, d: 1.3, f: k => { s.scale.setScalar(2 + k * 22); s.material.opacity = 1 - k; l.intensity = 30 * (1 - k); }, end: () => { kill(s, [s.material, geo]); scene.remove(l); } }); }
+      const l = lamp(0xffa040, X(p[0]), 4, Z(p[1]), 18); l.set(14); clearBomb(); smoke(p, 6, 0x4a4440); shake = 1.4;
+      FX.push({ t: 0, d: 1.3, f: k => { s.scale.setScalar(2 + k * 22); s.material.opacity = 1 - k; l.set(14 * (1 - k)); }, end: () => { l.off(); kill(s, [s.material, geo]); } }); }
 
     /* камера: в подготовке — вся карта, в раунде — за живыми игроками */
     const CAM = { x: 0, z: 0, d: 150, tx: 0, tz: 0, td: 92 };
@@ -171,7 +175,6 @@ const M3D = (() => {
       CAM.x = damp(CAM.x, CAM.tx, 1.6, dt); CAM.z = damp(CAM.z, CAM.tz, 1.6, dt); CAM.d = damp(CAM.d, CAM.td, 1.3, dt);
       const tilt = .95, sx = shake > 0 ? (Math.random() - .5) * shake : 0, sw = Math.sin(T * .12) * 1.5 + sx; shake = Math.max(0, shake - dt * 2);
       cam.position.set(CAM.x + rt[0] * sw + dn[0] * CAM.d * Math.cos(tilt), CAM.d * Math.sin(tilt), CAM.z + rt[1] * sw + dn[1] * CAM.d * Math.cos(tilt)); cam.lookAt(CAM.x, 0, CAM.z);
-      sun.target.position.set(CAM.x, 0, CAM.z); sun.position.set(CAM.x - 62, 46, CAM.z + 30); sun.target.updateMatrixWorld();
       scene.fog.near = CAM.d * .95; scene.fog.far = CAM.d * 2.6;
     }
 
@@ -203,7 +206,7 @@ const M3D = (() => {
         if (p.dead) { p.fig.rotation.x = damp(p.fig.rotation.x, -Math.PI / 2, 9, dt); p.fig.position.y = damp(p.fig.position.y, .35, 9, dt); }
         else p.fig.position.y = mv ? Math.abs(Math.sin(T * 9 + d.i)) * .08 : 0;
         const ds = cam.position.distanceTo(p.g.position), sc = ds * (MOB ? .085 : .06); p.tag.scale.set(sc, sc / 2, 1); p.tag.position.y = 2.4 + sc * .25; p.ring.scale.setScalar(Math.max(1, ds / 55)); }
-      if (bomb) { bomb.t += dt * (ph === 'round' ? spd : 1); const bl = bomb.def ? .6 : (Math.sin(bomb.t * (6 + bomb.t * .8)) > 0 ? 1 : .1); bomb.led.material.color.set(bomb.def ? 0x4aa3ff : 0xff2a1a).multiplyScalar(bl + .2); siteLight[bomb.site].color.set(bomb.def ? 0x4aa3ff : 0xff3b30); siteLight[bomb.site].intensity = bl * 5; }
+      if (bomb) { bomb.t += dt * (ph === 'round' ? spd : 1); const bl = bomb.def ? .6 : (Math.sin(bomb.t * (6 + bomb.t * .8)) > 0 ? 1 : .1); bomb.led.material.color.set(bomb.def ? 0x4aa3ff : 0xff2a1a).multiplyScalar(bl + .2); const em = sitePl[bomb.site].material; em.emissive.set(bomb.def ? 0x3a8cff : 0xff3030); em.emissiveIntensity = .08 + bl * .5; }
       flash.intensity = Math.max(0, flash.intensity - dt * 40);
       for (let i = FX.length - 1; i >= 0; i--) { const f = FX[i]; f.t += dt * (ph === 'round' ? spd : 1); const k = Math.min(1, f.t / f.d); f.f(k, T); if (k >= 1) { f.end(); FX.splice(i, 1); } }
       camFrame(Math.min(.05, dt || 0) || 0, t, ph);

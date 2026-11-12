@@ -311,7 +311,10 @@ class Match {
   /* Кто кого убил: первое убийство — исход первой дуэли, победитель раунда теряет от 0 до 4 игроков */
   feed(win, pa, pb, sideA, open) {
     const a = this.a, b = this.b, W = win ? a : b, L = win ? b : a, wSide = win ? sideA : other(sideA);
-    const r = R(), end = wSide === 'A' ? (r < .3 ? 'bomb' : 'elim') : (r < .22 ? 'defuse' : r < .32 ? 'time' : 'elim');
+    /* как кончился раунд (на победителя и деньги не влияет): атака чаще побеждает взрывом бомбы или добивает защиту уже после закладки,
+       защита — не даёт заложить, разминирует или держит до конца времени */
+    const r = R(), end = wSide === 'A' ? (r < .5 ? 'bomb' : 'elim') : (r < .3 ? 'defuse' : r < .42 ? 'time' : 'elim');
+    const planted = end === 'bomb' || end === 'defuse' || (end === 'elim' && wSide === 'A' && R() < .55);
     const gap = Math.abs(pa - pb), firstW = open.team === W;
     const surv = clamp(Math.round(rnd(.6, 3.2) + gap / 9 + (R() < .12 ? -1.5 : 0)), 1, firstW ? 5 : 4);
     const lSurv = end === 'elim' ? 0 : end === 'bomb' ? ri(0, 2) : end === 'time' ? ri(1, 2) : ri(0, 1);
@@ -330,7 +333,7 @@ class Match {
     let top = null; for (const key in cnt) if ((key[0] === 'a') === (W === a) && (!top || cnt[key] > cnt[top])) top = key;
     const ti = top ? +top[1] : wp(W, [0, 1, 2, 3, 4]), frags = top ? cnt[top] : 0; W.mv[ti]++;
     const lastAlive = surv === 1 ? pick([0, 1, 2, 3, 4]) : -1;
-    return { kills, end, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && lastAlive === ti, lastAlive, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
+    return { kills, end, planted, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && lastAlive === ti, lastAlive, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
   }
   /* Разыграть раунд: mine — приказы игрока, plan — направление, темп и ставка на игрока */
   play(mine, plan) {
@@ -874,7 +877,7 @@ function rdScript(L, mapN) {
   let sd = ((L.round || 1) * 2654435761) >>> 0; for (const ch of mapN) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0;
   const rnd = () => { sd = (sd + 0x6D2B79F5) | 0; let t = Math.imul(sd ^ sd >>> 15, 1 | sd); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
   const dir = attPlan.dir === 'A' || attPlan.dir === 'B' ? attPlan.dir : 'S', site = dir !== 'S' ? dir : rnd() < .5 ? 'A' : 'B', oth = site === 'A' ? 'B' : 'A';
-  const tempo = RD_V.ex[attPlan.tempo] ? attPlan.tempo : 'norm', kills = L.kills || [], timeR = L.end === 'time', plants = L.end === 'bomb' || L.end === 'defuse';
+  const tempo = RD_V.ex[attPlan.tempo] ? attPlan.tempo : 'norm', kills = L.kills || [], timeR = L.end === 'time', plants = L.end === 'bomb' || L.end === 'defuse' || !!L.planted;
   const sc = M.n[site], sR = g.nr[site] || 8, F = 1;
   const dots = [];
   for (const team of ['a', 'b']) { const att = (team === 'a') === aAtt;
@@ -967,16 +970,17 @@ function rdScript(L, mapN) {
   const lastK = kills.length ? tPrev : 0;
   if (plants && planter) { const pe = plantEst(); plantT = pe != null ? pe : Math.max(tc + 1, lastK - .5); if (planter.dt != null && planter.dt < plantT + .3) { const e = ev.find(x => x.type === 'kill' && (x.k.byA ? 'b' : 'a') + x.k.v === planter.team + planter.i); planter.dt = plantT + .3; planter.dp = rdWp(planter, planter.dt); if (e) e.t = planter.dt; } ev.push({ t: plantT, type: 'plant', site }); }
   let T;
-  if (L.end === 'bomb') { const tb = Math.max(plantT + 6.5, lastK + 1.4); ev.push({ t: tb, type: 'boom', site }); T = tb + 1.2; }
+  let bombT = plantT != null ? plantT + 8 : null;
+  if (L.end === 'bomb') { const tb = Math.max(plantT + 7.5, lastK + 1.4); bombT = tb; ev.push({ t: tb, type: 'boom', site }); T = tb + 1.2; }
   else if (L.end === 'defuse') { const bp = rdSnap(M, fsl[0], .9), cs = C_.filter(d => d.dt == null), df = cs.sort((x, y) => rdD(rdPos(x, lastK), bp) - rdD(rdPos(y, lastK), bp))[0];
     let td = Math.max(plantT + 1.5, lastK + 1.2); if (df) { const t0 = Math.max(lastK + .3, plantT + .4); cut(df, t0); const a = go(df, t0, [bp[0] + 1.2, bp[1] + .6], RD_V.hunt * df.sp); df.lk.push([a, 1e9, bp]); td = Math.max(td, a + 1.6); }
-    ev.push({ t: td, type: 'defuse', site }); T = td + 1.3; }
+    ev.push({ t: td, type: 'defuse', site }); T = td + 1.3; bombT = Math.max(bombT, td + 1.5); }
   else if (timeR) { const tt = Math.max(lastK + 2, 16); ev.push({ t: tt, type: 'time' }); T = tt + 1.2; }
-  else T = lastK + 1.6;
+  else { T = lastK + 1.6; if (plantT != null) { T = Math.max(T, plantT + 1.6); bombT = Math.max(bombT, T + 2); } }
   T = Math.max(T, 12);
   /* длинный раунд сжимаем до 22 с: всё ускоряется одинаково, совпадения по времени сохраняются */
   if (T > 22) { const k = 22 / T, sc1 = x => x * k; for (const d of dots) { d.wp.forEach(w => { w[0] *= k; }); d.lk.forEach(l => { l[0] *= k; if (l[1] < 1e8) l[1] *= k; }); if (d.dt != null) d.dt *= k; if (d.stArr) d.stArr *= k; if (d.postT) d.postT *= k; if (d.arr) d.arr *= k; }
-    ev.forEach(e => { e.t = sc1(e.t); }); tc = sc1(tc); if (plantT != null) plantT = sc1(plantT); T = 22; }
+    ev.forEach(e => { e.t = sc1(e.t); }); tc = sc1(tc); if (plantT != null) plantT = sc1(plantT); if (bombT != null) bombT = sc1(bombT); T = 22; }
   ev.sort((x, y) => x.t - y.t);
   /* гранаты: дым/молотов/флешка выхода + дым в начале раунда */
   const ut = [];
@@ -986,7 +990,7 @@ function rdScript(L, mapN) {
   /* убийство сквозь дым — для значка в килфиде */
   for (const e of ev) if (e.type === 'kill') { const K = find(e.k.byA ? 'a' : 'b', e.k.k), V = find(e.k.byA ? 'b' : 'a', e.k.v); if (!K || !V) continue; const a = rdPos(K, e.t - .01), b = V.dp;
     e.sm = ut.some(u => u.k === 'smoke' && e.t > u.t + .4 && e.t < u.t + 8.5 && (() => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, k = clamp(((u.p[0] - a[0]) * dx + (u.p[1] - a[1]) * dy) / l, 0, 1); return Math.hypot(a[0] + dx * k - u.p[0], a[1] + dy * k - u.p[1]) < 3; })()); }
-  return { dots, ev, T, site, tc, plantT, aAtt, ut, planter: planter ? planter.team + planter.i : null };
+  return { dots, ev, T, site, tc, plantT, bombT, aAtt, ut, planter: planter ? planter.team + planter.i : null };
 }
 
 /* ---------- План на карте до раунда: куда пойдёт ваша команда ---------- */

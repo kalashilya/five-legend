@@ -1735,6 +1735,16 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .acc-err{margin:0;padding:10px 12px;border-radius:10px;background:#ff5a5a1a;border:1px solid #ff5a5a55;color:#ffb3a8;font-size:13px}.acc-go{min-height:52px;font-size:16px}
 .rw-acc{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:10px 12px;border-radius:12px;background:#4aa3ff14;border:1px solid #4aa3ff44;font-size:12.5px;flex-wrap:wrap}
 
+.home-inst{display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:14px;border:1px solid #6fb7ff55;background:linear-gradient(120deg,#122236,#10141b);position:relative}
+.home-inst>div{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}.home-inst b{font:700 14px var(--f-d);letter-spacing:.04em;text-transform:uppercase;color:#9fd0ff}.home-inst div span{font-size:12px;color:#c3ccd6;line-height:1.3}.home-inst .btn{flex:none;min-height:44px;padding:0 14px}
+.hi-ico{flex:none;width:44px;height:44px;border-radius:11px;background:url(icon-180.png) center/cover,linear-gradient(145deg,#f0c477,#8a6420);box-shadow:0 4px 14px #0008}.hi-ico.big{width:72px;height:72px;border-radius:17px;margin:0 auto}
+.hi-x{flex:none;width:32px;height:32px;border:0;border-radius:50%;background:#ffffff10;color:#9aa4b0;font-size:18px;line-height:1;cursor:pointer}
+@media (min-width:761px){#app[data-tab="home"] .home-inst{grid-column:1 / -1}}
+#sheet .in.st-pop.inst-pop{gap:12px}.inst-pop h2{text-align:center}.inst-pop .acc-sub{margin:0;text-align:center;font-size:13px;color:#c3ccd6;line-height:1.4}
+.in-steps{display:flex;flex-direction:column;gap:8px}.in-step{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff14}
+.in-step>b{flex:none;width:24px;height:24px;border-radius:50%;background:#f0c477;color:#1a1408;font:700 13px/24px var(--f-d);text-align:center}
+.in-ic{flex:none;width:40px;height:40px;border-radius:10px;background:#0d1826;display:grid;place-items:center;color:#4aa3ff}.in-ic svg{width:24px;height:24px}.in-ok{font:700 9.5px sans-serif;color:#4aa3ff;letter-spacing:-.02em}
+.in-step p{margin:0;font-size:14px;font-weight:600;color:#eef2f6}.in-step small{display:block;margin-top:2px;font-size:12px;color:#97a2ae;line-height:1.3}
 .home-acc{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid #f0c47766;background:linear-gradient(120deg,#2b2412,#10141b)}
 .home-acc div{display:flex;flex-direction:column;gap:3px;min-width:0}.home-acc b{font:700 14px var(--f-d);letter-spacing:.04em;text-transform:uppercase;color:#f0c477}.home-acc span{font-size:12px;color:#c9c2b2;line-height:1.3}.home-acc .btn{flex:none;min-height:44px;padding:0 18px}
 @media (min-width:761px){#app[data-tab="home"] .home-acc{grid-column:1 / -1}}
@@ -3013,6 +3023,7 @@ function vHome() {
   const tut = st < 3 ? `<section class="lobby-tutorial"><div><span class="lobby-kicker">ПЕРВЫЙ ВЫХОД НА АРЕНУ</span><b>${st === 0 ? 'Открой стартовые кейсы' : st === 1 ? 'Собери свою пятёрку' : 'Сыграй первый матч'}</b><small>Шаг ${st + 1} из 3 · обучение</small></div>${st === 0 ? '<button class="btn pri s" data-act="tab" data-v="packs">ОТКРЫТЬ КЕЙСЫ ↗</button>' : st === 1 ? '<button class="btn pri s" data-act="auto">СОБРАТЬ СОСТАВ ↗</button>' : '<button class="btn pri s" data-act="fight">СЫГРАТЬ ПЕРВЫЙ МАТЧ ↗</button>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk">Понятно</button></div>` : ''}${tut}
   ${AU ? '' : `<section class="home-acc"><div><b>Сохрани прогресс в аккаунте</b><span>Ник и пароль — и карточки не потеряются, можно играть с любого телефона.</span></div><button class="btn pri s" data-act="authOpen">Войти</button></section>`}
+  ${instH()}
   <section class="lobby-hero">
     <div class="lobby-hero__art" aria-hidden="true">
       <div class="lobby-hero__roof"></div><div class="lobby-hero__beam lobby-hero__beam--a"></div><div class="lobby-hero__beam lobby-hero__beam--b"></div>
@@ -3309,6 +3320,7 @@ function vSheet() {
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
   if (sheet.t === 'auth') return authH();
+  if (sheet.t === 'inst') return instSheetH();
   if (sheet.t === 'sync') return syncH();
   if (sheet.t === 'top') return topH();
   if (sheet.t === 'slot') {
@@ -3726,7 +3738,7 @@ function start() {
   const r = load();
   if (r !== 'ok') { G = newProfile(now()); if (r === 'broken') G.note = 'Сохранение не удалось прочитать. Его копия оставлена в памяти браузера, начата новая игра.'; }
   if (G.live) { applyResult(G, false, G.live.sa || 0, G.live.sb || 0); delete G.live; G.note = 'Прошлый матч был прерван и засчитан как поражение.'; }
-  cloudStart(); save(); render(); introGo(r === 'new');
+  cloudStart(); installStart(); save(); render(); introGo(r === 'new');
 }
 /* заставка: пока игра грузится — лёгкая фаза; когда готова — показ (~2,7 с), затем пролёт в игру. Нажатие пропускает */
 function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; el.classList.add('out'); setTimeout(() => el.remove(), 800); }
@@ -4453,6 +4465,42 @@ function cloudStart() {
   document.addEventListener('keydown', e => { if (e.key === 'Enter' && sheet && sheet.t === 'auth' && (e.target.id === 'au-nick' || e.target.id === 'au-pass')) { e.preventDefault(); if (ACT_ACC.authGo() !== false) render(); } });
 }
 Object.assign(ACT, ACT_ACC);
+/* ---------- Установка как приложение ----------
+   Android (Chrome, Яндекс, Samsung): системное окно «Установить приложение» по одной кнопке.
+   iPhone: Apple не даёт сайтам ставить себя сами — показываем короткую подсказку с тремя шагами.
+   Уже установлено (открыто с иконки) — плашку не показываем. */
+let INST = null;
+const isStandalone = () => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } };
+const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isAndroid = () => /Android/i.test(navigator.userAgent);
+const instHidden = () => +(lsGet(KEY + '-inst-no') || 0) > Date.now();
+const canInstall = () => !isStandalone() && /^https:$/.test(location.protocol) && !instHidden() && (!!INST || isIOS() || isAndroid());
+function installStart() {
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(() => { /* без офлайна */ });
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); INST = e; if (!OV && !sheet) render(); });
+  addEventListener('appinstalled', () => { INST = null; if (!OV) render(); });
+}
+const ICO_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 11v9h14v-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICO_ADD = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const ICO_MENU = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="19" r="1.8" fill="currentColor"/></svg>';
+function instH() {
+  if (!canInstall()) return '';
+  return `<section class="home-inst"><span class="hi-ico" aria-hidden="true"></span><div><b>Установи игру</b><span>Как приложение: иконка и весь экран</span></div>
+    <button class="btn pri s" data-act="install">Установить</button><button class="hi-x" data-act="instNo" aria-label="Скрыть">×</button></section>`;
+}
+function instSheetH() {
+  const ios = isIOS(), step = (n, ic, t, s) => `<div class="in-step"><b>${n}</b><span class="in-ic">${ic}</span><div><p>${t}</p>${s ? `<small>${s}</small>` : ''}</div></div>`;
+  const steps = ios ? step(1, ICO_SHARE, 'Нажмите «Поделиться»', 'квадрат со стрелкой вверх — внизу экрана в Safari') + step(2, ICO_ADD, 'Выберите «На экран „Домой“»', 'если не видно — прокрутите список вниз') + step(3, '<b class="in-ok">Добавить</b>', 'Нажмите «Добавить» справа вверху', 'иконка «Пятёрка» появится на экране')
+    : step(1, ICO_MENU, 'Откройте меню браузера', 'три точки справа вверху') + step(2, ICO_ADD, 'Нажмите «Установить приложение»', 'или «Добавить на главный экран»') + step(3, '<b class="in-ok">Установить</b>', 'Подтвердите', 'иконка «Пятёрка» появится на экране');
+  return `<div class="in st-pop inst-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <span class="hi-ico big" aria-hidden="true"></span><h2>Установить игру</h2><p class="acc-sub">${ios ? 'На iPhone это делается в три касания — так требует Apple.' : 'Это займёт пару секунд.'} Потом игра открывается с иконки на весь экран, без браузера.</p>
+    <div class="in-steps">${steps}</div>${ios ? '<p class="sm mut" style="text-align:center;margin:0">Работает в Safari. В других браузерах на iPhone кнопка «Поделиться» — в меню.</p>' : ''}
+    <button class="btn pri acc-go" data-act="close">Понятно</button></div>`;
+}
+Object.assign(ACT, {
+  install() { if (INST) { const e = INST; INST = null; e.prompt(); e.userChoice.then(() => render()).catch(() => {}); return false; } sheet = { t: 'inst' }; },
+  instNo() { lsSet(KEY + '-inst-no', String(Date.now() + 7 * 86400000)); }
+});
 try { start(); document.getElementById('app').dataset.ok = 1; } catch (e) { window.__cmErr(e && e.stack || e); }
 })();
 </script>

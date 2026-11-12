@@ -79,7 +79,7 @@ function cardH(c, o = {}) {
 }
 const ownH = (id, cls) => { const o = own(id); return cardH(CARDS[id], { lv: o ? o.lv : 1, n: o ? o.n : 0, cls, pips: !!o, no: !o }); };
 /* значок кейса: снимок 3D-кейса из сцены открытия; если картинок нет (например, в тестах) — прежний рисованный значок */
-const pkH = (t, cls) => window.CASE_IMG && CASE_IMG[t] ? `<div class="pk pk-3d ${t} ${cls || ''}"><img src="${CASE_IMG[t]}" alt="" draggable="false"></div>` : `<div class="pk ${t} ${cls || ''}"><i class="lid"><span class="pk-rib"></span></i><i class="lock"></i><div class="box"><span class="pk-side"></span><span class="pk-stamp">5</span><b>${PACKS[t].n}</b></div></div>`;
+const pkH = (t, cls) => t === 'limit' ? pkH('elite', 'pk-lim ' + (cls || '')) : window.CASE_IMG && CASE_IMG[t] ? `<div class="pk pk-3d ${t} ${cls || ''}"><img src="${CASE_IMG[t]}" alt="" draggable="false"></div>` : `<div class="pk ${t} ${cls || ''}"><i class="lid"><span class="pk-rib"></span></i><i class="lock"></i><div class="box"><span class="pk-side"></span><span class="pk-stamp">5</span><b>${PACKS[t].n}</b></div></div>`;
 const LCOL = ['#b98a5a', '#b9c2cc', '#f2c14e', '#7fe0d0', '#8fb8ff', '#e45cf2', '#ff5a5a'];
 const rankH = i => `<svg class="rank" viewBox="0 0 44 30" aria-hidden="true"><path d="M2 2h40v17L22 28 2 19z" fill="#101215" stroke="${LCOL[i]}" stroke-width="1.6"/>${[0, 1, 2].slice(0, i % 3 + 1).map(k => `<path d="M12 ${7 + k * 5}l10 4 10-4" fill="none" stroke="${LCOL[i]}" stroke-width="2.2"/>`).join('')}</svg>`;
 const segH = (act, cur, opts) => `<div class="seg">${opts.map(([v, n, dot]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${n}${dot ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>`;
@@ -206,7 +206,7 @@ function vPacks() {
   const inv = Object.keys(PACKS).filter(k => G.packs[k] > 0);
   return `${dailyReady(G, now()) ? `<section class="pn"><div class="shop">${pkH('basic')}<div class="plain"><h3>Бесплатный кейс</h3><button class="btn pri" data-act="daily">Забрать</button></div></div></section>` : ''}
   ${inv.length ? `<section class="plain"><h3>Ваши кейсы</h3>${inv.map(k => `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${PACKS[k].n} <span class="num mut" style="font-size:15px">×${G.packs[k]}</span></h2><button class="btn pri" data-act="open" data-v="${k}">Открыть</button></div></div></div>`).join('')}</section>` : ''}
-  <section class="plain"><h3>Магазин</h3>${Object.keys(PACKS).map(k => { const P = PACKS[k]; return `<div class="pn"><div class="shop">${pkH(k)}<div class="plain"><h2>${P.n}</h2><p class="sm mut">${P.d}</p><div class="pill" style="align-self:flex-start"><i class="coin"></i>${nf(P.price)}</div></div></div><div class="odds">${P.odds.map((o, i) => `<span style="--rc:var(--r${i})">${o}%</span>`).join('')}</div><button class="btn" data-act="buy" data-v="${k}" ${G.coins < P.price ? 'disabled' : ''}>${G.coins < P.price ? 'Не хватает монет' : 'Купить и открыть'}</button></div>`; }).join('')}</section>
+  <section class="plain"><h3>Магазин</h3>${Object.keys(PACKS).filter(k => packOn(k, now())).map(k => { const P = PACKS[k]; return `<div class="pn ${P.from ? 'pk-limit' : ''}">${P.from ? `<div class="lim-tag"><b>Ограниченный кейс</b><span>до ${new Date(P.to).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })} · осталось <em id="lim-t" data-to="${P.to}"></em></span></div>` : ''}<div class="shop">${pkH(k)}<div class="plain"><h2>${P.n}</h2><p class="sm mut">${P.d}</p><div class="pill" style="align-self:flex-start"><i class="coin"></i>${nf(P.price)}</div></div></div><div class="odds">${P.odds.map((o, i) => `<span style="--rc:var(--r${i})">${o}%</span>`).join('')}</div><button class="btn" data-act="buy" data-v="${k}" ${G.coins < P.price ? 'disabled' : ''}>${G.coins < P.price ? 'Не хватает монет' : 'Купить и открыть'}</button></div>`; }).join('')}</section>
   <p class="sm mut">В кейсе пять карточек. Проценты показывают шанс редкости каждой из них: ${RAR.map(x => x.toLowerCase()).join(', ')}. Внутри редкости реже выпадают игроки с высоким рейтингом и из команд выше в таблице. С шансом 7% вместо обычной версии выпадает «${SPN[1]}» (+3 к рейтингу), с шансом 12% вместо высшей редкости выпадает «${SPN[2]}».</p>`;
 }
 
@@ -503,7 +503,7 @@ function startPack(type) {
 }
 function packBuild() {
   const o = $('#over'), d3 = rvOk();
-  o.innerHTML = `${d3 ? '<iframe class="rv3d" id="rv3d" title="Открытие кейса"></iframe>' : ''}<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · 5 карточек</p><div class="po-stage" id="po-stage">${d3 ? '' : `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`}</div><div class="po-name" id="po-name"><span class="mut">${d3 ? 'Кейс загружается…' : 'Нажмите на кейс, чтобы открыть'}</span></div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать все сразу</button></div></div>`;
+  o.innerHTML = `${d3 ? '<iframe class="rv3d" id="rv3d" title="Открытие кейса"></iframe>' : ''}<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow" id="po-top">Кейс «${PACKS[OV.type].n}» · ${OV.cards.length} карточек</p><div class="po-stage" id="po-stage">${d3 ? '' : `<button data-act="poTap" class="po-pk" aria-label="Открыть кейс">${pkH(OV.type)}</button>`}</div><div class="po-name" id="po-name"><span class="mut">${d3 ? 'Кейс загружается…' : 'Нажмите на кейс, чтобы открыть'}</span></div><div class="rowb" id="po-btn" style="width:100%"><button class="btn s" data-act="poSkip">Показать все сразу</button></div></div>`;
   o.classList.toggle('po3d', d3); o.hidden = false; o.scrollTop = 0; OV.built = true;
   if (d3) rvStart();
 }
@@ -522,7 +522,7 @@ const hslHex = (h, s, l) => { const f = n => { const k = (n + h / 30) % 12, a = 
 /* тот же источник фото, что и у карточки в интерфейсе (faceH): HLTV, фото, добавленное в игре, или папка photos */
 const rvPhoto = c => { const s = slug(c.nick); let u = c.hltv && typeof c.hltv.photo === 'string' && /^https:\/\/(?:img-cdn|static)\.hltv\.org\//.test(c.hltv.photo) ? c.hltv.photo : IMG[c.base];
   if (!u && s && typeof PH[s] === 'string') u = PH[s]; if (!u) return ''; try { return new URL(u, location.href).href; } catch (e) { return ''; } };
-function rvCard(x, type) { const c = x.c; return { box: PACKS[type] && ['basic', 'pro', 'elite'].includes(type) ? type : 'pro', boxN: PACKS[type] ? PACKS[type].n : '', nick: c.nick, team: teamOf(c), cc: ccOf(c), role: RN[c.role] || '', ovr: c.ovr, rar: rarName(c), col: glow(c), tc: hslHex(hsh(c.team) % 360, .75, .58), st: SK.map(k => [SS[k], c.st[k]]), photo: rvPhoto(c) }; }
+function rvCard(x, type) { const c = x.c; return { box: type === 'limit' ? 'elite' : PACKS[type] && ['basic', 'pro', 'elite'].includes(type) ? type : 'pro', boxN: PACKS[type] ? PACKS[type].n : '', nick: c.nick, team: teamOf(c), cc: ccOf(c), role: RN[c.role] || '', ovr: c.ovr, rar: rarName(c), col: glow(c), tc: hslHex(hsh(c.team) % 360, .75, .58), st: SK.map(k => [SS[k], c.st[k]]), photo: rvPhoto(c) }; }
 function rvStart() {
   const f = $('#rv3d'); if (!f) return; OV.top = topOf(OV.cards); const me = OV;
   RV = { f, ov: me, ready: false, quiet: false };
@@ -605,7 +605,7 @@ const nameH = x => `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span clas
 function poDone() {
   if (!OV || OV.t !== 'pack') return; OV.phase = 'done'; rvDrop();
   const l = [...OV.cards].sort((a, b) => b.c.ovr - a.c.ovr), top = l[0], st = $('#po-stage');
-  st.classList.remove('wo-on'); $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · 5 карточек`;
+  st.classList.remove('wo-on'); $('#po-top').textContent = `Кейс «${PACKS[OV.type].n}» · ${OV.cards.length} карточек`;
   $('#po-bg').style.setProperty('--gl', glow(top.c));
   st.innerHTML = `<div class="grid" style="width:100%">${l.map((x, i) => `<div class="plain big" style="gap:4px;animation-delay:${i * 90}ms"><button data-act="card" data-id="${x.c.id}" aria-label="${esc(x.c.nick)}">${cardH(x.c, { lv: own(x.c.id).lv, pips: true })}</button><span class="bdg ${x.isNew ? 'new' : 'dup'}" style="align-self:flex-start">${x.isNew ? 'новая' : 'дубль'}</span></div>`).join('')}</div>`;
   $('#po-name').innerHTML = `<b style="color:${glow(top.c)}">Лучшая: ${esc(top.c.nick)}</b><span class="sm mut">Новых карточек: ${l.filter(x => x.isNew).length} из 5</span>`;
@@ -787,7 +787,7 @@ const ACT = {
   tuGo() { const rar = tuRar, res = tuRun(G, tuSel); if (!res) return; tuSel = []; OV = { t: 'tu', res, rar, built: false }; },
   daily() { if (dailyReady(G, now())) { G.daily = mskDay(now()); G.packs.basic++; tab = 'packs'; } },
   open(v) { if (G.packs[v] > 0) { G.packs[v]--; startPack(v); } },
-  buy(v) { const P = PACKS[v]; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
+  buy(v) { const P = PACKS[v]; if (!P || !packOn(v, now())) return; if (G.coins >= P.price) { G.coins -= P.price; startPack(v); } },
   poTap() { return poTap(); },
   poSkip() { if (OV && OV.t === 'pack' && OV.phase === 'show' && RV && RV.ready) { RV.quiet = true; RV.f.contentWindow.postMessage({ t: 'skip' }, '*'); return false; } if (OV && OV.t === 'pack' && OV.phase !== 'done') poDone(); return false; },
   ovClose() { OV = null; LV = null; window.scrollTo(0, 0); },
@@ -834,3 +834,8 @@ function introHide() { const el = document.getElementById('intro'); if (!el || e
 function introGo(first) { const el = document.getElementById('intro'); if (!el) return; el.addEventListener('click', introHide);
   /* два кадра — чтобы первая отрисовка игры закончилась и анимация шла на свободном потоке */
   requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add('go'); setTimeout(introHide, noMotion() ? 350 : first ? 3300 : 2800); })); }
+/* ограниченный кейс: отсчёт до конца и появление/исчезновение в магазине без перезагрузки */
+let limOn = null;
+setInterval(() => { const on = Object.keys(PACKS).some(k => PACKS[k].from && packOn(k, now()));
+  if (limOn !== null && on !== limOn && tab === 'packs' && !OV && !sheet) render(); limOn = on;
+  const e = document.getElementById('lim-t'); if (e) { const s = Math.max(0, Math.floor((+e.dataset.to - now()) / 1000)); e.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); } }, 1000);

@@ -36,29 +36,49 @@ const M3D = (() => {
     groundT.wrapS = groundT.wrapT = THREE.RepeatWrapping; groundT.repeat.set(3, 3);
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(260, 260), new THREE.MeshStandardMaterial({ map: groundT, roughness: 1 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
     /* улицы: бордюр + покрытие, круглые стыки */
-    const stT = ctex(256, 256, (g, w) => { g.fillStyle = '#7a756b'; g.fillRect(0, 0, w, w); for (let i = 0; i < 2200; i++) { const v = 90 + Math.random() * 60 | 0; g.fillStyle = `rgb(${v},${v - 4},${v - 10})`; g.fillRect(Math.random() * w, Math.random() * w, 2 + Math.random() * 3, 2 + Math.random() * 3); } g.strokeStyle = 'rgba(0,0,0,.18)'; g.lineWidth = 2; for (let y = 0; y < w; y += 32) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); } });
+    const stT = ctex(256, 256, (g, w) => { g.fillStyle = '#7a756b'; g.fillRect(0, 0, w, w); for (let i = 0; i < 2200; i++) { const v = 90 + Math.random() * 60 | 0; g.fillStyle = `rgb(${v},${v - 4},${v - 10})`; g.fillRect(Math.random() * w, Math.random() * w, 2 + Math.random() * 3, 2 + Math.random() * 3); } });
     stT.wrapS = stT.wrapT = THREE.RepeatWrapping;
     const stMat = new THREE.MeshStandardMaterial({ map: stT, color: new THREE.Color(TH.st).multiplyScalar(.78), roughness: .95 }), curbMat = new THREE.MeshStandardMaterial({ color: TH.curb, roughness: .9 });
-    /* проходы: своя ширина у каждого, площадки у узлов (точки, респауны, мид) */
-    const road = (pad, y, mat) => { for (const sg of GEO.segs) { const a = sg.a, b = sg.b, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); const r = new THREE.Mesh(new THREE.BoxGeometry(L, .12, sg.h * 2 + pad), mat); r.position.set(X((a[0] + b[0]) / 2), y, Z((a[1] + b[1]) / 2)); r.rotation.y = -Math.atan2(dy, dx); r.receiveShadow = true; scene.add(r); }
-      for (const c of GEO.circ) if (c.r > 0) { const m = new THREE.Mesh(new THREE.CylinderGeometry(c.r + pad / 2, c.r + pad / 2, .12, 28), mat); m.position.set(X(c.c[0]), y, Z(c.c[1])); m.receiveShadow = true; scene.add(m); } };
-    road(1.4, .04, curbMat); road(0, .1, stMat);
-    /* дома: инстансы коробок с крышами, детали на крышах */
-    const lots = [];
-    for (let y = -14; y < 114; y += 4.4) for (let x = -14; x < 114; x += 4.4) { const cx = x + rnd() * 1.4, cy = y + rnd() * 1.4, w = 3.2 + rnd() * 1.6, d = 3.2 + rnd() * 1.6; if (out([cx + w / 2, cy + d / 2]) < 2.6 + Math.max(w, d) * .25) continue; const edge = Math.max(Math.abs(cx - 50), Math.abs(cy - 50)) > 56; if (edge && rnd() < .5) continue; if (rnd() < .07) continue;
-      const near = out([cx + w / 2, cy + d / 2]) + 4.3; lots.push({ x: cx, y: cy, w, d, h: (near < 12 ? 3.2 : 4.5) + rnd() * (near < 12 ? 3.4 : 6) }); }
     const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, .5, 0);
-    const bodies = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .88, metalness: 0 }), lots.length), roofs = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .9 }), lots.length);
-    const det = [], o = new THREE.Object3D(), col = new THREE.Color();
-    lots.forEach((L, i) => { o.position.set(X(L.x + L.w / 2), 0, Z(L.y + L.d / 2)); o.scale.set(L.w, L.h, L.d); o.rotation.set(0, 0, 0); o.updateMatrix(); bodies.setMatrixAt(i, o.matrix); bodies.setColorAt(i, col.setHex(TH.wall).multiplyScalar(.85 + rnd() * .2));
-      o.position.y = L.h; o.scale.set(L.w * .96, .25, L.d * .96); o.updateMatrix(); roofs.setMatrixAt(i, o.matrix); roofs.setColorAt(i, col.setHex(TH.roof[(rnd() * TH.roof.length) | 0]));
-      const q = rnd(); if (q < .35) det.push({ k: 'ac', x: L.x + L.w * (.25 + rnd() * .4), y: L.y + L.d * (.25 + rnd() * .4), h: L.h + .25 }); else if (q < .43 && RD_MAP_THEME[MAPN] !== 'ancient') det.push({ k: 'dome', x: L.x + L.w / 2, y: L.y + L.d / 2, h: L.h + .25, r: Math.min(L.w, L.d) * .34 }); });
-    for (const b of [bodies, roofs]) { b.castShadow = b.receiveShadow = true; if (b.instanceColor) b.instanceColor.needsUpdate = true; scene.add(b); }
-    { const acs = det.filter(d => d.k === 'ac'), dms = det.filter(d => d.k === 'dome');
-      const a = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0xb9b6ad, roughness: .6, metalness: .3 }), acs.length); acs.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.set(.9, .6, .7); o.updateMatrix(); a.setMatrixAt(i, o.matrix); }); a.castShadow = true; scene.add(a);
-      const dm = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: TH.dome, roughness: .35, metalness: .5 }), dms.length); dms.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.setScalar(d.r); o.updateMatrix(); dm.setMatrixAt(i, o.matrix); }); dm.castShadow = true; scene.add(dm); }
+    const o = new THREE.Object3D(), col = new THREE.Color();
+    if (GEO.rects) {
+      /* карта по схеме радара: пол зон — светлый камень, всё остальное — сплошные стены домов вплотную к проходам */
+      const flT = ctex(256, 256, (g, w) => { g.fillStyle = '#8f8470'; g.fillRect(0, 0, w, w); for (let i = 0; i < 1800; i++) { const v = 110 + Math.random() * 50 | 0; g.fillStyle = `rgba(${v},${v - 8},${v - 24},.55)`; g.fillRect(Math.random() * w, Math.random() * w, 2 + Math.random() * 4, 2 + Math.random() * 4); }
+        g.strokeStyle = 'rgba(40,32,22,.28)'; g.lineWidth = 2; for (let k = 0; k <= w; k += 64) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k, w); g.moveTo(0, k); g.lineTo(w, k); g.stroke(); } });
+      flT.wrapS = flT.wrapT = THREE.RepeatWrapping;
+      const flM = new THREE.MeshStandardMaterial({ map: flT, color: new THREE.Color(TH.floor || 0xffffff), roughness: .95 });
+      for (const r of GEO.rects) { const w = r[2] - r[0], d = r[3] - r[1], g2 = new THREE.BoxGeometry(w, .12, d), uv = g2.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, uv.getX(k) * w / 6, uv.getY(k) * d / 6); const f = new THREE.Mesh(g2, flM); f.position.set(X((r[0] + r[2]) / 2), .06, Z((r[1] + r[3]) / 2)); f.receiveShadow = true; scene.add(f); }
+      /* стены: клетки 2×2 снаружи зон, слитые в полосы; высота по кварталам */
+      const C = 2, hq = (x, y) => { let h = ((Math.floor(x / 9) * 73856093) ^ (Math.floor(y / 9) * 19349663) ^ seed) >>> 0; h = (h ^ h >>> 13) * 1274126177 >>> 0; return h / 4294967296; }, runs = [];
+      for (let y = -8; y < 108; y += C) { let cur = null; for (let x = -8; x < 108; x += C) { const c = [x + C / 2, y + C / 2], ok = out(c) >= .95, h = ok ? 2.8 + Math.round(hq(c[0], c[1]) * 3) * .9 : 0;
+        if (cur && ok && h === cur.h) cur.x1 = x + C; else { if (cur) runs.push(cur); cur = ok ? { x0: x, x1: x + C, y, h, rc: hq(c[0] + 4, c[1] + 4) } : null; } } if (cur) runs.push(cur); }
+      const walls = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .9 }), runs.length), tops = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .92 }), runs.length);
+      runs.forEach((u, k) => { const w = u.x1 - u.x0; o.position.set(X(u.x0 + w / 2), 0, Z(u.y + C / 2)); o.scale.set(w, u.h, C); o.updateMatrix(); walls.setMatrixAt(k, o.matrix); walls.setColorAt(k, col.setHex(TH.wall).multiplyScalar(1.02 + u.rc * .14));
+        o.position.y = u.h; o.scale.set(w, .2, C); o.updateMatrix(); tops.setMatrixAt(k, o.matrix); tops.setColorAt(k, col.setHex(TH.roof[(u.rc * TH.roof.length) | 0]).multiplyScalar(.62)); });
+      for (const b of [walls, tops]) { b.castShadow = b.receiveShadow = true; if (b.instanceColor) b.instanceColor.needsUpdate = true; scene.add(b); }
+      /* проёмы только для обзора (окно на мид): низкий подоконник */
+      for (const r of GEO.vrects) { const sill = new THREE.Mesh(boxG, new THREE.MeshStandardMaterial({ color: TH.wall, roughness: .9 })); sill.position.set(X((r[0] + r[2]) / 2), 0, Z((r[1] + r[3]) / 2)); sill.scale.set(r[2] - r[0], 1.4, r[3] - r[1]); sill.castShadow = true; scene.add(sill); }
+    } else {
+      /* проходы: своя ширина у каждого, площадки у узлов (точки, респауны, мид) */
+      const road = (pad, y, mat) => { for (const sg of GEO.segs) { const a = sg.a, b = sg.b, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); const r = new THREE.Mesh(new THREE.BoxGeometry(L, .12, sg.h * 2 + pad), mat); r.position.set(X((a[0] + b[0]) / 2), y, Z((a[1] + b[1]) / 2)); r.rotation.y = -Math.atan2(dy, dx); r.receiveShadow = true; scene.add(r); }
+        for (const c of GEO.circ) if (c.r > 0) { const m = new THREE.Mesh(new THREE.CylinderGeometry(c.r + pad / 2, c.r + pad / 2, .12, 28), mat); m.position.set(X(c.c[0]), y, Z(c.c[1])); m.receiveShadow = true; scene.add(m); } };
+      road(1.4, .04, curbMat); road(0, .1, stMat);
+      /* дома: инстансы коробок с крышами, детали на крышах */
+      const lots = [];
+      for (let y = -14; y < 114; y += 4.4) for (let x = -14; x < 114; x += 4.4) { const cx = x + rnd() * 1.4, cy = y + rnd() * 1.4, w = 3.2 + rnd() * 1.6, d = 3.2 + rnd() * 1.6; if (out([cx + w / 2, cy + d / 2]) < 2.6 + Math.max(w, d) * .25) continue; const edge = Math.max(Math.abs(cx - 50), Math.abs(cy - 50)) > 56; if (edge && rnd() < .5) continue; if (rnd() < .07) continue;
+        const near = out([cx + w / 2, cy + d / 2]) + 4.3; lots.push({ x: cx, y: cy, w, d, h: (near < 12 ? 3.2 : 4.5) + rnd() * (near < 12 ? 3.4 : 6) }); }
+      const bodies = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .88, metalness: 0 }), lots.length), roofs = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .9 }), lots.length);
+      const det = [];
+      lots.forEach((L, i) => { o.position.set(X(L.x + L.w / 2), 0, Z(L.y + L.d / 2)); o.scale.set(L.w, L.h, L.d); o.rotation.set(0, 0, 0); o.updateMatrix(); bodies.setMatrixAt(i, o.matrix); bodies.setColorAt(i, col.setHex(TH.wall).multiplyScalar(.85 + rnd() * .2));
+        o.position.y = L.h; o.scale.set(L.w * .96, .25, L.d * .96); o.updateMatrix(); roofs.setMatrixAt(i, o.matrix); roofs.setColorAt(i, col.setHex(TH.roof[(rnd() * TH.roof.length) | 0]));
+        const q = rnd(); if (q < .35) det.push({ k: 'ac', x: L.x + L.w * (.25 + rnd() * .4), y: L.y + L.d * (.25 + rnd() * .4), h: L.h + .25 }); else if (q < .43 && RD_MAP_THEME[MAPN] !== 'ancient') det.push({ k: 'dome', x: L.x + L.w / 2, y: L.y + L.d / 2, h: L.h + .25, r: Math.min(L.w, L.d) * .34 }); });
+      for (const b of [bodies, roofs]) { b.castShadow = b.receiveShadow = true; if (b.instanceColor) b.instanceColor.needsUpdate = true; scene.add(b); }
+      { const acs = det.filter(d => d.k === 'ac'), dms = det.filter(d => d.k === 'dome');
+        const a = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0xb9b6ad, roughness: .6, metalness: .3 }), acs.length); acs.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.set(.9, .6, .7); o.updateMatrix(); a.setMatrixAt(i, o.matrix); }); a.castShadow = true; scene.add(a);
+        const dm = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: TH.dome, roughness: .35, metalness: .5 }), dms.length); dms.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.setScalar(d.r); o.updateMatrix(); dm.setMatrixAt(i, o.matrix); }); dm.castShadow = true; scene.add(dm); }
+    }
     /* ящики и деревья у дорог */
-    { const cr = [], tr = []; for (let i = 0; i < 260; i++) { const p = [rnd() * 100, rnd() * 100], d = out(p); if (d > -1.8 && d < -.6 && cr.length < 30) cr.push(p); else if (d > .4 && d < 2.2 && tr.length < 40 && rnd() < .5) tr.push(p); }
+    { const cr = [], tr = []; for (let i = 0; i < 260; i++) { const p = [rnd() * 100, rnd() * 100], d = out(p); if (d > -1.8 && d < -.6 && cr.length < (GEO.rects ? 14 : 30)) cr.push(p); else if (!GEO.rects && d > .4 && d < 2.2 && tr.length < 40 && rnd() < .5) tr.push(p); }
       const cm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .85 }), cr.length); cr.forEach((p, i) => { const s = 1.2 + rnd() * .5; o.position.set(X(p[0]), .1, Z(p[1])); o.scale.set(s, s * (rnd() < .3 ? 2 : 1), s); o.rotation.y = rnd(); o.updateMatrix(); cm.setMatrixAt(i, o.matrix); }); cm.castShadow = cm.receiveShadow = true; scene.add(cm);
       const tm = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1.4, 0), new THREE.MeshStandardMaterial({ color: TH.tree, roughness: .9, flatShading: true }), tr.length), trunk = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x6b4b2a }), tr.length);
       tr.forEach((p, i) => { o.rotation.set(0, rnd() * 3, 0); o.position.set(X(p[0]), 3.2, Z(p[1])); o.scale.set(1.3, .9, 1.3); o.updateMatrix(); tm.setMatrixAt(i, o.matrix); o.position.y = 0; o.scale.set(.3, 3, .3); o.updateMatrix(); trunk.setMatrixAt(i, o.matrix); }); tm.castShadow = trunk.castShadow = true; scene.add(tm, trunk); }
@@ -69,10 +89,6 @@ const M3D = (() => {
       const l = new THREE.PointLight(0xff3b30, 0, 20, 2); l.position.set(X(p[0]), 3, Z(p[1])); scene.add(l); siteLight[s] = l; }
     /* укрытия по карте: ящики, будка, фургон, машины */
     if (RM.props && RM.props.length) { const pm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .8 }), RM.props.length); RM.props.forEach(([x, y, w, d, h], i) => { o.position.set(X(x), .1, Z(y)); o.scale.set(w, h, d); o.rotation.set(0, 0, 0); o.updateMatrix(); pm.setMatrixAt(i, o.matrix); pm.setColorAt(i, col.setHex([0x8b6a3f, 0x6f7a80, 0x9a8a6a][i % 3])); }); pm.castShadow = pm.receiveShadow = true; if (pm.instanceColor) pm.instanceColor.needsUpdate = true; scene.add(pm); }
-    /* названия мест на земле — как на радаре; разворачиваются вместе с камерой */
-    const LBL = []; let lblK = '';
-    for (const [k, txt] of RM.lb || []) { const p = RM.n[k]; if (!p) continue; const tx = ctex(512, 96, (g, w, h) => { g.clearRect(0, 0, w, h); g.font = '700 56px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 10; g.strokeStyle = 'rgba(0,0,0,.55)'; g.strokeText(txt.toUpperCase(), w / 2, h / 2); g.fillStyle = 'rgba(255,255,255,.92)'; g.fillText(txt.toUpperCase(), w / 2, h / 2); });
-      const lm = new THREE.Mesh(new THREE.PlaneGeometry(8, 1.5), new THREE.MeshBasicMaterial({ map: tx, transparent: true, opacity: .7, depthWrite: false })); lm.position.set(X(p[0]), .16, Z(p[1])); lm.userData.p = [X(p[0]), Z(p[1])]; lm.renderOrder = 2; scene.add(lm); LBL.push(lm); }
     for (const [k, c] of [['TS', 0xf2c14e], ['CTS', 0x4aa3ff]]) { const p = RM.n[k], z = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: .28, depthWrite: false })); z.rotation.x = -Math.PI / 2; z.position.set(X(p[0]), .22, Z(p[1])); scene.add(z); }
 
     /* игроки: фигурка, кольцо на земле, табличка с фото и ником */
@@ -148,7 +164,6 @@ const M3D = (() => {
       let b = null, fv = .62, sh = .06;
       if (ph === 'round' && S) { const al = S.dots.filter(d => d.dt == null || t < d.dt).map(d => { const p = rdPos(d, t); return [X(p[0]), Z(p[1]), 6]; }); if (al.length) b = box(al); fv = .66; sh = .02; }
       if (!b) { b = box(NB); if (ph === 'buy') { fv = port ? .6 : .6; sh = .1; } }
-      const lk = dn.join(); if (lk !== lblK) { lblK = lk; const a = Math.atan2(-rt[1], rt[0]); for (const l of LBL) { l.rotation.set(-Math.PI / 2, 0, a); l.position.x = l.userData.p[0] + dn[0] * 2.4; l.position.z = l.userData.p[1] + dn[1] * 2.4; } }
       const hc = (b[0] + b[1]) / 2, vc = (b[2] + b[3]) / 2, ev = b[3] - b[2];
       CAM.td = Math.max(ph === 'round' ? 52 : 60, need(b[1] - b[0], ev, fv)); const vsh = ev * sh + CAM.td * .0;
       CAM.tx = rt[0] * hc + dn[0] * (vc + vsh); CAM.tz = rt[1] * hc + dn[1] * (vc + vsh);

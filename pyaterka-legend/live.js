@@ -1,9 +1,36 @@
 /* ---------- Матч в реальном времени: карта сверху, игроки с фото, составы, подготовка к раунду ----------
    По образцу менеджеров киберспорта, упрощено для телефона: карта рисуется один раз (картинка),
    двигаются только 10 кружков игроков (transform), камера — один transform контейнера. */
-const WPN = { pistol: 'M3 3h11v2.4H9.6V10H6.4V5.4H3z', smg: 'M1 3h16v2.2h-3v2.4h-2.4V5.2H7v4.4H4V5.2H1z', rifle: 'M0 3.6h17l2.2-1.2H23v2.2h-3.4v1.2h-6v3.6h-2.4V5.8H6.4v2.6H3.2V5.8H0z', awp: 'M0 4h24v1.6H0zM7 2.2h5.6V4H7zM4 5.6h3.2V9H4zM14.4 5.6h2.2V8h-2.2z' };
-const wpnOf = (buy, role) => buy === 'pistol' || buy === 'eco' ? 'pistol' : buy === 'force' ? (role === 0 ? 'pistol' : 'smg') : role === 0 ? 'awp' : 'rifle';
-const wpnH = w => `<svg class="wpn" viewBox="0 0 24 10" aria-hidden="true"><path d="${WPN[w]}"/></svg>`;
+/* оружие как в килфиде CS2: силуэт ствола дулом вправо (в сторону жертвы); выбор — по стороне, закупке и роли */
+const WPN = {
+  ak: 'M0 8.6L12.4 7.4V11.2L2.6 14.2H0ZM12.4 6.2H43V7.2H57.6V8.6H43V10.4H12.4ZM37.6 4.6H50V6H37.6ZM55 4.8H56.4V6.4H55ZM19.6 10.4H23.8L22.2 16H18.4ZM27 10.4H32.2Q33 14.4 36.4 17.6L32.8 19.4Q29 15.6 27 10.4Z',
+  m4: 'M0 7.2L9.6 6.8V11.6L1 12.6H0ZM9.6 7.4H15V10H9.6ZM15 5.8H40V10.4H15ZM17.6 4.4H38V5.8H17.6ZM40 6.4H52V9.6H40ZM52 7.4H61V8.6H52ZM59 5.6H60.4V7.4H59ZM19 10.4H23L21.4 15.8H17.8ZM27 10.4H31.6L32.6 17.8H28.2Z',
+  m4s: 'M0 7.2L9.6 6.8V11.6L1 12.6H0ZM9.6 7.4H15V10H9.6ZM15 5.8H39V10.4H15ZM17.6 4.4H37V5.8H17.6ZM39 6.4H48V9.6H39ZM48 6.6H63.4V9.4H48ZM19 10.4H23L21.4 15.8H17.8ZM27 10.4H31L31.6 16.6H27.6Z',
+  awp: 'M0 6L14 6.4V11.4H8.6L6 14H0ZM3.4 8.2H9.4V9.6H3.4ZM14 6.6H30V10.6H14ZM30 7.6H63.4V8.8H30ZM15.4 2.4H32.4V5.2H15.4ZM18.6 5.2H20.6V6.6H18.6ZM27 5.2H29V6.6H27ZM24 10.6H28.4V13.6H24ZM14 10.6H18.4L17 14.8H13.4Z',
+  ssg: 'M0 7.2L13 7.2V10.6L3.4 11.8H0ZM13 7H28V10.2H13ZM28 7.8H60.4V8.8H28ZM15 4.2H28.6V6.2H15ZM17.4 6.2H19V7H17.4ZM24.4 6.2H26V7H24.4ZM21 10.2H24L23.6 12.6H21ZM13.6 10.2H17.4L16 14H12.6Z',
+  galil: 'M0 6.8H3V12.8H0ZM3 7.2H12.4V8.4H4.4V10.8H12.4V12H3ZM12.4 6.2H40V10.4H12.4ZM40 6.8H50V9.6H40ZM50 7.6H59.4V8.6H50ZM57.4 5.4H58.8V7.2H57.4ZM19 10.4H23L21.4 15.6H17.8ZM26.6 10.4H31.4Q32.2 14 35.2 17L32 18.8Q28.6 15.4 26.6 10.4Z',
+  famas: 'M0 6.6H3V12.8H0ZM3 7.2H44V11.6H3ZM13.4 3.4H36.6V4.8H35V7.2H33.2V4.8H16.8V7.2H15V4.8H13.4ZM44 8H56.6V9.2H44ZM8 11.6H12.6L13.2 16.4H8.4ZM21.8 11.6H25.8L24.4 16.6H20.6ZM36 11.6H40.6V13.6H36Z',
+  mac10: 'M2 5.8H10V7H3.4V10H10V11.2H2ZM10 5H30V11H10ZM30 6.4H37.4V8.6H30ZM14 11H19.2L18.6 19H13.4ZM21 11H25.4V12.6H21Z',
+  mp9: 'M0 6.6H6V7.6H1.4V9.4H6V10.4H0ZM6 5.8H32V10.4H6ZM32 7H40.4V8.6H32ZM13.6 10.4H18.8L18.4 18.6H13.4ZM26 10.4H29V14.6H26Z',
+  glock: 'M10 4.8H35V9.2H10ZM12 9.2H22.4V11.6H17.6L15.8 17.4H10Z',
+  p2000: 'M9 4.8H34.4V9.2H9ZM11 9.2H21.4V11.6H16.6L15 17.4H9.2Z',
+  usp: 'M7 4.8H29V9.2H7ZM29 5.2H45.6V8.8H29ZM9 9.2H19.4V11.6H14.6L13 17.4H7.2Z',
+  p250: 'M10 5.2H32.6V9.2H10ZM12 9.2H22V11.4H17.4L16 17H10.6Z',
+  five7: 'M8 4.8H34.4V8.8H8ZM10 8.8H20.6V11.2H15.6L14.4 17.8H8.6Z',
+  tec9: 'M7 5.4H33V9.2H7ZM33 6H43V8.4H33ZM19.6 9.2H24.6L25.2 17.4H20.2ZM8 9.2H14L12.4 15H7Z',
+  deagle: 'M5 4.2H36.6V9.6H5ZM36.6 5H41V8.6H36.6ZM7 9.6H18V12H13.6L12 18.4H4.6Z' };
+const WPN_W = { ak: 58, m4: 61, m4s: 64, awp: 64, ssg: 61, galil: 60, famas: 57, mac10: 38, mp9: 41, glock: 35, p2000: 35, usp: 46, p250: 33, five7: 35, tec9: 43, deagle: 41 };
+const WPN_N = { ak: 'AK-47', m4: 'M4A4', m4s: 'M4A1-S', awp: 'AWP', ssg: 'SSG 08', galil: 'Galil AR', famas: 'FAMAS', mac10: 'MAC-10', mp9: 'MP9', glock: 'Glock-18', p2000: 'P2000', usp: 'USP-S', p250: 'P250', five7: 'Five-SeveN', tec9: 'Tec-9', deagle: 'Desert Eagle' };
+/* T: Glock → эко P250/Tec-9/Deagle → форс Galil/MAC-10 → полная AK-47; CT: USP-S → P250/Five-SeveN/Deagle → FAMAS/MP9 → M4A1-S/M4A4; снайпер: SSG 08 на форсе, AWP на полной */
+const wpnOf = (buy, role, side, i = 0, r = 0) => { const t = side === 'T' || side === 'A', h = (i * 7 + r * 3 + (role || 0) * 5) % 10;
+  if (buy === 'pistol') return t ? 'glock' : h < 7 ? 'usp' : 'p2000';
+  if (buy === 'eco') return (t ? ['glock', 'p250', 'tec9', 'deagle', 'glock'] : ['usp', 'p250', 'five7', 'deagle', 'usp'])[h % 5];
+  if (buy === 'force') return role === 0 ? 'ssg' : t ? (h < 5 ? 'galil' : h < 8 ? 'mac10' : 'tec9') : (h < 5 ? 'famas' : h < 8 ? 'mp9' : 'five7');
+  return role === 0 ? 'awp' : t ? 'ak' : h < 6 ? 'm4s' : 'm4'; };
+const wpnH = w => `<svg class="wpn wpn-${w}" viewBox="0 0 ${WPN_W[w] || 64} 20" style="--ww:${WPN_W[w] || 64}" role="img" aria-label="${WPN_N[w] || ''}"><path d="${WPN[w] || WPN.glock}"/></svg>`;
+/* значки килфида: хедшот, сквозь дым */
+const KF_HS = '<svg class="kf-i" viewBox="0 0 20 20" role="img" aria-label="в голову"><path fill-rule="evenodd" d="M10 1.6c4.4 0 7.4 3 7.4 7 0 2.4-1 4-2.6 5v3.6h-2.6V15H11v2.2H9V15H7.8v2.2H5.2v-3.6C3.6 12.6 2.6 11 2.6 8.6c0-4 3-7 7.4-7zM6.6 7.2a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zm6.8 0a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zM10 11l-1.2 2h2.4z"/></svg>';
+const KF_SM = '<svg class="kf-i" viewBox="0 0 20 20" role="img" aria-label="сквозь дым"><path d="M6 15.6a4 4 0 0 1-.6-7.9 5 5 0 0 1 9.6-1.2 3.8 3.8 0 0 1 .4 7.6 3 3 0 0 1-2.8 1.5z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 18h10" stroke="currentColor" stroke-width="1.8"/></svg>';
 const faceSrc = c => { const h = faceH(c), m = /src="([^"]+)"/.exec(h); return m ? m[1] : ''; };
 const sideCol = s => s === 'D' ? 'ct' : 't';
 
@@ -47,7 +74,7 @@ function lvKD() {
     const k0 = LV.kd ? LV.kd[t].k[i] : s.k[i], d0 = LV.kd ? LV.kd[t].d[i] : s.d[i], kd = $(`#kd-${t}-${i}`); if (!kd) continue;
     kd.textContent = `${k0}/${d0}`;
     const buy = L ? (t === 'a' ? L.buyA : L.buyB) : (m.decider ? 'full' : t === 'a' ? m.buyOf(m.a, OV.sel, OV.plan.buy) : m.buyOf(m.b, []));
-    $(`#w-${t}-${i}`).innerHTML = wpnH(wpnOf(buy, s.info.e[i].c.role));
+    $(`#w-${t}-${i}`).innerHTML = wpnH(wpnOf(buy, s.info.e[i].c.role, (t === 'a') === (m.sideA === 'A') ? 'T' : 'CT', i, L ? L.round : m.round));
   }
 }
 /* ---------- Игроки на карте ---------- */
@@ -85,7 +112,7 @@ function rdEvent(S, e) {
   if (e.type === 'kill') {
     const kd = S.dots.find(d => d.team === (e.k.byA ? 'a' : 'b') && d.i === e.k.k), vd = S.dots.find(d => d.team === (e.k.byA ? 'b' : 'a') && d.i === e.k.v);
     if (kd && vd) { const a = rdPos(kd, e.t), b = rdPos(vd, e.t); rdFx(`<line class="rd-shot ${kd.side === 'T' ? 't' : 'ct'}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`, 600); }
-    lvKill(e.k);
+    lvKill(e.k, e);
   } else if (e.type === 'plant') { top.innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">C4</text></g>`; rc.innerHTML = '<span class="bomb">Бомба заложена</span>'; sfx('scan'); }
   else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); top.innerHTML = ''; }
   else if (e.type === 'defuse') { top.innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">✓</text></g>`; rc.innerHTML = '<span>Бомба обезврежена</span>'; }
@@ -146,11 +173,14 @@ function lvPlay() {
   $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[L.plan.dir]}, ${TEMPON[L.plan.tempo]} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
   setTimeout(() => { if (LV && LV.ph === 'round') $('#bn').innerHTML = ''; }, 2600);
 }
-function lvKill(k) {
+function lvKill(k, e) {
   const L = LV.last, m = OV.m, kt = k.byA ? 'a' : 'b', vt = k.byA ? 'b' : 'a', K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
   const ks = k.byA ? L.sideA : other(L.sideA), f = $('#feed');
-  f.insertAdjacentHTML('beforeend', `<div class="${k.byA ? '' : 'me'}"><span class="ka ${sideCol(ks)}">${esc(K.info.e[k.k].c.nick)}</span>${wpnH(wpnOf(k.byA ? L.buyA : L.buyB, K.info.e[k.k].c.role))}${k.hs ? '<i class="hs"></i>' : ''}<span class="va ${sideCol(other(ks))}">${esc(V.info.e[k.v].c.nick)}</span></div>`);
-  while (f.children.length > 4) f.firstChild.remove();
+  /* строка как в CS2: убийца (цвет стороны) · оружие · значки (хедшот, сквозь дым) · жертва; убийства вашей команды — в красной рамке */
+  const w = wpnOf(k.byA ? L.buyA : L.buyB, K.info.e[k.k].c.role, ks, k.k, L.round);
+  f.insertAdjacentHTML('beforeend', `<div class="kf ${k.byA ? 'mine' : ''}"><span class="ka ${sideCol(ks)}">${esc(K.info.e[k.k].c.nick)}</span>${wpnH(w)}${e && e.sm ? KF_SM : ''}${k.hs ? KF_HS : ''}<span class="va ${sideCol(other(ks))}">${esc(V.info.e[k.v].c.nick)}</span></div>`);
+  const row = f.lastElementChild; setTimeout(() => { row.classList.add('out'); setTimeout(() => row.remove(), 400); }, 7000);
+  while (f.children.length > 5) f.firstChild.remove();
   if (LV.kd) { LV.kd[kt].k[k.k]++; LV.kd[vt].d[k.v]++; }
   const vr = $(`#pl-${vt}-${k.v}`); if (vr) vr.classList.add('dead'); const hp = $(`#hp-${vt}-${k.v}`); if (hp) hp.style.width = '0%';
   const kr = $(`#pl-${kt}-${k.k}`); if (kr) { kr.classList.remove('hit'); void kr.offsetWidth; kr.classList.add('hit'); }

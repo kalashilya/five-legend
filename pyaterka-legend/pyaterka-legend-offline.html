@@ -1666,6 +1666,14 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .qp-r{position:absolute;top:6px;right:6px;font:700 8px/1 var(--f-m);padding:3px 5px;border-radius:4px;background:#f0c477;color:#111}
 .qp-f{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;font-size:11px;color:#9aa4b0;flex-wrap:wrap}.qp-f b{color:#ffd35a;font:700 14px var(--f-d)}
 @media (min-width:900px){.m3 .feed{top:170px}}
+/* килфид как в CS2: тёмная плашка, ник убийцы цветом стороны, силуэт оружия, значки, ник жертвы; убийства вашей команды — в красной рамке */
+.feed div.kf,.m3 .feed div.kf{gap:5px;padding:3px 7px;border-radius:3px;background:rgb(10 12 14 / .64);border:1.5px solid transparent;font:600 11px/1.2 var(--f-d);text-transform:none;letter-spacing:.01em;transition:opacity .4s}
+.feed div.kf.mine,.m3 .feed div.kf.mine{border-color:#e0302a;background:rgb(30 8 8 / .74)}
+.feed div.kf.out{opacity:0}
+.feed .kf .wpn{height:11px;width:calc(var(--ww) * 11px / 20);fill:#f2f2f2;flex:none}
+.feed .kf .kf-i{width:12px;height:12px;fill:#f2f2f2;color:#f2f2f2;flex:none}
+.feed .kf .ka.t,.feed .kf .va.t{color:#e8bf5a}.feed .kf .ka.ct,.feed .kf .va.ct{color:#7aa8f0}
+.pl-w .wpn{height:8px;width:calc(var(--ww) * 8px / 20)}.m3 .pl-w .wpn{height:7px;width:calc(var(--ww) * 7px / 20)}
 @media (prefers-reduced-motion: reduce){.qp-c{transition:none}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -2351,6 +2359,10 @@ const RADAR = {
   Mirage: {
     n: { TS: [86, 46], tMid: [72, 45], mid: [59, 44], midW: [47, 43], win: [35, 41], con: [42, 53], jung: [35, 60], stairs: [44, 63], A: [40, 73], tet: [52, 70], ramp: [63, 65], tRamp: [76, 57], pAlley: [82, 68], pal: [67, 81], palx: [52, 80], tick: [28, 74], ctp: [22, 68], CTS: [14, 60], ctB1: [15, 48], kit: [23, 38], mkt: [16, 29], B: [20, 20], short: [32, 28], cat: [43, 35], tApp: [82, 31], App1: [69, 19], App2: [53, 14], Bapps: [36, 15], side: [61, 27], under: [52, 31] },
     r: { TS: 7, A: 9, B: 8, CTS: 6, mid: 5.5, win: 3.2 },
+    /* зоны карты прямоугольниками, как на радаре: [x0, y0, x1, y1]; vrects — проёмы только для обзора (окно) */
+    rects: [[78, 38, 94, 54], [66, 41, 80, 49], [44, 39, 68, 48], [30, 37, 38, 44], [17, 33, 31, 43], [12, 38, 20, 56], [8, 54, 20, 66], [12, 24, 21, 35], [12, 12, 30, 27], [29, 11, 41, 19], [40, 10, 65, 18], [62, 13, 78, 25], [74, 22, 87, 40],
+      [57, 22, 64, 31], [45, 28, 60, 34], [39, 30, 48, 41], [28, 24, 41, 32], [39, 47, 46, 56], [31, 54, 41, 64], [41, 55, 47, 66], [31, 63, 50, 82], [70, 52, 82, 62], [57, 60, 74, 69], [48, 65, 60, 74], [78, 52, 86, 78], [62, 75, 84, 86], [47, 76, 64, 84], [23, 69, 33, 78], [18, 63, 26, 72]],
+    vrects: [[37, 39.2, 45, 42.8]],
     tz: ['TS', 'tMid', 'mid', 'tRamp', 'ramp', 'pAlley', 'pal', 'tApp', 'App1', 'App2', 'side', 'under'], ctz: ['CTS', 'ctB1', 'kit', 'mkt', 'ctp', 'tick', 'win', 'jung', 'stairs'],
     e: [['TS', 'tMid', 9], ['tMid', 'mid', 9], ['mid', 'midW', 9], ['midW', 'win', 3.5, 'v'], ['win', 'kit', 5], ['kit', 'ctB1', 6], ['ctB1', 'CTS', 7], ['kit', 'mkt', 6], ['mkt', 'B', 6],
       ['midW', 'con', 6], ['con', 'jung', 6], ['con', 'stairs', 5], ['jung', 'A', 7], ['stairs', 'A', 6], ['TS', 'tRamp', 8], ['tRamp', 'ramp', 7], ['ramp', 'tet', 7], ['tet', 'A', 8],
@@ -2382,6 +2394,8 @@ const RADAR = {
   'Dust II': {
     n: { TS: [56, 88], oLong: [74, 84], lDoors: [84, 71], long: [86, 53], pit: [93, 40], acr: [83, 31], A: [75, 19], extA: [64, 23], CTS: [55, 24], ctMid: [44, 32], mDoors: [46, 41], xbox: [50, 50], mid: [48, 59], tMid: [50, 73], cat: [60, 43], short: [69, 33], bDoors: [32, 28], B: [19, 21], tunEx: [14, 36], upTun: [14, 56], oTun: [23, 77], tRamp: [38, 85], loTun: [33, 63] },
     r: { TS: 7, A: 9, B: 9, CTS: 5.5, oTun: 5, mid: 5 },
+    rects: [[48, 82, 64, 94], [62, 80, 82, 88], [80, 64, 88, 84], [82, 36, 90, 66], [88, 34, 96, 46], [76, 24, 90, 37], [66, 12, 84, 26], [58, 18, 68, 28], [50, 18, 60, 30], [40, 26, 51, 36], [43, 35, 49, 45], [44, 44, 56, 54], [43, 52, 53, 66], [46, 64, 54, 84],
+      [52, 38, 66, 48], [62, 24, 72, 42], [26, 24, 41, 32], [10, 12, 28, 31], [10, 30, 18, 44], [10, 42, 18, 72], [16, 70, 30, 84], [28, 80, 50, 90], [22, 60, 30, 72], [26, 59, 44, 65]],
     tz: ['TS', 'oLong', 'lDoors', 'tMid', 'mid', 'tRamp', 'oTun', 'upTun', 'loTun'], ctz: ['CTS', 'ctMid', 'extA', 'bDoors'],
     e: [['TS', 'oLong', 8], ['oLong', 'lDoors', 5], ['lDoors', 'long', 8], ['long', 'acr', 9], ['long', 'pit', 5], ['acr', 'A', 9], ['A', 'extA', 8], ['extA', 'CTS', 7], ['CTS', 'ctMid', 7], ['ctMid', 'mDoors', 5],
       ['mDoors', 'xbox', 6], ['xbox', 'mid', 8], ['mid', 'tMid', 7], ['tMid', 'TS', 6], ['xbox', 'cat', 5], ['cat', 'short', 5], ['short', 'A', 6], ['ctMid', 'bDoors', 5], ['bDoors', 'B', 6],
@@ -2457,14 +2471,21 @@ function rdGeo(M) {
   const segs = M.e.map(e => ({ a: M.n[e[0]], b: M.n[e[1]], h: rdEw(e) / 2, v: e[3] === 'v' })), nr = {};
   for (const k in M.n) nr[k] = (M.r && M.r[k]) || 0;
   for (const e of M.e) if (e[3] !== 'v') for (const k of [e[0], e[1]]) nr[k] = Math.max(nr[k], rdEw(e) / 2);
-  const circ = Object.keys(M.n).map(k => ({ c: M.n[k], r: nr[k] }));
-  const raw = (x, y) => { let f = -1e9;
+  const circ = Object.keys(M.n).map(k => ({ c: M.n[k], r: nr[k] })), rects = M.rects || null, vrects = M.vrects || [];
+  const rf = (r, x, y) => { const dx = Math.max(r[0] - x, 0, x - r[2]), dy = Math.max(r[1] - y, 0, y - r[3]); return dx || dy ? -Math.hypot(dx, dy) : Math.min(x - r[0], r[2] - x, y - r[1], r[3] - y); };
+  const raw = rects ? (x, y) => { let f = -1e9; for (const r of rects) f = Math.max(f, rf(r, x, y)); for (const r of vrects) f = Math.max(f, rf(r, x, y)); return f; } : (x, y) => { let f = -1e9;
     for (const s of segs) { const dx = s.b[0] - s.a[0], dy = s.b[1] - s.a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((x - s.a[0]) * dx + (y - s.a[1]) * dy) / l)); f = Math.max(f, s.h - Math.hypot(x - s.a[0] - t * dx, y - s.a[1] - t * dy)); }
     for (const c of circ) f = Math.max(f, c.r - Math.hypot(x - c.c[0], y - c.c[1])); return f; };
   const N = 201, G = new Float32Array(N * N); for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) G[j * N + i] = raw(i / 2, j / 2);
   const adj = {}; for (const k in M.n) adj[k] = [];
   for (const e of M.e) if (e[3] !== 'v') { const l = rdD(M.n[e[0]], M.n[e[1]]); adj[e[0]].push([e[1], l]); adj[e[1]].push([e[0], l]); }
-  return (M._g = { segs, circ, nr, raw, G, N, adj, sp: {} });
+  const g = (M._g = { segs, circ, nr, raw, G, N, adj, sp: {}, rects, vrects, via: {} });
+  /* у зон-прямоугольников проход из узла в узел может идти с поворотом: ищем точку поворота, чтобы не резать угол сквозь стену */
+  if (rects) for (const e of M.e) { if (e[3] === 'v') continue; const a = M.n[e[0]], b = M.n[e[1]]; if (rdLos(M, a, b, .9)) continue;
+    const cand = [[a[0], b[1]], [b[0], a[1]]]; for (let i = 1; i < 10; i++) for (let j = 1; j < 10; j++) cand.push([a[0] + (b[0] - a[0]) * i / 10 + (j - 5) * .8, a[1] + (b[1] - a[1]) * i / 10 - (j - 5) * .8]);
+    let v = null; for (const c of cand) { const q = rdSnap(M, c, 1.2); if (rdLos(M, a, q, .9) && rdLos(M, q, b, .9)) { v = q; break; } }
+    if (v) { g.via[e[0] + '>' + e[1]] = [v]; g.via[e[1] + '>' + e[0]] = [v]; } }
+  return g;
 }
 /* запас до стены: >0 — внутри прохода (на столько единиц), <0 — снаружи */
 function rdFree(M, p) {
@@ -2482,6 +2503,7 @@ function rdLos(M, a, b, m = .6) {
 /* точка внутрь прохода, если оказалась у стены */
 function rdSnap(M, p, m = 1) {
   if (rdFree(M, p) >= m) return p.slice(); const g = rdGeo(M); let best = null, bd = 1e9;
+  if (g.rects) { for (const r of g.rects) { const q = [clamp(p[0], r[0] + Math.min(m, (r[2] - r[0]) / 2), r[2] - Math.min(m, (r[2] - r[0]) / 2)), clamp(p[1], r[1] + Math.min(m, (r[3] - r[1]) / 2), r[3] - Math.min(m, (r[3] - r[1]) / 2))], dd = rdD(q, p); if (dd < bd) { bd = dd; best = q; } } return best.slice(); }
   for (const s of g.segs) { if (s.v) continue; const dx = s.b[0] - s.a[0], dy = s.b[1] - s.a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0] - s.a[0]) * dx + (p[1] - s.a[1]) * dy) / l)), c = [s.a[0] + t * dx, s.a[1] + t * dy], d = rdD(c, p), q = d > 1e-6 ? Math.max(0, s.h - m) / d : 0, r = d <= s.h - m ? p : [c[0] + (p[0] - c[0]) * q, c[1] + (p[1] - c[1]) * q]; const dd = rdD(r, p); if (dd < bd) { bd = dd; best = r; } }
   for (const c of g.circ) { const d = rdD(c.c, p), q = d > 1e-6 ? Math.max(0, c.r - m) / d : 0, r = d <= c.r - m ? p : [c.c[0] + (p[0] - c.c[0]) * q, c.c[1] + (p[1] - c.c[1]) * q]; const dd = rdD(r, p); if (dd < bd) { bd = dd; best = r; } }
   return best ? best.slice() : p.slice();
@@ -2504,7 +2526,8 @@ function rdPull(M, P) {
   return out;
 }
 /* путь между любыми точками по проходам */
-function rdPath(M, p, q, side) { if (rdLos(M, p, q, 1.1)) return [p, q]; const r = rdRoute(M, rdNear(M, p), rdNear(M, q), side); return rdPull(M, [p, ...r.map(k => M.n[k]), q]); }
+const rdExp = (M, r) => { const g = rdGeo(M), o = []; r.forEach((k, i) => { if (i) o.push(...(g.via[r[i - 1] + '>' + k] || [])); o.push(M.n[k]); }); return o; };
+function rdPath(M, p, q, side) { if (rdLos(M, p, q, 1.1)) return [p, q]; const r = rdRoute(M, rdNear(M, p), rdNear(M, q), side); return rdPull(M, [p, ...rdExp(M, r), q]); }
 /* путь через заданные узлы */
 function rdChain(M, p, nodes, q, side) { let P = [p], cur = p; for (const k of nodes) { const s = rdPath(M, cur, M.n[k], side); P = P.concat(s.slice(1)); cur = M.n[k]; } if (q) P = P.concat(rdPath(M, cur, q, side).slice(1)); return rdPull(M, P); }
 const rdLen = P => { let l = 0; for (let i = 1; i < P.length; i++) l += rdD(P[i - 1], P[i]); return l; };
@@ -2667,6 +2690,9 @@ function rdScript(L, mapN) {
   if (!timeR) for (const u of P.ut[site] || []) ut.push({ t: Math.max(1.5, tc + u.dt), k: u.k, p: u.p });
   for (const u of P.ut0 || []) ut.push({ t: u.t, k: u.k, p: u.p });
   ut.sort((x, y) => x.t - y.t);
+  /* убийство сквозь дым — для значка в килфиде */
+  for (const e of ev) if (e.type === 'kill') { const K = find(e.k.byA ? 'a' : 'b', e.k.k), V = find(e.k.byA ? 'b' : 'a', e.k.v); if (!K || !V) continue; const a = rdPos(K, e.t - .01), b = V.dp;
+    e.sm = ut.some(u => u.k === 'smoke' && e.t > u.t + .4 && e.t < u.t + 8.5 && (() => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, k = clamp(((u.p[0] - a[0]) * dx + (u.p[1] - a[1]) * dy) / l, 0, 1); return Math.hypot(a[0] + dx * k - u.p[0], a[1] + dy * k - u.p[1]) < 3; })()); }
   return { dots, ev, T, site, tc, plantT, aAtt, ut, planter: planter ? planter.team + planter.i : null };
 }
 
@@ -2712,7 +2738,7 @@ function rdArt(mapN, size = 1024) {
   }
   /* улицы: бордюр, покрытие, разметка */
   g.lineCap = g.lineJoin = 'round';
-  const lay = (pad, col) => { g.strokeStyle = g.fillStyle = col; for (const sg of GEO.segs) { g.lineWidth = (sg.h * 2 + pad) * u; g.beginPath(); g.moveTo(sg.a[0] * u, sg.a[1] * u); g.lineTo(sg.b[0] * u, sg.b[1] * u); g.stroke(); } for (const c of GEO.circ) if (c.r > 0) { g.beginPath(); g.arc(c.c[0] * u, c.c[1] * u, (c.r + pad / 2) * u, 0, 7); g.fill(); } };
+  const lay = (pad, col) => { g.strokeStyle = g.fillStyle = col; if (GEO.rects) { for (const r of GEO.rects.concat(GEO.vrects)) g.fillRect((r[0] - pad / 2) * u, (r[1] - pad / 2) * u, (r[2] - r[0] + pad) * u, (r[3] - r[1] + pad) * u); return; } for (const sg of GEO.segs) { g.lineWidth = (sg.h * 2 + pad) * u; g.beginPath(); g.moveTo(sg.a[0] * u, sg.a[1] * u); g.lineTo(sg.b[0] * u, sg.b[1] * u); g.stroke(); } for (const c of GEO.circ) if (c.r > 0) { g.beginPath(); g.arc(c.c[0] * u, c.c[1] * u, (c.r + pad / 2) * u, 0, 7); g.fill(); } };
   lay(2.2, 'rgba(0,0,0,.35)'); lay(1, T.curb); lay(0, T.st);
   for (let i = 0; i < 1400; i++) { const p = [rnd() * 100, rnd() * 100]; if (dist(p) < W / 2 - .3) { g.fillStyle = rnd() < .5 ? T.st2 : 'rgba(0,0,0,.12)'; g.fillRect(p[0] * u, p[1] * u, (.5 + rnd()) * u, (.5 + rnd()) * u); } }
   /* ящики и деревья у дорог */
@@ -3524,9 +3550,36 @@ function start() {
 /* ---------- Матч в реальном времени: карта сверху, игроки с фото, составы, подготовка к раунду ----------
    По образцу менеджеров киберспорта, упрощено для телефона: карта рисуется один раз (картинка),
    двигаются только 10 кружков игроков (transform), камера — один transform контейнера. */
-const WPN = { pistol: 'M3 3h11v2.4H9.6V10H6.4V5.4H3z', smg: 'M1 3h16v2.2h-3v2.4h-2.4V5.2H7v4.4H4V5.2H1z', rifle: 'M0 3.6h17l2.2-1.2H23v2.2h-3.4v1.2h-6v3.6h-2.4V5.8H6.4v2.6H3.2V5.8H0z', awp: 'M0 4h24v1.6H0zM7 2.2h5.6V4H7zM4 5.6h3.2V9H4zM14.4 5.6h2.2V8h-2.2z' };
-const wpnOf = (buy, role) => buy === 'pistol' || buy === 'eco' ? 'pistol' : buy === 'force' ? (role === 0 ? 'pistol' : 'smg') : role === 0 ? 'awp' : 'rifle';
-const wpnH = w => `<svg class="wpn" viewBox="0 0 24 10" aria-hidden="true"><path d="${WPN[w]}"/></svg>`;
+/* оружие как в килфиде CS2: силуэт ствола дулом вправо (в сторону жертвы); выбор — по стороне, закупке и роли */
+const WPN = {
+  ak: 'M0 8.6L12.4 7.4V11.2L2.6 14.2H0ZM12.4 6.2H43V7.2H57.6V8.6H43V10.4H12.4ZM37.6 4.6H50V6H37.6ZM55 4.8H56.4V6.4H55ZM19.6 10.4H23.8L22.2 16H18.4ZM27 10.4H32.2Q33 14.4 36.4 17.6L32.8 19.4Q29 15.6 27 10.4Z',
+  m4: 'M0 7.2L9.6 6.8V11.6L1 12.6H0ZM9.6 7.4H15V10H9.6ZM15 5.8H40V10.4H15ZM17.6 4.4H38V5.8H17.6ZM40 6.4H52V9.6H40ZM52 7.4H61V8.6H52ZM59 5.6H60.4V7.4H59ZM19 10.4H23L21.4 15.8H17.8ZM27 10.4H31.6L32.6 17.8H28.2Z',
+  m4s: 'M0 7.2L9.6 6.8V11.6L1 12.6H0ZM9.6 7.4H15V10H9.6ZM15 5.8H39V10.4H15ZM17.6 4.4H37V5.8H17.6ZM39 6.4H48V9.6H39ZM48 6.6H63.4V9.4H48ZM19 10.4H23L21.4 15.8H17.8ZM27 10.4H31L31.6 16.6H27.6Z',
+  awp: 'M0 6L14 6.4V11.4H8.6L6 14H0ZM3.4 8.2H9.4V9.6H3.4ZM14 6.6H30V10.6H14ZM30 7.6H63.4V8.8H30ZM15.4 2.4H32.4V5.2H15.4ZM18.6 5.2H20.6V6.6H18.6ZM27 5.2H29V6.6H27ZM24 10.6H28.4V13.6H24ZM14 10.6H18.4L17 14.8H13.4Z',
+  ssg: 'M0 7.2L13 7.2V10.6L3.4 11.8H0ZM13 7H28V10.2H13ZM28 7.8H60.4V8.8H28ZM15 4.2H28.6V6.2H15ZM17.4 6.2H19V7H17.4ZM24.4 6.2H26V7H24.4ZM21 10.2H24L23.6 12.6H21ZM13.6 10.2H17.4L16 14H12.6Z',
+  galil: 'M0 6.8H3V12.8H0ZM3 7.2H12.4V8.4H4.4V10.8H12.4V12H3ZM12.4 6.2H40V10.4H12.4ZM40 6.8H50V9.6H40ZM50 7.6H59.4V8.6H50ZM57.4 5.4H58.8V7.2H57.4ZM19 10.4H23L21.4 15.6H17.8ZM26.6 10.4H31.4Q32.2 14 35.2 17L32 18.8Q28.6 15.4 26.6 10.4Z',
+  famas: 'M0 6.6H3V12.8H0ZM3 7.2H44V11.6H3ZM13.4 3.4H36.6V4.8H35V7.2H33.2V4.8H16.8V7.2H15V4.8H13.4ZM44 8H56.6V9.2H44ZM8 11.6H12.6L13.2 16.4H8.4ZM21.8 11.6H25.8L24.4 16.6H20.6ZM36 11.6H40.6V13.6H36Z',
+  mac10: 'M2 5.8H10V7H3.4V10H10V11.2H2ZM10 5H30V11H10ZM30 6.4H37.4V8.6H30ZM14 11H19.2L18.6 19H13.4ZM21 11H25.4V12.6H21Z',
+  mp9: 'M0 6.6H6V7.6H1.4V9.4H6V10.4H0ZM6 5.8H32V10.4H6ZM32 7H40.4V8.6H32ZM13.6 10.4H18.8L18.4 18.6H13.4ZM26 10.4H29V14.6H26Z',
+  glock: 'M10 4.8H35V9.2H10ZM12 9.2H22.4V11.6H17.6L15.8 17.4H10Z',
+  p2000: 'M9 4.8H34.4V9.2H9ZM11 9.2H21.4V11.6H16.6L15 17.4H9.2Z',
+  usp: 'M7 4.8H29V9.2H7ZM29 5.2H45.6V8.8H29ZM9 9.2H19.4V11.6H14.6L13 17.4H7.2Z',
+  p250: 'M10 5.2H32.6V9.2H10ZM12 9.2H22V11.4H17.4L16 17H10.6Z',
+  five7: 'M8 4.8H34.4V8.8H8ZM10 8.8H20.6V11.2H15.6L14.4 17.8H8.6Z',
+  tec9: 'M7 5.4H33V9.2H7ZM33 6H43V8.4H33ZM19.6 9.2H24.6L25.2 17.4H20.2ZM8 9.2H14L12.4 15H7Z',
+  deagle: 'M5 4.2H36.6V9.6H5ZM36.6 5H41V8.6H36.6ZM7 9.6H18V12H13.6L12 18.4H4.6Z' };
+const WPN_W = { ak: 58, m4: 61, m4s: 64, awp: 64, ssg: 61, galil: 60, famas: 57, mac10: 38, mp9: 41, glock: 35, p2000: 35, usp: 46, p250: 33, five7: 35, tec9: 43, deagle: 41 };
+const WPN_N = { ak: 'AK-47', m4: 'M4A4', m4s: 'M4A1-S', awp: 'AWP', ssg: 'SSG 08', galil: 'Galil AR', famas: 'FAMAS', mac10: 'MAC-10', mp9: 'MP9', glock: 'Glock-18', p2000: 'P2000', usp: 'USP-S', p250: 'P250', five7: 'Five-SeveN', tec9: 'Tec-9', deagle: 'Desert Eagle' };
+/* T: Glock → эко P250/Tec-9/Deagle → форс Galil/MAC-10 → полная AK-47; CT: USP-S → P250/Five-SeveN/Deagle → FAMAS/MP9 → M4A1-S/M4A4; снайпер: SSG 08 на форсе, AWP на полной */
+const wpnOf = (buy, role, side, i = 0, r = 0) => { const t = side === 'T' || side === 'A', h = (i * 7 + r * 3 + (role || 0) * 5) % 10;
+  if (buy === 'pistol') return t ? 'glock' : h < 7 ? 'usp' : 'p2000';
+  if (buy === 'eco') return (t ? ['glock', 'p250', 'tec9', 'deagle', 'glock'] : ['usp', 'p250', 'five7', 'deagle', 'usp'])[h % 5];
+  if (buy === 'force') return role === 0 ? 'ssg' : t ? (h < 5 ? 'galil' : h < 8 ? 'mac10' : 'tec9') : (h < 5 ? 'famas' : h < 8 ? 'mp9' : 'five7');
+  return role === 0 ? 'awp' : t ? 'ak' : h < 6 ? 'm4s' : 'm4'; };
+const wpnH = w => `<svg class="wpn wpn-${w}" viewBox="0 0 ${WPN_W[w] || 64} 20" style="--ww:${WPN_W[w] || 64}" role="img" aria-label="${WPN_N[w] || ''}"><path d="${WPN[w] || WPN.glock}"/></svg>`;
+/* значки килфида: хедшот, сквозь дым */
+const KF_HS = '<svg class="kf-i" viewBox="0 0 20 20" role="img" aria-label="в голову"><path fill-rule="evenodd" d="M10 1.6c4.4 0 7.4 3 7.4 7 0 2.4-1 4-2.6 5v3.6h-2.6V15H11v2.2H9V15H7.8v2.2H5.2v-3.6C3.6 12.6 2.6 11 2.6 8.6c0-4 3-7 7.4-7zM6.6 7.2a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zm6.8 0a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zM10 11l-1.2 2h2.4z"/></svg>';
+const KF_SM = '<svg class="kf-i" viewBox="0 0 20 20" role="img" aria-label="сквозь дым"><path d="M6 15.6a4 4 0 0 1-.6-7.9 5 5 0 0 1 9.6-1.2 3.8 3.8 0 0 1 .4 7.6 3 3 0 0 1-2.8 1.5z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 18h10" stroke="currentColor" stroke-width="1.8"/></svg>';
 const faceSrc = c => { const h = faceH(c), m = /src="([^"]+)"/.exec(h); return m ? m[1] : ''; };
 const sideCol = s => s === 'D' ? 'ct' : 't';
 
@@ -3570,7 +3623,7 @@ function lvKD() {
     const k0 = LV.kd ? LV.kd[t].k[i] : s.k[i], d0 = LV.kd ? LV.kd[t].d[i] : s.d[i], kd = $(`#kd-${t}-${i}`); if (!kd) continue;
     kd.textContent = `${k0}/${d0}`;
     const buy = L ? (t === 'a' ? L.buyA : L.buyB) : (m.decider ? 'full' : t === 'a' ? m.buyOf(m.a, OV.sel, OV.plan.buy) : m.buyOf(m.b, []));
-    $(`#w-${t}-${i}`).innerHTML = wpnH(wpnOf(buy, s.info.e[i].c.role));
+    $(`#w-${t}-${i}`).innerHTML = wpnH(wpnOf(buy, s.info.e[i].c.role, (t === 'a') === (m.sideA === 'A') ? 'T' : 'CT', i, L ? L.round : m.round));
   }
 }
 /* ---------- Игроки на карте ---------- */
@@ -3608,7 +3661,7 @@ function rdEvent(S, e) {
   if (e.type === 'kill') {
     const kd = S.dots.find(d => d.team === (e.k.byA ? 'a' : 'b') && d.i === e.k.k), vd = S.dots.find(d => d.team === (e.k.byA ? 'b' : 'a') && d.i === e.k.v);
     if (kd && vd) { const a = rdPos(kd, e.t), b = rdPos(vd, e.t); rdFx(`<line class="rd-shot ${kd.side === 'T' ? 't' : 'ct'}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`, 600); }
-    lvKill(e.k);
+    lvKill(e.k, e);
   } else if (e.type === 'plant') { top.innerHTML = `<g class="rd-bomb" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">C4</text></g>`; rc.innerHTML = '<span class="bomb">Бомба заложена</span>'; sfx('scan'); }
   else if (e.type === 'boom') { rdFx(`<circle class="rd-boom" cx="${sp[0]}" cy="${sp[1]}" r="3"/>`, 1400); top.innerHTML = ''; }
   else if (e.type === 'defuse') { top.innerHTML = `<g class="rd-bomb off" transform="translate(${sp[0] + 3.4} ${sp[1] - 3.4})"><circle r="2.2"/><text y=".8">✓</text></g>`; rc.innerHTML = '<span>Бомба обезврежена</span>'; }
@@ -3669,11 +3722,14 @@ function lvPlay() {
   $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[L.plan.dir]}, ${TEMPON[L.plan.tempo]} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
   setTimeout(() => { if (LV && LV.ph === 'round') $('#bn').innerHTML = ''; }, 2600);
 }
-function lvKill(k) {
+function lvKill(k, e) {
   const L = LV.last, m = OV.m, kt = k.byA ? 'a' : 'b', vt = k.byA ? 'b' : 'a', K = k.byA ? m.a : m.b, V = k.byA ? m.b : m.a;
   const ks = k.byA ? L.sideA : other(L.sideA), f = $('#feed');
-  f.insertAdjacentHTML('beforeend', `<div class="${k.byA ? '' : 'me'}"><span class="ka ${sideCol(ks)}">${esc(K.info.e[k.k].c.nick)}</span>${wpnH(wpnOf(k.byA ? L.buyA : L.buyB, K.info.e[k.k].c.role))}${k.hs ? '<i class="hs"></i>' : ''}<span class="va ${sideCol(other(ks))}">${esc(V.info.e[k.v].c.nick)}</span></div>`);
-  while (f.children.length > 4) f.firstChild.remove();
+  /* строка как в CS2: убийца (цвет стороны) · оружие · значки (хедшот, сквозь дым) · жертва; убийства вашей команды — в красной рамке */
+  const w = wpnOf(k.byA ? L.buyA : L.buyB, K.info.e[k.k].c.role, ks, k.k, L.round);
+  f.insertAdjacentHTML('beforeend', `<div class="kf ${k.byA ? 'mine' : ''}"><span class="ka ${sideCol(ks)}">${esc(K.info.e[k.k].c.nick)}</span>${wpnH(w)}${e && e.sm ? KF_SM : ''}${k.hs ? KF_HS : ''}<span class="va ${sideCol(other(ks))}">${esc(V.info.e[k.v].c.nick)}</span></div>`);
+  const row = f.lastElementChild; setTimeout(() => { row.classList.add('out'); setTimeout(() => row.remove(), 400); }, 7000);
+  while (f.children.length > 5) f.firstChild.remove();
   if (LV.kd) { LV.kd[kt].k[k.k]++; LV.kd[vt].d[k.v]++; }
   const vr = $(`#pl-${vt}-${k.v}`); if (vr) vr.classList.add('dead'); const hp = $(`#hp-${vt}-${k.v}`); if (hp) hp.style.width = '0%';
   const kr = $(`#pl-${kt}-${k.k}`); if (kr) { kr.classList.remove('hit'); void kr.offsetWidth; kr.classList.add('hit'); }
@@ -3745,29 +3801,49 @@ const M3D = (() => {
     groundT.wrapS = groundT.wrapT = THREE.RepeatWrapping; groundT.repeat.set(3, 3);
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(260, 260), new THREE.MeshStandardMaterial({ map: groundT, roughness: 1 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
     /* улицы: бордюр + покрытие, круглые стыки */
-    const stT = ctex(256, 256, (g, w) => { g.fillStyle = '#7a756b'; g.fillRect(0, 0, w, w); for (let i = 0; i < 2200; i++) { const v = 90 + Math.random() * 60 | 0; g.fillStyle = `rgb(${v},${v - 4},${v - 10})`; g.fillRect(Math.random() * w, Math.random() * w, 2 + Math.random() * 3, 2 + Math.random() * 3); } g.strokeStyle = 'rgba(0,0,0,.18)'; g.lineWidth = 2; for (let y = 0; y < w; y += 32) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); } });
+    const stT = ctex(256, 256, (g, w) => { g.fillStyle = '#7a756b'; g.fillRect(0, 0, w, w); for (let i = 0; i < 2200; i++) { const v = 90 + Math.random() * 60 | 0; g.fillStyle = `rgb(${v},${v - 4},${v - 10})`; g.fillRect(Math.random() * w, Math.random() * w, 2 + Math.random() * 3, 2 + Math.random() * 3); } });
     stT.wrapS = stT.wrapT = THREE.RepeatWrapping;
     const stMat = new THREE.MeshStandardMaterial({ map: stT, color: new THREE.Color(TH.st).multiplyScalar(.78), roughness: .95 }), curbMat = new THREE.MeshStandardMaterial({ color: TH.curb, roughness: .9 });
-    /* проходы: своя ширина у каждого, площадки у узлов (точки, респауны, мид) */
-    const road = (pad, y, mat) => { for (const sg of GEO.segs) { const a = sg.a, b = sg.b, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); const r = new THREE.Mesh(new THREE.BoxGeometry(L, .12, sg.h * 2 + pad), mat); r.position.set(X((a[0] + b[0]) / 2), y, Z((a[1] + b[1]) / 2)); r.rotation.y = -Math.atan2(dy, dx); r.receiveShadow = true; scene.add(r); }
-      for (const c of GEO.circ) if (c.r > 0) { const m = new THREE.Mesh(new THREE.CylinderGeometry(c.r + pad / 2, c.r + pad / 2, .12, 28), mat); m.position.set(X(c.c[0]), y, Z(c.c[1])); m.receiveShadow = true; scene.add(m); } };
-    road(1.4, .04, curbMat); road(0, .1, stMat);
-    /* дома: инстансы коробок с крышами, детали на крышах */
-    const lots = [];
-    for (let y = -14; y < 114; y += 4.4) for (let x = -14; x < 114; x += 4.4) { const cx = x + rnd() * 1.4, cy = y + rnd() * 1.4, w = 3.2 + rnd() * 1.6, d = 3.2 + rnd() * 1.6; if (out([cx + w / 2, cy + d / 2]) < 2.6 + Math.max(w, d) * .25) continue; const edge = Math.max(Math.abs(cx - 50), Math.abs(cy - 50)) > 56; if (edge && rnd() < .5) continue; if (rnd() < .07) continue;
-      const near = out([cx + w / 2, cy + d / 2]) + 4.3; lots.push({ x: cx, y: cy, w, d, h: (near < 12 ? 3.2 : 4.5) + rnd() * (near < 12 ? 3.4 : 6) }); }
     const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, .5, 0);
-    const bodies = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .88, metalness: 0 }), lots.length), roofs = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .9 }), lots.length);
-    const det = [], o = new THREE.Object3D(), col = new THREE.Color();
-    lots.forEach((L, i) => { o.position.set(X(L.x + L.w / 2), 0, Z(L.y + L.d / 2)); o.scale.set(L.w, L.h, L.d); o.rotation.set(0, 0, 0); o.updateMatrix(); bodies.setMatrixAt(i, o.matrix); bodies.setColorAt(i, col.setHex(TH.wall).multiplyScalar(.85 + rnd() * .2));
-      o.position.y = L.h; o.scale.set(L.w * .96, .25, L.d * .96); o.updateMatrix(); roofs.setMatrixAt(i, o.matrix); roofs.setColorAt(i, col.setHex(TH.roof[(rnd() * TH.roof.length) | 0]));
-      const q = rnd(); if (q < .35) det.push({ k: 'ac', x: L.x + L.w * (.25 + rnd() * .4), y: L.y + L.d * (.25 + rnd() * .4), h: L.h + .25 }); else if (q < .43 && RD_MAP_THEME[MAPN] !== 'ancient') det.push({ k: 'dome', x: L.x + L.w / 2, y: L.y + L.d / 2, h: L.h + .25, r: Math.min(L.w, L.d) * .34 }); });
-    for (const b of [bodies, roofs]) { b.castShadow = b.receiveShadow = true; if (b.instanceColor) b.instanceColor.needsUpdate = true; scene.add(b); }
-    { const acs = det.filter(d => d.k === 'ac'), dms = det.filter(d => d.k === 'dome');
-      const a = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0xb9b6ad, roughness: .6, metalness: .3 }), acs.length); acs.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.set(.9, .6, .7); o.updateMatrix(); a.setMatrixAt(i, o.matrix); }); a.castShadow = true; scene.add(a);
-      const dm = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: TH.dome, roughness: .35, metalness: .5 }), dms.length); dms.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.setScalar(d.r); o.updateMatrix(); dm.setMatrixAt(i, o.matrix); }); dm.castShadow = true; scene.add(dm); }
+    const o = new THREE.Object3D(), col = new THREE.Color();
+    if (GEO.rects) {
+      /* карта по схеме радара: пол зон — светлый камень, всё остальное — сплошные стены домов вплотную к проходам */
+      const flT = ctex(256, 256, (g, w) => { g.fillStyle = '#8f8470'; g.fillRect(0, 0, w, w); for (let i = 0; i < 1800; i++) { const v = 110 + Math.random() * 50 | 0; g.fillStyle = `rgba(${v},${v - 8},${v - 24},.55)`; g.fillRect(Math.random() * w, Math.random() * w, 2 + Math.random() * 4, 2 + Math.random() * 4); }
+        g.strokeStyle = 'rgba(40,32,22,.28)'; g.lineWidth = 2; for (let k = 0; k <= w; k += 64) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k, w); g.moveTo(0, k); g.lineTo(w, k); g.stroke(); } });
+      flT.wrapS = flT.wrapT = THREE.RepeatWrapping;
+      const flM = new THREE.MeshStandardMaterial({ map: flT, color: new THREE.Color(TH.floor || 0xffffff), roughness: .95 });
+      for (const r of GEO.rects) { const w = r[2] - r[0], d = r[3] - r[1], g2 = new THREE.BoxGeometry(w, .12, d), uv = g2.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, uv.getX(k) * w / 6, uv.getY(k) * d / 6); const f = new THREE.Mesh(g2, flM); f.position.set(X((r[0] + r[2]) / 2), .06, Z((r[1] + r[3]) / 2)); f.receiveShadow = true; scene.add(f); }
+      /* стены: клетки 2×2 снаружи зон, слитые в полосы; высота по кварталам */
+      const C = 2, hq = (x, y) => { let h = ((Math.floor(x / 9) * 73856093) ^ (Math.floor(y / 9) * 19349663) ^ seed) >>> 0; h = (h ^ h >>> 13) * 1274126177 >>> 0; return h / 4294967296; }, runs = [];
+      for (let y = -8; y < 108; y += C) { let cur = null; for (let x = -8; x < 108; x += C) { const c = [x + C / 2, y + C / 2], ok = out(c) >= .95, h = ok ? 2.8 + Math.round(hq(c[0], c[1]) * 3) * .9 : 0;
+        if (cur && ok && h === cur.h) cur.x1 = x + C; else { if (cur) runs.push(cur); cur = ok ? { x0: x, x1: x + C, y, h, rc: hq(c[0] + 4, c[1] + 4) } : null; } } if (cur) runs.push(cur); }
+      const walls = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .9 }), runs.length), tops = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .92 }), runs.length);
+      runs.forEach((u, k) => { const w = u.x1 - u.x0; o.position.set(X(u.x0 + w / 2), 0, Z(u.y + C / 2)); o.scale.set(w, u.h, C); o.updateMatrix(); walls.setMatrixAt(k, o.matrix); walls.setColorAt(k, col.setHex(TH.wall).multiplyScalar(1.02 + u.rc * .14));
+        o.position.y = u.h; o.scale.set(w, .2, C); o.updateMatrix(); tops.setMatrixAt(k, o.matrix); tops.setColorAt(k, col.setHex(TH.roof[(u.rc * TH.roof.length) | 0]).multiplyScalar(.62)); });
+      for (const b of [walls, tops]) { b.castShadow = b.receiveShadow = true; if (b.instanceColor) b.instanceColor.needsUpdate = true; scene.add(b); }
+      /* проёмы только для обзора (окно на мид): низкий подоконник */
+      for (const r of GEO.vrects) { const sill = new THREE.Mesh(boxG, new THREE.MeshStandardMaterial({ color: TH.wall, roughness: .9 })); sill.position.set(X((r[0] + r[2]) / 2), 0, Z((r[1] + r[3]) / 2)); sill.scale.set(r[2] - r[0], 1.4, r[3] - r[1]); sill.castShadow = true; scene.add(sill); }
+    } else {
+      /* проходы: своя ширина у каждого, площадки у узлов (точки, респауны, мид) */
+      const road = (pad, y, mat) => { for (const sg of GEO.segs) { const a = sg.a, b = sg.b, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); const r = new THREE.Mesh(new THREE.BoxGeometry(L, .12, sg.h * 2 + pad), mat); r.position.set(X((a[0] + b[0]) / 2), y, Z((a[1] + b[1]) / 2)); r.rotation.y = -Math.atan2(dy, dx); r.receiveShadow = true; scene.add(r); }
+        for (const c of GEO.circ) if (c.r > 0) { const m = new THREE.Mesh(new THREE.CylinderGeometry(c.r + pad / 2, c.r + pad / 2, .12, 28), mat); m.position.set(X(c.c[0]), y, Z(c.c[1])); m.receiveShadow = true; scene.add(m); } };
+      road(1.4, .04, curbMat); road(0, .1, stMat);
+      /* дома: инстансы коробок с крышами, детали на крышах */
+      const lots = [];
+      for (let y = -14; y < 114; y += 4.4) for (let x = -14; x < 114; x += 4.4) { const cx = x + rnd() * 1.4, cy = y + rnd() * 1.4, w = 3.2 + rnd() * 1.6, d = 3.2 + rnd() * 1.6; if (out([cx + w / 2, cy + d / 2]) < 2.6 + Math.max(w, d) * .25) continue; const edge = Math.max(Math.abs(cx - 50), Math.abs(cy - 50)) > 56; if (edge && rnd() < .5) continue; if (rnd() < .07) continue;
+        const near = out([cx + w / 2, cy + d / 2]) + 4.3; lots.push({ x: cx, y: cy, w, d, h: (near < 12 ? 3.2 : 4.5) + rnd() * (near < 12 ? 3.4 : 6) }); }
+      const bodies = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .88, metalness: 0 }), lots.length), roofs = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ roughness: .9 }), lots.length);
+      const det = [];
+      lots.forEach((L, i) => { o.position.set(X(L.x + L.w / 2), 0, Z(L.y + L.d / 2)); o.scale.set(L.w, L.h, L.d); o.rotation.set(0, 0, 0); o.updateMatrix(); bodies.setMatrixAt(i, o.matrix); bodies.setColorAt(i, col.setHex(TH.wall).multiplyScalar(.85 + rnd() * .2));
+        o.position.y = L.h; o.scale.set(L.w * .96, .25, L.d * .96); o.updateMatrix(); roofs.setMatrixAt(i, o.matrix); roofs.setColorAt(i, col.setHex(TH.roof[(rnd() * TH.roof.length) | 0]));
+        const q = rnd(); if (q < .35) det.push({ k: 'ac', x: L.x + L.w * (.25 + rnd() * .4), y: L.y + L.d * (.25 + rnd() * .4), h: L.h + .25 }); else if (q < .43 && RD_MAP_THEME[MAPN] !== 'ancient') det.push({ k: 'dome', x: L.x + L.w / 2, y: L.y + L.d / 2, h: L.h + .25, r: Math.min(L.w, L.d) * .34 }); });
+      for (const b of [bodies, roofs]) { b.castShadow = b.receiveShadow = true; if (b.instanceColor) b.instanceColor.needsUpdate = true; scene.add(b); }
+      { const acs = det.filter(d => d.k === 'ac'), dms = det.filter(d => d.k === 'dome');
+        const a = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0xb9b6ad, roughness: .6, metalness: .3 }), acs.length); acs.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.set(.9, .6, .7); o.updateMatrix(); a.setMatrixAt(i, o.matrix); }); a.castShadow = true; scene.add(a);
+        const dm = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: TH.dome, roughness: .35, metalness: .5 }), dms.length); dms.forEach((d, i) => { o.position.set(X(d.x), d.h, Z(d.y)); o.scale.setScalar(d.r); o.updateMatrix(); dm.setMatrixAt(i, o.matrix); }); dm.castShadow = true; scene.add(dm); }
+    }
     /* ящики и деревья у дорог */
-    { const cr = [], tr = []; for (let i = 0; i < 260; i++) { const p = [rnd() * 100, rnd() * 100], d = out(p); if (d > -1.8 && d < -.6 && cr.length < 30) cr.push(p); else if (d > .4 && d < 2.2 && tr.length < 40 && rnd() < .5) tr.push(p); }
+    { const cr = [], tr = []; for (let i = 0; i < 260; i++) { const p = [rnd() * 100, rnd() * 100], d = out(p); if (d > -1.8 && d < -.6 && cr.length < (GEO.rects ? 14 : 30)) cr.push(p); else if (!GEO.rects && d > .4 && d < 2.2 && tr.length < 40 && rnd() < .5) tr.push(p); }
       const cm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .85 }), cr.length); cr.forEach((p, i) => { const s = 1.2 + rnd() * .5; o.position.set(X(p[0]), .1, Z(p[1])); o.scale.set(s, s * (rnd() < .3 ? 2 : 1), s); o.rotation.y = rnd(); o.updateMatrix(); cm.setMatrixAt(i, o.matrix); }); cm.castShadow = cm.receiveShadow = true; scene.add(cm);
       const tm = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1.4, 0), new THREE.MeshStandardMaterial({ color: TH.tree, roughness: .9, flatShading: true }), tr.length), trunk = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x6b4b2a }), tr.length);
       tr.forEach((p, i) => { o.rotation.set(0, rnd() * 3, 0); o.position.set(X(p[0]), 3.2, Z(p[1])); o.scale.set(1.3, .9, 1.3); o.updateMatrix(); tm.setMatrixAt(i, o.matrix); o.position.y = 0; o.scale.set(.3, 3, .3); o.updateMatrix(); trunk.setMatrixAt(i, o.matrix); }); tm.castShadow = trunk.castShadow = true; scene.add(tm, trunk); }
@@ -3778,10 +3854,6 @@ const M3D = (() => {
       const l = new THREE.PointLight(0xff3b30, 0, 20, 2); l.position.set(X(p[0]), 3, Z(p[1])); scene.add(l); siteLight[s] = l; }
     /* укрытия по карте: ящики, будка, фургон, машины */
     if (RM.props && RM.props.length) { const pm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .8 }), RM.props.length); RM.props.forEach(([x, y, w, d, h], i) => { o.position.set(X(x), .1, Z(y)); o.scale.set(w, h, d); o.rotation.set(0, 0, 0); o.updateMatrix(); pm.setMatrixAt(i, o.matrix); pm.setColorAt(i, col.setHex([0x8b6a3f, 0x6f7a80, 0x9a8a6a][i % 3])); }); pm.castShadow = pm.receiveShadow = true; if (pm.instanceColor) pm.instanceColor.needsUpdate = true; scene.add(pm); }
-    /* названия мест на земле — как на радаре; разворачиваются вместе с камерой */
-    const LBL = []; let lblK = '';
-    for (const [k, txt] of RM.lb || []) { const p = RM.n[k]; if (!p) continue; const tx = ctex(512, 96, (g, w, h) => { g.clearRect(0, 0, w, h); g.font = '700 56px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 10; g.strokeStyle = 'rgba(0,0,0,.55)'; g.strokeText(txt.toUpperCase(), w / 2, h / 2); g.fillStyle = 'rgba(255,255,255,.92)'; g.fillText(txt.toUpperCase(), w / 2, h / 2); });
-      const lm = new THREE.Mesh(new THREE.PlaneGeometry(8, 1.5), new THREE.MeshBasicMaterial({ map: tx, transparent: true, opacity: .7, depthWrite: false })); lm.position.set(X(p[0]), .16, Z(p[1])); lm.userData.p = [X(p[0]), Z(p[1])]; lm.renderOrder = 2; scene.add(lm); LBL.push(lm); }
     for (const [k, c] of [['TS', 0xf2c14e], ['CTS', 0x4aa3ff]]) { const p = RM.n[k], z = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: .28, depthWrite: false })); z.rotation.x = -Math.PI / 2; z.position.set(X(p[0]), .22, Z(p[1])); scene.add(z); }
 
     /* игроки: фигурка, кольцо на земле, табличка с фото и ником */
@@ -3857,7 +3929,6 @@ const M3D = (() => {
       let b = null, fv = .62, sh = .06;
       if (ph === 'round' && S) { const al = S.dots.filter(d => d.dt == null || t < d.dt).map(d => { const p = rdPos(d, t); return [X(p[0]), Z(p[1]), 6]; }); if (al.length) b = box(al); fv = .66; sh = .02; }
       if (!b) { b = box(NB); if (ph === 'buy') { fv = port ? .6 : .6; sh = .1; } }
-      const lk = dn.join(); if (lk !== lblK) { lblK = lk; const a = Math.atan2(-rt[1], rt[0]); for (const l of LBL) { l.rotation.set(-Math.PI / 2, 0, a); l.position.x = l.userData.p[0] + dn[0] * 2.4; l.position.z = l.userData.p[1] + dn[1] * 2.4; } }
       const hc = (b[0] + b[1]) / 2, vc = (b[2] + b[3]) / 2, ev = b[3] - b[2];
       CAM.td = Math.max(ph === 'round' ? 52 : 60, need(b[1] - b[0], ev, fv)); const vsh = ev * sh + CAM.td * .0;
       CAM.tx = rt[0] * hc + dn[0] * (vc + vsh); CAM.tz = rt[1] * hc + dn[1] * (vc + vsh);

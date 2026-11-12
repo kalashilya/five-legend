@@ -8,6 +8,10 @@ const RADAR = {
   Mirage: {
     n: { TS: [86, 46], tMid: [72, 45], mid: [59, 44], midW: [47, 43], win: [35, 41], con: [42, 53], jung: [35, 60], stairs: [44, 63], A: [40, 73], tet: [52, 70], ramp: [63, 65], tRamp: [76, 57], pAlley: [82, 68], pal: [67, 81], palx: [52, 80], tick: [28, 74], ctp: [22, 68], CTS: [14, 60], ctB1: [15, 48], kit: [23, 38], mkt: [16, 29], B: [20, 20], short: [32, 28], cat: [43, 35], tApp: [82, 31], App1: [69, 19], App2: [53, 14], Bapps: [36, 15], side: [61, 27], under: [52, 31] },
     r: { TS: 7, A: 9, B: 8, CTS: 6, mid: 5.5, win: 3.2 },
+    /* зоны карты прямоугольниками, как на радаре: [x0, y0, x1, y1]; vrects — проёмы только для обзора (окно) */
+    rects: [[78, 38, 94, 54], [66, 41, 80, 49], [44, 39, 68, 48], [30, 37, 38, 44], [17, 33, 31, 43], [12, 38, 20, 56], [8, 54, 20, 66], [12, 24, 21, 35], [12, 12, 30, 27], [29, 11, 41, 19], [40, 10, 65, 18], [62, 13, 78, 25], [74, 22, 87, 40],
+      [57, 22, 64, 31], [45, 28, 60, 34], [39, 30, 48, 41], [28, 24, 41, 32], [39, 47, 46, 56], [31, 54, 41, 64], [41, 55, 47, 66], [31, 63, 50, 82], [70, 52, 82, 62], [57, 60, 74, 69], [48, 65, 60, 74], [78, 52, 86, 78], [62, 75, 84, 86], [47, 76, 64, 84], [23, 69, 33, 78], [18, 63, 26, 72]],
+    vrects: [[37, 39.2, 45, 42.8]],
     tz: ['TS', 'tMid', 'mid', 'tRamp', 'ramp', 'pAlley', 'pal', 'tApp', 'App1', 'App2', 'side', 'under'], ctz: ['CTS', 'ctB1', 'kit', 'mkt', 'ctp', 'tick', 'win', 'jung', 'stairs'],
     e: [['TS', 'tMid', 9], ['tMid', 'mid', 9], ['mid', 'midW', 9], ['midW', 'win', 3.5, 'v'], ['win', 'kit', 5], ['kit', 'ctB1', 6], ['ctB1', 'CTS', 7], ['kit', 'mkt', 6], ['mkt', 'B', 6],
       ['midW', 'con', 6], ['con', 'jung', 6], ['con', 'stairs', 5], ['jung', 'A', 7], ['stairs', 'A', 6], ['TS', 'tRamp', 8], ['tRamp', 'ramp', 7], ['ramp', 'tet', 7], ['tet', 'A', 8],
@@ -39,6 +43,8 @@ const RADAR = {
   'Dust II': {
     n: { TS: [56, 88], oLong: [74, 84], lDoors: [84, 71], long: [86, 53], pit: [93, 40], acr: [83, 31], A: [75, 19], extA: [64, 23], CTS: [55, 24], ctMid: [44, 32], mDoors: [46, 41], xbox: [50, 50], mid: [48, 59], tMid: [50, 73], cat: [60, 43], short: [69, 33], bDoors: [32, 28], B: [19, 21], tunEx: [14, 36], upTun: [14, 56], oTun: [23, 77], tRamp: [38, 85], loTun: [33, 63] },
     r: { TS: 7, A: 9, B: 9, CTS: 5.5, oTun: 5, mid: 5 },
+    rects: [[48, 82, 64, 94], [62, 80, 82, 88], [80, 64, 88, 84], [82, 36, 90, 66], [88, 34, 96, 46], [76, 24, 90, 37], [66, 12, 84, 26], [58, 18, 68, 28], [50, 18, 60, 30], [40, 26, 51, 36], [43, 35, 49, 45], [44, 44, 56, 54], [43, 52, 53, 66], [46, 64, 54, 84],
+      [52, 38, 66, 48], [62, 24, 72, 42], [26, 24, 41, 32], [10, 12, 28, 31], [10, 30, 18, 44], [10, 42, 18, 72], [16, 70, 30, 84], [28, 80, 50, 90], [22, 60, 30, 72], [26, 59, 44, 65]],
     tz: ['TS', 'oLong', 'lDoors', 'tMid', 'mid', 'tRamp', 'oTun', 'upTun', 'loTun'], ctz: ['CTS', 'ctMid', 'extA', 'bDoors'],
     e: [['TS', 'oLong', 8], ['oLong', 'lDoors', 5], ['lDoors', 'long', 8], ['long', 'acr', 9], ['long', 'pit', 5], ['acr', 'A', 9], ['A', 'extA', 8], ['extA', 'CTS', 7], ['CTS', 'ctMid', 7], ['ctMid', 'mDoors', 5],
       ['mDoors', 'xbox', 6], ['xbox', 'mid', 8], ['mid', 'tMid', 7], ['tMid', 'TS', 6], ['xbox', 'cat', 5], ['cat', 'short', 5], ['short', 'A', 6], ['ctMid', 'bDoors', 5], ['bDoors', 'B', 6],
@@ -114,14 +120,21 @@ function rdGeo(M) {
   const segs = M.e.map(e => ({ a: M.n[e[0]], b: M.n[e[1]], h: rdEw(e) / 2, v: e[3] === 'v' })), nr = {};
   for (const k in M.n) nr[k] = (M.r && M.r[k]) || 0;
   for (const e of M.e) if (e[3] !== 'v') for (const k of [e[0], e[1]]) nr[k] = Math.max(nr[k], rdEw(e) / 2);
-  const circ = Object.keys(M.n).map(k => ({ c: M.n[k], r: nr[k] }));
-  const raw = (x, y) => { let f = -1e9;
+  const circ = Object.keys(M.n).map(k => ({ c: M.n[k], r: nr[k] })), rects = M.rects || null, vrects = M.vrects || [];
+  const rf = (r, x, y) => { const dx = Math.max(r[0] - x, 0, x - r[2]), dy = Math.max(r[1] - y, 0, y - r[3]); return dx || dy ? -Math.hypot(dx, dy) : Math.min(x - r[0], r[2] - x, y - r[1], r[3] - y); };
+  const raw = rects ? (x, y) => { let f = -1e9; for (const r of rects) f = Math.max(f, rf(r, x, y)); for (const r of vrects) f = Math.max(f, rf(r, x, y)); return f; } : (x, y) => { let f = -1e9;
     for (const s of segs) { const dx = s.b[0] - s.a[0], dy = s.b[1] - s.a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((x - s.a[0]) * dx + (y - s.a[1]) * dy) / l)); f = Math.max(f, s.h - Math.hypot(x - s.a[0] - t * dx, y - s.a[1] - t * dy)); }
     for (const c of circ) f = Math.max(f, c.r - Math.hypot(x - c.c[0], y - c.c[1])); return f; };
   const N = 201, G = new Float32Array(N * N); for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) G[j * N + i] = raw(i / 2, j / 2);
   const adj = {}; for (const k in M.n) adj[k] = [];
   for (const e of M.e) if (e[3] !== 'v') { const l = rdD(M.n[e[0]], M.n[e[1]]); adj[e[0]].push([e[1], l]); adj[e[1]].push([e[0], l]); }
-  return (M._g = { segs, circ, nr, raw, G, N, adj, sp: {} });
+  const g = (M._g = { segs, circ, nr, raw, G, N, adj, sp: {}, rects, vrects, via: {} });
+  /* у зон-прямоугольников проход из узла в узел может идти с поворотом: ищем точку поворота, чтобы не резать угол сквозь стену */
+  if (rects) for (const e of M.e) { if (e[3] === 'v') continue; const a = M.n[e[0]], b = M.n[e[1]]; if (rdLos(M, a, b, .9)) continue;
+    const cand = [[a[0], b[1]], [b[0], a[1]]]; for (let i = 1; i < 10; i++) for (let j = 1; j < 10; j++) cand.push([a[0] + (b[0] - a[0]) * i / 10 + (j - 5) * .8, a[1] + (b[1] - a[1]) * i / 10 - (j - 5) * .8]);
+    let v = null; for (const c of cand) { const q = rdSnap(M, c, 1.2); if (rdLos(M, a, q, .9) && rdLos(M, q, b, .9)) { v = q; break; } }
+    if (v) { g.via[e[0] + '>' + e[1]] = [v]; g.via[e[1] + '>' + e[0]] = [v]; } }
+  return g;
 }
 /* запас до стены: >0 — внутри прохода (на столько единиц), <0 — снаружи */
 function rdFree(M, p) {
@@ -139,6 +152,7 @@ function rdLos(M, a, b, m = .6) {
 /* точка внутрь прохода, если оказалась у стены */
 function rdSnap(M, p, m = 1) {
   if (rdFree(M, p) >= m) return p.slice(); const g = rdGeo(M); let best = null, bd = 1e9;
+  if (g.rects) { for (const r of g.rects) { const q = [clamp(p[0], r[0] + Math.min(m, (r[2] - r[0]) / 2), r[2] - Math.min(m, (r[2] - r[0]) / 2)), clamp(p[1], r[1] + Math.min(m, (r[3] - r[1]) / 2), r[3] - Math.min(m, (r[3] - r[1]) / 2))], dd = rdD(q, p); if (dd < bd) { bd = dd; best = q; } } return best.slice(); }
   for (const s of g.segs) { if (s.v) continue; const dx = s.b[0] - s.a[0], dy = s.b[1] - s.a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0] - s.a[0]) * dx + (p[1] - s.a[1]) * dy) / l)), c = [s.a[0] + t * dx, s.a[1] + t * dy], d = rdD(c, p), q = d > 1e-6 ? Math.max(0, s.h - m) / d : 0, r = d <= s.h - m ? p : [c[0] + (p[0] - c[0]) * q, c[1] + (p[1] - c[1]) * q]; const dd = rdD(r, p); if (dd < bd) { bd = dd; best = r; } }
   for (const c of g.circ) { const d = rdD(c.c, p), q = d > 1e-6 ? Math.max(0, c.r - m) / d : 0, r = d <= c.r - m ? p : [c.c[0] + (p[0] - c.c[0]) * q, c.c[1] + (p[1] - c.c[1]) * q]; const dd = rdD(r, p); if (dd < bd) { bd = dd; best = r; } }
   return best ? best.slice() : p.slice();
@@ -161,7 +175,8 @@ function rdPull(M, P) {
   return out;
 }
 /* путь между любыми точками по проходам */
-function rdPath(M, p, q, side) { if (rdLos(M, p, q, 1.1)) return [p, q]; const r = rdRoute(M, rdNear(M, p), rdNear(M, q), side); return rdPull(M, [p, ...r.map(k => M.n[k]), q]); }
+const rdExp = (M, r) => { const g = rdGeo(M), o = []; r.forEach((k, i) => { if (i) o.push(...(g.via[r[i - 1] + '>' + k] || [])); o.push(M.n[k]); }); return o; };
+function rdPath(M, p, q, side) { if (rdLos(M, p, q, 1.1)) return [p, q]; const r = rdRoute(M, rdNear(M, p), rdNear(M, q), side); return rdPull(M, [p, ...rdExp(M, r), q]); }
 /* путь через заданные узлы */
 function rdChain(M, p, nodes, q, side) { let P = [p], cur = p; for (const k of nodes) { const s = rdPath(M, cur, M.n[k], side); P = P.concat(s.slice(1)); cur = M.n[k]; } if (q) P = P.concat(rdPath(M, cur, q, side).slice(1)); return rdPull(M, P); }
 const rdLen = P => { let l = 0; for (let i = 1; i < P.length; i++) l += rdD(P[i - 1], P[i]); return l; };
@@ -324,6 +339,9 @@ function rdScript(L, mapN) {
   if (!timeR) for (const u of P.ut[site] || []) ut.push({ t: Math.max(1.5, tc + u.dt), k: u.k, p: u.p });
   for (const u of P.ut0 || []) ut.push({ t: u.t, k: u.k, p: u.p });
   ut.sort((x, y) => x.t - y.t);
+  /* убийство сквозь дым — для значка в килфиде */
+  for (const e of ev) if (e.type === 'kill') { const K = find(e.k.byA ? 'a' : 'b', e.k.k), V = find(e.k.byA ? 'b' : 'a', e.k.v); if (!K || !V) continue; const a = rdPos(K, e.t - .01), b = V.dp;
+    e.sm = ut.some(u => u.k === 'smoke' && e.t > u.t + .4 && e.t < u.t + 8.5 && (() => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, k = clamp(((u.p[0] - a[0]) * dx + (u.p[1] - a[1]) * dy) / l, 0, 1); return Math.hypot(a[0] + dx * k - u.p[0], a[1] + dy * k - u.p[1]) < 3; })()); }
   return { dots, ev, T, site, tc, plantT, aAtt, ut, planter: planter ? planter.team + planter.i : null };
 }
 
@@ -369,7 +387,7 @@ function rdArt(mapN, size = 1024) {
   }
   /* улицы: бордюр, покрытие, разметка */
   g.lineCap = g.lineJoin = 'round';
-  const lay = (pad, col) => { g.strokeStyle = g.fillStyle = col; for (const sg of GEO.segs) { g.lineWidth = (sg.h * 2 + pad) * u; g.beginPath(); g.moveTo(sg.a[0] * u, sg.a[1] * u); g.lineTo(sg.b[0] * u, sg.b[1] * u); g.stroke(); } for (const c of GEO.circ) if (c.r > 0) { g.beginPath(); g.arc(c.c[0] * u, c.c[1] * u, (c.r + pad / 2) * u, 0, 7); g.fill(); } };
+  const lay = (pad, col) => { g.strokeStyle = g.fillStyle = col; if (GEO.rects) { for (const r of GEO.rects.concat(GEO.vrects)) g.fillRect((r[0] - pad / 2) * u, (r[1] - pad / 2) * u, (r[2] - r[0] + pad) * u, (r[3] - r[1] + pad) * u); return; } for (const sg of GEO.segs) { g.lineWidth = (sg.h * 2 + pad) * u; g.beginPath(); g.moveTo(sg.a[0] * u, sg.a[1] * u); g.lineTo(sg.b[0] * u, sg.b[1] * u); g.stroke(); } for (const c of GEO.circ) if (c.r > 0) { g.beginPath(); g.arc(c.c[0] * u, c.c[1] * u, (c.r + pad / 2) * u, 0, 7); g.fill(); } };
   lay(2.2, 'rgba(0,0,0,.35)'); lay(1, T.curb); lay(0, T.st);
   for (let i = 0; i < 1400; i++) { const p = [rnd() * 100, rnd() * 100]; if (dist(p) < W / 2 - .3) { g.fillStyle = rnd() < .5 ? T.st2 : 'rgba(0,0,0,.12)'; g.fillRect(p[0] * u, p[1] * u, (.5 + rnd()) * u, (.5 + rnd()) * u); } }
   /* ящики и деревья у дорог */

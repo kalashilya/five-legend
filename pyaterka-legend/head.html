@@ -1665,6 +1665,14 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .qp-r{position:absolute;top:6px;right:6px;font:700 8px/1 var(--f-m);padding:3px 5px;border-radius:4px;background:#f0c477;color:#111}
 .qp-f{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;font-size:11px;color:#9aa4b0;flex-wrap:wrap}.qp-f b{color:#ffd35a;font:700 14px var(--f-d)}
 @media (min-width:900px){.m3 .feed{top:170px}}
+/* килфид как в CS2: тёмная плашка, ник убийцы цветом стороны, силуэт оружия, значки, ник жертвы; убийства вашей команды — в красной рамке */
+.feed div.kf,.m3 .feed div.kf{gap:5px;padding:3px 7px;border-radius:3px;background:rgb(10 12 14 / .64);border:1.5px solid transparent;font:600 11px/1.2 var(--f-d);text-transform:none;letter-spacing:.01em;transition:opacity .4s}
+.feed div.kf.mine,.m3 .feed div.kf.mine{border-color:#e0302a;background:rgb(30 8 8 / .74)}
+.feed div.kf.out{opacity:0}
+.feed .kf .wpn{height:11px;width:calc(var(--ww) * 11px / 20);fill:#f2f2f2;flex:none}
+.feed .kf .kf-i{width:12px;height:12px;fill:#f2f2f2;color:#f2f2f2;flex:none}
+.feed .kf .ka.t,.feed .kf .va.t{color:#e8bf5a}.feed .kf .ka.ct,.feed .kf .va.ct{color:#7aa8f0}
+.pl-w .wpn{height:8px;width:calc(var(--ww) * 8px / 20)}.m3 .pl-w .wpn{height:7px;width:calc(var(--ww) * 7px / 20)}
 @media (prefers-reduced-motion: reduce){.qp-c{transition:none}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">

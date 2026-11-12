@@ -32,6 +32,7 @@ jobs:
           node --check core.js
           node --check meta.js
           node --check ui.js
+          node --check c4.js
           node --check test.js
           node --check browser-smoke.js
       - name: Build offline game and run logic tests

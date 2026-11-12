@@ -118,8 +118,21 @@ function accH() {
     <p class="sm">Сейчас прогресс хранится только на этом устройстве. Войдите или создайте аккаунт — тогда карточки, монеты и кубки не потеряются и будут доступны с любого телефона.</p>
     <div class="rowb"><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button><button class="btn s" data-act="topOpen">Рейтинг игроков</button></div></section>`;
 }
+/* окно входа при каждом открытии игры, пока игрок не вошёл (один раз за запуск) */
+let authAsked = false;
+const authAskDue = () => !authAsked;
 function authH() {
   const s = sheet;
+  if (s.pop) return `<div class="in st-pop acc-pop">${xBtn.replace('class="lg-x"', 'class="lg-x st-x0"')}
+    <svg class="acc-logo" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="acc-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a8"/><stop offset="1" stop-color="#c9902a"/></linearGradient></defs><path d="M50 6 88 20v28c0 22-16 37-38 46C28 85 12 70 12 48V20z" fill="#0d1520" stroke="url(#acc-g)" stroke-width="4"/><text x="50" y="64" text-anchor="middle" font-size="46" font-weight="700" fill="url(#acc-g)" font-family="Oswald, Impact, sans-serif">5</text></svg>
+    <h2>${s.mode === 'up' ? 'Создай аккаунт' : 'Вход в аккаунт'}</h2>
+    <p class="acc-sub">Карточки, монеты и кубки сохранятся на сервере — можно играть с любого телефона и попасть в рейтинг игроков.</p>
+    ${segH('authMode', s.mode, [['up', 'Новый аккаунт'], ['in', 'Уже есть аккаунт']])}
+    <label class="acc-f"><span>Ник в игре</span><input id="au-nick" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" value="${esc(s.nick || '')}" placeholder="латиница, цифры, _"></label>
+    <label class="acc-f"><span>Пароль</span><input id="au-pass" type="password" autocomplete="${s.mode === 'up' ? 'new-password' : 'current-password'}" maxlength="72" value="${esc(s.pass || '')}" placeholder="не меньше 6 символов"></label>
+    ${s.err ? `<p class="acc-err" role="alert">${esc(s.err)}</p>` : ''}
+    <button class="btn pri acc-go" data-act="authGo" ${s.busy ? 'disabled' : ''}>${s.busy ? 'Подождите…' : s.mode === 'up' ? 'Создать аккаунт' : 'Войти'}</button>
+    <button class="acc-skip" data-act="close">Играть без аккаунта</button></div>`;
   return `<div class="in lg-page acc-page"><div class="lg-top"><div><small class="eyebrow">Аккаунт</small><b>${s.mode === 'up' ? 'Создать аккаунт' : 'Вход'}</b></div>${xBtn}</div>
     ${segH('authMode', s.mode, [['in', 'Вход'], ['up', 'Новый аккаунт']])}
     <label class="acc-f"><span>Ник в игре</span><input id="au-nick" type="text" inputmode="latin" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" value="${esc(s.nick || '')}" placeholder="например, s1mple_fan"></label>

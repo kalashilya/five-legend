@@ -1,5 +1,10 @@
 # CHANGELOG — «Пятёрка Легенд»
 
+## 2026-11-12 — игра как приложение на экране «Домой»
+- Добавлено: значок игры, название и режим приложения (`manifest.webmanifest`, `apple-mobile-web-app-capable`, значки 180 и 512 px в `pyaterka-legend/web/`). Если добавить сайт на экран «Домой», игра открывается на весь экран без адресной строки и панелей Safari — кнопки внизу ничем не перекрыты.
+- Изменено: Netlify копирует значки и манифест вместе с игрой.
+- Файлы: pyaterka-legend/build.sh, pyaterka-legend/web/ (новое), netlify.toml, pyaterka-legend/pyaterka-legend-offline.html, CHANGELOG.md.
+
 ## 2026-11-12 — подготовка к публикации на Netlify
 - Добавлено: `netlify.toml` — при подключении репозитория к Netlify сайт сам пересобирается после каждого обновления на GitHub. Публикуется только готовый файл игры (как `index.html`), без исходников. Кэш отключён, чтобы новая версия открывалась сразу. Старая ссылка на `pyaterka-legend-offline.html` ведёт на игру.
 - Файлы: netlify.toml (новый), .gitignore, CHANGELOG.md.

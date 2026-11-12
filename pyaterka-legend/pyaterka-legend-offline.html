@@ -4644,11 +4644,18 @@ function netPost(uid, ev, p) {
 
 /* ---------- Присутствие и личный канал ---------- */
 const netMeta = () => ({ uid: AU.uid, nick: AU.nick, st: NET.st, v: NET_V, t: NET.qt || 0 });
-function netSt(st) { NET.st = st; if (AU && RT.ch['fl-lobby']) rtTrack('fl-lobby', netMeta()); }
-function onlineMap() { const c = RT.ch['fl-lobby'], o = {}; if (!c) return o; for (const k in c.pres) { const l = c.pres[k], x = l[l.length - 1]; if (x && x.uid) o[x.uid] = x; } return o; }
+function netSt(st) { NET.st = st; if (AU && RT.ch['fl-lobby']) { rtTrack('fl-lobby', netMeta()); hereSend(); } }
+/* кто в игре: присутствие сервера + запасной способ — каждый раз в 5 с сообщает о себе в общем канале */
+const SEEN = {};
+function onlineMap() { const c = RT.ch['fl-lobby'], o = {}; if (!c) return o; for (const k in c.pres) { const l = c.pres[k], x = l[l.length - 1]; if (x && x.uid) o[x.uid] = x; }
+  const t = Date.now(); for (const id in SEEN) if (t - SEEN[id]._t < 16000) o[id] = SEEN[id]; if (AU && c.ok) o[AU.uid] = netMeta(); return o; }
+const hereSend = ev => { if (AU && RT.ch['fl-lobby'] && RT.ch['fl-lobby'].ok) rtSend('fl-lobby', ev || 'here', netMeta()); };
+const onlineUi = () => { mmTick(); if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render(); };
+setInterval(() => { if (!AU) return; hereSend(); const t = Date.now(); let ch = 0; for (const id in SEEN) if (t - SEEN[id]._t > 16000) { delete SEEN[id]; ch = 1; } if (ch) onlineUi(); }, 5000);
 function netBoot() {
   if (!AU || NET.on) return; NET.on = 1;
-  rtJoin('fl-lobby', { key: AU.uid, meta: netMeta(), onPres: () => { mmTick(); if (sheet && sheet.t === 'fr') frRender(); else if (tab === 'play' && !OV && !sheet) render(); } });
+  rtJoin('fl-lobby', { key: AU.uid, meta: netMeta(), onPres: onlineUi, onJoin: () => { hereSend('who'); onlineUi(); },
+    on: (ev, p) => { if ((ev !== 'here' && ev !== 'who') || !p || !p.uid || p.uid === AU.uid) return; const nw = !SEEN[p.uid] || SEEN[p.uid].st !== p.st; SEEN[p.uid] = Object.assign({}, p, { _t: Date.now() }); if (ev === 'who') hereSend(); if (nw) onlineUi(); } });
   rtJoin('fl-u-' + AU.uid, { on: netInbox });
   frLoad();
 }

@@ -1,6 +1,7 @@
 /* ---------- Радар карты: схема проходов, расстановки, маршруты и постановка раунда ----------
    Mirage и Dust II — подробные схемы по реальным картам CS2: те же зоны и проходы (callouts), ширина проходов,
-   респауны на 5 мест, расстановки защиты, маршруты атаки, гранаты, места после закладки. Остальные карты — упрощённые.
+   респауны на 5 мест, расстановки защиты, маршруты атаки, гранаты, места после закладки.
+   Inferno, Ancient и Anubis — в radar-maps.js: зоны сняты с радаров CS2, узлы и расстановки — по колаутам.
    Постановка раунда строится из результата движка (L): кто кого и в каком порядке убил, закладка, исход —
    поэтому видно на карте всегда то же, что в счёте. Сам баланс матча здесь не меняется.
    Координаты 0–100, x вправо, y вниз. e: [узел, узел, ширина прохода, 'v' — только обзор (окно), ходить нельзя]. */
@@ -67,27 +68,6 @@ const RADAR = {
         B: [{ k: 'smoke', p: [31, 27], dt: -1 }, { k: 'smoke', p: [25, 22], dt: -.9 }, { k: 'flash', p: [16, 31], dt: -.25 }, { k: 'fire', p: [14, 16], dt: .1 }] },
       ut0: [{ k: 'smoke', p: [46, 41], t: 2.4 }]
     }
-  },
-  Inferno: {
-    n: { TS: [12, 86], tM: [32, 76], ap: [42, 58], bal: [62, 56], A: [80, 58], m1: [52, 78], sh: [68, 72], bn1: [24, 58], bn2: [34, 34], B: [56, 14], CTS: [88, 28], ctA: [84, 44], ctB: [72, 18], arch: [70, 40] },
-    e: [['TS', 'tM'], ['tM', 'ap'], ['ap', 'bal'], ['bal', 'A'], ['tM', 'm1'], ['m1', 'sh'], ['sh', 'A'], ['TS', 'bn1'], ['bn1', 'bn2'], ['bn2', 'B'], ['CTS', 'ctA'], ['ctA', 'A'], ['CTS', 'ctB'], ['ctB', 'B'], ['A', 'arch'], ['arch', 'ctB']],
-    tr: { A: [['TS', 'tM', 'ap', 'bal', 'A'], ['TS', 'tM', 'm1', 'sh', 'A']], B: [['TS', 'bn1', 'bn2', 'B'], ['TS', 'bn1', 'bn2', 'B']], M: ['TS', 'tM', 'm1'] },
-    ct: { A: ['CTS', 'ctA', 'A'], B: ['CTS', 'ctB', 'B'], M: ['CTS', 'ctA', 'arch'] },
-    lb: [['ap', 'Апартаменты'], ['sh', 'Шорт'], ['bn1', 'Банан'], ['arch', 'Арка'], ['m1', 'Мид']]
-  },
-  Ancient: {
-    n: { TS: [50, 90], aM: [30, 74], dn: [28, 50], A: [22, 28], M1: [50, 66], M2: [50, 46], cX: [50, 28], bM: [70, 74], bR: [78, 52], B: [76, 28], CTS: [50, 10], ctA: [30, 16], ctB: [68, 14] },
-    e: [['TS', 'aM'], ['aM', 'dn'], ['dn', 'A'], ['TS', 'M1'], ['M1', 'M2'], ['M2', 'cX'], ['M2', 'dn'], ['TS', 'bM'], ['bM', 'bR'], ['bR', 'B'], ['CTS', 'ctA'], ['ctA', 'A'], ['CTS', 'ctB'], ['ctB', 'B'], ['CTS', 'cX'], ['cX', 'ctA'], ['cX', 'ctB']],
-    tr: { A: [['TS', 'aM', 'dn', 'A'], ['TS', 'M1', 'M2', 'dn', 'A']], B: [['TS', 'bM', 'bR', 'B'], ['TS', 'M1', 'M2', 'cX', 'ctB', 'B']], M: ['TS', 'M1', 'M2'] },
-    ct: { A: ['CTS', 'ctA', 'A'], B: ['CTS', 'ctB', 'B'], M: ['CTS', 'cX', 'M2'] },
-    lb: [['aM', 'A-мейн'], ['dn', 'Донат'], ['M2', 'Мид'], ['bR', 'Рампа B'], ['cX', 'Пещера']]
-  },
-  Anubis: {
-    n: { TS: [50, 90], bM: [26, 76], bC: [18, 52], B: [24, 26], aM: [74, 76], aC: [82, 52], A: [76, 24], M1: [50, 68], M2: [50, 46], CTS: [52, 10], ctA: [66, 14], ctB: [36, 14], hv: [64, 40] },
-    e: [['TS', 'bM'], ['bM', 'bC'], ['bC', 'B'], ['TS', 'aM'], ['aM', 'aC'], ['aC', 'A'], ['TS', 'M1'], ['M1', 'M2'], ['M2', 'bC'], ['M2', 'hv'], ['hv', 'A'], ['CTS', 'ctA'], ['ctA', 'A'], ['CTS', 'ctB'], ['ctB', 'B'], ['hv', 'ctA']],
-    tr: { A: [['TS', 'aM', 'aC', 'A'], ['TS', 'M1', 'M2', 'hv', 'A']], B: [['TS', 'bM', 'bC', 'B'], ['TS', 'M1', 'M2', 'bC', 'B']], M: ['TS', 'M1', 'M2'] },
-    ct: { A: ['CTS', 'ctA', 'A'], B: ['CTS', 'ctB', 'B'], M: ['CTS', 'ctA', 'hv'] },
-    lb: [['bM', 'B-мейн'], ['aM', 'A-мейн'], ['M2', 'Канал'], ['hv', 'Хевен'], ['bC', 'Коннектор']]
   }
 };
 const RD_POOL = ['Mirage', 'Dust II', 'Inferno', 'Ancient', 'Anubis'];
@@ -125,7 +105,17 @@ function rdGeo(M) {
   const raw = rects ? (x, y) => { let f = -1e9; for (const r of rects) f = Math.max(f, rf(r, x, y)); for (const r of vrects) f = Math.max(f, rf(r, x, y)); return f; } : (x, y) => { let f = -1e9;
     for (const s of segs) { const dx = s.b[0] - s.a[0], dy = s.b[1] - s.a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((x - s.a[0]) * dx + (y - s.a[1]) * dy) / l)); f = Math.max(f, s.h - Math.hypot(x - s.a[0] - t * dx, y - s.a[1] - t * dy)); }
     for (const c of circ) f = Math.max(f, c.r - Math.hypot(x - c.c[0], y - c.c[1])); return f; };
-  const N = 201, G = new Float32Array(N * N); for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) G[j * N + i] = raw(i / 2, j / 2);
+  const N = 201, G = new Float32Array(N * N);
+  if (rects && M.union) {
+    /* зоны сняты с радара полосами: запас до стены считается до границы всей проходимой области (а не каждой полосы), иначе стыки полос — «стены» */
+    const inside = (x, y) => rects.some(r => x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3]) || vrects.some(r => x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3]);
+    const occ = new Uint8Array(N * N); for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) occ[j * N + i] = inside(i / 2, j / 2) ? 1 : 0;
+    const dist = want => { const D = new Float32Array(N * N), S = 1.4142; for (let k = 0; k < N * N; k++) D[k] = occ[k] === want ? 1e6 : 0;
+      for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const k = j * N + i; if (!D[k]) continue; let v = D[k]; if (i) v = Math.min(v, D[k - 1] + 1); if (j) { v = Math.min(v, D[k - N] + 1); if (i) v = Math.min(v, D[k - N - 1] + S); if (i < N - 1) v = Math.min(v, D[k - N + 1] + S); } D[k] = v; }
+      for (let j = N - 1; j >= 0; j--) for (let i = N - 1; i >= 0; i--) { const k = j * N + i; if (!D[k]) continue; let v = D[k]; if (i < N - 1) v = Math.min(v, D[k + 1] + 1); if (j < N - 1) { v = Math.min(v, D[k + N] + 1); if (i < N - 1) v = Math.min(v, D[k + N + 1] + S); if (i) v = Math.min(v, D[k + N - 1] + S); } D[k] = v; }
+      return D; };
+    const din = dist(1), dout = dist(0); for (let k = 0; k < N * N; k++) G[k] = occ[k] ? (din[k] - .5) / 2 : -(dout[k] - .5) / 2;
+  } else for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) G[j * N + i] = raw(i / 2, j / 2);
   const adj = {}; for (const k in M.n) adj[k] = [];
   for (const e of M.e) if (e[3] !== 'v') { const l = rdD(M.n[e[0]], M.n[e[1]]); adj[e[0]].push([e[1], l]); adj[e[1]].push([e[0], l]); }
   const g = (M._g = { segs, circ, nr, raw, G, N, adj, sp: {}, rects, vrects, via: {} });
@@ -134,7 +124,22 @@ function rdGeo(M) {
     const cand = [[a[0], b[1]], [b[0], a[1]]]; for (let i = 1; i < 10; i++) for (let j = 1; j < 10; j++) cand.push([a[0] + (b[0] - a[0]) * i / 10 + (j - 5) * .8, a[1] + (b[1] - a[1]) * i / 10 - (j - 5) * .8]);
     let v = null; for (const c of cand) { const q = rdSnap(M, c, 1.2); if (rdLos(M, a, q, .9) && rdLos(M, q, b, .9)) { v = q; break; } }
     if (v) { g.via[e[0] + '>' + e[1]] = [v]; g.via[e[1] + '>' + e[0]] = [v]; } }
+  /* карты, снятые с радара: если проход не прямой и одного поворота мало — путь по сетке проходимого (A*), затем срезаем углы */
+  if (rects && M.union) for (const e of M.e) { const k = e[0] + '>' + e[1]; if (e[3] === 'v' || g.via[k]) continue; const a = M.n[e[0]], b = M.n[e[1]]; if (rdLos(M, a, b, .9)) continue;
+    const P = rdGrid(M, g, a, b); if (P) { const v = rdPull(M, [a, ...P, b]).slice(1, -1); g.via[k] = v; g.via[e[1] + '>' + e[0]] = v.slice().reverse(); } }
   return g;
+}
+/* путь по сетке 0,5 ед. через места с запасом от стены ≥ 0,9 (A*, 8 направлений) */
+function rdGrid(M, g, a, b) {
+  const N = g.N, G = g.G, id = (i, j) => j * N + i, si = Math.round(a[0] * 2), sj = Math.round(a[1] * 2), ti = Math.round(b[0] * 2), tj = Math.round(b[1] * 2), ok = k => G[k] >= .9;
+  const gs = new Float32Array(N * N).fill(1e9), from = new Int32Array(N * N).fill(-1), done = new Uint8Array(N * N), open = [[0, id(si, sj)]]; gs[id(si, sj)] = 0;
+  const h = k => Math.hypot(k % N - ti, (k / N | 0) - tj), push = (f, k) => { open.push([f, k]); let i = open.length - 1; while (i) { const p = (i - 1) >> 1; if (open[p][0] <= open[i][0]) break; [open[p], open[i]] = [open[i], open[p]]; i = p; } };
+  const pop = () => { const t = open[0], l = open.pop(); if (open.length) { open[0] = l; let i = 0; for (;;) { const c = 2 * i + 1; if (c >= open.length) break; const d = c + 1 < open.length && open[c + 1][0] < open[c][0] ? c + 1 : c; if (open[i][0] <= open[d][0]) break; [open[i], open[d]] = [open[d], open[i]]; i = d; } } return t; };
+  let it = 0;
+  while (open.length && it++ < 90000) { const [, k] = pop(); if (done[k]) continue; done[k] = 1; const i = k % N, j = k / N | 0; if (Math.abs(i - ti) <= 1 && Math.abs(j - tj) <= 1) { const out = []; let q = k; while (q >= 0) { out.unshift([q % N / 2, (q / N | 0) / 2]); q = from[q]; } return out; }
+    for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) { if (!di && !dj) continue; const x = i + di, y = j + dj; if (x < 0 || y < 0 || x >= N || y >= N) continue; const n = id(x, y); if (done[n] || (!ok(n) && Math.hypot(x - si, y - sj) > 3)) continue;
+      const c = gs[k] + (di && dj ? 1.414 : 1) * (G[n] < 1.6 ? 1.6 : 1); if (c < gs[n]) { gs[n] = c; from[n] = k; push(c + h(n), n); } } }
+  return null;
 }
 /* запас до стены: >0 — внутри прохода (на столько единиц), <0 — снаружи */
 function rdFree(M, p) {
@@ -152,6 +157,8 @@ function rdLos(M, a, b, m = .6) {
 /* точка внутрь прохода, если оказалась у стены */
 function rdSnap(M, p, m = 1) {
   if (rdFree(M, p) >= m) return p.slice(); const g = rdGeo(M); let best = null, bd = 1e9;
+  if (g.rects && M.union) { const N = g.N, ci = clamp(Math.round(p[0] * 2), 0, N - 1), cj = clamp(Math.round(p[1] * 2), 0, N - 1);
+    for (let rad = 1; rad < 60; rad++) { for (let dj = -rad; dj <= rad; dj++) for (let di = -rad; di <= rad; di++) { if (Math.max(Math.abs(di), Math.abs(dj)) !== rad) continue; const i = ci + di, j = cj + dj; if (i < 0 || j < 0 || i >= N || j >= N || g.G[j * N + i] < m) continue; const q = [i / 2, j / 2], dd = rdD(q, p); if (dd < bd) { bd = dd; best = q; } } if (best) return best; } }
   if (g.rects) { for (const r of g.rects) { const q = [clamp(p[0], r[0] + Math.min(m, (r[2] - r[0]) / 2), r[2] - Math.min(m, (r[2] - r[0]) / 2)), clamp(p[1], r[1] + Math.min(m, (r[3] - r[1]) / 2), r[3] - Math.min(m, (r[3] - r[1]) / 2))], dd = rdD(q, p); if (dd < bd) { bd = dd; best = q; } } return best.slice(); }
   for (const s of g.segs) { if (s.v) continue; const dx = s.b[0] - s.a[0], dy = s.b[1] - s.a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0] - s.a[0]) * dx + (p[1] - s.a[1]) * dy) / l)), c = [s.a[0] + t * dx, s.a[1] + t * dy], d = rdD(c, p), q = d > 1e-6 ? Math.max(0, s.h - m) / d : 0, r = d <= s.h - m ? p : [c[0] + (p[0] - c[0]) * q, c[1] + (p[1] - c[1]) * q]; const dd = rdD(r, p); if (dd < bd) { bd = dd; best = r; } }
   for (const c of g.circ) { const d = rdD(c.c, p), q = d > 1e-6 ? Math.max(0, c.r - m) / d : 0, r = d <= c.r - m ? p : [c.c[0] + (p[0] - c.c[0]) * q, c.c[1] + (p[1] - c.c[1]) * q]; const dd = rdD(r, p); if (dd < bd) { bd = dd; best = r; } }

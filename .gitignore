@@ -2,3 +2,5 @@ _t.js
 .DS_Store
 pyaterka-legend/tools/shots/
 dist/
+pyaterka-legend/tools/maps/*.png
+pyaterka-legend/tools/maps/*_rects.json

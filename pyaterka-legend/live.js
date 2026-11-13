@@ -315,10 +315,18 @@ function lvKill(k, e) {
 }
 /* подпись плана: название тактики, а у старого плана без тактики — точка и темп */
 const planLbl = p => p && p.tk && TK[p.tk] ? TK[p.tk].n : p ? (DIRN[p.dir] || '') + ', ' + (TEMPON[p.tempo] || '') : '';
+/* разбор раунда для игрока: шанс раунда и главные причины в процентах (насколько каждая сдвинула шанс) */
+const FX_N = { sq: 'состав', buy: 'экономика', cards: 'приказы', roles: 'роли', tk: 'тактика', call: 'решение', read: 'точка', duel: 'первая дуэль' };
+function fxLine(L) {
+  if (!L.fx || L.p == null) return '';
+  const P = x => 1 / (1 + Math.exp(-x / 9)), tot = Object.values(L.fx).reduce((a, b) => a + b, 0);
+  const parts = Object.entries(L.fx).map(([k, v]) => [k, Math.round(100 * (P(tot) - P(tot - v)))]).filter(x => Math.abs(x[1]) >= 2).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 4);
+  return `<span class="bn-fx"><b>Шанс раунда ${Math.round(L.p * 100)}%</b>${parts.map(([k, d]) => `<i class="${d > 0 ? 'up' : 'dn'}">${FX_N[k]} ${d > 0 ? '+' : '−'}${Math.abs(d)}%</i>`).join('')}</span>`;
+}
 function lvEnd() {
   const L = LV.last; LV.ph = 'end'; LV.t = T_END; lvBtns();
   const rd = { good: 'вы переиграли соперника по направлению', bad: 'соперник прочитал ваше направление', fake: 'фейк спас атаку' }[L.read];
-  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span>${L.tkA && L.tkB ? `<span class="bn-tk">Вы: «${esc(TK[L.tkA].n)}» · соперник: «${esc(TK[L.tkB].n)}»${L.why ? ' — ' + esc(L.why) : ''}</span>` : rd ? `<span>${rd}</span>` : ''}</div>`;
+  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span>${fxLine(L)}${L.tkA && L.tkB ? `<span class="bn-tk">Вы: «${esc(TK[L.tkA].n)}» · соперник: «${esc(TK[L.tkB].n)}»${L.why ? ' — ' + esc(L.why) : ''}</span>` : rd ? `<span>${rd}</span>` : ''}</div>`;
   LV.kd = null; lvHud(); sfx(L.win ? 'win' : 'lose');
 }
 function lvNext() {

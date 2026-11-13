@@ -445,8 +445,12 @@ class Match {
     const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
     const tkB0 = pB.tk && TK[pB.tk] && TK[pB.tk].s === sideB ? pB.tk : null, tkA = tkBonus(plan.tk, tkB0, buyA, buyB), tkB = tkBonus(tkB0, plan.tk, buyB, buyA);
-    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + mc + tkA + sgn * (dm + swing) / 2;
-    const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) + mcB + tkB - sgn * (dm + swing) / 2;
+    const rA = role(a, plan, a.score < b.score), rB = role(b, pB, b.score < a.score), cA = va.reduce((s, x) => s + x.v, 0), cB = vb.reduce((s, x) => s + x.v, 0);
+    const pa = baseA + BUY[buyA].v + hot(a) + cA + rA + focus + mc + tkA + sgn * (dm + swing) / 2;
+    const pb = baseB + BUY[buyB].v + hot(b) + cB + rB + mcB + tkB - sgn * (dm + swing) / 2;
+    /* разбор раунда (с вашей стороны, в очках силы; сумма = pa − pb): состав и сторона карты, деньги и серия, приказы, роли и фокус,
+       тактика против тактики, решение капитана, угаданная точка, первая дуэль */
+    const fx = { sq: baseA - baseB, buy: BUY[buyA].v - BUY[buyB].v + hot(a) - hot(b), cards: cA - cB, roles: rA + focus - rB, tk: tkA - tkB, call: mc - mcB, read: sgn * dm, duel: sgn * swing };
     const p = 1 / (1 + Math.exp(-(pa - pb) / 9)), win = R() < p;
     const W = win ? a : b, L = win ? b : a; W.score++;
     const open = openAtt ? { team: att, k: 1, v: ri(0, 4) } : { team: def, k: 0, v: 1 };
@@ -462,7 +466,7 @@ class Match {
     const Ltk = L === a ? plan.tk : tkB0, Lsv = L === a ? plan.save : pB.save; if (Ltk === 'save' || Lsv) L.money = Math.min(MAX_MONEY, L.money + 1200);   /* сейв сохранил оружие */
     W.ws++; W.ls = 0; L.ls++; L.ws = 0;
     const read = pAtt.dir === 'S' || pDef.dir === 'S' ? null : faked ? 'fake' : (pAtt.dir === pDef.dir) === (att === a) ? 'bad' : 'good';
-    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: (() => { const wT = win ? plan.tk : tkB0, lT = win ? tkB0 : plan.tk, w = tkWhy(wT, lT), u = tkWhy(lT, wT); return w || (u ? u + ', но перестрелки решили иначе' : ''); })() }, f);
+    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, fx, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: (() => { const wT = win ? plan.tk : tkB0, lT = win ? tkB0 : plan.tk, w = tkWhy(wT, lT), u = tkWhy(lT, wT); return w || (u ? u + ', но перестрелки решили иначе' : ''); })() }, f);
     this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, tkA: plan.tk || null, tkB: tkB0, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, buyB, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
     if (a.score >= WIN_N || b.score >= WIN_N) { this.over = true; this.won = a.score > b.score; return this.last; }
     this.round++;
@@ -498,6 +502,7 @@ function applyResult(G, won, sa, sb) {
   G.tro += r.tro; G.coins += r.coins; if (won) G.w++; else G.l++;
   if (G.tro > G.best) { G.best = G.tro; const n = leagueOf(G.best); if (n > lg0) { G.packs.pro++; r.packs.push('кейс «Про» за лигу «' + LEAGUES[n][0] + '»'); } }
   const up = addXp(G, r.xp); if (up) r.packs.push('базовый кейс за уровень ' + G.lvl);
+  if (won && G.c4 && typeof c4WinReward === 'function') { const t = c4WinReward(G); if (t) r.packs.push(t); }   /* шанс на попытку или подсказку C4 */
   return r;
 }
 
@@ -564,8 +569,9 @@ function normalize(G, now) {
   { const p = G.streak.pend; G.streak.pend = p && Number.isInteger(p.d) && Number.isInteger(p.day) && p.day >= 1 && p.day <= 28 ? { d: p.d, day: p.day } : null; G.streak.shown = Number.isInteger(G.streak.shown) ? G.streak.shown : -1; }
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
-  { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { tries: Array.isArray(c.tries) ? c.tries.filter(t => Number.isFinite(t) && t > 0).slice(-10) : [], used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }   /* старое ожидание next (4 ч) сбрасывается */
+  { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { tries: Array.isArray(c.tries) ? c.tries.filter(t => Number.isFinite(t) && t > 0).slice(-10) : [], used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [], bonus: Number.isInteger(c.bonus) ? clamp(c.bonus, 0, 5) : 0, hints: Array.isArray(c.hints) ? [...new Set(c.hints.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }   /* старое ожидание next (4 ч) сбрасывается; bonus — запасные попытки за победы, hints — подсказки */
   G.news = Number.isInteger(G.news) && G.news >= 0 ? G.news : 0;
+  G.gift = Number.isInteger(G.gift) && G.gift >= 0 ? G.gift : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
   for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !Number.isFinite(+o.n) || !(+o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
@@ -590,7 +596,7 @@ function normalize(G, now) {
   if (now != null) refresh(G, now);
   return G;
 }
-function newProfile(now) { const G = newGame(); G.tut = 0; G.news = NEWS_V; return normalize(G, now); }   /* новичку «Что нового» не показываем — у него обучение */
+function newProfile(now) { const G = newGame(); G.tut = 0; return normalize(G, now); }   /* «Что нового» новичок увидит после обучения (newsDue требует tut ≥ 3) */
 
 /* ---------- Составы и капитан ---------- */
 const captSlot = G => { const id = G.capts[G.sqi]; return id == null ? -1 : G.squad.indexOf(id); };
@@ -650,21 +656,42 @@ const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object
    При каждом выпуске добавляйте запись В НАЧАЛО списка с номером v на 1 больше. Игрок видит все записи новее своей
    отметки G.news (едет в облако вместе с сохранением); новые профили сразу получают последнюю отметку. */
 const NEWS = [
-  { v: 1, d: '13.11.2026', t: 'Большое обновление матча', items: [
-    ['Тактики', '19 тактик вместо трёх: 10 в атаке, 9 в защите. Листайте карточки — на каждой видно, кого она бьёт и кому проигрывает.'],
-    ['Решения капитана', '13 разных ситуаций посреди раунда: потеряли энтри, упала бомба, снайпер на миде, эко соперника, тишина, тайм-аут. Верный ответ даёт перевес.'],
-    ['Причина раунда', 'После раунда видно тактики обеих сторон и почему раунд пошёл так.'],
-    ['Умный соперник', 'Бот запоминает ваши привычки: два раза подряд одно и то же — на третий он вас ждёт.'],
-    ['Камера со своей стороны', 'Ваш спавн всегда снизу. Карту можно крутить двумя пальцами, приближать щипком и двигать; двойной тап — вернуть вид.'],
-    ['Разминка перед матчем', 'После выбора карты — 6 секунд разминки с отсчётом: карта успевает загрузиться, и матч начинается без чёрного экрана.'],
-    ['Новое меню', 'Кнопка «Играть» по центру, вкладка «Друзья» со списком и обменом, профиль — по нажатию на аватар.'],
-    ['Взлом C4', 'На странице кейсов попробуйте взломать бомбу: угадайте 6-значный код и заберите награду. Две попытки каждый час.'],
-    ['Рейтинги по HLTV', 'Топ-20 игроков HLTV — 92, 90 и 88. На карточках подписи наград: «MVP · Бухарест», «EVP · Пекин». «Игрок недели» убран — такие карточки стали обычными.']
+  { v: 2, d: '13.11.2026', t: 'Большое обновление', sec: [
+    { h: 'Матч', items: [
+      ['Тактики', '19 тактик вместо трёх: 10 в атаке и 9 в защите. Листайте карточки — на каждой видно, кого она бьёт и кому проигрывает.'],
+      ['Решения капитана', '13 разных ситуаций посреди раунда: потеряли энтри, упала бомба, снайпер на миде, эко соперника, тишина, тайм-аут. Верный ответ даёт перевес.'],
+      ['Разбор раунда', 'После каждого раунда — шанс раунда и что на него повлияло: состав, тактика, решение, экономика, первая дуэль.'],
+      ['Умный соперник', 'Бот запоминает ваши привычки: два раза подряд одно и то же — на третий он вас ждёт.'],
+      ['Камера со своей стороны', 'Ваш спавн всегда снизу. Карту можно крутить двумя пальцами, приближать щипком и двигать; двойной тап — вернуть вид.'],
+      ['Разминка перед матчем', 'После выбора карты — 6 секунд разминки с отсчётом: карта успевает загрузиться, и матч начинается без чёрного экрана.']
+    ] },
+    { h: 'Новые фишки', items: [
+      ['Подарок', 'В честь переезда игры на новый адрес — карточка игрока 87+ каждому. Откройте «?» на главной.'],
+      ['Взлом C4', 'На странице кейсов угадайте 6-значный код и заберите награду. Две попытки каждый час, кнопка «Ещё попытка», вибрация.'],
+      ['Награды за победу', 'После выигранного матча есть шанс получить лишнюю попытку взлома C4 или подсказку — половину кода.'],
+      ['Друзья и обмен', 'Вкладка «Друзья»: список друзей и обмен карточками. Кнопка «Играть» — по центру, профиль — по нажатию на аватар.'],
+      ['Рейтинги по HLTV', 'Топ-20 игроков HLTV — 92, 90 и 88. На карточках подписи наград: «MVP · Бухарест», «EVP · Пекин».']
+    ] },
+    { h: 'Исправления', items: [
+      ['Кнопки в матче', 'Тактики и решения капитана снова нажимаются (после смены меню они могли не срабатывать).'],
+      ['«Игрок недели»', 'Убран из игры. Такие карточки стали обычными карточками этих игроков — копии и уровень сохранились.'],
+      ['Мелочи', 'Крестик на экране бомбы стоит ровно, окно «Что нового» больше не пропадает при входе в аккаунт.']
+    ] }
   ] }
 ];
 const NEWS_V = NEWS[0].v;
 const newsDue = G => G.tut >= 3 && (G.news | 0) < NEWS_V;
 const newsFor = G => NEWS.filter(n => n.v > (G.news | 0));
+/* ---------- Подарок в честь переезда на новый адрес (13.11.2026) ----------
+   Один раз на профиль (G.gift, едет в облако): случайная обычная карточка игрока с рейтингом 87+. Выдаётся в момент открытия «?». */
+const GIFT_ID = 1, GIFT_MIN = 87;
+const giftDue = G => G.tut >= 3 && (G.gift | 0) < GIFT_ID;
+function giftRun(G) {
+  if (!giftDue(G)) return null;
+  const pool = ALL.filter(c => !c.sp && !c.hist && c.ovr >= GIFT_MIN); if (!pool.length) return null;
+  const c = pool[Math.floor(Math.random() * pool.length)], isNew = addCard(G, c.id); G.gift = GIFT_ID;
+  return { c, isNew, up: false };
+}
 /* ---------- Взлом бомбы C4 (страница кейсов) ----------
    Игрок набирает на бомбе 6 цифр. Попыток — C4_PER за скользящий час (и удачных, и нет). Каждый код даёт награду один раз на профиль.
    В игре хранятся не коды, а их отпечатки: открыв файл игры, код не прочитать. Новый код: node tools/code-hash.js 123456.
@@ -683,10 +710,25 @@ const C4_CODES = {
   'tv3tk411gwizj': { r: { coins: 3000, pack: { pro: 3 } } },
   '43ndplmgmacc': { r: { pack: { elite: 1 }, pick: 4 } }
 };
+/* Подсказки за победу: половина кода (3 цифры из 6). Ключ — отпечаток кода, как в C4_CODES. */
+const C4_HINTS = {
+  'j1i1to526ipz': '6_6__9', 'ccqavd16fj31s': '_7_77_', '1t2w7dx16ws5ik': '13___3', '17vkzbj19aby2': '__13_3', '19e1t1snv3q7f': '9_2_2_',
+  '1foj0zfpvlh4u': '_12__3', '1snytyf15qc14i': '5__05_', 'fr7l2j44qaae': '_0__04', 'tv3tk411gwizj': '1__0_0', '43ndplmgmacc': '__9_99'
+};
+const C4_BONUS_MAX = 5, C4_WIN_TRY = .25, C4_WIN_HINT = .10;
+/* награда за победу в матче: с шансом 25% — лишняя попытка взлома (сверх 2 в час, до 5 в запасе), иначе с шансом 10% — подсказка к ещё не взломанному коду */
+function c4WinReward(G) {
+  const r = Math.random();
+  if (r < C4_WIN_TRY && G.c4.bonus < C4_BONUS_MAX) { G.c4.bonus++; return 'попытка взлома C4 (сверх двух в час)'; }
+  if (r < C4_WIN_TRY + C4_WIN_HINT) { const L = Object.keys(C4_HINTS).filter(h => !G.c4.used.includes(h) && !G.c4.hints.includes(h)); if (L.length) { const h = L[Math.floor(Math.random() * L.length)]; G.c4.hints.push(h); return 'подсказка к коду C4: ' + C4_HINTS[h].split('').join(' ') + ' (' + rewardText(C4_CODES[h].r) + ')'; } }
+  return null;
+}
+/* подсказки игрока к ещё не взломанным кодам: маска и награда */
+const c4HintList = G => G.c4.hints.filter(h => C4_HINTS[h] && C4_CODES[h] && !G.c4.used.includes(h)).map(h => ({ m: C4_HINTS[h], r: rewardText(C4_CODES[h].r) }));
 const c4Recent = (G, nowTs) => G.c4.tries.filter(t => nowTs - t < C4_WIN && t <= nowTs + 60000);
-const c4TriesLeft = (G, nowTs) => Math.max(0, C4_PER - c4Recent(G, nowTs).length);
+const c4TriesLeft = (G, nowTs) => Math.max(0, C4_PER - c4Recent(G, nowTs).length) + (G.c4.bonus | 0);   /* + запасные попытки за победы */
 /* сколько ждать до следующей попытки (0 — можно сейчас) */
-const c4Left = (G, nowTs) => { const r = c4Recent(G, nowTs); return r.length < C4_PER ? 0 : Math.max(0, Math.min(...r) + C4_WIN - nowTs); };
+const c4Left = (G, nowTs) => { const r = c4Recent(G, nowTs); return r.length < C4_PER || G.c4.bonus > 0 ? 0 : Math.max(0, Math.min(...r) + C4_WIN - nowTs); };
 /* итог: ok — код верный и награда выдана; used — код уже взломан (попытка не тратится); wait — попытка ещё не восстановилась */
 function c4Try(G, digits, nowTs) {
   const d = String(digits || '');
@@ -694,7 +736,7 @@ function c4Try(G, digits, nowTs) {
   const left = c4Left(G, nowTs); if (left > 0) return { ok: false, wait: left, why: 'Бомба остывает. Следующая попытка позже.' };
   const h = c4Hash(d), c = C4_CODES[h];
   if (c && G.c4.used.includes(h)) return { ok: false, used: true, why: 'Этот код вы уже взломали.' };
-  G.c4.tries = c4Recent(G, nowTs).concat(nowTs);
+  if (c4Recent(G, nowTs).length < C4_PER) G.c4.tries = c4Recent(G, nowTs).concat(nowTs); else G.c4.bonus--;   /* сначала часовые попытки, потом запасные */
   if (!c) return { ok: false, why: 'Код не угадан' };
   G.c4.used.push(h); giveReward(G, c.r);
   return { ok: true, r: c.r, text: rewardText(c.r) };
@@ -797,7 +839,7 @@ const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro)
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
   TK, TK_T, TK_CT, tkOk, tkBonus, tkWhy, TK_HIT,
-  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, c4TriesLeft, C4_CODES, C4_WIN, C4_PER, NEWS, NEWS_V, newsDue, newsFor, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
+  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, c4TriesLeft, c4WinReward, c4HintList, C4_HINTS, C4_CODES, C4_WIN, C4_PER, NEWS, NEWS_V, newsDue, newsFor, giftDue, giftRun, GIFT_MIN, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
 
 /* ---------- Радар карты: схема проходов, расстановки, маршруты и постановка раунда ----------
    Mirage и Dust II — подробные схемы по реальным картам CS2: те же зоны и проходы (callouts), ширина проходов,

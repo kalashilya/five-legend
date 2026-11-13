@@ -144,7 +144,7 @@ function snapApply(sn) {
 function mirL(L) {
   const k = (L.kills || []).map(x => Object.assign({}, x, { byA: !x.byA }));
   return Object.assign({}, L, { sideA: other(L.sideA), plan: L.planB, planB: L.plan, mine: L.theirs || [], theirs: L.mine || [], cutA: L.cutB, cutB: L.cutA, va: L.vb, vb: L.va, pa: L.pb, pb: L.pa,
-    p: L.p == null ? L.p : 1 - L.p, win: L.win == null ? L.win : !L.win, buyA: L.buyB, buyB: L.buyA, openMine: L.openMine == null ? L.openMine : !L.openMine, read: flipRead(L.read), intel: null, tkA: L.tkB, tkB: L.tkA, tkVa: L.tkVb, tkVb: L.tkVa, kills: k, kA: k.filter(x => x.byA).length, awpK: k.filter(x => x.byA && x.k === 0).length });
+    p: L.p == null ? L.p : 1 - L.p, win: L.win == null ? L.win : !L.win, buyA: L.buyB, buyB: L.buyA, openMine: L.openMine == null ? L.openMine : !L.openMine, read: flipRead(L.read), intel: null, fx: L.fx ? Object.fromEntries(Object.entries(L.fx).map(([k, v]) => [k, -v])) : L.fx, tkA: L.tkB, tkB: L.tkA, tkVa: L.tkVb, tkVb: L.tkVa, kills: k, kA: k.filter(x => x.byA).length, awpK: k.filter(x => x.byA && x.k === 0).length });
 }
 function mirS(S) {
   const sw = t => t === 'a' ? 'b' : 'a';

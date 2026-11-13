@@ -123,17 +123,36 @@ ok('взлом C4: 2 попытки в скользящий час, верный
     r = E.c4Try(g, '000001', NOW + H); assert(!r.ok && r.used); assert.strictEqual(E.c4TriesLeft(g, NOW + H), 1, 'повтор взломанного кода попытку не тратит');
     const back = E.migrate(JSON.parse(JSON.stringify(g)), NOW); assert.deepStrictEqual(back.c4.tries, g.c4.tries); assert(back.c4.used.includes(h));
     const old = E.migrate({ v: 2, coins: 1, cards: {}, squads: [[], [], []], c4: { next: NOW + 3 * H, used: ['x1'] }, season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW);
-    assert.deepStrictEqual(old.c4, { tries: [], used: ['x1'] }); assert.strictEqual(E.c4Left(old, NOW), 0, 'старое 4-часовое ожидание сброшено');
-    const bad = E.migrate({ v: 2, coins: 1, cards: {}, squads: [[], [], []], c4: 'x', season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW); assert.deepStrictEqual(bad.c4, { tries: [], used: [] });
+    assert.deepStrictEqual(old.c4, { tries: [], used: ['x1'], bonus: 0, hints: [] }); assert.strictEqual(E.c4Left(old, NOW), 0, 'старое 4-часовое ожидание сброшено');
+    const bad = E.migrate({ v: 2, coins: 1, cards: {}, squads: [[], [], []], c4: 'x', season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW); assert.deepStrictEqual(bad.c4, { tries: [], used: [], bonus: 0, hints: [] });
   } finally { delete E.C4_CODES[h]; }
   assert(Object.values(E.C4_CODES).every(c => c.r && (c.r.coins || c.r.pack || c.r.pick != null)));
 });
 ok('«Что нового»: старый игрок видит окно один раз, новичок — нет, отметка сохраняется', () => {
-  assert(E.NEWS.length >= 1 && E.NEWS.every((n, i) => Number.isInteger(n.v) && (i === 0 || n.v < E.NEWS[i - 1].v) && n.items.length));
+  assert(E.NEWS.length >= 1 && E.NEWS.every((n, i) => Number.isInteger(n.v) && (i === 0 || n.v < E.NEWS[i - 1].v) && ((n.items && n.items.length) || (n.sec && n.sec.every(c => c.h && c.items.length)))));
   const old = E.migrate({ v: 2, coins: 1, tut: 3, cards: {}, squads: [[], [], []], season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW);
   assert.strictEqual(old.news, 0); assert(E.newsDue(old)); assert.strictEqual(E.newsFor(old).length, E.NEWS.length);
   old.news = E.NEWS_V; const back = E.migrate(JSON.parse(JSON.stringify(old)), NOW); assert.strictEqual(back.news, E.NEWS_V); assert(!E.newsDue(back));
-  const fresh = E.newProfile(NOW); fresh.tut = 3; assert(!E.newsDue(fresh));
+  const fresh = E.newProfile(NOW); assert(!E.newsDue(fresh), 'во время обучения не показываем'); fresh.tut = 3; assert(E.newsDue(fresh), 'после обучения новичок тоже видит');
+});
+ok('подарок 87+: один раз на профиль, только после обучения, карточка в коллекции', () => {
+  const g = E.newProfile(NOW); assert(!E.giftDue(g)); assert.strictEqual(E.giftRun(g), null); g.tut = 3; assert(E.giftDue(g));
+  const r = E.giftRun(g); assert(r && r.c.ovr >= 87 && !r.c.sp && !r.c.hist); assert(g.cards[r.c.id] && g.cards[r.c.id].n >= 1);
+  assert(!E.giftDue(g)); assert.strictEqual(E.giftRun(g), null); const back = E.migrate(JSON.parse(JSON.stringify(g)), NOW); assert(!E.giftDue(back));
+});
+ok('награды C4 за победу: запасная попытка сверх часа и подсказка половины кода', () => {
+  const g = E.newProfile(NOW), real = Math.random; let seq = [];
+  Math.random = () => seq.length ? seq.shift() : .99;
+  try {
+    seq = [.1]; assert(/попытка взлома/.test(E.c4WinReward(g))); assert.strictEqual(g.c4.bonus, 1);
+    seq = [.3, 0]; const t = E.c4WinReward(g); assert(/подсказка к коду C4/.test(t)); assert.strictEqual(g.c4.hints.length, 1);
+    const hl = E.c4HintList(g); assert.strictEqual(hl.length, 1); assert.strictEqual(hl[0].m.replace(/_/g, '').length, 3);
+    seq = [.9]; assert.strictEqual(E.c4WinReward(g), null);
+  } finally { Math.random = real; }
+  const h = E.c4Hash('000001'); E.C4_CODES[h] = { r: { coins: 1 } };
+  try { E.c4Try(g, '000002', NOW); E.c4Try(g, '000003', NOW + 1); assert.strictEqual(E.c4TriesLeft(g, NOW + 2), 1); assert.strictEqual(E.c4Left(g, NOW + 2), 0, 'запасная попытка доступна сразу');
+    E.c4Try(g, '000004', NOW + 3); assert.strictEqual(g.c4.bonus, 0); assert(E.c4Left(g, NOW + 4) > 0); } finally { delete E.C4_CODES[h]; }
+  const back = E.migrate(JSON.parse(JSON.stringify(g)), NOW); assert.strictEqual(back.c4.hints.length, 1);
 });
 ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
   assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);

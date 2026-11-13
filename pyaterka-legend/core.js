@@ -356,8 +356,12 @@ class Match {
     const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
     const tkB0 = pB.tk && TK[pB.tk] && TK[pB.tk].s === sideB ? pB.tk : null, tkA = tkBonus(plan.tk, tkB0, buyA, buyB), tkB = tkBonus(tkB0, plan.tk, buyB, buyA);
-    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + mc + tkA + sgn * (dm + swing) / 2;
-    const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) + mcB + tkB - sgn * (dm + swing) / 2;
+    const rA = role(a, plan, a.score < b.score), rB = role(b, pB, b.score < a.score), cA = va.reduce((s, x) => s + x.v, 0), cB = vb.reduce((s, x) => s + x.v, 0);
+    const pa = baseA + BUY[buyA].v + hot(a) + cA + rA + focus + mc + tkA + sgn * (dm + swing) / 2;
+    const pb = baseB + BUY[buyB].v + hot(b) + cB + rB + mcB + tkB - sgn * (dm + swing) / 2;
+    /* разбор раунда (с вашей стороны, в очках силы; сумма = pa − pb): состав и сторона карты, деньги и серия, приказы, роли и фокус,
+       тактика против тактики, решение капитана, угаданная точка, первая дуэль */
+    const fx = { sq: baseA - baseB, buy: BUY[buyA].v - BUY[buyB].v + hot(a) - hot(b), cards: cA - cB, roles: rA + focus - rB, tk: tkA - tkB, call: mc - mcB, read: sgn * dm, duel: sgn * swing };
     const p = 1 / (1 + Math.exp(-(pa - pb) / 9)), win = R() < p;
     const W = win ? a : b, L = win ? b : a; W.score++;
     const open = openAtt ? { team: att, k: 1, v: ri(0, 4) } : { team: def, k: 0, v: 1 };
@@ -373,7 +377,7 @@ class Match {
     const Ltk = L === a ? plan.tk : tkB0, Lsv = L === a ? plan.save : pB.save; if (Ltk === 'save' || Lsv) L.money = Math.min(MAX_MONEY, L.money + 1200);   /* сейв сохранил оружие */
     W.ws++; W.ls = 0; L.ls++; L.ws = 0;
     const read = pAtt.dir === 'S' || pDef.dir === 'S' ? null : faked ? 'fake' : (pAtt.dir === pDef.dir) === (att === a) ? 'bad' : 'good';
-    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: (() => { const wT = win ? plan.tk : tkB0, lT = win ? tkB0 : plan.tk, w = tkWhy(wT, lT), u = tkWhy(lT, wT); return w || (u ? u + ', но перестрелки решили иначе' : ''); })() }, f);
+    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, fx, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: (() => { const wT = win ? plan.tk : tkB0, lT = win ? tkB0 : plan.tk, w = tkWhy(wT, lT), u = tkWhy(lT, wT); return w || (u ? u + ', но перестрелки решили иначе' : ''); })() }, f);
     this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, tkA: plan.tk || null, tkB: tkB0, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, buyB, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
     if (a.score >= WIN_N || b.score >= WIN_N) { this.over = true; this.won = a.score > b.score; return this.last; }
     this.round++;
@@ -409,5 +413,6 @@ function applyResult(G, won, sa, sb) {
   G.tro += r.tro; G.coins += r.coins; if (won) G.w++; else G.l++;
   if (G.tro > G.best) { G.best = G.tro; const n = leagueOf(G.best); if (n > lg0) { G.packs.pro++; r.packs.push('кейс «Про» за лигу «' + LEAGUES[n][0] + '»'); } }
   const up = addXp(G, r.xp); if (up) r.packs.push('базовый кейс за уровень ' + G.lvl);
+  if (won && G.c4 && typeof c4WinReward === 'function') { const t = c4WinReward(G); if (t) r.packs.push(t); }   /* шанс на попытку или подсказку C4 */
   return r;
 }

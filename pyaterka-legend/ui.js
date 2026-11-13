@@ -798,7 +798,8 @@ const ACT = {
 
 document.addEventListener('click', e => {
   /* пока заставка не ушла и ещё 0,8 с после — нажатия не попадают в игру (чтобы «пропустить заставку» не запускало матч) */
-  if (document.getElementById('intro') || Date.now() - introT < 800) return;
+  /* только стартовая заставка: у надписи «Добро пожаловать на …» в матче тот же id, но класс lv-intro — её не считаем */
+  const itr = document.getElementById('intro'); if ((itr && !itr.classList.contains('lv-intro')) || Date.now() - introT < 800) return;
   const b = e.target.closest('[data-act]');
   if (!b) { if (e.target.id === 'sheet') { sheet = null; askSell = null; render(); } return; }
   if (b.disabled) return;

@@ -270,4 +270,5 @@ function lbTable(G, scope, now) {
 const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro).length + 1;
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
+  TK, TK_T, TK_CT, tkOk, tkBonus, tkWhy, TK_HIT,
   migrate, normalize, newProfile, c4Try, c4Hash, c4Left, C4_CODES, C4_WAIT, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };

@@ -184,7 +184,11 @@ function netSplash() {
   sfx('found'); setTimeout(() => { if (OV && OV.net === N && !N.done) netLive(); }, 2600);
 }
 function netLive() {
-  const N = OV.net; liveGo(); N.live = 1; LV.spd = NET_SPD; LV.ph = 'wait'; netWaitDraw('Ждём соперника…'); lvBtns();
+  const N = OV.net; liveGo(); LV.spd = NET_SPD;   /* сначала разминка (warmStart), затем netWarmDone */
+}
+/* разминка закончилась на этом устройстве: ведущий ждёт готовности второго, второй сообщает, что готов */
+function netWarmDone() {
+  const N = OV.net; N.live = 1; LV.ph = 'wait'; netWaitDraw('Ждём соперника…'); lvBtns();
   if (N.host) { if (N.opRdy) lvBuy(true); }
   else { N.rdy = 1; N.rdyT = Date.now(); rtSend(N.ch, 'rdy', {}); if (N.pend) netGuestApplyBuy(); }
 }

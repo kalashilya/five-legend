@@ -61,7 +61,7 @@ function normalize(G, now) {
   { const p = G.streak.pend; G.streak.pend = p && Number.isInteger(p.d) && Number.isInteger(p.day) && p.day >= 1 && p.day <= 28 ? { d: p.d, day: p.day } : null; G.streak.shown = Number.isInteger(G.streak.shown) ? G.streak.shown : -1; }
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
-  { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { next: Number.isFinite(c.next) ? Math.max(0, c.next) : 0, used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }
+  { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { tries: Array.isArray(c.tries) ? c.tries.filter(t => Number.isFinite(t) && t > 0).slice(-10) : [], used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }   /* старое ожидание next (4 ч) сбрасывается */
   G.news = Number.isInteger(G.news) && G.news >= 0 ? G.news : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
   for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !Number.isFinite(+o.n) || !(+o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
@@ -153,8 +153,9 @@ const NEWS = [
     ['Причина раунда', 'После раунда видно тактики обеих сторон и почему раунд пошёл так.'],
     ['Умный соперник', 'Бот запоминает ваши привычки: два раза подряд одно и то же — на третий он вас ждёт.'],
     ['Камера со своей стороны', 'Ваш спавн всегда снизу. Карту можно крутить двумя пальцами, приближать щипком и двигать; двойной тап — вернуть вид.'],
+    ['Разминка перед матчем', 'После выбора карты — 6 секунд разминки с отсчётом: карта успевает загрузиться, и матч начинается без чёрного экрана.'],
     ['Новое меню', 'Кнопка «Играть» по центру, вкладка «Друзья» со списком и обменом, профиль — по нажатию на аватар.'],
-    ['Взлом C4', 'На странице кейсов попробуйте взломать бомбу: угадайте 6-значный код и заберите награду. Одна попытка раз в 4 часа.'],
+    ['Взлом C4', 'На странице кейсов попробуйте взломать бомбу: угадайте 6-значный код и заберите награду. Две попытки каждый час.'],
     ['Рейтинги по HLTV', 'Топ-20 игроков HLTV — 92, 90 и 88. На карточках подписи наград: «MVP · Бухарест», «EVP · Пекин». «Игрок недели» убран — такие карточки стали обычными.']
   ] }
 ];
@@ -162,10 +163,10 @@ const NEWS_V = NEWS[0].v;
 const newsDue = G => G.tut >= 3 && (G.news | 0) < NEWS_V;
 const newsFor = G => NEWS.filter(n => n.v > (G.news | 0));
 /* ---------- Взлом бомбы C4 (страница кейсов) ----------
-   Игрок набирает на бомбе 6 цифр. Попытка — раз в 4 часа (и удачная, и нет). Каждый код даёт награду один раз на профиль.
+   Игрок набирает на бомбе 6 цифр. Попыток — C4_PER за скользящий час (и удачных, и нет). Каждый код даёт награду один раз на профиль.
    В игре хранятся не коды, а их отпечатки: открыв файл игры, код не прочитать. Новый код: node tools/code-hash.js 123456.
-   Состояние в G.c4: next — когда можно пробовать снова (мс), used — отпечатки уже взломанных кодов; едет в облако вместе с сохранением. */
-const C4_WAIT = 4 * 3600000;
+   Состояние в G.c4: tries — время последних попыток (мс), used — отпечатки уже взломанных кодов; едет в облако вместе с сохранением. */
+const C4_WIN = 3600000, C4_PER = 2;
 const c4Hash = d => hsh('C4|' + d + '|5L').toString(36) + hsh(d.split('').reverse().join('') + '#PL').toString(36);
 const C4_CODES = {
   'j1i1to526ipz': { r: { pack: { elite: 3 } } },
@@ -179,7 +180,10 @@ const C4_CODES = {
   'tv3tk411gwizj': { r: { coins: 3000, pack: { pro: 3 } } },
   '43ndplmgmacc': { r: { pack: { elite: 1 }, pick: 4 } }
 };
-const c4Left = (G, nowTs) => Math.max(0, (G.c4.next || 0) - nowTs);
+const c4Recent = (G, nowTs) => G.c4.tries.filter(t => nowTs - t < C4_WIN && t <= nowTs + 60000);
+const c4TriesLeft = (G, nowTs) => Math.max(0, C4_PER - c4Recent(G, nowTs).length);
+/* сколько ждать до следующей попытки (0 — можно сейчас) */
+const c4Left = (G, nowTs) => { const r = c4Recent(G, nowTs); return r.length < C4_PER ? 0 : Math.max(0, Math.min(...r) + C4_WIN - nowTs); };
 /* итог: ok — код верный и награда выдана; used — код уже взломан (попытка не тратится); wait — попытка ещё не восстановилась */
 function c4Try(G, digits, nowTs) {
   const d = String(digits || '');
@@ -187,7 +191,7 @@ function c4Try(G, digits, nowTs) {
   const left = c4Left(G, nowTs); if (left > 0) return { ok: false, wait: left, why: 'Бомба остывает. Следующая попытка позже.' };
   const h = c4Hash(d), c = C4_CODES[h];
   if (c && G.c4.used.includes(h)) return { ok: false, used: true, why: 'Этот код вы уже взломали.' };
-  G.c4.next = nowTs + C4_WAIT;
+  G.c4.tries = c4Recent(G, nowTs).concat(nowTs);
   if (!c) return { ok: false, why: 'Код не угадан' };
   G.c4.used.push(h); giveReward(G, c.r);
   return { ok: true, r: c.r, text: rewardText(c.r) };
@@ -290,4 +294,4 @@ const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro)
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
   TK, TK_T, TK_CT, tkOk, tkBonus, tkWhy, TK_HIT,
-  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, C4_CODES, C4_WAIT, NEWS, NEWS_V, newsDue, newsFor, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
+  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, c4TriesLeft, C4_CODES, C4_WIN, C4_PER, NEWS, NEWS_V, newsDue, newsFor, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };

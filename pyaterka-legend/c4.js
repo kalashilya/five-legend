@@ -3,9 +3,11 @@
    Логика попытки — c4Try в meta.js. Экран бомбы живёт в отдельном слое поверх игры и не пересоздаётся при render(). */
 const C4_ICON = `<svg class="c4-ico" viewBox="0 0 64 48" aria-hidden="true"><rect x="3" y="6" width="58" height="11" rx="5" fill="#b08a55"/><rect x="3" y="18.5" width="58" height="11" rx="5" fill="#a07d4b"/><rect x="3" y="31" width="58" height="11" rx="5" fill="#b08a55"/><rect x="9" y="4" width="5" height="40" fill="#1c1e21"/><rect x="50" y="4" width="5" height="40" fill="#1c1e21"/><rect x="19" y="10" width="26" height="30" rx="3" fill="#2c3136" stroke="#0d0f11" stroke-width="1.5"/><rect x="22" y="13" width="20" height="7" rx="1" fill="#0c1f0e"/><path d="M24 16.5h16" stroke="#6dff7a" stroke-width="1.6" stroke-dasharray="2 1.4"/><g fill="#59616a"><rect x="22.5" y="23" width="5" height="4" rx="1"/><rect x="29.5" y="23" width="5" height="4" rx="1"/><rect x="36.5" y="23" width="5" height="4" rx="1"/><rect x="22.5" y="29" width="5" height="4" rx="1"/><rect x="29.5" y="29" width="5" height="4" rx="1"/><rect x="36.5" y="29" width="5" height="4" rx="1"/></g><circle cx="40" cy="36.5" r="1.8" fill="#ff3b30"/><path d="M45 14c8-6 14 2 15-6M45 34c9 4 12-6 16 0" fill="none" stroke="#d33" stroke-width="1.6"/></svg>`;
 const c4Fmt = ms => { const s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return h + ':' + String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+/* подпись после попытки: сколько попыток осталось в этот час или когда следующая */
+const c4After = () => { const n = c4TriesLeft(G, now()); return n ? 'Осталось попыток в этот час: ' + n + '.' : 'Следующая попытка через ' + c4Fmt(c4Left(G, now())) + '.'; };
 function c4EntryH() {
   const left = c4Left(G, now());
-  return `<div class="c4-entry"><button class="c4-btn ${left ? 'cool' : 'ready'}" type="button" data-act="c4open" aria-label="Попробуй взломать бомбу C4"><span class="c4-btxt"><b>Попробуй взломать</b><small id="c4-et">${left ? 'через ' + c4Fmt(left) : 'попытка доступна'}</small></span>${C4_ICON}</button></div>`;
+  return `<div class="c4-entry"><button class="c4-btn ${left ? 'cool' : 'ready'}" type="button" data-act="c4open" aria-label="Попробуй взломать бомбу C4"><span class="c4-btxt"><b>Попробуй взломать</b><small id="c4-et">${left ? 'через ' + c4Fmt(left) : 'попыток: ' + c4TriesLeft(G, now())}</small></span>${C4_ICON}</button></div>`;
 }
 ACT.c4open = () => c4Open();
 
@@ -50,7 +52,7 @@ function c4Draw(lcd) {
   else if (cool) L.innerHTML = `<span class="c4-w">ЖДИТЕ</span>`;
   else L.innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<span class="c4-d ${C4.code[i] ? 'on' : ''}">${C4.code[i] || '_'}</span>`).join('');
   if (C4.done) return;
-  sub.textContent = cool ? 'Следующая попытка через ' + c4Fmt(left) : 'Набери 6 цифр и нажми OK. Одна попытка раз в 4 часа.';
+  sub.textContent = cool ? 'Следующая попытка через ' + c4Fmt(left) : 'Набери 6 цифр и нажми OK. ' + C4_PER + ' попытки в час, осталось: ' + c4TriesLeft(G, now()) + '.';
 }
 function c4Click(e) {
   const b = e.target.closest('[data-c4]'); if (!b || !C4) return;
@@ -81,13 +83,13 @@ function c4Check() {
     const sub = document.getElementById('c4-sub');
     if (r.ok) {
       C4.done = true; el.classList.add('win'); c4Draw(`<span class="c4-w ok">ВЗЛОМАНО</span>`);
-      msg.innerHTML = 'Код подошёл! Награда: ' + esc(r.text); msg.className = 'c4-msg ok'; sub.textContent = 'Награда уже у вас. Следующая попытка через 4 часа.';
+      msg.innerHTML = 'Код подошёл! Награда: ' + esc(r.text); msg.className = 'c4-msg ok'; sub.textContent = 'Награда уже у вас. ' + c4After();
       sfx('found'); c4Buzz([80, 60, 80, 60, 260]);
     } else if (r.used) {
       msg.textContent = r.why; msg.className = 'c4-msg warn'; C4.code = ''; c4Draw(); c4Beep(400, .2, 'triangle', .06);
     } else {
       C4.done = true; el.classList.add('fail'); bomb.classList.add('jolt'); c4Draw(`<span class="c4-w bad">ОШИБКА</span>`);
-      msg.textContent = r.why; msg.className = 'c4-msg bad'; sub.textContent = r.wait ? 'Следующая попытка через ' + c4Fmt(r.wait) : 'Следующая попытка через ' + c4Fmt(c4Left(G, now()));
+      msg.textContent = r.why; msg.className = 'c4-msg bad'; sub.textContent = r.wait ? 'Следующая попытка через ' + c4Fmt(r.wait) : c4After();
       c4Beep(180, .45, 'sawtooth', .07, 70); c4Buzz([300, 80, 300]);
     }
   }, 2050);
@@ -100,6 +102,6 @@ document.addEventListener('keydown', e => {
 });
 /* отсчёт до следующей попытки: на кнопке страницы кейсов и на экране бомбы */
 setInterval(() => {
-  const e = document.getElementById('c4-et'); if (e && G) { const left = c4Left(G, now()); e.textContent = left ? 'через ' + c4Fmt(left) : 'попытка доступна'; e.parentNode.parentNode.classList.toggle('cool', !!left); e.parentNode.parentNode.classList.toggle('ready', !left); }
+  const e = document.getElementById('c4-et'); if (e && G) { const left = c4Left(G, now()); e.textContent = left ? 'через ' + c4Fmt(left) : 'попыток: ' + c4TriesLeft(G, now()); e.parentNode.parentNode.classList.toggle('cool', !!left); e.parentNode.parentNode.classList.toggle('ready', !left); }
   if (C4 && !C4.busy && !C4.done) c4Draw();
 }, 1000);

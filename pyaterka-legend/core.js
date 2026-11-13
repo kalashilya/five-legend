@@ -315,6 +315,11 @@ class Match {
     const lastAlive = surv === 1 ? pick([0, 1, 2, 3, 4]) : -1;
     return { kills, end, planted, surv, lSurv, mvp: W.info.e[ti].c.nick, mvpI: ti, frags, ace: frags === 5, clutch: surv === 1 && frags >= 2 && lastAlive === ti, lastAlive, kA: kills.filter(x => x.byA).length, awpK: kills.filter(x => x.byA && x.k === 0).length };
   }
+  /* шанс атаки выиграть первую дуэль: энтри атаки против снайпера защиты */
+  openP() { const att = this.sideA === 'A' ? this.a : this.b, def = att === this.a ? this.b : this.a, ent = att.info.e[1], hold = def.info.e[0];
+    return 1 / (1 + Math.exp(-(ent.st.ent - (hold.st.aim + hold.st.pos) / 2 - 1.5 * hold.pw + 2) / 7)); }
+  /* разыграть первую дуэль заранее (для решения капитана по ходу раунда): true — первый фраг у атаки */
+  rollOpen() { this.preOpen = { r: this.round, v: R() < this.openP() }; return this.preOpen.v; }
   /* Разыграть раунд: mine — приказы игрока, plan — направление, темп и ставка на игрока */
   play(mine, plan) {
     if (this.over || !this.canPlay(this.a, mine)) return null;
@@ -323,8 +328,8 @@ class Match {
     if (!TEMPOS.includes(plan.tempo)) plan.tempo = 'norm';
     if (!Number.isInteger(plan.focus) || plan.focus < 0 || plan.focus >= 5) plan.focus = -1;
     if (plan.tk != null && (!TK[plan.tk] || TK[plan.tk].s !== this.sideA)) delete plan.tk;
-    /* решение по ходу раунда (смена точки, ротация): цена потерянного времени, от 0 до −3 */
-    const mc = clamp(+plan.mc || 0, -3, 0), mcB = clamp(+(this.nx.plan && this.nx.plan.mc) || 0, -3, 0);
+    /* решение по ходу раунда: удачное решение даёт до +3, неудачное или потерянное время — до −3 */
+    const mc = clamp(+plan.mc || 0, -3, 3), mcB = clamp(+(this.nx.plan && this.nx.plan.mc) || 0, -3, 3);
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
     const act = (own, oth) => { let l = [...own]; if (oth.includes('fake')) { const t = l.filter(k => k !== 'fake').sort((x, y) => AC[y].cost - AC[x].cost)[0]; if (t) l = l.filter(k => k !== t); return { l, cut: t || null }; } return { l, cut: null }; };
     const A = act(mine, theirs), B = act(theirs, mine);
@@ -345,7 +350,8 @@ class Match {
     const faked = dm < 0 && cAtt.includes('fake'); if (faked) dm = 0;
     dm *= 1 - .3 * (dm < 0 ? att : def).info.e[4].pw;
     /* первая дуэль: энтри атаки против снайпера защиты, ставка зависит от темпа атаки */
-    const ent = att.info.e[1], hold = def.info.e[0], pO = 1 / (1 + Math.exp(-(ent.st.ent - (hold.st.aim + hold.st.pos) / 2 - 1.5 * hold.pw + 2) / 7)), openAtt = R() < pO;
+    const pre = this.preOpen && this.preOpen.r === this.round ? this.preOpen.v : null, openAtt = pre != null ? pre : R() < this.openP(); this.preOpen = null;
+    const ent = att.info.e[1];
     const stake = 3 * T_OPEN[pAtt.tempo], swing = openAtt ? stake : -stake * (1 - .5 * Math.min(1, ent.pw));
     const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
@@ -364,7 +370,7 @@ class Match {
       s.money = Math.max(0, s.money - BUY[buy].c); s.spent += BUY[buy].c; const q = s.buys[buy] = s.buys[buy] || [0, 0]; q[0]++; if (s === W) q[1]++;
     }
     W.money = Math.min(MAX_MONEY, W.money + 3250 + 500 * f.surv); L.money = Math.min(MAX_MONEY, L.money + 1900 + 500 * Math.min(L.ls, 3) + 400 * f.lSurv);
-    const Ltk = L === a ? plan.tk : tkB0; if (Ltk === 'save') L.money = Math.min(MAX_MONEY, L.money + 1200);   /* сейв сохранил оружие */
+    const Ltk = L === a ? plan.tk : tkB0, Lsv = L === a ? plan.save : pB.save; if (Ltk === 'save' || Lsv) L.money = Math.min(MAX_MONEY, L.money + 1200);   /* сейв сохранил оружие */
     W.ws++; W.ls = 0; L.ls++; L.ws = 0;
     const read = pAtt.dir === 'S' || pDef.dir === 'S' ? null : faked ? 'fake' : (pAtt.dir === pDef.dir) === (att === a) ? 'bad' : 'good';
     this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: win ? tkWhy(plan.tk, tkB0) : tkWhy(tkB0, plan.tk) }, f);

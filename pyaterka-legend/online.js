@@ -198,9 +198,9 @@ function netAfterPlay() {
 }
 function netAfterPick(L, opt, note) { const N = OV.net; hostSend(N, 'rd', { r: L.round, L, opt, snap: snapOf(OV.m), note: /^соперник:/.test(note) ? note.replace(/^соперник: /, '') : 'Соперник принял решение' }); }
 function netCall(m) {
-  if (m.isPistol() || m.round < 2 || LV.lastCall === m.round - 1 || Math.random() > .4) return null;
-  const hostAtk = m.sideA === 'A';
-  return Math.random() < .5 ? { me: callGen(hostAtk, OV.plan.dir, m.nx.plan.dir), op: null } : { me: null, op: callGen(!hostAtk, m.nx.plan.dir, OV.plan.dir) };
+  if (m.isPistol() || m.round < 2 || LV.lastCall === m.round - 1 || Math.random() > .45) return null;
+  const hostAtk = m.sideA === 'A'; m.rollOpen();
+  return Math.random() < .5 ? { me: callGen(hostAtk, OV.plan.dir, m.nx.plan.dir, callCtx(m, true)), op: null } : { me: null, op: callGen(!hostAtk, m.nx.plan.dir, OV.plan.dir, callCtx(m, false)) };
 }
 function netBuyEnd() {
   const N = OV.net, m = OV.m;

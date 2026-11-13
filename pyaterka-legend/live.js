@@ -146,28 +146,90 @@ function lvBuy(first) {
   if (OV.net && OV.net.host) netBuySent();
 }
 /* ---------- Решение по ходу раунда ----------
-   В части раундов (не в пистолетных) перед выходом на точку игра останавливается и спрашивает капитана:
-   атака — «доигрываем здесь или уходим на другую точку» по разведке; защита — «держим или ротация» по звуку шагов.
-   Разведка верна в 75% (атака) и 70% (защита). Выбор меняет направление в расчёте раунда (угадал усиленную точку
-   или нет — та же цена, что и в плане до раунда), за смену точки — штраф за потерянное время. */
+   В части раундов (не в пистолетных) перед выходом на точку игра останавливается и спрашивает капитана.
+   Первая дуэль разыгрывается заранее (m.rollOpen), поэтому ситуация совпадает с тем, что дальше покажет розыгрыш.
+   Ситуации (kind): разведка по точке, выход из центра, потеряли энтри, упала бомба, первый фраг наш, снайпер на миде,
+   эко соперника, тайм-аут; в защите — шаги, потеряли игрока на точке, их энтри убит, тишина, эко атаки, тайм-аут.
+   Правду (настоящий план соперника) знает только игра: удачный ответ даёт плюс, неудачный — минус (mc от −3 до +3).
+   Варианты могут менять точку (dir), темп, тактику (tk), ротацию защиты (rot) и сейв (save). */
 function callFor(m) {
-  if (m.isPistol() || m.round < 2 || LV.lastCall === m.round - 1 || Math.random() > .4) return null;
-  return callGen(m.sideA === 'A', OV.plan.dir, m.nx.plan.dir);
+  if (m.isPistol() || m.round < 2 || LV.lastCall === m.round - 1 || Math.random() > .45) return null;
+  m.rollOpen();
+  return callGen(m.sideA === 'A', OV.plan.dir, m.nx.plan.dir, callCtx(m, true));
 }
-/* варианты решения для капитана: atk — он в атаке, cur — его план, tr — настоящий план соперника */
-function callGen(atk, cur, tr) {
-  const oth = d => d === 'A' ? 'B' : 'A';
+/* обстановка для решения: me — сторона, которой задаём вопрос (host — игрок этого устройства, иначе соперник) */
+function callCtx(m, host) {
+  const me = host ? m.a : m.b, op = host ? m.b : m.a, myPlan = host ? OV.plan : m.nx.plan, opPlan = host ? m.nx.plan : OV.plan;
+  const mySide = host ? m.sideA : other(m.sideA), atkWon = m.preOpen && m.preOpen.r === m.round ? m.preOpen.v : null;
+  const h = m.hist.slice(-2), lost2 = h.length === 2 && h.every(x => host ? !x.win : x.win), half = m.round <= HALF ? 1 : 2;
+  m.toUsed = m.toUsed || {}; const key = (host ? 'a' : 'b') + half;
+  return { open: atkWon == null ? null : mySide === 'A' ? atkWon : !atkWon, myTk: myPlan.tk || null, opTk: opPlan.tk || null, opTempo: opPlan.tempo,
+    opBuy: m.decider ? 'full' : m.buyOf(op, []), myEntry: me.info.e[1].c.nick, opEntry: op.info.e[1].c.nick, opAwp: op.info.e[0].c.nick,
+    timeout: lost2 && !m.toUsed[key] ? () => { m.toUsed[key] = 1; } : null, side: mySide };
+}
+/* варианты решения для капитана: atk — он в атаке, cur — его точка, tr — настоящая точка соперника, c — обстановка */
+function callGen(atk, cur, tr, c) {
+  c = c || {}; const oth = d => d === 'A' ? 'B' : 'A', S = [], add = (w, f) => S.push([w, f]);
+  const site = cur === 'A' || cur === 'B' ? cur : null, onMe = site && tr === site;   /* onMe — защита стоит там, куда мы идём */
   if (atk) {
-    const seen = Math.random() < .75 ? tr : ['A', 'S', 'B'].filter(x => x !== tr)[Math.floor(Math.random() * 2)];
-    const hint = seen === 'S' ? 'защита стоит ровно: по двое на A и B' : `на ${seen} стоят трое, на ${oth(seen)} — один`;
-    const opts = cur === 'S' ? [{ t: 'Выход на A', s: 'вся команда идёт на A', dir: 'A' }, { t: 'Выход на B', s: 'вся команда идёт на B', dir: 'B' }]
-      : [{ t: 'Доигрываем на ' + cur, s: 'продолжаем выход по плану', dir: cur }, { t: 'Уходим на ' + oth(cur), s: 'быстрая смена точки, теряем время', dir: oth(cur), tempo: 'fast', mc: -1.2 }];
-    return { atk, q: 'Разведка: ' + hint, opts, def: 0 };
+    if (site) add(1, () => { const seen = Math.random() < .75 ? tr : ['A', 'S', 'B'].filter(x => x !== tr)[Math.floor(Math.random() * 2)];
+      return { kind: 'scout', q: 'Разведка: ' + (seen === 'S' ? 'защита стоит ровно: по двое на A и B' : `на ${seen} стоят трое, на ${oth(seen)} — один`),
+        opts: [{ t: 'Доигрываем на ' + site, s: 'продолжаем выход по плану', dir: site }, { t: 'Уходим на ' + oth(site), s: 'быстрая смена точки', dir: oth(site), tempo: 'fast', mc: -1.2, slow: 1 }] }; });
+    else add(1.2, () => ({ kind: 'scoutS', q: 'Контроль карты взят. Куда выходим?', opts: [{ t: 'Выход на A', s: 'вся команда идёт на A', dir: 'A' }, { t: 'Выход на B', s: 'вся команда идёт на B', dir: 'B' }] }));
+    if (c.open === false && site) {
+      add(3, () => ({ kind: 'entryLost', q: `Потеряли ${c.myEntry} на входе в ${site}. Вы 4 на 5.`, opts: [
+        { t: 'Трейд сразу', s: 'двое сразу выходят за ним', mc: onMe ? -1.5 : 1.8 },
+        { t: 'Откат и гранаты заново', s: 'ждём, перекидываем точку', tempo: 'slow', mc: .4 },
+        { t: 'Уходим на ' + oth(site), s: 'смена точки, теряем время', dir: oth(site), mc: -1, slow: 1 }] }));
+      add(1.5, () => ({ kind: 'bombDown', q: `Погиб ${c.myEntry}, бомба упала у входа на ${site}.`, opts: [
+        { t: 'Подобрать и идти', s: 'саппорт забирает бомбу', mc: onMe ? -1.4 : 1.2 },
+        { t: 'Подобрать и на ' + oth(site), s: 'бомбу несём на другую точку', dir: oth(site), mc: -1.3, slow: 1 },
+        { t: 'Сейв', s: 'раунд отдаём, бережём оружие', mc: -3, save: 1 }] }));
+    }
+    if (c.open === false && !site) add(2.5, () => ({ kind: 'midLost', q: `Потеряли ${c.myEntry} на миде. Решайте, куда выходить вчетвером.`, opts: [
+      { t: 'Выход на A', s: 'вчетвером на A', dir: 'A' }, { t: 'Выход на B', s: 'вчетвером на B', dir: 'B' }, { t: 'Откат и пауза', s: 'перегруппировка, медленно', tempo: 'slow', mc: .3 }] }));
+    if (c.open === true) add(2.5, () => ({ kind: 'entryWon', q: `Первый фраг ваш: ${c.myEntry} снял игрока на ${site || 'миде'}.`, opts: [
+      { t: 'Давим сразу', s: 'не даём защите собраться', tempo: 'fast', mc: onMe ? -.5 : 2 },
+      { t: 'Ждём гранат', s: 'заходим под смоки и флешки', mc: onMe ? 1.5 : -.8 },
+      { t: 'Растягиваем точку', s: 'двое заходят с другой стороны', mc: .6 }] }));
+    const awp = c.opTk === 'awpMid';
+    if (awp || Math.random() < .25) add(awp ? 2 : .8, () => ({ kind: 'awpMid', q: `Разведка: на миде, похоже, снайпер ${c.opAwp}.`, opts: [
+      { t: 'Обходим через точку', s: 'не лезем в его линию', mc: awp ? 1.5 : -.7, slow: 1 },
+      { t: 'Флешка и дуэль', s: 'энтри выходит под флешку', mc: awp ? -1.2 : 2 },
+      { t: 'Смок и проход', s: 'закрываем линию дымом', mc: awp ? 1.9 : -.6 }] }));
+    if (c.opBuy === 'eco') add(2.2, () => ({ kind: 'ecoOpp', q: 'У защиты эко: только пистолеты.', opts: [
+      { t: 'Давим быстро', s: 'пользуемся оружием, не даём им собраться', tempo: 'fast', mc: c.opTk === 'antiEco' ? -1.4 : 2 },
+      { t: 'Играем аккуратно', s: 'не отдаём им винтовки', mc: c.opTk === 'antiEco' ? 1.6 : -.3 }] }));
+  } else {
+    const seen = tr === 'S' ? (Math.random() < .5 ? 'A' : 'B') : Math.random() < .7 ? tr : oth(tr);
+    add(1, () => ({ kind: 'steps', q: tr === 'S' ? 'Слышно: шаги с двух сторон, больше на ' + seen : 'Слышно: атака идёт на ' + seen,
+      opts: cur === seen ? [{ t: 'Держим стек ' + seen, s: 'остаёмся как стоим', dir: cur }, { t: 'Растягиваемся', s: 'по двое на точках', dir: 'S', mc: -.4 }]
+        : [{ t: 'Держим позиции', s: 'не верим, стоим по плану', dir: cur }, { t: 'Ротация на ' + seen, s: 'двое бегут на ' + seen + ', поздно', dir: seen, mc: -.6, rot: seen, slow: 1 }] }));
+    const tsite = tr === 'A' || tr === 'B' ? tr : null, hit = tsite || (Math.random() < .5 ? 'A' : 'B');
+    if (c.open === false) add(3, () => ({ kind: 'siteLost', q: `Потеряли игрока на ${hit}: их энтри прошёл.`, opts: [
+      { t: 'Ретейк сразу', s: 'ближние бегут на ' + hit, mc: tsite ? -1.4 : 1.2, rot: hit },
+      { t: 'Ждём всех и ретейк', s: 'собираемся и заходим вместе', mc: tsite ? 1.3 : -.6, slow: 1 },
+      { t: 'Сейв', s: 'отдаём раунд, бережём оружие', mc: -3, save: 1 }] }));
+    if (c.open === true) add(2.5, () => ({ kind: 'oppEntryDown', q: `${c.opEntry} убит на подходе к ${hit}.`, opts: [
+      { t: 'Выходим добивать', s: 'давим, пока их меньше', mc: c.opTempo === 'fast' ? 1.6 : -1.2 },
+      { t: 'Держим позиции', s: 'пусть идут к нам', mc: .5 },
+      { t: 'Ротация на ' + oth(hit), s: 'ждём второй удар', dir: oth(hit), rot: oth(hit), mc: -.6, slow: 1 }] }));
+    if (c.opTempo === 'slow') add(1.8, () => { const lk = c.opTk === 'contact' || c.opTk === 'lurk'; return { kind: 'silence', q: 'Тишина 40 секунд: ни шагов, ни гранат.', opts: [
+      { t: 'Выйти за информацией', s: 'один игрок идёт вперёд', mc: lk ? -2.2 : 1.8 },
+      { t: 'Ждать', s: 'не высовываемся, слушаем', mc: lk ? 2 : -.7 }] }; });
+    if (c.opBuy === 'eco') add(2.2, () => ({ kind: 'ecoOpp', q: 'У атаки эко: у них нет денег.', opts: [
+      { t: 'Анти-эко: вперёд', s: 'встречаем их раньше точки', mc: c.opTk === 'ecoRush' ? 2 : -.6 },
+      { t: 'Стоим по местам', s: 'не отдаём им винтовки', mc: c.opTk === 'ecoRush' ? -.6 : 1.4 }] }));
   }
-  const seen = tr === 'S' ? (Math.random() < .5 ? 'A' : 'B') : Math.random() < .7 ? tr : oth(tr);
-  const opts = cur === seen ? [{ t: 'Держим стек ' + seen, s: 'остаёмся как стоим', dir: cur }, { t: 'Растягиваемся', s: 'по двое на точках', dir: 'S', mc: -.4 }]
-    : [{ t: 'Держим позиции', s: 'не верим, стоим по плану', dir: cur }, { t: 'Ротация на ' + seen, s: 'двое бегут на ' + seen + ', поздно', dir: seen, mc: -.6, rot: seen }];
-  return { atk, q: tr === 'S' ? 'Слышно: шаги с двух сторон, больше на ' + seen : 'Слышно: атака идёт на ' + seen, opts, def: 0 };
+  if (c.timeout) add(2, () => { const L = (atk ? TK_T : TK_CT).filter(k => k !== c.myTk && tkOk(k, 'full')), good = c.opTk ? L.filter(k => TK[k].bt.includes(c.opTk)) : [];
+    const pick2 = [good.length ? good[Math.floor(Math.random() * good.length)] : null]; while (pick2.length < 3) { const k = L[Math.floor(Math.random() * L.length)]; if (k && !pick2.includes(k)) pick2.push(k); }
+    const ks = pick2.filter(Boolean).slice(0, 2).sort(() => Math.random() - .5); c.timeout();
+    return { kind: 'timeout', q: 'Тайм-аут капитана: два раунда подряд проиграны. Меняем тактику прямо сейчас?', opts: [
+      { t: 'Остаёмся', s: 'играем как задумали' },
+      ...ks.map(k => ({ t: TK[k].n, s: TK[k].d, tk: k, dir: TK[k].dir, tempo: TK[k].tempo, mc: -.3 }))] }; });
+  let tot = 0; S.forEach(x => tot += x[0]); let q = Math.random() * tot, f = S[0][1];
+  for (const x of S) { q -= x[0]; if (q <= 0) { f = x[1]; break; } }
+  return Object.assign({ atk, def: 0 }, f());
 }
 function lvPlay() {
   const m = OV.m, sel = m.canPlay(m.a, OV.sel) ? OV.sel : [];
@@ -196,7 +258,7 @@ function callDraw() {
   const p = $('#prep'), c = LV.pre && LV.pre.call; if (!p || !c) return;
   p.className = 'lv-prep on qp call';
   p.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${c.atk ? 'Атака' : 'Защита'} · решение капитана</small><b>${esc(c.q)}</b></div><div class="qp-ring" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" id="qpg" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span id="qpt"></span></div></div>
-    <div class="call-o">${c.opts.map((o, i) => `<button class="call-b ${i ? 'alt' : ''}" data-act="mc" data-v="${i}"><b>${esc(o.t)}</b><small>${esc(o.s)}${o.mc ? ' · штраф за время' : ''}</small></button>`).join('')}</div>
+    <div class="call-o">${c.opts.map((o, i) => `<button class="call-b ${i ? 'alt' : ''}" data-act="mc" data-v="${i}"><b>${esc(o.t)}</b><small>${esc(o.s)}${o.slow ? ' · теряем время' : ''}</small></button>`).join('')}</div>
     <p class="sm mut call-n">Разведка не всегда точна. Нет ответа — ${esc(c.opts[c.def].t.toLowerCase())}.</p>`;
   qpTick();
 }
@@ -205,7 +267,7 @@ function callPick(i, who) {
   const m = OV.m, pre = LV.pre; if (!pre || m.over) return;
   if (OV.net && !OV.net.host) { netGuestMc(i); return; }
   const op = who === 'op', c = op ? pre.op : pre.call; if (!c) return; const o = c.opts[i] || c.opts[c.def];
-  const chg = p => Object.assign({}, p, { dir: o.dir }, o.tempo ? { tempo: o.tempo } : {}, o.mc ? { mc: o.mc } : {});
+  const chg = p => Object.assign({}, p, o.dir ? { dir: o.dir } : {}, o.tempo ? { tempo: o.tempo } : {}, o.mc ? { mc: o.mc } : {}, o.tk ? { tk: o.tk } : {}, o.save ? { save: 1 } : {});
   const st = op ? pre.S.planB.dir : pre.S.plan.dir, plan = op ? OV.plan : chg(OV.plan); if (op) m.nx.plan = chg(m.nx.plan);
   const S0 = LV.S, t0 = LV.rt, L = m.play(pre.sel, plan);
   const atk = (m.sideA === 'A') !== op, opt = { perm: S0.perm, tEx: S0.tEx, t0, stDir: atk ? st : undefined, defDir: atk ? undefined : st, rotTo: !atk && o.rot ? o.rot : undefined };

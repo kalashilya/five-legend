@@ -284,8 +284,7 @@ function m3Build() {
     <div class="lv-prep" id="prep"></div></div>`;
   M3C = M3D.make($('#m3gl'), m);
   LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, spd: LV && LV.spd || 1, cam: { x: 50, y: 50, z: 1 }, kd: null, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] }, d3: 1 };
-  setTimeout(() => { const n = $('#intro'); if (n) n.classList.add('out'); }, 2300);
-  lvBuy(true); requestAnimationFrame(lvTick);
+  warmStart(W_3D); requestAnimationFrame(lvTick);
 }
 /* 3D, если браузер умеет WebGL; иначе — 2D-карта */
 function liveGo() {

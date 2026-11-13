@@ -295,7 +295,7 @@ function vProf() {
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
   <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
-  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
+  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><button class="btn s nw-btn" data-act="news">Что нового · обновление от ${esc(NEWS[0].d)}</button><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
   ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
 }
 
@@ -360,6 +360,14 @@ function stGrid(ss) {
   return `<div class="st-grid">${STREAK_REWARDS.map((r, i) => { const d = i + 1, done = d <= ss.done, today = ss.p && d === ss.p.day;
     return `<span class="st-day ${done ? 'is-done' : ''} ${today ? 'is-today' : ''} ${r.pack ? 'is-pack' : ''} ${r.pack && r.pack.elite ? 'is-elite' : ''}"><small>${d}</small>${stArt(r)}<b>${stShort(r)}</b></span>`; }).join('')}</div>`;
 }
+/* «Что нового»: после обновления — записи новее отметки игрока; из профиля — вся история (sheet.all) */
+function newsH() {
+  const L = sheet.all ? NEWS : (sheet.list || NEWS.slice(0, 1));
+  return `<div class="in st-pop nw-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <small class="eyebrow">${sheet.all ? 'История обновлений' : 'Что нового'}</small><h2>${esc(L[0].t)}</h2>
+    ${L.map((n, i) => `${i ? `<h3 class="nw-h">${esc(n.t)}</h3>` : ''}<p class="nw-d">Обновление от ${esc(n.d)}</p><ul class="nw-l">${n.items.map(([h, d]) => `<li><b>${esc(h)}</b><span>${esc(d)}</span></li>`).join('')}</ul>`).join('')}
+    <button class="btn pri" data-act="close">Понятно, играть</button></div>`;
+}
 function streakH() {
   const ss = stState(), got = sheet.got, day = got ? G.streak.day : ss.cur, r = got || (ss.p ? STREAK_REWARDS[ss.p.day - 1] : G.streak.reward);
   const nextPack = STREAK_REWARDS.findIndex((x, i) => i + 1 > day && x.pack), np = nextPack >= 0 ? STREAK_REWARDS[nextPack] : null;
@@ -391,6 +399,7 @@ function vSheet() {
       <div class="qs-list">${l.slice(0, 40).map(id => `<span>${esc(CARDS[id].nick)} <b>×${Math.min(QS[id], qsMax(id))}</b></span>`).join('')}${l.length > 40 ? `<span>и ещё ${l.length - 40}</span>` : ''}</div>
       <div class="rowb"><button class="btn" data-act="close">Отмена</button><button class="btn pri" data-act="qsSell">Продать за ${nf(q.coins)}</button></div></div></div>`; }
   if (sheet.t === 'qsDone') return `<div class="in"><div class="wrap col"><h2>Продано</h2><p>Продано карточек: <b>${sheet.n}</b>. Получено <b><i class="coin"></i> ${nf(sheet.coins)}</b>.</p><div class="rowb"><button class="btn pri" data-act="close">Отлично</button></div></div></div>`;
+  if (sheet.t === 'news') return newsH();
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
@@ -719,6 +728,7 @@ function render() {
   const frIn = AU ? FR.rows.filter(r => r.st === 'pending' && r.b === AU.uid).length : 0;
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()), fr: TR.inc.length + frIn };
   $('#tabs .wrap').innerHTML = NAV.map(k => `<button data-act="tab" data-v="${k}" class="${k === 'play' ? 'tb-play' : ''}" ${tab === k ? 'aria-current="page"' : ''}>${k === 'play' ? `<span class="tb-ball"><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg></span>` : `<svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>`}${TABS[k][0]}${dots[k] ? (typeof dots[k] === 'number' ? `<span class="dot n">${dots[k]}</span>` : '<span class="dot"></span>') : ''}</button>`).join('');
+  if (!sheet && !OV && tab === 'home' && newsDue(G)) { sheet = { t: 'news', list: newsFor(G) }; G.news = NEWS_V; save(); }
   if (!sheet && !OV && tab === 'home' && !AU && authAskDue()) { authAsked = true; sheet = { t: 'auth', mode: 'up', pop: 1 }; }
   if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
@@ -746,6 +756,7 @@ const ACT = {
   close() { sheet = null; imgMsg = ''; askSell = null; },
   leagues() { sheet = { t: 'leagues', go: 1 }; },
   lvlInfo() { sheet = { t: 'lvl' }; },
+  news() { sheet = { t: 'news', all: 1 }; },
   streak() { sheet = { t: 'streak' }; },
   streakClaim() { const r = claimStreak(G, now()); if (!r) return; sfx('stop', r.pack ? (r.pack.elite ? 4 : r.pack.pro ? 3 : 1) : 0); if (sheet && sheet.t === 'streak') sheet.got = r; else sheet = { t: 'streak', got: r }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },

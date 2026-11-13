@@ -2044,6 +2044,17 @@ html,body{background:#0d0f1c}
 .fr-tabs .seg button{font:600 14px/1.1 var(--f-b)!important;letter-spacing:0!important;text-transform:none!important;min-height:40px}
 /* общий воздух: меньше «рамочного» шума у панелей */
 #app .pn,#app .plain.pn{border-radius:16px}
+.nw-pop{display:flex;flex-direction:column;gap:6px;overflow-y:auto;overscroll-behavior:contain}.nw-pop h2{margin:2px 0 0}.nw-h{margin:16px 0 0;font:600 15px/1.2 var(--f-d);letter-spacing:.04em;color:var(--fg)}.nw-d{margin:0 0 4px;font:500 11px var(--f-m);color:var(--mut)}.nw-l{list-style:none;margin:6px 0 10px;padding:0;display:flex;flex-direction:column;gap:10px}.nw-l li{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:#ffffff0d;border:1px solid #ffffff14}.nw-l b{font:700 14px/1.2 var(--f-d);letter-spacing:.04em;text-transform:uppercase;color:#f2c14e}.nw-l span{font-size:13px;line-height:1.4;color:#d6dce3}.nw-pop .btn.pri{margin-top:4px}.nw-btn{margin:0 0 10px}
+.lv-warm{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;background:radial-gradient(120% 70% at 50% 42%,#1a2433,#07090d 72%);transition:opacity .45s ease;pointer-events:auto}
+.lv-warm.out{opacity:0;pointer-events:none}
+.lv-warm .eyebrow{font-size:13px;letter-spacing:.32em;color:#f0a93a}
+.wm-map{font:700 44px/1 var(--f-d);letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 0 24px #f0a93a55}
+.wm-vs{font:500 13px/1.3 var(--f-b);color:#c3cbd4}.wm-vs i{font-style:normal;color:#f2c14e}
+.wm-n{font:700 96px/1 var(--f-d);color:#f2c14e;margin:10px 0 14px;text-shadow:0 0 30px #f2c14e66;font-variant-numeric:tabular-nums}
+.wm-n.tk{animation:wmTk .9s ease-out}@keyframes wmTk{0%{transform:scale(1.35);opacity:.3}30%{opacity:1}100%{transform:scale(1)}}
+.wm-bar{width:min(260px,70vw);height:6px;border-radius:99px;background:#ffffff18;overflow:hidden}.wm-bar i{display:block;height:100%;background:linear-gradient(90deg,#f0a93a,#f2c14e);transform-origin:left;transform:scaleX(0)}
+.wm-s{font:500 11px var(--f-m);color:#7f8a96;letter-spacing:.06em}
+@media (prefers-reduced-motion:reduce){.wm-n.tk{animation:none}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -2657,7 +2668,8 @@ function normalize(G, now) {
   { const p = G.streak.pend; G.streak.pend = p && Number.isInteger(p.d) && Number.isInteger(p.day) && p.day >= 1 && p.day <= 28 ? { d: p.d, day: p.day } : null; G.streak.shown = Number.isInteger(G.streak.shown) ? G.streak.shown : -1; }
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
-  { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { next: Number.isFinite(c.next) ? Math.max(0, c.next) : 0, used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }
+  { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { tries: Array.isArray(c.tries) ? c.tries.filter(t => Number.isFinite(t) && t > 0).slice(-10) : [], used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }   /* старое ожидание next (4 ч) сбрасывается */
+  G.news = Number.isInteger(G.news) && G.news >= 0 ? G.news : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
   for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !Number.isFinite(+o.n) || !(+o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
@@ -2682,7 +2694,7 @@ function normalize(G, now) {
   if (now != null) refresh(G, now);
   return G;
 }
-function newProfile(now) { const G = newGame(); G.tut = 0; return normalize(G, now); }
+function newProfile(now) { const G = newGame(); G.tut = 0; G.news = NEWS_V; return normalize(G, now); }   /* новичку «Что нового» не показываем — у него обучение */
 
 /* ---------- Составы и капитан ---------- */
 const captSlot = G => { const id = G.capts[G.sqi]; return id == null ? -1 : G.squad.indexOf(id); };
@@ -2738,11 +2750,30 @@ function giveReward(G, r) {
   if (r.pick != null) { const pool = POOL[r.pick], ids = []; for (let i = 0; i < 3; i++) ids.push(pick(pool).id); G.picks.push(ids); }
 }
 const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object.keys(r.pack).map(k => 'кейс «' + PACKS[k].n + '»' + (r.pack[k] > 1 ? ' ×' + r.pack[k] : '')).join(', ') : '', r.pick != null ? 'карточка на выбор («' + RAR[r.pick] + '»)' : ''].filter(Boolean).join(' + ');
+/* ---------- «Что нового»: окно при первом входе после обновления ----------
+   При каждом выпуске добавляйте запись В НАЧАЛО списка с номером v на 1 больше. Игрок видит все записи новее своей
+   отметки G.news (едет в облако вместе с сохранением); новые профили сразу получают последнюю отметку. */
+const NEWS = [
+  { v: 1, d: '13.11.2026', t: 'Большое обновление матча', items: [
+    ['Тактики', '19 тактик вместо трёх: 10 в атаке, 9 в защите. Листайте карточки — на каждой видно, кого она бьёт и кому проигрывает.'],
+    ['Решения капитана', '13 разных ситуаций посреди раунда: потеряли энтри, упала бомба, снайпер на миде, эко соперника, тишина, тайм-аут. Верный ответ даёт перевес.'],
+    ['Причина раунда', 'После раунда видно тактики обеих сторон и почему раунд пошёл так.'],
+    ['Умный соперник', 'Бот запоминает ваши привычки: два раза подряд одно и то же — на третий он вас ждёт.'],
+    ['Камера со своей стороны', 'Ваш спавн всегда снизу. Карту можно крутить двумя пальцами, приближать щипком и двигать; двойной тап — вернуть вид.'],
+    ['Разминка перед матчем', 'После выбора карты — 6 секунд разминки с отсчётом: карта успевает загрузиться, и матч начинается без чёрного экрана.'],
+    ['Новое меню', 'Кнопка «Играть» по центру, вкладка «Друзья» со списком и обменом, профиль — по нажатию на аватар.'],
+    ['Взлом C4', 'На странице кейсов попробуйте взломать бомбу: угадайте 6-значный код и заберите награду. Две попытки каждый час.'],
+    ['Рейтинги по HLTV', 'Топ-20 игроков HLTV — 92, 90 и 88. На карточках подписи наград: «MVP · Бухарест», «EVP · Пекин». «Игрок недели» убран — такие карточки стали обычными.']
+  ] }
+];
+const NEWS_V = NEWS[0].v;
+const newsDue = G => G.tut >= 3 && (G.news | 0) < NEWS_V;
+const newsFor = G => NEWS.filter(n => n.v > (G.news | 0));
 /* ---------- Взлом бомбы C4 (страница кейсов) ----------
-   Игрок набирает на бомбе 6 цифр. Попытка — раз в 4 часа (и удачная, и нет). Каждый код даёт награду один раз на профиль.
+   Игрок набирает на бомбе 6 цифр. Попыток — C4_PER за скользящий час (и удачных, и нет). Каждый код даёт награду один раз на профиль.
    В игре хранятся не коды, а их отпечатки: открыв файл игры, код не прочитать. Новый код: node tools/code-hash.js 123456.
-   Состояние в G.c4: next — когда можно пробовать снова (мс), used — отпечатки уже взломанных кодов; едет в облако вместе с сохранением. */
-const C4_WAIT = 4 * 3600000;
+   Состояние в G.c4: tries — время последних попыток (мс), used — отпечатки уже взломанных кодов; едет в облако вместе с сохранением. */
+const C4_WIN = 3600000, C4_PER = 2;
 const c4Hash = d => hsh('C4|' + d + '|5L').toString(36) + hsh(d.split('').reverse().join('') + '#PL').toString(36);
 const C4_CODES = {
   'j1i1to526ipz': { r: { pack: { elite: 3 } } },
@@ -2756,7 +2787,10 @@ const C4_CODES = {
   'tv3tk411gwizj': { r: { coins: 3000, pack: { pro: 3 } } },
   '43ndplmgmacc': { r: { pack: { elite: 1 }, pick: 4 } }
 };
-const c4Left = (G, nowTs) => Math.max(0, (G.c4.next || 0) - nowTs);
+const c4Recent = (G, nowTs) => G.c4.tries.filter(t => nowTs - t < C4_WIN && t <= nowTs + 60000);
+const c4TriesLeft = (G, nowTs) => Math.max(0, C4_PER - c4Recent(G, nowTs).length);
+/* сколько ждать до следующей попытки (0 — можно сейчас) */
+const c4Left = (G, nowTs) => { const r = c4Recent(G, nowTs); return r.length < C4_PER ? 0 : Math.max(0, Math.min(...r) + C4_WIN - nowTs); };
 /* итог: ok — код верный и награда выдана; used — код уже взломан (попытка не тратится); wait — попытка ещё не восстановилась */
 function c4Try(G, digits, nowTs) {
   const d = String(digits || '');
@@ -2764,7 +2798,7 @@ function c4Try(G, digits, nowTs) {
   const left = c4Left(G, nowTs); if (left > 0) return { ok: false, wait: left, why: 'Бомба остывает. Следующая попытка позже.' };
   const h = c4Hash(d), c = C4_CODES[h];
   if (c && G.c4.used.includes(h)) return { ok: false, used: true, why: 'Этот код вы уже взломали.' };
-  G.c4.next = nowTs + C4_WAIT;
+  G.c4.tries = c4Recent(G, nowTs).concat(nowTs);
   if (!c) return { ok: false, why: 'Код не угадан' };
   G.c4.used.push(h); giveReward(G, c.r);
   return { ok: true, r: c.r, text: rewardText(c.r) };
@@ -2867,7 +2901,7 @@ const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro)
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
   TK, TK_T, TK_CT, tkOk, tkBonus, tkWhy, TK_HIT,
-  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, C4_CODES, C4_WAIT, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
+  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, c4TriesLeft, C4_CODES, C4_WIN, C4_PER, NEWS, NEWS_V, newsDue, newsFor, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
 /* ---------- Радар карты: схема проходов, расстановки, маршруты и постановка раунда ----------
    Mirage и Dust II — подробные схемы по реальным картам CS2: те же зоны и проходы (callouts), ширина проходов,
    респауны на 5 мест, расстановки защиты, маршруты атаки, гранаты, места после закладки.
@@ -3588,7 +3622,7 @@ function vProf() {
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
   <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
-  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
+  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><button class="btn s nw-btn" data-act="news">Что нового · обновление от ${esc(NEWS[0].d)}</button><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
   ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
 }
 
@@ -3653,6 +3687,14 @@ function stGrid(ss) {
   return `<div class="st-grid">${STREAK_REWARDS.map((r, i) => { const d = i + 1, done = d <= ss.done, today = ss.p && d === ss.p.day;
     return `<span class="st-day ${done ? 'is-done' : ''} ${today ? 'is-today' : ''} ${r.pack ? 'is-pack' : ''} ${r.pack && r.pack.elite ? 'is-elite' : ''}"><small>${d}</small>${stArt(r)}<b>${stShort(r)}</b></span>`; }).join('')}</div>`;
 }
+/* «Что нового»: после обновления — записи новее отметки игрока; из профиля — вся история (sheet.all) */
+function newsH() {
+  const L = sheet.all ? NEWS : (sheet.list || NEWS.slice(0, 1));
+  return `<div class="in st-pop nw-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <small class="eyebrow">${sheet.all ? 'История обновлений' : 'Что нового'}</small><h2>${esc(L[0].t)}</h2>
+    ${L.map((n, i) => `${i ? `<h3 class="nw-h">${esc(n.t)}</h3>` : ''}<p class="nw-d">Обновление от ${esc(n.d)}</p><ul class="nw-l">${n.items.map(([h, d]) => `<li><b>${esc(h)}</b><span>${esc(d)}</span></li>`).join('')}</ul>`).join('')}
+    <button class="btn pri" data-act="close">Понятно, играть</button></div>`;
+}
 function streakH() {
   const ss = stState(), got = sheet.got, day = got ? G.streak.day : ss.cur, r = got || (ss.p ? STREAK_REWARDS[ss.p.day - 1] : G.streak.reward);
   const nextPack = STREAK_REWARDS.findIndex((x, i) => i + 1 > day && x.pack), np = nextPack >= 0 ? STREAK_REWARDS[nextPack] : null;
@@ -3684,6 +3726,7 @@ function vSheet() {
       <div class="qs-list">${l.slice(0, 40).map(id => `<span>${esc(CARDS[id].nick)} <b>×${Math.min(QS[id], qsMax(id))}</b></span>`).join('')}${l.length > 40 ? `<span>и ещё ${l.length - 40}</span>` : ''}</div>
       <div class="rowb"><button class="btn" data-act="close">Отмена</button><button class="btn pri" data-act="qsSell">Продать за ${nf(q.coins)}</button></div></div></div>`; }
   if (sheet.t === 'qsDone') return `<div class="in"><div class="wrap col"><h2>Продано</h2><p>Продано карточек: <b>${sheet.n}</b>. Получено <b><i class="coin"></i> ${nf(sheet.coins)}</b>.</p><div class="rowb"><button class="btn pri" data-act="close">Отлично</button></div></div></div>`;
+  if (sheet.t === 'news') return newsH();
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
@@ -4012,6 +4055,7 @@ function render() {
   const frIn = AU ? FR.rows.filter(r => r.st === 'pending' && r.b === AU.uid).length : 0;
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()), fr: TR.inc.length + frIn };
   $('#tabs .wrap').innerHTML = NAV.map(k => `<button data-act="tab" data-v="${k}" class="${k === 'play' ? 'tb-play' : ''}" ${tab === k ? 'aria-current="page"' : ''}>${k === 'play' ? `<span class="tb-ball"><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg></span>` : `<svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>`}${TABS[k][0]}${dots[k] ? (typeof dots[k] === 'number' ? `<span class="dot n">${dots[k]}</span>` : '<span class="dot"></span>') : ''}</button>`).join('');
+  if (!sheet && !OV && tab === 'home' && newsDue(G)) { sheet = { t: 'news', list: newsFor(G) }; G.news = NEWS_V; save(); }
   if (!sheet && !OV && tab === 'home' && !AU && authAskDue()) { authAsked = true; sheet = { t: 'auth', mode: 'up', pop: 1 }; }
   if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
@@ -4039,6 +4083,7 @@ const ACT = {
   close() { sheet = null; imgMsg = ''; askSell = null; },
   leagues() { sheet = { t: 'leagues', go: 1 }; },
   lvlInfo() { sheet = { t: 'lvl' }; },
+  news() { sheet = { t: 'news', all: 1 }; },
   streak() { sheet = { t: 'streak' }; },
   streakClaim() { const r = claimStreak(G, now()); if (!r) return; sfx('stop', r.pack ? (r.pack.elite ? 4 : r.pack.pro ? 3 : 1) : 0); if (sheet && sheet.t === 'streak') sheet.got = r; else sheet = { t: 'streak', got: r }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },
@@ -4182,8 +4227,7 @@ function liveBuild() {
     <div class="lv-ctl" id="mbtn"></div>
     <div class="lv-prep" id="prep"></div></div>`;
   LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, spd: LV && LV.spd || 1, cam: { x: 50, y: 50, z: 1 }, kd: null, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] } };
-  setTimeout(() => { const n = $('#intro'); if (n) n.classList.add('out'); }, 2300);
-  lvBuy(true); requestAnimationFrame(lvTick);
+  warmStart(W_2D); requestAnimationFrame(lvTick);
 }
 /* табло, деньги, история раундов, у/с и оружие игроков */
 function lvHud() {
@@ -4267,6 +4311,29 @@ function mmDraw() { document.querySelectorAll('#rowA .pl').forEach((c, i) => c.c
   const q = LV.min && !LV.tuned && QP[OV.m.sideA][LV.qr], shown = q ? { dir: q.dir, tempo: q.tempo } : OV.plan;
   if (M3C) M3C.plan(OV.m.sideA, LV.ph !== 'buy' || OV.m.over ? null : shown);
   const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, shown) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
+/* ---------- Разминка перед первым раундом ----------
+   Пока идёт отсчёт, карта строится и рисуется за экраном «Разминка» (3D успевает загрузить текстуры и шейдеры — без чёрного экрана).
+   Потом экран плавно уходит и начинается первый раунд; в онлайне — когда разминка закончилась у обоих (netWarmDone). */
+const W_3D = 6000, W_2D = 2500;
+function warmStart(ms) {
+  const m = OV.m; LV.ph = 'warm'; LV.T = LV.t = ms; LV.wEnd = performance.now() + ms; LV.wf = 0; LV.S = rdIdle(); rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
+  const n = $('#intro'); if (n) n.classList.add('out');
+  const el = document.createElement('div'); el.className = 'lv-warm'; el.id = 'warm'; el.setAttribute('role', 'status');
+  el.innerHTML = `<small class="eyebrow">Разминка</small><b class="wm-map">${esc(m.map.n)}</b><span class="wm-vs">Вы <i>${sideName(m.sideA)}</i> · против ${esc(m.b.name)}</span><span class="wm-n" id="wmn">${Math.ceil(ms / 1000)}</span><span class="wm-bar"><i id="wmb"></i></span><small class="wm-s">${OV.net ? 'Карта загружается у обоих игроков' : 'Карта загружается'}</small>`;
+  const host = $('#mt .lv') || $('#mt'); host.appendChild(el); lvBtns();
+}
+/* отсчёт по настоящим часам (а не по кадрам); старт — когда время вышло и уже нарисовано не меньше 10 кадров карты */
+function warmTick() {
+  LV.wf++; LV.t = Math.max(0, LV.wEnd - performance.now()); if (LV.t <= 0 && LV.wf < 10) LV.t = 1;
+  const n = $('#wmn'), b = $('#wmb'), s = String(Math.max(1, Math.ceil(LV.t / 1000)));
+  if (n && n.textContent !== s && LV.t > 0) { n.textContent = s; n.classList.remove('tk'); void n.offsetWidth; n.classList.add('tk'); sfx('tap'); }
+  if (b) b.style.transform = `scaleX(${clamp(1 - LV.t / (LV.T || 1), 0, 1).toFixed(3)})`;
+  if (LV.t <= 0) warmEnd();
+}
+function warmEnd() {
+  const el = $('#warm'); if (el) { el.classList.add('out'); setTimeout(() => el.remove(), 450); }
+  if (OV.net) netWarmDone(); else lvBuy(true);
+}
 function lvBuy(first) {
   const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = OV.net ? (first ? NET_BUY1 : NET_BUY) : first ? T_BUY1 : T_BUY; LV.min = true; LV.tuned = false; LV.kd = null; LV.sent = 0;
   document.querySelectorAll('.pl').forEach(c => c.classList.remove('dead', 'hit')); document.querySelectorAll('[id^="hp-"]').forEach(h => h.style.width = '100%');
@@ -4442,6 +4509,7 @@ function lvTick(ts) {
   if (!LV.paused && !(OV.net && OV.net.frz)) {
     LV.t -= dt;
     if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; qpTick(); if (LV.t <= 0) { if (OV.net) netBuyEnd(); else { if (LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } } }
+    else if (LV.ph === 'warm') warmTick();
     else if (LV.ph === 'wait') { /* онлайн: ждём ход ведущего */ }
     else if (LV.ph === 'round' && LV.ask === 2) { LV.at -= dt; if (LV.at <= 0 && OV.net && OV.net.host && LV.pre) callPick(LV.pre.op.def, 'op'); }
     else if (LV.ph === 'round' && LV.ask) { LV.t -= 0; LV.at -= dt; LV.t = LV.at; qpTick(); if (LV.at <= 0) callPick(LV.pre.call.def); }
@@ -4458,7 +4526,7 @@ function lvTick(ts) {
       if (!LV.pre && LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); rdDotsAt(S, S.T); lvEnd(); } }
     else { LV.t -= dt * (LV.spd - 1); if (LV.t <= 0) lvNext(); }
   }
-  if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' ? 0 : LV.S.T; if (M3C) M3C.frame(t, LV.paused ? 0 : dt / 1000, LV.ph, LV.spd); else { rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); } }
+  if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' || LV.ph === 'warm' ? 0 : LV.S.T; if (M3C) M3C.frame(t, LV.paused ? 0 : dt / 1000, LV.ph, LV.spd); else { rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); } }
   requestAnimationFrame(lvTick);
 }
 /* ---------- Матч в 3D (Three.js): город по графу карты, игроки с фото, трассеры, дым, молотов, бомба ----------
@@ -4747,8 +4815,7 @@ function m3Build() {
     <div class="lv-prep" id="prep"></div></div>`;
   M3C = M3D.make($('#m3gl'), m);
   LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, spd: LV && LV.spd || 1, cam: { x: 50, y: 50, z: 1 }, kd: null, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] }, d3: 1 };
-  setTimeout(() => { const n = $('#intro'); if (n) n.classList.add('out'); }, 2300);
-  lvBuy(true); requestAnimationFrame(lvTick);
+  warmStart(W_3D); requestAnimationFrame(lvTick);
 }
 /* 3D, если браузер умеет WebGL; иначе — 2D-карта */
 function liveGo() {
@@ -5193,7 +5260,11 @@ function netSplash() {
   sfx('found'); setTimeout(() => { if (OV && OV.net === N && !N.done) netLive(); }, 2600);
 }
 function netLive() {
-  const N = OV.net; liveGo(); N.live = 1; LV.spd = NET_SPD; LV.ph = 'wait'; netWaitDraw('Ждём соперника…'); lvBtns();
+  const N = OV.net; liveGo(); LV.spd = NET_SPD;   /* сначала разминка (warmStart), затем netWarmDone */
+}
+/* разминка закончилась на этом устройстве: ведущий ждёт готовности второго, второй сообщает, что готов */
+function netWarmDone() {
+  const N = OV.net; N.live = 1; LV.ph = 'wait'; netWaitDraw('Ждём соперника…'); lvBtns();
   if (N.host) { if (N.opRdy) lvBuy(true); }
   else { N.rdy = 1; N.rdyT = Date.now(); rtSend(N.ch, 'rdy', {}); if (N.pend) netGuestApplyBuy(); }
 }
@@ -5569,9 +5640,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target &&
    Логика попытки — c4Try в meta.js. Экран бомбы живёт в отдельном слое поверх игры и не пересоздаётся при render(). */
 const C4_ICON = `<svg class="c4-ico" viewBox="0 0 64 48" aria-hidden="true"><rect x="3" y="6" width="58" height="11" rx="5" fill="#b08a55"/><rect x="3" y="18.5" width="58" height="11" rx="5" fill="#a07d4b"/><rect x="3" y="31" width="58" height="11" rx="5" fill="#b08a55"/><rect x="9" y="4" width="5" height="40" fill="#1c1e21"/><rect x="50" y="4" width="5" height="40" fill="#1c1e21"/><rect x="19" y="10" width="26" height="30" rx="3" fill="#2c3136" stroke="#0d0f11" stroke-width="1.5"/><rect x="22" y="13" width="20" height="7" rx="1" fill="#0c1f0e"/><path d="M24 16.5h16" stroke="#6dff7a" stroke-width="1.6" stroke-dasharray="2 1.4"/><g fill="#59616a"><rect x="22.5" y="23" width="5" height="4" rx="1"/><rect x="29.5" y="23" width="5" height="4" rx="1"/><rect x="36.5" y="23" width="5" height="4" rx="1"/><rect x="22.5" y="29" width="5" height="4" rx="1"/><rect x="29.5" y="29" width="5" height="4" rx="1"/><rect x="36.5" y="29" width="5" height="4" rx="1"/></g><circle cx="40" cy="36.5" r="1.8" fill="#ff3b30"/><path d="M45 14c8-6 14 2 15-6M45 34c9 4 12-6 16 0" fill="none" stroke="#d33" stroke-width="1.6"/></svg>`;
 const c4Fmt = ms => { const s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return h + ':' + String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+/* подпись после попытки: сколько попыток осталось в этот час или когда следующая */
+const c4After = () => { const n = c4TriesLeft(G, now()); return n ? 'Осталось попыток в этот час: ' + n + '.' : 'Следующая попытка через ' + c4Fmt(c4Left(G, now())) + '.'; };
 function c4EntryH() {
   const left = c4Left(G, now());
-  return `<div class="c4-entry"><button class="c4-btn ${left ? 'cool' : 'ready'}" type="button" data-act="c4open" aria-label="Попробуй взломать бомбу C4"><span class="c4-btxt"><b>Попробуй взломать</b><small id="c4-et">${left ? 'через ' + c4Fmt(left) : 'попытка доступна'}</small></span>${C4_ICON}</button></div>`;
+  return `<div class="c4-entry"><button class="c4-btn ${left ? 'cool' : 'ready'}" type="button" data-act="c4open" aria-label="Попробуй взломать бомбу C4"><span class="c4-btxt"><b>Попробуй взломать</b><small id="c4-et">${left ? 'через ' + c4Fmt(left) : 'попыток: ' + c4TriesLeft(G, now())}</small></span>${C4_ICON}</button></div>`;
 }
 ACT.c4open = () => c4Open();
 
@@ -5616,7 +5689,7 @@ function c4Draw(lcd) {
   else if (cool) L.innerHTML = `<span class="c4-w">ЖДИТЕ</span>`;
   else L.innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<span class="c4-d ${C4.code[i] ? 'on' : ''}">${C4.code[i] || '_'}</span>`).join('');
   if (C4.done) return;
-  sub.textContent = cool ? 'Следующая попытка через ' + c4Fmt(left) : 'Набери 6 цифр и нажми OK. Одна попытка раз в 4 часа.';
+  sub.textContent = cool ? 'Следующая попытка через ' + c4Fmt(left) : 'Набери 6 цифр и нажми OK. ' + C4_PER + ' попытки в час, осталось: ' + c4TriesLeft(G, now()) + '.';
 }
 function c4Click(e) {
   const b = e.target.closest('[data-c4]'); if (!b || !C4) return;
@@ -5647,13 +5720,13 @@ function c4Check() {
     const sub = document.getElementById('c4-sub');
     if (r.ok) {
       C4.done = true; el.classList.add('win'); c4Draw(`<span class="c4-w ok">ВЗЛОМАНО</span>`);
-      msg.innerHTML = 'Код подошёл! Награда: ' + esc(r.text); msg.className = 'c4-msg ok'; sub.textContent = 'Награда уже у вас. Следующая попытка через 4 часа.';
+      msg.innerHTML = 'Код подошёл! Награда: ' + esc(r.text); msg.className = 'c4-msg ok'; sub.textContent = 'Награда уже у вас. ' + c4After();
       sfx('found'); c4Buzz([80, 60, 80, 60, 260]);
     } else if (r.used) {
       msg.textContent = r.why; msg.className = 'c4-msg warn'; C4.code = ''; c4Draw(); c4Beep(400, .2, 'triangle', .06);
     } else {
       C4.done = true; el.classList.add('fail'); bomb.classList.add('jolt'); c4Draw(`<span class="c4-w bad">ОШИБКА</span>`);
-      msg.textContent = r.why; msg.className = 'c4-msg bad'; sub.textContent = r.wait ? 'Следующая попытка через ' + c4Fmt(r.wait) : 'Следующая попытка через ' + c4Fmt(c4Left(G, now()));
+      msg.textContent = r.why; msg.className = 'c4-msg bad'; sub.textContent = r.wait ? 'Следующая попытка через ' + c4Fmt(r.wait) : c4After();
       c4Beep(180, .45, 'sawtooth', .07, 70); c4Buzz([300, 80, 300]);
     }
   }, 2050);
@@ -5666,7 +5739,7 @@ document.addEventListener('keydown', e => {
 });
 /* отсчёт до следующей попытки: на кнопке страницы кейсов и на экране бомбы */
 setInterval(() => {
-  const e = document.getElementById('c4-et'); if (e && G) { const left = c4Left(G, now()); e.textContent = left ? 'через ' + c4Fmt(left) : 'попытка доступна'; e.parentNode.parentNode.classList.toggle('cool', !!left); e.parentNode.parentNode.classList.toggle('ready', !left); }
+  const e = document.getElementById('c4-et'); if (e && G) { const left = c4Left(G, now()); e.textContent = left ? 'через ' + c4Fmt(left) : 'попыток: ' + c4TriesLeft(G, now()); e.parentNode.parentNode.classList.toggle('cool', !!left); e.parentNode.parentNode.classList.toggle('ready', !left); }
   if (C4 && !C4.busy && !C4.done) c4Draw();
 }, 1000);
 /* ---------- Трейд: передача дубликатов другу ----------

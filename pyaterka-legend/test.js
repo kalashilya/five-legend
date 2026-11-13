@@ -109,21 +109,31 @@ ok('награды турниров записаны в карточки для 
   assert.deepStrictEqual(b('xertioN').aw.a, [['MVP', 'IEM Пекин 2026', 2]]); assert.strictEqual(b('PR').aw.a.length, 2);
   assert.strictEqual(b('ZywOo').aw.top, 1); assert(E.MVPP.find(c => c.nick === 'YEKINDAR').aw); assert(E.ALL.filter(c => c.hist).every(c => !c.aw));
 });
-ok('взлом C4: верный код даёт награду один раз, попытка раз в 4 часа, неверный код тратит попытку, перенос сохранения', () => {
-  const H = 4 * 3600000, h = E.c4Hash('000001'); assert(!E.C4_CODES[h]); E.C4_CODES[h] = { r: { coins: 700, pack: { elite: 1 } } };
+ok('взлом C4: 2 попытки в скользящий час, верный код — награда один раз, повтор взломанного не тратит попытку, перенос сохранения', () => {
+  const H = 3600000, h = E.c4Hash('000001'); assert(!E.C4_CODES[h]); E.C4_CODES[h] = { r: { coins: 700, pack: { elite: 1 } } };
   try {
-    assert.strictEqual(E.C4_WAIT, H); assert.strictEqual(Object.keys(E.C4_CODES).length, 11);
+    assert.strictEqual(E.C4_WIN, H); assert.strictEqual(E.C4_PER, 2); assert.strictEqual(Object.keys(E.C4_CODES).length, 11);
     const g = E.newProfile(NOW), c0 = g.coins, e0 = g.packs.elite;
-    assert(E.c4Try(g, '12345', NOW).bad); assert(E.c4Try(g, 'abcdef', NOW).bad); assert.strictEqual(g.c4.next, 0);
-    let r = E.c4Try(g, '000001', NOW); assert(r.ok, r.why); assert.strictEqual(g.coins, c0 + 700); assert.strictEqual(g.packs.elite, e0 + 1); assert.strictEqual(g.c4.next, NOW + H);
-    r = E.c4Try(g, '000002', NOW + 1000); assert(!r.ok && r.wait > 0); assert.strictEqual(g.c4.next, NOW + H);
-    r = E.c4Try(g, '000001', NOW + H); assert(!r.ok && r.used); assert.strictEqual(g.coins, c0 + 700); assert.strictEqual(E.c4Left(g, NOW + H), 0, 'повтор взломанного кода попытку не тратит');
-    r = E.c4Try(g, '000002', NOW + H); assert(!r.ok && r.why === 'Код не угадан'); assert.strictEqual(g.c4.next, NOW + 2 * H);
-    const back = E.migrate(JSON.parse(JSON.stringify(g)), NOW); assert.strictEqual(back.c4.next, NOW + 2 * H); assert(back.c4.used.includes(h));
-    const old = E.migrate({ v: 2, coins: 1, cards: {}, squads: [[], [], []], capts: [], season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW); assert.deepStrictEqual(old.c4, { next: 0, used: [] });
-    const bad = E.migrate({ v: 2, coins: 1, cards: {}, squads: [[], [], []], c4: 'x', season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW); assert.deepStrictEqual(bad.c4, { next: 0, used: [] });
+    assert(E.c4Try(g, '12345', NOW).bad); assert(E.c4Try(g, 'abcdef', NOW).bad); assert.strictEqual(E.c4TriesLeft(g, NOW), 2);
+    let r = E.c4Try(g, '000002', NOW); assert(!r.ok && r.why === 'Код не угадан'); assert.strictEqual(E.c4TriesLeft(g, NOW), 1); assert.strictEqual(E.c4Left(g, NOW), 0);
+    r = E.c4Try(g, '000001', NOW + 600000); assert(r.ok, r.why); assert.strictEqual(g.coins, c0 + 700); assert.strictEqual(g.packs.elite, e0 + 1);
+    assert.strictEqual(E.c4TriesLeft(g, NOW + 600000), 0); assert.strictEqual(E.c4Left(g, NOW + 600000), H - 600000);
+    r = E.c4Try(g, '000003', NOW + 700000); assert(!r.ok && r.wait > 0);
+    assert.strictEqual(E.c4TriesLeft(g, NOW + H), 1, 'через час после первой попытки — снова можно');
+    r = E.c4Try(g, '000001', NOW + H); assert(!r.ok && r.used); assert.strictEqual(E.c4TriesLeft(g, NOW + H), 1, 'повтор взломанного кода попытку не тратит');
+    const back = E.migrate(JSON.parse(JSON.stringify(g)), NOW); assert.deepStrictEqual(back.c4.tries, g.c4.tries); assert(back.c4.used.includes(h));
+    const old = E.migrate({ v: 2, coins: 1, cards: {}, squads: [[], [], []], c4: { next: NOW + 3 * H, used: ['x1'] }, season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW);
+    assert.deepStrictEqual(old.c4, { tries: [], used: ['x1'] }); assert.strictEqual(E.c4Left(old, NOW), 0, 'старое 4-часовое ожидание сброшено');
+    const bad = E.migrate({ v: 2, coins: 1, cards: {}, squads: [[], [], []], c4: 'x', season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW); assert.deepStrictEqual(bad.c4, { tries: [], used: [] });
   } finally { delete E.C4_CODES[h]; }
   assert(Object.values(E.C4_CODES).every(c => c.r && (c.r.coins || c.r.pack || c.r.pick != null)));
+});
+ok('«Что нового»: старый игрок видит окно один раз, новичок — нет, отметка сохраняется', () => {
+  assert(E.NEWS.length >= 1 && E.NEWS.every((n, i) => Number.isInteger(n.v) && (i === 0 || n.v < E.NEWS[i - 1].v) && n.items.length));
+  const old = E.migrate({ v: 2, coins: 1, tut: 3, cards: {}, squads: [[], [], []], season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW);
+  assert.strictEqual(old.news, 0); assert(E.newsDue(old)); assert.strictEqual(E.newsFor(old).length, E.NEWS.length);
+  old.news = E.NEWS_V; const back = E.migrate(JSON.parse(JSON.stringify(old)), NOW); assert.strictEqual(back.news, E.NEWS_V); assert(!E.newsDue(back));
+  const fresh = E.newProfile(NOW); fresh.tut = 3; assert(!E.newsDue(fresh));
 });
 ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
   assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);

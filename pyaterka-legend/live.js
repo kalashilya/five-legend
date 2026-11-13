@@ -54,8 +54,7 @@ function liveBuild() {
     <div class="lv-ctl" id="mbtn"></div>
     <div class="lv-prep" id="prep"></div></div>`;
   LV = { ph: 'buy', t: 0, T: 1, q: [], paused: false, last: null, ts: 0, spd: LV && LV.spd || 1, cam: { x: 50, y: 50, z: 1 }, kd: null, kc: { A: [0, 0, 0, 0, 0], B: [0, 0, 0, 0, 0] } };
-  setTimeout(() => { const n = $('#intro'); if (n) n.classList.add('out'); }, 2300);
-  lvBuy(true); requestAnimationFrame(lvTick);
+  warmStart(W_2D); requestAnimationFrame(lvTick);
 }
 /* табло, деньги, история раундов, у/с и оружие игроков */
 function lvHud() {
@@ -139,6 +138,29 @@ function mmDraw() { document.querySelectorAll('#rowA .pl').forEach((c, i) => c.c
   const q = LV.min && !LV.tuned && QP[OV.m.sideA][LV.qr], shown = q ? { dir: q.dir, tempo: q.tempo } : OV.plan;
   if (M3C) M3C.plan(OV.m.sideA, LV.ph !== 'buy' || OV.m.over ? null : shown);
   const g = $('#rd-plan'); if (!g) return; g.innerHTML = LV.ph === 'buy' ? rdPlanSvg(OV.m.map.n, OV.m.sideA, shown) : ''; $('#lvv').className = 'lv-view sd-' + OV.m.sideA; }
+/* ---------- Разминка перед первым раундом ----------
+   Пока идёт отсчёт, карта строится и рисуется за экраном «Разминка» (3D успевает загрузить текстуры и шейдеры — без чёрного экрана).
+   Потом экран плавно уходит и начинается первый раунд; в онлайне — когда разминка закончилась у обоих (netWarmDone). */
+const W_3D = 6000, W_2D = 2500;
+function warmStart(ms) {
+  const m = OV.m; LV.ph = 'warm'; LV.T = LV.t = ms; LV.wEnd = performance.now() + ms; LV.wf = 0; LV.S = rdIdle(); rdDotsBuild(LV.S); rdDotsAt(LV.S, 0);
+  const n = $('#intro'); if (n) n.classList.add('out');
+  const el = document.createElement('div'); el.className = 'lv-warm'; el.id = 'warm'; el.setAttribute('role', 'status');
+  el.innerHTML = `<small class="eyebrow">Разминка</small><b class="wm-map">${esc(m.map.n)}</b><span class="wm-vs">Вы <i>${sideName(m.sideA)}</i> · против ${esc(m.b.name)}</span><span class="wm-n" id="wmn">${Math.ceil(ms / 1000)}</span><span class="wm-bar"><i id="wmb"></i></span><small class="wm-s">${OV.net ? 'Карта загружается у обоих игроков' : 'Карта загружается'}</small>`;
+  const host = $('#mt .lv') || $('#mt'); host.appendChild(el); lvBtns();
+}
+/* отсчёт по настоящим часам (а не по кадрам); старт — когда время вышло и уже нарисовано не меньше 10 кадров карты */
+function warmTick() {
+  LV.wf++; LV.t = Math.max(0, LV.wEnd - performance.now()); if (LV.t <= 0 && LV.wf < 10) LV.t = 1;
+  const n = $('#wmn'), b = $('#wmb'), s = String(Math.max(1, Math.ceil(LV.t / 1000)));
+  if (n && n.textContent !== s && LV.t > 0) { n.textContent = s; n.classList.remove('tk'); void n.offsetWidth; n.classList.add('tk'); sfx('tap'); }
+  if (b) b.style.transform = `scaleX(${clamp(1 - LV.t / (LV.T || 1), 0, 1).toFixed(3)})`;
+  if (LV.t <= 0) warmEnd();
+}
+function warmEnd() {
+  const el = $('#warm'); if (el) { el.classList.add('out'); setTimeout(() => el.remove(), 450); }
+  if (OV.net) netWarmDone(); else lvBuy(true);
+}
 function lvBuy(first) {
   const m = OV.m; LV.ph = 'buy'; LV.T = LV.t = OV.net ? (first ? NET_BUY1 : NET_BUY) : first ? T_BUY1 : T_BUY; LV.min = true; LV.tuned = false; LV.kd = null; LV.sent = 0;
   document.querySelectorAll('.pl').forEach(c => c.classList.remove('dead', 'hit')); document.querySelectorAll('[id^="hp-"]').forEach(h => h.style.width = '100%');
@@ -314,6 +336,7 @@ function lvTick(ts) {
   if (!LV.paused && !(OV.net && OV.net.frz)) {
     LV.t -= dt;
     if (LV.ph === 'buy') { const s = Math.ceil(Math.max(0, LV.t) / 1000), e = $('#ppt'); if (e && e.textContent !== '(' + s + ')') e.textContent = '(' + s + ')'; qpTick(); if (LV.t <= 0) { if (OV.net) netBuyEnd(); else { if (LV.min && !LV.tuned) qpApply(LV.qr); lvPlay(); } } }
+    else if (LV.ph === 'warm') warmTick();
     else if (LV.ph === 'wait') { /* онлайн: ждём ход ведущего */ }
     else if (LV.ph === 'round' && LV.ask === 2) { LV.at -= dt; if (LV.at <= 0 && OV.net && OV.net.host && LV.pre) callPick(LV.pre.op.def, 'op'); }
     else if (LV.ph === 'round' && LV.ask) { LV.t -= 0; LV.at -= dt; LV.t = LV.at; qpTick(); if (LV.at <= 0) callPick(LV.pre.call.def); }
@@ -330,6 +353,6 @@ function lvTick(ts) {
       if (!LV.pre && LV.rt >= S.T) { while (LV.ei < S.ev.length) rdEvent(S, S.ev[LV.ei++]); rdDotsAt(S, S.T); lvEnd(); } }
     else { LV.t -= dt * (LV.spd - 1); if (LV.t <= 0) lvNext(); }
   }
-  if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' ? 0 : LV.S.T; if (M3C) M3C.frame(t, LV.paused ? 0 : dt / 1000, LV.ph, LV.spd); else { rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); } }
+  if (LV && LV.S) { const t = LV.ph === 'round' ? LV.rt : LV.ph === 'buy' || LV.ph === 'warm' ? 0 : LV.S.T; if (M3C) M3C.frame(t, LV.paused ? 0 : dt / 1000, LV.ph, LV.spd); else { rdDotsAt(LV.S, t); lvCam(t, LV.paused ? 0 : dt); } }
   requestAnimationFrame(lvTick);
 }

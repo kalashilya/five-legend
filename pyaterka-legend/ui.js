@@ -363,10 +363,26 @@ function stGrid(ss) {
 /* «Что нового»: после обновления — записи новее отметки игрока; из профиля — вся история (sheet.all) */
 function newsH() {
   const L = sheet.all ? NEWS : (sheet.list || NEWS.slice(0, 1));
+  const items = it => `<ul class="nw-l">${it.map(([h, d]) => `<li><b>${esc(h)}</b><span>${esc(d)}</span></li>`).join('')}</ul>`;
   return `<div class="in st-pop nw-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <small class="eyebrow">${sheet.all ? 'История обновлений' : 'Что нового'}</small><h2>${esc(L[0].t)}</h2>
-    ${L.map((n, i) => `${i ? `<h3 class="nw-h">${esc(n.t)}</h3>` : ''}<p class="nw-d">Обновление от ${esc(n.d)}</p><ul class="nw-l">${n.items.map(([h, d]) => `<li><b>${esc(h)}</b><span>${esc(d)}</span></li>`).join('')}</ul>`).join('')}
+    ${L.map((n, i) => `${i ? `<h3 class="nw-h">${esc(n.t)}</h3>` : ''}<p class="nw-d">Обновление от ${esc(n.d)}</p>${n.sec ? n.sec.map(c => `<h4 class="nw-s">${esc(c.h)}</h4>${items(c.items)}`).join('') : items(n.items || [])}`).join('')}
     <button class="btn pri" data-act="close">Понятно, играть</button></div>`;
+}
+/* подарок в честь переезда: карточка «?», по нажатию — анимация как у контракта (giftBuild) */
+let giftLater = false;
+function giftH() {
+  return `<div class="in st-pop gf-pop"><button class="lg-x st-x0" data-act="giftLater" aria-label="Позже"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <small class="eyebrow">Подарок</small><h2>Спасибо, что играете!</h2>
+    <p class="gf-t">В честь большого обновления и переезда игры на новый адрес — держите от нас карточку игрока <b>${GIFT_MIN}+</b>.</p>
+    <button class="gf-card" data-act="giftOpen" aria-label="Открыть подарок"><span class="gf-q">?</span><small>Нажмите, чтобы открыть</small></button>
+    <button class="btn pri" data-act="giftOpen">Забрать подарок</button></div>`;
+}
+function giftBuild() {
+  const o = $('#over'), x = OV.res;
+  o.innerHTML = `<canvas id="fx"></canvas><div class="po-bg" id="po-bg"></div><div class="wrap po"><p class="eyebrow">Подарок · игрок ${GIFT_MIN}+</p><div class="po-stage" id="po-stage"><div class="scan glitch" id="scan" style="--gl:#f2c14e"><div class="scan-fr"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sil"/></svg><i class="scan-ln"></i></div></div></div><div class="po-name" id="po-name"><b>Открываем…</b><span class="sm mut">Кто же это?</span></div><div class="po-btn" id="po-btn"></div></div>`;
+  o.hidden = false; o.scrollTop = 0; OV.built = true; sfx('open');
+  later(1900, () => { $('#po-stage').innerHTML = `<div class="scan out" id="scan" style="--gl:${glow(x.c)}">${cardH(x.c, { stats: true })}</div>`; $('#po-bg').style.setProperty('--gl', glow(x.c)); $('#po-name').innerHTML = `<b style="color:${glow(x.c)}">${esc(x.c.nick)}</b><span class="sm mut">${esc(x.c.team)} · рейтинг ${x.c.ovr} · ${rarName(x.c)} · ${x.isNew ? 'новая карточка' : 'копия в коллекцию'}</span>`; flashNow(); burst(glow(x.c), 120, $('#scan')); sfx('stop', x.c.rar); $('#po-btn').innerHTML = '<button class="btn pri" data-act="ovClose">Забрать</button>'; });
 }
 function streakH() {
   const ss = stState(), got = sheet.got, day = got ? G.streak.day : ss.cur, r = got || (ss.p ? STREAK_REWARDS[ss.p.day - 1] : G.streak.reward);
@@ -400,6 +416,7 @@ function vSheet() {
       <div class="rowb"><button class="btn" data-act="close">Отмена</button><button class="btn pri" data-act="qsSell">Продать за ${nf(q.coins)}</button></div></div></div>`; }
   if (sheet.t === 'qsDone') return `<div class="in"><div class="wrap col"><h2>Продано</h2><p>Продано карточек: <b>${sheet.n}</b>. Получено <b><i class="coin"></i> ${nf(sheet.coins)}</b>.</p><div class="rowb"><button class="btn pri" data-act="close">Отлично</button></div></div></div>`;
   if (sheet.t === 'news') return newsH();
+  if (sheet.t === 'gift') return giftH();
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
@@ -728,15 +745,18 @@ function render() {
   const frIn = AU ? FR.rows.filter(r => r.st === 'pending' && r.b === AU.uid).length : 0;
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()), fr: TR.inc.length + frIn };
   $('#tabs .wrap').innerHTML = NAV.map(k => `<button data-act="tab" data-v="${k}" class="${k === 'play' ? 'tb-play' : ''}" ${tab === k ? 'aria-current="page"' : ''}>${k === 'play' ? `<span class="tb-ball"><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg></span>` : `<svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>`}${TABS[k][0]}${dots[k] ? (typeof dots[k] === 'number' ? `<span class="dot n">${dots[k]}</span>` : '<span class="dot"></span>') : ''}</button>`).join('');
-  if (!sheet && !OV && tab === 'home' && newsDue(G)) { sheet = { t: 'news', list: newsFor(G) }; G.news = NEWS_V; save(); }
-  if (!sheet && !OV && tab === 'home' && !AU && authAskDue()) { authAsked = true; sheet = { t: 'auth', mode: 'up', pop: 1 }; }
-  if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
+  /* «Что нового»: только когда заставка ушла; увиденным считается после закрытия (ACT.close / newsOk), а не при показе */
+  if (!sheet && !OV && tab === 'home' && newsDue(G) && !document.querySelector('#intro:not(.lv-intro)')) sheet = { t: 'news', list: newsFor(G) };
+  if (!sheet && !OV && tab === 'home' && !giftLater && !newsDue(G) && giftDue(G) && !document.querySelector('#intro:not(.lv-intro)')) sheet = { t: 'gift' };
+  const popOk = !document.querySelector('#intro:not(.lv-intro)') && !newsDue(G) && (giftLater || !giftDue(G));   /* «Создай аккаунт» и серия — после заставки, «Что нового» и подарка */
+  if (popOk && !sheet && !OV && tab === 'home' && !AU && authAskDue()) { authAsked = true; sheet = { t: 'auth', mode: 'up', pop: 1 }; }
+  if (popOk && !sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
   if (sheet && sheet.t === 'leagues' && sheet.go) { sheet.go = 0; lgScroll(); }
   const ov = $('#over');
   if (!OV && G.picks.length && !sheet) OV = { t: 'pick', built: false };
   if (!OV) { if (RV) rvDrop(); ov.innerHTML = ''; ov.hidden = true; ov.classList.remove('po3d'); }
-  else if (!OV.built) { ({ pack: packBuild, match: matchBuild, pick: pickBuild, tu: tuBuild })[OV.t](); }
+  else if (!OV.built) { ({ pack: packBuild, match: matchBuild, pick: pickBuild, tu: tuBuild, gift: giftBuild })[OV.t](); }
 }
 function autoSquad() {
   const used = new Set(), sq = [null, null, null, null, null];
@@ -753,10 +773,12 @@ const ACT = {
   frsub(v) { frSub = v; if (v === 'trade') { TRD.msg = ''; trLoad(true); } frLoad(); }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
   snd(v) { snd = v; try { localStorage.setItem(SKEY, v); } catch (e) { /* не сохранится */ } sfx('win'); },
   noteOk() { delete G.note; },
-  close() { sheet = null; imgMsg = ''; askSell = null; },
+  close() { if (sheet && sheet.t === 'news' && !sheet.all) { G.news = NEWS_V; save(); } sheet = null; imgMsg = ''; askSell = null; },
   leagues() { sheet = { t: 'leagues', go: 1 }; },
   lvlInfo() { sheet = { t: 'lvl' }; },
   news() { sheet = { t: 'news', all: 1 }; },
+  giftOpen() { const r = giftRun(G); sheet = null; if (!r) return; save(); OV = { t: 'gift', res: r, built: false }; },
+  giftLater() { giftLater = true; sheet = null; },
   streak() { sheet = { t: 'streak' }; },
   streakClaim() { const r = claimStreak(G, now()); if (!r) return; sfx('stop', r.pack ? (r.pack.elite ? 4 : r.pack.pro ? 3 : 1) : 0); if (sheet && sheet.t === 'streak') sheet.got = r; else sheet = { t: 'streak', got: r }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },
@@ -835,7 +857,7 @@ function start() {
 }
 /* заставка: пока игра грузится — лёгкая фаза; когда готова — показ (~2,7 с), затем пролёт в игру. Нажатие пропускает */
 let introT = 0;
-function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; introT = Date.now(); el.classList.add('out'); setTimeout(() => el.remove(), 800); }
+function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; introT = Date.now(); el.classList.add('out'); setTimeout(() => { el.remove(); if (!OV && !sheet) render(); }, 800); }   /* после заставки — показать отложенные окна («Что нового», подарок) */
 function introGo(first) { const el = document.getElementById('intro'); if (!el) return; el.addEventListener('click', introHide);
   /* два кадра — чтобы первая отрисовка игры закончилась и анимация шла на свободном потоке */
   requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add('go'); setTimeout(introHide, noMotion() ? 350 : first ? 3300 : 2800); })); }

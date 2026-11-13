@@ -41,7 +41,8 @@ function c4Open() {
   </div>
   <p class="c4-msg" id="c4-msg" role="status"></p>
   <p class="c4-sub" id="c4-sub"></p>
-  <button class="c4-again" type="button" data-c4="again" id="c4-again">Ещё попытка</button>`;
+  <button class="c4-again" type="button" data-c4="again" id="c4-again">Ещё попытка</button>
+  <div class="c4-hints" id="c4-hints"></div>`;
   document.body.appendChild(el); document.documentElement.classList.add('c4-lock');
   el.addEventListener('click', c4Click);
   requestAnimationFrame(() => el.classList.add('on'));
@@ -67,8 +68,10 @@ function c4Draw(lcd) {
   if (lcd != null) L.innerHTML = lcd;
   else if (cool) L.innerHTML = `<span class="c4-w">ЖДИТЕ</span>`;
   else L.innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<span class="c4-d ${C4.code[i] ? 'on' : ''}">${C4.code[i] || '_'}</span>`).join('');
+  const hl = c4HintList(G), hb = document.getElementById('c4-hints');
+  if (hb) hb.innerHTML = hl.length ? `<small>Подсказки за победы</small>${hl.map(h => `<span><b>${h.m.split('').map(x => x === '_' ? '<i>_</i>' : x).join('')}</b><em>${esc(h.r)}</em></span>`).join('')}` : '';
   if (C4.done) return;
-  sub.textContent = cool ? 'Следующая попытка через ' + c4Fmt(left) : 'Набери 6 цифр и нажми OK. ' + C4_PER + ' попытки в час, осталось: ' + c4TriesLeft(G, now()) + '.';
+  sub.textContent = cool ? 'Следующая попытка через ' + c4Fmt(left) : 'Набери 6 цифр и нажми OK. ' + C4_PER + ' попытки в час' + (G.c4.bonus ? ' + запас за победы: ' + G.c4.bonus : '') + '. Осталось: ' + c4TriesLeft(G, now()) + '.';
 }
 function c4Click(e) {
   const b = e.target.closest('[data-c4]'); if (!b || !C4) return;

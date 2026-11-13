@@ -10,7 +10,7 @@ const isAndroid = () => /Android/i.test(navigator.userAgent);
 const instHidden = () => +(lsGet(KEY + '-inst-no') || 0) > Date.now();
 const canInstall = () => !isStandalone() && /^https:$/.test(location.protocol) && !instHidden() && (!!INST || isIOS() || isAndroid());
 function installStart() {
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(() => { /* без офлайна */ });
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => { /* без офлайна */ });
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); INST = e; if (!OV && !sheet) render(); });
   addEventListener('appinstalled', () => { INST = null; if (!OV) render(); });
 }

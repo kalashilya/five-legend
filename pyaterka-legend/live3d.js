@@ -268,22 +268,29 @@ function liveGo() {
   liveBuild();
 }
 
-/* ---------- Быстрый план: три карточки, одно нажатие — раунд пошёл (к карточке сам добавляется подходящий приказ) ---------- */
-const QP = {
-  A: [{ n: 'Раш B', d: 'Быстро всей командой на B', ic: 'B', dir: 'B', tempo: 'fast', card: 'tempo', ac: '#ff8a3d' }, { n: 'Дефолт', d: 'Разведка по карте, точка по ходу', ic: '⇄', dir: 'S', tempo: 'norm', card: 'nades', ac: '#f2c14e' }, { n: 'Сплит A', d: 'Медленно, с двух сторон на A', ic: 'A', dir: 'A', tempo: 'slow', card: 'fake', ac: '#ff5a5a' }],
-  D: [{ n: 'Стек A', d: 'Трое на A, по одному на мид и B', ic: 'A', dir: 'A', tempo: 'norm', card: 'stack', ac: '#4aa3ff' }, { n: 'Ровно', d: 'Двое на каждой точке, один на миде', ic: '◎', dir: 'S', tempo: 'norm', card: 'cross', ac: '#7fe0d0' }, { n: 'Стек B', d: 'Трое на B, по одному на мид и A', ic: 'B', dir: 'B', tempo: 'norm', card: 'stack', ac: '#8f7bff' }]
-};
+/* ---------- Быстрый план: тактики стороны листаются вбок, одно нажатие — раунд пошёл ----------
+   Тактики и их взаимные плюсы — TK в core.js. Показываются только доступные при текущей закупке (data-v — номер в полном списке). */
+const QP = { A: TK_T.map(k => Object.assign({ k }, TK[k])), D: TK_CT.map(k => Object.assign({ k }, TK[k])) };
 const qpCan = (m, k) => !!AC[k] && m.a.hand.includes(k) && m.canPlay(m.a, [k]);
-/* совет: после победы — то же направление, после поражения — следующее */
-function qpRec(m) { const L = QP[m.sideA], h = m.hist[m.hist.length - 1]; if (!h || h.side !== m.sideA) return 1; const i = L.findIndex(p => p.dir === h.dirA); return i < 0 ? 1 : h.win ? i : (i + 1) % 3; }
-function qpApply(i) { const m = OV.m, p = QP[m.sideA][i]; if (!p) return; OV.plan.dir = p.dir; OV.plan.tempo = p.tempo; OV.sel = qpCan(m, p.card) ? [p.card] : []; }
+const qpBuy = m => m.decider ? 'full' : m.buyOf(m.a, [], OV.plan.buy);
+const qpAvail = m => QP[m.sideA].map((p, i) => i).filter(i => tkOk(QP[m.sideA][i].k, qpBuy(m)));
+/* совет: то, что бьёт прошлую тактику соперника на этой стороне; после победы — повторить свою; иначе — дефолт/ровно */
+function qpRec(m) {
+  const L = QP[m.sideA], av = qpAvail(m), h = m.hist.filter(x => x.side === m.sideA).slice(-1)[0], ix = k => L.findIndex(p => p.k === k);
+  if (h && h.tkB) { const c = av.filter(i => L[i].bt.includes(h.tkB)); if (c.length) return c[0]; }
+  if (h && h.win && h.tkA && av.includes(ix(h.tkA))) return ix(h.tkA);
+  const d = ix(m.sideA === 'A' ? 'deflt' : 'even'); return av.includes(d) ? d : av[0];
+}
+function qpApply(i) { const m = OV.m, p = QP[m.sideA][i]; if (!p) return; OV.plan.dir = p.dir; OV.plan.tempo = p.tempo; OV.plan.tk = p.k; OV.sel = qpCan(m, p.card) ? [p.card] : []; }
+const qpNames = ks => ks.slice(0, 2).map(k => TK[k] ? TK[k].n : '').join(', ');
 function qpDraw(el) {
-  const m = OV.m, L = QP[m.sideA], ri = LV.qr = qpRec(m), atk = m.sideA === 'A';
-  const kind = m.decider ? 'решающий' : m.isPistol() ? 'пистолетный' : (BUY[m.buyOf(m.a, [])] || BUY.eco).n.toLowerCase();
+  const m = OV.m, L = QP[m.sideA], ri = LV.qr = qpRec(m), atk = m.sideA === 'A', av = qpAvail(m);
+  const kind = m.decider ? 'решающий' : m.isPistol() ? 'пистолетный' : (BUY[qpBuy(m)] || BUY.eco).n.toLowerCase();
+  const order = [ri, ...av.filter(i => i !== ri)];
   el.className = 'lv-prep on qp';
-  el.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${atk ? 'Атака · T' : 'Защита · CT'} · раунд ${m.round} · ${kind}</small><b>Выберите план</b></div><div class="qp-ring" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" id="qpg" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span id="qpt"></span></div></div>
-    <div class="qp-cards">${L.map((p, i) => `<button class="qp-c ${i === ri ? 'rec' : ''}" data-act="qp" data-v="${i}" style="--ac:${p.ac}">${i === ri ? '<span class="qp-r">совет</span>' : ''}<span class="qp-i">${p.ic}</span><b>${p.n}</b><small>${p.d}</small>${qpCan(m, p.card) ? `<em>+ ${esc(AC[p.card].n)}</em>` : ''}</button>`).join('')}</div>
-    <div class="qp-f"><span>Деньги <b>$${nf(m.a.money)}</b> · приказы ${m.a.en}/8</span></div>`;
+  el.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${atk ? 'Атака · T' : 'Защита · CT'} · раунд ${m.round} · ${kind}</small><b>Выберите тактику <span class="qp-n">${av.length}</span></b></div><div class="qp-ring" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" id="qpg" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span id="qpt"></span></div></div>
+    <div class="qp-cards" role="list">${order.map(i => { const p = L[i]; return `<button class="qp-c ${i === ri ? 'rec' : ''}" role="listitem" data-act="qp" data-v="${i}" style="--ac:${p.ac}">${i === ri ? '<span class="qp-r">совет</span>' : ''}<span class="qp-i">${p.ic}</span><b>${p.n}</b><small>${p.d}</small>${p.bt.length ? `<span class="qp-t up">бьёт: ${esc(qpNames(p.bt))}</span>` : ''}${p.ls.length ? `<span class="qp-t dn">слабо: ${esc(qpNames(p.ls))}</span>` : ''}${qpCan(m, p.card) ? `<em>+ ${esc(AC[p.card].n)}</em>` : ''}</button>`; }).join('')}</div>
+    <div class="qp-f"><span>Деньги <b>$${nf(m.a.money)}</b> · приказы ${m.a.en}/8</span><span class="qp-sw">листайте →</span></div>`;
   qpTick();
 }
 function qpTick() {

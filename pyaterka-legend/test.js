@@ -7,23 +7,26 @@ let passed = 0; const ok = (name, fn) => { fn(); passed++; console.log('  ok  ' 
 const mkSq = o => { const sq = []; for (let r = 0; r < 5; r++) { const l = E.ALL.filter(x => x.role === r && !x.sp && !sq.some(q => q.c.nick === x.nick)).sort((a, b) => Math.abs(a.ovr - o) - Math.abs(b.ovr - o)).slice(0, 6); sq.push({ c: l[Math.floor(Math.random() * l.length)], lv: 1 }); } return sq; };
 const subsets = m => { const h = m.a.hand, o = []; for (let k = 0; k < 1 << h.length; k++) { const s = h.filter((x, i) => k >> i & 1); if (m.canPlay(m.a, s)) o.push(s); } return o; };
 const cost = s => s.reduce((x, k) => x + E.AC[k].cost, 0);
+/* тактики, доступные игроку в этом раунде, и план из тактики (как при нажатии карточки) */
+const tks = m => (m.sideA === 'A' ? E.TK_T : E.TK_CT).filter(k => E.tkOk(k, m.decider ? 'full' : m.buyOf(m.a, [])));
+const tkPlan = k => ({ dir: E.TK[k].dir, tempo: E.TK[k].tempo, tk: k });
 const P = {
   none: m => [[], {}],
-  random: m => { const o = subsets(m); return [o[Math.floor(Math.random() * o.length)], { dir: 'ASB'[Math.floor(Math.random() * 3)], tempo: E.TEMPOS[Math.floor(Math.random() * 3)] }]; },
+  random: m => { const o = subsets(m), L = tks(m), k = L[Math.floor(Math.random() * L.length)]; return [o[Math.floor(Math.random() * o.length)], tkPlan(k)]; },
   /* «по цифрам»: берёт приказы с наибольшей суммой бонусов, которые показаны на картах; план не трогает */
   greedy: m => { const ctx = { side: m.sideA, behind: m.a.score < m.b.score, cap: m.capIgl(m.a) }, val = k => k === 'eco' ? -9 : k === 'fake' ? 3 : E.acVal(k, m.a, ctx); return [subsets(m).sort((a, b) => b.reduce((x, k) => x + val(k), 0) - a.reduce((x, k) => x + val(k), 0))[0] || [], {}]; },
-  stubborn: m => [P.greedy(m)[0], { dir: 'A', tempo: 'fast' }],
+  stubborn: m => [P.greedy(m)[0], tkPlan(m.sideA === 'A' ? 'rushA' : 'stackA')],
   /* «читающий»: пользуется разведкой, помнит точки и приказы соперника, не повторяется сам */
   reader: m => {
-    const atk = m.sideA === 'A', it = m.nx.intel, h = m.hist.filter(x => x.side === m.sideA), c = { A: 0, B: 0, S: 0 }, mine = { A: 0, B: 0, S: 0 }; h.slice(-6).forEach(x => c[x.dirB]++); h.slice(-4).forEach(x => mine[x.dirA]++);
-    const guess = it && it.k === 'dir' ? it.v : h.length >= 2 && c.A !== c.B ? (c.A > c.B ? 'A' : 'B') : null;
-    let dir = !guess ? (Math.random() < .5 ? 'A' : 'B') : guess === 'S' ? (atk ? 'A' : 'S') : atk ? (guess === 'A' ? 'B' : 'A') : guess;
-    if (!(it && it.k === 'dir') && mine[dir] >= 3) dir = 'S';
-    const e = m.a.info.e, tempo = atk ? (e[1].st.ent >= e[2].st.utl ? 'fast' : 'slow') : 'norm', seen = {}; m.hist.slice(-6).forEach(x => x.theirs.forEach(k => seen[k] = (seen[k] || 0) + 1));
+    const L = tks(m), h = m.hist.filter(x => x.side === m.sideA), it = m.nx.intel, seenTk = it && it.tk ? it.tk : (h.length ? h[h.length - 1].tkB : null);
+    const mine = h.slice(-2).map(x => x.tkA), beat = seenTk ? L.filter(k => E.TK[k].bt.includes(seenTk)) : [];
+    let k = beat.length ? beat[Math.floor(Math.random() * beat.length)] : L[Math.floor(Math.random() * L.length)];
+    if (mine.length === 2 && mine[0] === k && mine[1] === k) { const o = L.filter(x => x !== k); k = o[Math.floor(Math.random() * o.length)]; }
+    const seen = {}; m.hist.slice(-6).forEach(x => x.theirs.forEach(c => seen[c] = (seen[c] || 0) + 1));
     const ctx = { side: m.sideA, behind: m.a.score < m.b.score, cap: m.capIgl(m.a), oppStack: seen.stack >= 2, oppTempo: seen.tempo >= 2, oppNades: seen.nades >= 2 };
-    const val = k => k === 'eco' ? -9 : k === 'fake' ? 3 : E.acVal(k, m.a, ctx);
-    const cards = subsets(m).sort((a, b) => b.reduce((x, k) => x + val(k), 0) - a.reduce((x, k) => x + val(k), 0))[0] || [];
-    return [cards, { dir, tempo }];
+    const val = c => c === 'eco' ? -9 : c === 'fake' ? 3 : E.acVal(c, m.a, ctx);
+    const cards = subsets(m).sort((a, b) => b.reduce((x, c) => x + val(c), 0) - a.reduce((x, c) => x + val(c), 0))[0] || [];
+    return [cards, tkPlan(k)];
   }
 };
 function sim(o, tro, pol, n = N) { let w = 0, r = 0; for (let i = 0; i < n; i++) { const sq = mkSq(o), m = new E.Match(sq, tro, E.squadInfo(sq).rating, { capt: 4 }); let g = 0; while (!m.over && g++ < 40) { const [c, p] = pol(m); assert(m.play(c, p), 'раунд должен разыграться'); } assert(m.over); if (m.won) w++; r += m.hist.length; } return { win: 100 * w / n, rounds: r / n }; }

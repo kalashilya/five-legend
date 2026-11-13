@@ -178,7 +178,7 @@ function lvPlay() {
     const fake = { sideA: m.sideA, plan: Object.assign({}, OV.plan), planB: m.nx.plan, kills: [], end: 'elim', round: m.round, buyA: m.decider ? 'full' : m.buyOf(m.a, sel, OV.plan.buy), buyB: m.decider ? 'full' : m.buyOf(m.b, m.nx.cards), mine: sel, theirs: [] };
     LV.pre = OV.net ? { sel, call: call.me, op: call.op, S: fake } : { sel, call, S: fake }; LV.last = fake; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.ask = 0; LV.S = rdScript(fake, m.map.n); LV.ev0 = LV.S.ev; LV.S.ev = []; LV.ei = 0; LV.callT = Math.max(2.5, LV.S.tEx - .15); LV.lastCall = m.round;
     rdDotsBuild(LV.S); rdDotsAt(LV.S, 0); planDraw(); lvKD();
-    $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>'; $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[OV.plan.dir]}, ${TEMPON[OV.plan.tempo]}</span></div>`;
+    $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>'; $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${esc(planLbl(OV.plan))}</span></div>`;
     setTimeout(() => { if (LV && LV.ph === 'round' && !LV.ask) $('#bn').innerHTML = ''; }, 2200);
     if (OV.net) netAfterPlay();
     return;
@@ -189,7 +189,7 @@ function lvPlay() {
   planDraw(); lvKD();
   const tg = (pl, cut) => pl.length ? pl.map(k => k === cut ? `<s>${AC[k].n}</s>` : AC[k].n).join(', ') : 'без приказов';
   $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>';
-  $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[L.plan.dir]}, ${TEMPON[L.plan.tempo]} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
+  $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${esc(planLbl(L.plan))} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
   setTimeout(() => { if (LV && LV.ph === 'round') $('#bn').innerHTML = ''; }, 2600);
 }
 function callDraw() {
@@ -227,10 +227,12 @@ function lvKill(k, e) {
   const kr = $(`#pl-${kt}-${k.k}`); if (kr) { kr.classList.remove('hit'); void kr.offsetWidth; kr.classList.add('hit'); }
   lvKD(); sfx('kill');
 }
+/* подпись плана: название тактики, а у старого плана без тактики — точка и темп */
+const planLbl = p => p && p.tk && TK[p.tk] ? TK[p.tk].n : p ? (DIRN[p.dir] || '') + ', ' + (TEMPON[p.tempo] || '') : '';
 function lvEnd() {
   const L = LV.last; LV.ph = 'end'; LV.t = T_END; lvBtns();
   const rd = { good: 'вы переиграли соперника по направлению', bad: 'соперник прочитал ваше направление', fake: 'фейк спас атаку' }[L.read];
-  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span>${rd ? `<span>${rd}</span>` : ''}</div>`;
+  $('#bn').innerHTML = `<div class="banner ${L.win ? 'w' : 'l'}"><b>${L.win ? 'Раунд ваш' : 'Раунд проигран'}</b><span>${END[L.end]} · ${esc(L.mvp)}: ${L.ace ? 'эйс' : L.clutch ? 'клатч, ' + L.frags + ' фр.' : L.frags + ' фр.'}</span>${L.tkA && L.tkB ? `<span class="bn-tk">Вы: «${esc(TK[L.tkA].n)}» · соперник: «${esc(TK[L.tkB].n)}»${L.why ? ' — ' + esc(L.why) : ''}</span>` : rd ? `<span>${rd}</span>` : ''}</div>`;
   LV.kd = null; lvHud(); sfx(L.win ? 'win' : 'lose');
 }
 function lvNext() {

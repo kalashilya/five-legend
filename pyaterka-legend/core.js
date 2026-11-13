@@ -135,6 +135,47 @@ function acVal(k, me, ctx) {
     default: return 0;
   }
 }
+/* ---------- Тактики перед раундом (быстрый план) ----------
+   Атака (T) и защита (CT) выбирают по одной тактике. Тактика задаёт точку и темп (по ним идёт 3D-розыгрыш), приказ к ней
+   (карта из руки, если хватает импульса) и свой плюс/минус против тактики соперника: bt — кого бьёт (+TK_HIT), ls — кому проигрывает (−TK_HIT).
+   need: 'buy' — только с закупкой (полная/форс), 'eco' — только на пистолетах или без денег, иначе всегда. */
+const TK_HIT = 3.4;
+const TK = {
+  rushB: { s: 'A', n: 'Раш B', d: 'Быстро всей пятёркой на B', ic: 'B', dir: 'B', tempo: 'fast', card: 'tempo', ac: '#ff8a3d', bt: ['even', 'awpMid', 'midAgro'], ls: ['stackB', 'cross'] },
+  rushA: { s: 'A', n: 'Раш A', d: 'Быстро всей пятёркой на A', ic: 'A', dir: 'A', tempo: 'fast', card: 'tempo', ac: '#ff7a5a', bt: ['even', 'awpMid', 'midAgro'], ls: ['stackA', 'cross'] },
+  splitA: { s: 'A', n: 'Сплит A', d: 'Медленно, с двух сторон на A', ic: 'A', dir: 'A', tempo: 'slow', card: 'nades', ac: '#ff5a5a', need: 'buy', bt: ['stackA', 'retake'], ls: ['midAgro', 'antiEco'] },
+  splitB: { s: 'A', n: 'Сплит B', d: 'Медленно, с двух сторон на B', ic: 'B', dir: 'B', tempo: 'slow', card: 'nades', ac: '#e8604f', need: 'buy', bt: ['stackB', 'retake'], ls: ['midAgro', 'antiEco'] },
+  deflt: { s: 'A', n: 'Дефолт', d: 'Разведка по карте, точка по ходу', ic: '⇄', dir: 'S', tempo: 'norm', card: 'nades', ac: '#f2c14e', bt: ['save', 'retake'], ls: ['midAgro', 'awpMid'] },
+  mid: { s: 'A', n: 'Через мид', d: 'Забираем мид, потом на любую точку', ic: 'M', dir: 'S', tempo: 'norm', card: 'awp', ac: '#ffd166', need: 'buy', bt: ['stackA', 'stackB', 'even'], ls: ['midAgro', 'awpMid'] },
+  fake: { s: 'A', n: 'Фейк A → B', d: 'Шум и граната на A, выход на B', ic: '↷', dir: 'B', tempo: 'norm', card: 'fake', ac: '#b79bff', bt: ['stackA', 'even'], ls: ['stackB', 'awpMid'] },
+  lurk: { s: 'A', n: 'Лерк', d: 'Четверо на A, один тихо заходит с B', ic: 'L', dir: 'A', tempo: 'norm', card: 'clutch', ac: '#7fe0d0', bt: ['stackA', 'retake'], ls: ['even', 'cross'] },
+  contact: { s: 'A', n: 'Контакт', d: 'Тихо, без гранат, ловим ротацию', ic: '•', dir: 'S', tempo: 'slow', card: 'clutch', ac: '#9fd36b', bt: ['midAgro', 'antiEco'], ls: ['cross', 'even'] },
+  ecoRush: { s: 'A', n: 'Эко-раш', d: 'Без денег: все вместе в одну точку', ic: '$', dir: 'B', tempo: 'fast', card: 'tempo', ac: '#c9a26a', need: 'eco', bt: ['even', 'awpMid', 'save'], ls: ['antiEco', 'stackB'] },
+  stackA: { s: 'D', n: 'Стек A', d: 'Трое на A, по одному на мид и B', ic: 'A', dir: 'A', tempo: 'norm', card: 'stack', ac: '#4aa3ff', bt: ['rushA', 'lurk'], ls: ['fake', 'splitA', 'mid'] },
+  stackB: { s: 'D', n: 'Стек B', d: 'Трое на B, по одному на мид и A', ic: 'B', dir: 'B', tempo: 'norm', card: 'stack', ac: '#8f7bff', bt: ['rushB', 'fake', 'ecoRush'], ls: ['splitB', 'mid'] },
+  even: { s: 'D', n: 'Ровно 2-1-2', d: 'Двое на каждой точке, один на миде', ic: '◎', dir: 'S', tempo: 'norm', card: 'cross', ac: '#7fe0d0', bt: ['lurk', 'contact'], ls: ['rushA', 'rushB', 'mid'] },
+  midAgro: { s: 'D', n: 'Агрессия на мид', d: 'Забираем мид, ломаем атаке выходы', ic: 'M', dir: 'S', tempo: 'fast', card: 'tempo', ac: '#5ec8ff', bt: ['mid', 'deflt', 'splitA', 'splitB'], ls: ['rushA', 'rushB', 'contact'] },
+  retake: { s: 'D', n: 'Ретейк', d: 'Отдаём точку, возвращаем её вчетвером', ic: '↺', dir: 'S', tempo: 'slow', card: 'timeout', ac: '#9ab8ff', bt: ['rushA', 'rushB'], ls: ['splitA', 'splitB', 'lurk', 'deflt'] },
+  awpMid: { s: 'D', n: 'Снайпер на миде', d: 'AWP держит центр, остальные ровно', ic: '⌖', dir: 'S', tempo: 'norm', card: 'awp', ac: '#6fd0c0', need: 'buy', bt: ['mid', 'deflt', 'fake'], ls: ['rushA', 'rushB', 'ecoRush'] },
+  antiEco: { s: 'D', n: 'Анти-эко', d: 'Атака без денег: выходим вперёд', ic: '»', dir: 'S', tempo: 'fast', card: 'tempo', ac: '#ffb35a', bt: ['ecoRush', 'contact', 'splitA', 'splitB'], ls: [] },
+  save: { s: 'D', n: 'Сейв-сетап', d: 'Стоим глубоко, бережём оружие', ic: '▣', dir: 'S', tempo: 'slow', card: 'eco', ac: '#9aa3ae', bt: [], ls: ['deflt', 'ecoRush'] },
+  cross: { s: 'D', n: 'Перекрёсток', d: 'Двое держат один проход под разными углами', ic: '✕', dir: 'S', tempo: 'norm', card: 'cross', ac: '#4fd1a5', need: 'buy', bt: ['rushA', 'rushB', 'lurk', 'contact'], ls: ['mid', 'splitA'] }
+};
+const TK_T = Object.keys(TK).filter(k => TK[k].s === 'A'), TK_CT = Object.keys(TK).filter(k => TK[k].s === 'D');
+/* доступна ли тактика при такой закупке (pistol/full/force/eco) */
+const tkOk = (k, buy) => !!TK[k] && (!TK[k].need || (TK[k].need === 'buy' ? buy === 'full' || buy === 'force' : buy === 'eco' || buy === 'pistol'));
+/* плюс тактики против тактики соперника; «Анти-эко» сильно, только если у атаки нет закупки, иначе это ошибка; «Сейв» слабее, зато бережёт деньги */
+function tkBonus(my, op, myBuy, opBuy) {
+  const a = TK[my]; if (!a) return 0;
+  let v = a.bt.includes(op) ? TK_HIT : a.ls.includes(op) ? -TK_HIT : 0;
+  if (my === 'antiEco') v += opBuy === 'eco' ? 2.5 : opBuy === 'force' || opBuy === 'pistol' ? 0 : -3;
+  if (my === 'save') v -= 2.5;
+  if (my === 'ecoRush' && myBuy !== 'eco' && myBuy !== 'pistol') v -= 2;
+  return v;
+}
+/* причина раунда для строки после раунда: чем тактика победителя била тактику проигравшего */
+function tkWhy(w, l) { const a = TK[w], b = TK[l]; if (!a || !b) return ''; return a.bt.includes(l) ? `«${a.n}» бьёт «${b.n}»` : b.ls.includes(w) ? `«${b.n}» слабо против «${a.n}»` : ''; }
+
 const STYLES = {
   aggro: { n: 'агрессивный', d: 'часто играет «Быстрый темп» и «Звезду раунда»', w: { tempo: 3, star: 2, awp: 1.2, clutch: 1, nades: .8, fake: .6, stack: .4, timeout: .7, cross: .5, eco: .5 } },
   tact: { n: 'тактический', d: 'любит «Раскидку», «Фейк» и «Тайм-аут»', w: { nades: 2.6, fake: 2, timeout: 1.8, awp: 1, tempo: .7, stack: .9, star: 1, clutch: .8, cross: 1, eco: .7 } },
@@ -200,15 +241,29 @@ class Match {
     this.nx = { plan: this.aiPlan(slip), cards: this.aiChoose(slip), slip };
     this.nx.intel = this.recon();
   }
+  /* Тактика соперника-бота. Видит только прошлые раунды: если вы дважды подряд играли одно и то же на этой стороне,
+     он с шансом по лиге (40–85%) ставит то, что это бьёт; против атаки без денег играет «Анти-эко». */
   aiPlan(slip) {
-    if (slip) return { dir: pick(DIRS), tempo: pick(TEMPOS), focus: -1 };
-    const st = this.style, aiSide = other(this.sideA), all = this.hist.filter(x => x.side === this.sideA), h = all.slice(-5), cnt = { A: 0, S: 0, B: 0 }; h.forEach(x => cnt[x.dirA]++);
+    const aiSide = other(this.sideA), aiDef = aiSide === 'D', buy = this.decider ? 'full' : this.buyOf(this.b, []), meBuy = this.decider ? 'full' : this.buyOf(this.a, []);
+    const L = (aiDef ? TK_CT : TK_T).filter(k => tkOk(k, buy)), mk = k => ({ dir: TK[k].dir, tempo: TK[k].tempo, focus: -1, tk: k });
+    if (slip) return mk(pick(L));
+    const lg = this.opp.lg, mine = this.hist.filter(x => x.side === this.sideA && x.tkA).slice(-3).map(x => x.tkA);
     /* сильный соперник меняет привычную точку, если его дважды переиграли */
-    if (this.opp.lg >= 2 && all.slice(-3).filter(x => x.read === 'good' && x.dirB === this.fav[aiSide]).length >= 2) this.fav[aiSide] = this.fav[aiSide] === 'A' ? 'B' : 'A';
-    const top = cnt.A >= cnt.B ? 'A' : 'B', aiDef = aiSide === 'D';
-    const dir = h.length >= 3 && cnt[top] >= 3 && R() < .6 ? (aiDef ? top : top === 'A' ? 'B' : 'A') : R() < .55 ? this.fav[aiSide] : pick(DIRS);
-    const tempo = pick(st === 'aggro' ? ['fast', 'fast', 'norm'] : st === 'def' ? ['slow', 'slow', 'norm'] : ['norm', 'norm', 'fast', 'slow']);
-    return { dir, tempo, focus: -1 };
+    if (lg >= 2 && this.hist.filter(x => x.side === this.sideA).slice(-3).filter(x => x.read === 'good' && x.dirB === this.fav[aiSide]).length >= 2) this.fav[aiSide] = this.fav[aiSide] === 'A' ? 'B' : 'A';
+    if (aiDef && meBuy === 'eco' && R() < .5 + .06 * lg) return mk('antiEco');
+    const last = mine[mine.length - 1], same = mine.length >= 2 && mine[mine.length - 2] === last;
+    if (last && same && R() < .4 + .065 * lg) { const c = L.filter(k => TK[k].bt.includes(last)); if (c.length) return mk(pick(c)); }
+    const st = this.style, fav = this.fav[aiSide];
+    const w = k => { const t = TK[k]; let x = 1;
+      if (st === 'aggro') x *= t.tempo === 'fast' ? 2.2 : t.tempo === 'slow' ? .6 : 1;
+      if (st === 'def') x *= ['stackA', 'stackB', 'cross', 'retake', 'even', 'contact', 'lurk'].includes(k) ? 1.8 : .8;
+      if (st === 'tact') x *= ['splitA', 'splitB', 'fake', 'mid', 'deflt', 'awpMid'].includes(k) ? 1.9 : .8;
+      if (t.dir === fav) x *= 1.6;
+      if (k === 'antiEco' || k === 'save') x *= .15;
+      return x; };
+    let tot = 0; const ws = L.map(k => (tot += w(k), w(k))); let q = R() * tot;
+    for (let i = 0; i < L.length; i++) { q -= ws[i]; if (q <= 0) return mk(L[i]); }
+    return mk(L[0]);
   }
   aiChoose(slip) {
     const s = this.b, w = Object.assign({}, STYLES[this.style].w), h = s.hand, opts = [];
@@ -231,7 +286,7 @@ class Match {
     const a = this.a; if (a.capt < 0) return null;
     if (R() > clamp(.3 + (this.capIgl(a) - 65) / 70, .15, .7)) return null;
     const p = this.nx.plan, aiDef = this.sideA === 'A';
-    return R() < .65 ? { k: 'dir', v: p.dir, t: aiDef ? 'Соперник усиливает: ' + DIRN[p.dir] : 'Соперник пойдёт: ' + DIRN[p.dir] } : { k: 'tempo', v: p.tempo, t: 'Темп соперника: ' + TEMPON[p.tempo] };
+    return R() < .65 ? Object.assign({ k: 'dir', v: p.dir, t: p.tk && TK[p.tk] ? 'Соперник готовит: «' + TK[p.tk].n + '»' : aiDef ? 'Соперник усиливает: ' + DIRN[p.dir] : 'Соперник пойдёт: ' + DIRN[p.dir] }, p.tk ? { tk: p.tk } : {}) : { k: 'tempo', v: p.tempo, t: 'Темп соперника: ' + TEMPON[p.tempo] };
   }
   /* Кто кого убил: первое убийство — исход первой дуэли, победитель раунда теряет от 0 до 4 игроков */
   feed(win, pa, pb, sideA, open) {
@@ -267,6 +322,7 @@ class Match {
     if (!DIRS.includes(plan.dir)) plan.dir = 'S';
     if (!TEMPOS.includes(plan.tempo)) plan.tempo = 'norm';
     if (!Number.isInteger(plan.focus) || plan.focus < 0 || plan.focus >= 5) plan.focus = -1;
+    if (plan.tk != null && (!TK[plan.tk] || TK[plan.tk].s !== this.sideA)) delete plan.tk;
     /* решение по ходу раунда (смена точки, ротация): цена потерянного времени, от 0 до −3 */
     const mc = clamp(+plan.mc || 0, -3, 0), mcB = clamp(+(this.nx.plan && this.nx.plan.mc) || 0, -3, 0);
     const a = this.a, b = this.b, ai = this.nx, theirs = ai.cards, pB = ai.plan, sideA = this.sideA, sideB = other(sideA), pistol = this.isPistol();
@@ -293,8 +349,9 @@ class Match {
     const stake = 3 * T_OPEN[pAtt.tempo], swing = openAtt ? stake : -stake * (1 - .5 * Math.min(1, ent.pw));
     const sgn = att === a ? 1 : -1;
     const baseA = (sideA === 'A' ? a.info.atk : a.info.def) + mapV(sideA), baseB = (sideB === 'A' ? b.info.atk : b.info.def) + mapV(sideB);
-    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + mc + sgn * (dm + swing) / 2;
-    const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) + mcB - sgn * (dm + swing) / 2;
+    const tkB0 = pB.tk && TK[pB.tk] && TK[pB.tk].s === sideB ? pB.tk : null, tkA = tkBonus(plan.tk, tkB0, buyA, buyB), tkB = tkBonus(tkB0, plan.tk, buyB, buyA);
+    const pa = baseA + BUY[buyA].v + hot(a) + va.reduce((s, x) => s + x.v, 0) + role(a, plan, a.score < b.score) + focus + mc + tkA + sgn * (dm + swing) / 2;
+    const pb = baseB + BUY[buyB].v + hot(b) + vb.reduce((s, x) => s + x.v, 0) + role(b, pB, b.score < a.score) + mcB + tkB - sgn * (dm + swing) / 2;
     const p = 1 / (1 + Math.exp(-(pa - pb) / 9)), win = R() < p;
     const W = win ? a : b, L = win ? b : a; W.score++;
     const open = openAtt ? { team: att, k: 1, v: ri(0, 4) } : { team: def, k: 0, v: 1 };
@@ -307,10 +364,11 @@ class Match {
       s.money = Math.max(0, s.money - BUY[buy].c); s.spent += BUY[buy].c; const q = s.buys[buy] = s.buys[buy] || [0, 0]; q[0]++; if (s === W) q[1]++;
     }
     W.money = Math.min(MAX_MONEY, W.money + 3250 + 500 * f.surv); L.money = Math.min(MAX_MONEY, L.money + 1900 + 500 * Math.min(L.ls, 3) + 400 * f.lSurv);
+    const Ltk = L === a ? plan.tk : tkB0; if (Ltk === 'save') L.money = Math.min(MAX_MONEY, L.money + 1200);   /* сейв сохранил оружие */
     W.ws++; W.ls = 0; L.ls++; L.ws = 0;
     const read = pAtt.dir === 'S' || pDef.dir === 'S' ? null : faked ? 'fake' : (pAtt.dir === pDef.dir) === (att === a) ? 'bad' : 'good';
-    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false }, f);
-    this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, buyB, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
+    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: win ? tkWhy(plan.tk, tkB0) : tkWhy(tkB0, plan.tk) }, f);
+    this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, tkA: plan.tk || null, tkB: tkB0, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, buyB, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
     if (a.score >= WIN_N || b.score >= WIN_N) { this.over = true; this.won = a.score > b.score; return this.last; }
     this.round++;
     if (this.round === HALF + 1) { this.sideA = sideB; this.last.swap = true; for (const s of [a, b]) { s.money = START_MONEY; s.ls = 0; s.ws = 0; } }

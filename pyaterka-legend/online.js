@@ -5,7 +5,7 @@
    и решения капитана, ведущий разыгрывает раунд и рассылает результат и состояние матча. Повтор раунда
    строится одинаково у обоих (сценарий радара зависит только от результата раунда).
    Онлайн-матчи на интерес: кубки, монеты, опыт и задания не меняются, ведётся только личный счёт с соперником. */
-const NET_V = '1:' + ALL.length;                 /* версия правил: у обоих игроков должна совпадать */
+const NET_V = '2:' + ALL.length;                 /* версия правил: у обоих игроков должна совпадать */
 const NET_BUY = 5000, NET_BUY1 = 8000, NET_CALL = 5000, NET_SPD = 2.4, NET_LOST = 12000, NET_GIVEUP = 60000, NET_INV = 20000;
 const RT = { ch: {}, open: false, err: '', st: 'off', lob: 0, last: null, here: [], hereK: '', skew: 0, busy: 0, timer: 0 };
 const rtErr = e => { const was = RT.err; RT.err = String(e || '').slice(0, 160); if (RT.err !== was) { console.warn('[online]', RT.err); profUi(); } };
@@ -144,7 +144,7 @@ function snapApply(sn) {
 function mirL(L) {
   const k = (L.kills || []).map(x => Object.assign({}, x, { byA: !x.byA }));
   return Object.assign({}, L, { sideA: other(L.sideA), plan: L.planB, planB: L.plan, mine: L.theirs || [], theirs: L.mine || [], cutA: L.cutB, cutB: L.cutA, va: L.vb, vb: L.va, pa: L.pb, pb: L.pa,
-    p: L.p == null ? L.p : 1 - L.p, win: L.win == null ? L.win : !L.win, buyA: L.buyB, buyB: L.buyA, openMine: L.openMine == null ? L.openMine : !L.openMine, read: flipRead(L.read), intel: null, kills: k, kA: k.filter(x => x.byA).length, awpK: k.filter(x => x.byA && x.k === 0).length });
+    p: L.p == null ? L.p : 1 - L.p, win: L.win == null ? L.win : !L.win, buyA: L.buyB, buyB: L.buyA, openMine: L.openMine == null ? L.openMine : !L.openMine, read: flipRead(L.read), intel: null, tkA: L.tkB, tkB: L.tkA, tkVa: L.tkVb, tkVb: L.tkVa, kills: k, kA: k.filter(x => x.byA).length, awpK: k.filter(x => x.byA && x.k === 0).length });
 }
 function mirS(S) {
   const sw = t => t === 'a' ? 'b' : 'a';
@@ -207,13 +207,14 @@ function netBuyEnd() {
   if (!LV.sent) { if (LV.min && !LV.tuned) qpApply(LV.qr); LV.sent = 1; LV.sentAt = Date.now(); if (N.host) netWaitDraw('Ждём план соперника…'); else { netPlanSend(true); netWaitDraw('План отправлен — ждём соперника'); } }
   if (N.host && (N.opFin === m.round || Date.now() - LV.sentAt > 2500)) {
     const P = N.opPlan || {}, dir = DIRS.includes(P.dir) ? P.dir : 'S', tempo = TEMPOS.includes(P.tempo) ? P.tempo : 'norm';
-    m.nx = { plan: { dir, tempo, focus: -1 }, cards: P.card && AC[P.card] && m.canPlay(m.b, [P.card]) ? [P.card] : [], slip: false, intel: null };
+    const tk = P.tk && TK[P.tk] && TK[P.tk].s === other(m.sideA) ? P.tk : undefined;
+    m.nx = { plan: Object.assign({ dir, tempo, focus: -1 }, tk ? { tk } : {}), cards: P.card && AC[P.card] && m.canPlay(m.b, [P.card]) ? [P.card] : [], slip: false, intel: null };
     lvPlay();
   }
 }
 function netPlanSend(fin) {
   const N = OV.net, m = OV.m; if (N.host) return;
-  const p = { r: m.round, dir: OV.plan.dir, tempo: OV.plan.tempo, card: OV.sel[0] || null, fin: !!fin };
+  const p = { r: m.round, dir: OV.plan.dir, tempo: OV.plan.tempo, tk: OV.plan.tk || null, card: OV.sel[0] || null, fin: !!fin };
   if (fin) { N.fin = p; N.finT = Date.now(); } rtSend(N.ch, 'pl', p);
 }
 function netGuestMc(i) {
@@ -236,7 +237,7 @@ function netGuestPre(p) {
   LV.pre = { sel: [], call: p.call || null, S: fake }; LV.last = fake; LV.ph = 'round'; LV.rt = 0; LV.bd = 0; LV.ask = 0;
   LV.S = S; LV.ev0 = S.ev; LV.S.ev = []; LV.ei = 0; LV.callT = p.callT; LV.lastCall = m.round;
   rdDotsBuild(LV.S); rdDotsAt(LV.S, 0); planDraw(); lvKD();
-  $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>'; $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[fake.plan.dir] || ''}, ${TEMPON[fake.plan.tempo] || ''}</span></div>`;
+  $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>'; $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${esc(planLbl(fake.plan))}</span></div>`;
   setTimeout(() => { if (LV && LV.ph === 'round' && !LV.ask) $('#bn').innerHTML = ''; }, 2200);
 }
 function netGuestRd(p) {
@@ -251,7 +252,7 @@ function netGuestRd(p) {
   else { LV.rt = 0; rdDotsBuild(S); rdDotsAt(S, 0);
     const tg = (pl, cut) => pl && pl.length ? pl.map(k => k === cut ? `<s>${AC[k].n}</s>` : AC[k].n).join(', ') : 'без приказов';
     $('#feed').innerHTML = ''; $('#rdc').innerHTML = '<span>1:55</span>';
-    $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${DIRN[L.plan.dir] || ''}, ${TEMPON[L.plan.tempo] || ''} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
+    $('#bn').innerHTML = `<div class="banner n sm"><span>Вы: ${esc(planLbl(L.plan))} · ${tg(L.mine, L.cutA)}</span><span>Соперник: ${tg(L.theirs, L.cutB)}</span></div>`;
     setTimeout(() => { if (LV && LV.ph === 'round') $('#bn').innerHTML = ''; }, 2600); }
   planDraw(); lvKD(); lvBtns();
 }

@@ -134,7 +134,6 @@ function vHome() {
     <div class="hm-head"><h2>Боевая пятёрка${info ? ' · ' + info.rating.toFixed(1) : ''}</h2><button class="hm-link" data-act="goSquad">Изменить</button></div>
     <div class="lobby-lineup">${lineup}</div>
     <div class="hm-stats"><span>Химия <b>${info ? info.chem + '/13' : '—'}</b></span><span>Сила <b>${info ? (info.atk + info.def).toFixed(1) : '—'}</b></span><span>Коллекция <b>${collectionPct}%</b></span></div>
-    <button class="hm-go" data-act="fight" ${info ? '' : 'disabled'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>${info ? 'В бой' : 'Заполни пять позиций'}</button>
   </section>
   <section class="hm-sec"><h2>Режимы</h2>
     <button class="hm-row" data-act="fight" ${info ? '' : 'disabled'}><span class="hm-ic g"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5M15 5h4v4M5 5l5 5M14 14l5 5M15 19h4v-4"/></svg></span><span class="hm-tx"><b>Против бота</b><small>Рейтинговый матч · лига «${LEAGUES[lg][0]}»</small></span><span class="hm-ar">›</span></button>
@@ -152,7 +151,8 @@ function vHome() {
       <button class="lobby-daily__more" data-act="streak">Все награды серии ›</button>
     </div>
   </section>
-  ${st === 3 ? `<section class="lobby-missions">${tasksH()}</section>` : ''}`;
+  ${st === 3 ? `<section class="lobby-missions">${tasksH()}</section>` : ''}
+  <button class="hm-go" data-act="fight" ${info ? '' : 'disabled'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>${info ? 'В бой' : 'Заполни пять позиций'}</button>`;
 }
 function lbH() {
   const t = lbTable(G, lbScope, now()), row = x => `<div class="lb ${x.me ? 'me' : ''}"><b>${x.place}</b><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.name)}</span><b>${x.tro}</b></div>`;
@@ -797,6 +797,8 @@ const ACT = {
 };
 
 document.addEventListener('click', e => {
+  /* пока заставка не ушла и ещё 0,8 с после — нажатия не попадают в игру (чтобы «пропустить заставку» не запускало матч) */
+  if (document.getElementById('intro') || Date.now() - introT < 800) return;
   const b = e.target.closest('[data-act]');
   if (!b) { if (e.target.id === 'sheet') { sheet = null; askSell = null; render(); } return; }
   if (b.disabled) return;
@@ -820,7 +822,8 @@ function start() {
   cloudStart(); installStart(); netBoot(); save(); render(); introGo(r === 'new');
 }
 /* заставка: пока игра грузится — лёгкая фаза; когда готова — показ (~2,7 с), затем пролёт в игру. Нажатие пропускает */
-function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; el.classList.add('out'); setTimeout(() => el.remove(), 800); }
+let introT = 0;
+function introHide() { const el = document.getElementById('intro'); if (!el || el.dataset.h) return; el.dataset.h = 1; introT = Date.now(); el.classList.add('out'); setTimeout(() => el.remove(), 800); }
 function introGo(first) { const el = document.getElementById('intro'); if (!el) return; el.addEventListener('click', introHide);
   /* два кадра — чтобы первая отрисовка игры закончилась и анимация шла на свободном потоке */
   requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add('go'); setTimeout(introHide, noMotion() ? 350 : first ? 3300 : 2800); })); }

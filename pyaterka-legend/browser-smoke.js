@@ -24,6 +24,9 @@ const { chromium } = require('playwright');
       const app = document.querySelector('#app');
       return app && app.dataset.ok === '1' && app.innerText.trim().length > 20;
     }, null, { timeout: 15000 });
+    /* заставка и всплывающие окна при первом входе (вход в аккаунт, награда дня) перекрывают экран — закрываем */
+    await page.waitForFunction(() => !document.querySelector('#intro'), null, { timeout: 20000 });
+    for (let i = 0; i < 4; i++) { const closed = await page.evaluate(() => { const b = document.querySelector('#sheet:not([hidden]) [data-act="close"]'); if (b) b.click(); return !!b; }); if (!closed) break; await page.waitForTimeout(250); }
 
     const layouts = [];
     const shotDir = path.join(__dirname, 'artifacts');
@@ -55,7 +58,7 @@ const { chromium } = require('playwright');
     const sections = [
       { tab: 'col', selector: '.collection-hero', label: 'Коллекция' },
       { tab: 'play', selector: '.match-hero', label: 'Матчи' },
-      { tab: 'prof', selector: '.profile-hero', label: 'Профиль' },
+      { tab: 'prof', selector: '.pf-hero', label: 'Профиль' },
       { tab: 'packs', selector: '.pk', label: 'Кейсы' }
     ];
     for (const section of sections) {

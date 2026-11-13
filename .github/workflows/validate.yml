@@ -33,6 +33,7 @@ jobs:
           node --check meta.js
           node --check ui.js
           node --check c4.js
+          for f in radar.js radar-maps.js live.js live3d.js cloud.js install.js online.js profile.js trade.js; do node --check "$f"; done
           node --check test.js
           node --check browser-smoke.js
       - name: Build offline game and run logic tests

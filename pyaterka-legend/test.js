@@ -28,13 +28,13 @@ const P = {
 };
 function sim(o, tro, pol, n = N) { let w = 0, r = 0; for (let i = 0; i < n; i++) { const sq = mkSq(o), m = new E.Match(sq, tro, E.squadInfo(sq).rating, { capt: 4 }); let g = 0; while (!m.over && g++ < 40) { const [c, p] = pol(m); assert(m.play(c, p), 'раунд должен разыграться'); } assert(m.over); if (m.won) w++; r += m.hist.length; } return { win: 100 * w / n, rounds: r / n }; }
 
-ok('16 полных HLTV-профилей и статистика HLTV подключены к карточкам', () => {
+ok('22 полных HLTV-профиля и статистика HLTV подключены к карточкам', () => {
   const profiled = E.ALL.filter(c => c.hltv && c.hltv.photo && c.hltv.country && c.hltv.teamLogo && !c.sp && !c.hist);
-  assert.strictEqual(profiled.length, 16);
-  assert.strictEqual(E.ALL.filter(c => c.hltv && c.hltv.photo && !c.sp && !c.hist).length, 358, 'все найденные портреты HLTV должны быть привязаны к карточкам');
-  assert.strictEqual(new Set(E.ALL.filter(c => !c.sp && !c.hist).map(c => c.team)).size, 125, 'в базе должны быть ровно 125 действующих команд HLTV');
+  assert.strictEqual(profiled.length, 22);
+  assert.strictEqual(E.ALL.filter(c => c.hltv && c.hltv.photo && !c.sp && !c.hist).length, 366, 'все найденные портреты HLTV должны быть привязаны к карточкам');
+  assert.strictEqual(new Set(E.ALL.filter(c => !c.sp && !c.hist).map(c => c.team)).size, 120, 'в базе должны быть ровно 120 действующих команд HLTV');
   const verified = E.ALL.filter(c => c.hltv && !c.sp && !c.hist), base = E.ALL.filter(c => !c.sp && !c.hist), donk = base.find(c => c.nick === 'donk'), zywoo = base.find(c => c.nick === 'ZywOo');
-  assert(donk && zywoo); assert.strictEqual(donk.ovr, 98); assert.strictEqual(donk.st.aim, 97); assert.strictEqual(donk.st.ent, 88);
+  assert(donk && zywoo); assert.strictEqual(donk.ovr, 92); assert.strictEqual(donk.st.aim, 97); assert.strictEqual(donk.st.ent, 88);
   assert.strictEqual(donk.hltv.last12m.maps, 177); assert.strictEqual(donk.hltv.last3m.rating3, 1.34);
   assert.strictEqual(E.indOf(donk).n, 'Дуэлянт'); assert(E.indPow(donk, 1) > E.abPow(donk, 1));
   assert.strictEqual(E.indOf(zywoo).n, 'Снайпер');
@@ -44,7 +44,7 @@ ok('16 полных HLTV-профилей и статистика HLTV подк�
 });
 console.log('1. Карточки и база');
 ok('718 карточек (jL — архивная Vitality), номера уникальны, особые версии MVP на месте, «Игрока недели» нет', () => { assert.strictEqual(E.ALL.length, 718); assert.strictEqual(new Set(E.ALL.map(c => c.id)).size, 718); assert.strictEqual(E.MVPP.length, 14); assert(!E.ALL.some(c => c.sp === 1 || c.id >= E.W_ID && c.id < E.M_ID)); const state = E.ALL.find(c => c.team === 'STATE'), butterfly = E.ALL.find(c => c.team === 'Butterfly'); assert(state && butterfly); assert.notStrictEqual(state.t, butterfly.t, 'команды за пределами первых 101 не должны склеиваться в одну'); });
-ok('редкости 388/152/78/28/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [388, 152, 78, 28, 8]));
+ok('редкости 432/160/76/28/8', () => assert.deepStrictEqual(E.POOL.map(p => p.length), [432, 160, 76, 28, 8]));
 ok('у каждой карточки шесть показателей от 40 до 99', () => E.ALL.forEach(c => Object.values(c.st).forEach(v => assert(v >= 40 && v <= 99))));
 ok('обновление базы: трансфер создаёт новую карточку, старая остаётся архивной с тем же номером', () => {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-')); for (const f of ['gen.js', 'teams.txt', 'ids.json']) fs.copyFileSync(f, path.join(d, f));

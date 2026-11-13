@@ -40,7 +40,7 @@ function frFormKeep() { const i = document.getElementById('fr-nick'); if (i) FRF
 function profUi() {
   const ae = document.activeElement; if (ae && ae.id === 'fr-nick') return;
   if (sheet && (sheet.t === 'frP' || sheet.t === 'fr')) { render(); return; }
-  if (!OV && !sheet && (tab === 'prof' || tab === 'play' || (tab === 'col' && sub === 'trade'))) { frFormKeep(); render(); }
+  if (!OV && !sheet && (tab === 'prof' || tab === 'play' || tab === 'fr')) { frFormKeep(); render(); }
 }
 function frSecH() {
   if (!AU) return `<section class="pf-friends pn"><div class="profile-section-title"><small>SQUAD MATES</small><h3>ДРУЗЬЯ</h3></div>
@@ -126,7 +126,7 @@ Object.assign(ACT, {
   avaOpen() { sheet = { t: 'avaPick', sel: myAva() }; },
   avaSel(v) { if (sheet && sheet.t === 'avaPick') sheet.sel = clamp(+v | 0, 0, AVA.length - 1); },
   avaSave() { if (sheet && sheet.t === 'avaPick') { G.ava = sheet.sel | 0; sheet = null; sfx('tap'); } },
-  frOpen() { if (!AU) { sheet = { t: 'auth', mode: 'in' }; return; } sheet = null; tab = 'prof'; frLoad(); setTimeout(() => { const e = document.getElementById('pf-friends'); if (e) e.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); },
+  frOpen() { if (!AU) { sheet = { t: 'auth', mode: 'in' }; return; } sheet = null; tab = 'fr'; frSub = 'list'; frLoad(); scrollTo(0, 0); },
   frAdd() { if (FRF.busy) return false; frFormKeep(); FRF.busy = true; FRF.msg = ''; frAdd(FRF.nick); },
   frView(v) { if (!AU) return; sheet = { t: 'frP', id: v, st: 'load' }; frViewLoad(v); },
   frDelAsk(v) { sheet = { t: 'frDel', id: v }; },

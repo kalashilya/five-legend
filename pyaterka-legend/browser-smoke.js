@@ -38,7 +38,7 @@ const { chromium } = require('playwright');
         width: innerWidth,
         scrollWidth: document.documentElement.scrollWidth,
         appReady: document.querySelector('#app')?.dataset.ok === '1',
-        hero: (() => { const r = document.querySelector('.lobby-hero')?.getBoundingClientRect(); return !!r && r.width > 0 && r.height > 0 && r.left >= -1 && r.right <= innerWidth + 1; })(),
+        hero: (() => { const r = document.querySelector('.hm-league')?.getBoundingClientRect(); return !!r && r.width > 0 && r.height > 0 && r.left >= -1 && r.right <= innerWidth + 1; })(),
         arena: !!document.querySelector('.arena-art'),
         lineup: !!document.querySelector('.lobby-lineup'),
         nav: document.querySelectorAll('#tabs button').length,
@@ -59,11 +59,12 @@ const { chromium } = require('playwright');
       { tab: 'col', selector: '.collection-hero', label: 'Коллекция' },
       { tab: 'play', selector: '.match-hero', label: 'Матчи' },
       { tab: 'prof', selector: '.pf-hero', label: 'Профиль' },
+      { tab: 'fr', selector: '.fr-tabs', label: 'Друзья' },
       { tab: 'packs', selector: '.pk', label: 'Кейсы' }
     ];
     for (const section of sections) {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.locator('#tabs button[data-v="' + section.tab + '"]').click();
+      await page.locator(section.tab === 'prof' ? '#hud button.who' : '#tabs button[data-v="' + section.tab + '"]').click();
       await page.waitForFunction(tab => document.querySelector('#app')?.dataset.tab === tab, section.tab);
       await page.waitForFunction(selector => !!document.querySelector('#app ' + selector), section.selector);
       const state = await page.evaluate(() => ({
@@ -81,7 +82,7 @@ const { chromium } = require('playwright');
       await page.screenshot({ path: path.join(shotDir, section.tab + '-390.png'), fullPage: true });
     }
     if (errors.length) throw new Error('JavaScript errors: ' + errors.join(' | '));
-    console.log('Browser smoke OK: home responsive at 390/768/1440; collection, matches, profile and cases rendered at 390; no horizontal overflow or uncaught page errors.');
+    console.log('Browser smoke OK: home responsive at 390/768/1440; collection, matches, profile, friends and cases rendered at 390; no horizontal overflow or uncaught page errors.');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

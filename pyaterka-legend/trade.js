@@ -79,7 +79,7 @@ async function trCancel(id) {
 }
 /* проверка раз в 20 с (и сразу по сигналу от друга) */
 setInterval(() => { if (AU && !OV && !document.hidden) trLoad(); }, 20000);
-const trUi = () => { if (OV || (sheet && sheet.t !== 'trPick')) return; if (tab === 'col' && sub === 'trade') render(); else { const d = !!TR.inc.length, b = document.querySelector('#tabs [data-v="col"]'); if (b && !!b.querySelector('.dot') !== d) render(); } };
+const trUi = () => { if (OV || (sheet && sheet.t !== 'trPick')) return; if (tab === 'fr') render(); else { const d = !!TR.inc.length, b = document.querySelector('#tabs [data-v="fr"]'); if (b && !!b.querySelector('.dot') !== d) render(); } };
 
 /* ---------- Уведомление ---------- */
 function trToast(t, n) {
@@ -93,7 +93,7 @@ function trToast(t, n) {
 const trCardsH = cards => `<div class="tr-cards">${cards.map(([id, n]) => `<div class="tr-cc">${cardH(CARDS[id], { cls: 'xs' })}${n > 1 ? `<i>×${n}</i>` : ''}</div>`).join('')}</div>`;
 const trAgo = s => { const m = Math.max(0, Math.round((Date.now() - Date.parse(s)) / 60000)); return m < 1 ? 'только что' : m < 60 ? m + ' мин назад' : m < 1440 ? Math.round(m / 60) + ' ч назад' : Math.round(m / 1440) + ' дн назад'; };
 function vTrade() {
-  if (!AU) return `<section class="pn tr-box"><h3>Трейд</h3><p class="sm">Передавайте друзьям дубликаты карточек. Нужен аккаунт и друзья в профиле.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button></section>`;
+  if (!AU) return `<section class="pn tr-box"><h3>Трейд</h3><p class="sm">Передавайте друзьям дубликаты карточек. Нужен аккаунт и друзья.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button></section>`;
   const fr = trFriends(), d = trDupes(), cap = TRD.pick.length;
   const inc = TR.inc.map(t => `<div class="tr-in"><div class="tr-in__h">${avaH(FR.nick[t.frm] && FR.nick[t.frm].ava, 'sm')}<div><b>${esc(t.frm_nick || frNick(t.frm))}</b><span>${trAgo(t.created_at)} · ${trCards(t).reduce((s, x) => s + x[1], 0)} карт.</span></div></div>
       ${trCardsH(trCards(t))}<div class="tr-in__b"><button class="btn pri" data-act="trYes" data-v="${t.id}" ${t.busy ? 'disabled' : ''}>Принять</button><button class="btn" data-act="trNo" data-v="${t.id}" ${t.busy ? 'disabled' : ''}>Отклонить</button></div></div>`).join('');
@@ -106,7 +106,7 @@ function vTrade() {
     <section class="pn tr-box"><div class="profile-section-title"><small>NEW TRADE</small><h3>НОВЫЙ ТРЕЙД</h3></div>
       <div class="tr-step"><b>1</b><span>Кому</span></div>
       ${fr.length ? `<div class="tr-fr">${fr.map(id => `<button class="tr-f ${TRD.to === id ? 'on' : ''}" data-act="trTo" data-v="${id}" aria-pressed="${TRD.to === id}">${avaH(FR.nick[id] && FR.nick[id].ava, 'md')}<span>${esc(frNick(id))}</span></button>`).join('')}</div>`
-        : `<p class="sm mut">Пока нет друзей. Добавьте друга по нику в профиле.</p><button class="btn s" data-act="frOpen">Друзья в профиле</button>`}
+        : `<p class="sm mut">Пока нет друзей. Добавьте друга по нику во вкладке «Список».</p><button class="btn s" data-act="frOpen">К списку друзей</button>`}
       <div class="tr-step"><b>2</b><span>Карточки · ${cap} из ${TR_MAX}</span>${cap ? '<button class="tr-clr" data-act="trClear">Очистить</button>' : ''}</div>
       <div class="tr-slots">${slots}</div>
       <p class="sm mut">Нажмите на дубликат, чтобы добавить копию. Одна копия каждой карточки всегда остаётся у вас.</p>
@@ -131,7 +131,7 @@ function vTrade() {
 })();
 
 Object.assign(ACT, {
-  trOpen() { const el = document.getElementById('tr-toast'); if (el) el.classList.remove('on'); sheet = null; tab = 'col'; sub = 'trade'; trLoad(true); scrollTo(0, 0); },
+  trOpen() { const el = document.getElementById('tr-toast'); if (el) el.classList.remove('on'); sheet = null; tab = 'fr'; frSub = 'trade'; trLoad(true); scrollTo(0, 0); },
   trToastX() { const el = document.getElementById('tr-toast'); if (el) el.classList.remove('on'); return false; },
   trTo(v) { TRD.to = TRD.to === v ? null : v; TRD.msg = ''; },
   trPick(v) { const id = +v; if (TRD.pick.length >= TR_MAX || !trFree(id)) return false; TRD.pick.push(id); TRD.msg = ''; sfx('tap'); },

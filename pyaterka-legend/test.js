@@ -132,6 +132,7 @@ ok('«Что нового»: старый игрок видит окно оди�
   assert(E.NEWS.length >= 1 && E.NEWS.every((n, i) => Number.isInteger(n.v) && (i === 0 || n.v < E.NEWS[i - 1].v) && ((n.items && n.items.length) || (n.sec && n.sec.every(c => c.h && c.items.length)))));
   const old = E.migrate({ v: 2, coins: 1, tut: 3, cards: {}, squads: [[], [], []], season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW);
   assert.strictEqual(old.news, 0); assert(E.newsDue(old)); assert.strictEqual(E.newsFor(old).length, E.NEWS.length);
+  { const a = Object.assign({}, old, { news: 2 }); const l = E.newsFor(a); assert(E.newsDue(a) && l.length === E.NEWS_V - 2 && l[0].v === E.NEWS_V); const z = Object.assign({}, old, { news: 1 }); assert(E.newsFor(z).some(n => n.v === 2), 'не видевший v2 получит и её'); }
   old.news = E.NEWS_V; const back = E.migrate(JSON.parse(JSON.stringify(old)), NOW); assert.strictEqual(back.news, E.NEWS_V); assert(!E.newsDue(back));
   const fresh = E.newProfile(NOW); assert(!E.newsDue(fresh), 'во время обучения не показываем'); fresh.tut = 3; assert(E.newsDue(fresh), 'после обучения новичок тоже видит');
 });

@@ -103,10 +103,11 @@ const inSquads = (G, id) => G.squads.some(s => s.includes(+id));
 
 /* ---------- Продажа: цена зависит от редкости, рейтинга и уровня (формула предложена, не утверждена) ---------- */
 function priceOf(c, lv) {
-  const pool = POOL[c.rar], mn = Math.min(...pool.map(x => x.ovr)), mx = Math.max(...pool.map(x => x.ovr));
+  const pool = POOL[c.rar], mm = priceOf.mm[c.rar] || (priceOf.mm[c.rar] = [Math.min(...pool.map(x => x.ovr)), Math.max(...pool.map(x => x.ovr))]), mn = mm[0], mx = mm[1];   /* границы редкости считаем один раз */
   const rel = mx > mn ? clamp(((c.sp ? c.o : c.ovr) - mn) / (mx - mn), 0, 1) : .5;
   return Math.round(sellVal(c) * (.9 + .2 * rel) * (1 + .25 * ((lv || 1) - 1)));
 }
+priceOf.mm = [];
 const sellNeedsConfirm = (G, id) => { const o = G.cards[id]; return !!o && o.n === 1 && (inSquads(G, id) || !!CARDS[id].sp); };
 function sellOne(G, id) {
   const o = G.cards[id]; if (!o) return 0;
@@ -148,6 +149,12 @@ const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object
    При каждом выпуске добавляйте запись В НАЧАЛО списка с номером v на 1 больше. Игрок видит все записи новее своей
    отметки G.news (едет в облако вместе с сохранением); новые профили сразу получают последнюю отметку. */
 const NEWS = [
+  { v: 3, d: '13.11.2026', t: 'Игра стала быстрее', sec: [
+    { h: 'Исправления', items: [
+      ['Быстрая загрузка', 'Игра загружается почти в 2 раза быстрее.'],
+      ['«Моя коллекция»', 'Больше не тормозит при большой коллекции: карточки показываются порциями, кнопка «Показать ещё» внизу.']
+    ] }
+  ] },
   { v: 2, d: '13.11.2026', t: 'Большое обновление', sec: [
     { h: 'Матч', items: [
       ['Тактики', '19 тактик вместо трёх: 10 в атаке и 9 в защите. Листайте карточки — на каждой видно, кого она бьёт и кому проигрывает.'],

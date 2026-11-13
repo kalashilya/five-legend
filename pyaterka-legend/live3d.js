@@ -1,7 +1,9 @@
 /* ---------- Матч в 3D (Three.js): город по графу карты, игроки с фото, трассеры, дым, молотов, бомба ----------
    Ход матча считает движок (OV.m), сцена только показывает раунд. Табло, составы, лента, подготовка к раунду
    и все кнопки — общие с 2D-матчем (live.js). Нет WebGL — играем в 2D (liveBuild). */
-const m3Ok = () => { if (m3Ok.v === undefined) { try { const c = document.createElement('canvas'); m3Ok.v = !!(window.THREE && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { m3Ok.v = false; } } return m3Ok.v && !m3Ok.bad; };
+/* проверочный WebGL-контекст сразу отпускаем: на телефонах число живых контекстов ограничено */
+const glFree = x => { try { const e = x && x.getExtension('WEBGL_lose_context'); if (e) e.loseContext(); } catch (e) { /* нет расширения */ } };
+const m3Ok = () => { if (m3Ok.v === undefined) { try { const c = document.createElement('canvas'); const x = window.THREE && (c.getContext('webgl2') || c.getContext('webgl')); m3Ok.v = !!x; glFree(x); } catch (e) { m3Ok.v = false; } } return m3Ok.v && !m3Ok.bad; };
 let M3C = null;
 function m3Stop() { if (!M3C) return; const c = M3C; M3C = null; try { c.dispose(); } catch (e) { /* контекст уже освобождён */ } }
 const M3D = (() => {

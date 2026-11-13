@@ -1,6 +1,7 @@
 {
-  "generatedFrom": "pyaterka-legend/data.js",
+  "sourceFile": "pyaterka-legend/data.js",
   "branch": "feature/premium-visual-redesign",
+  "snapshot": "2026-11-11",
   "teams": [
     {
       "name": "MOUZ",
@@ -544,8 +545,7 @@
         "maps": 177,
         "rating3": 1.4,
         "roundSwing": 3.08
-      },
-      "teamIndex": 3
+      }
     },
     {
       "id": 0,
@@ -563,8 +563,7 @@
         "maps": 195,
         "rating3": 1.38,
         "roundSwing": 3.96
-      },
-      "teamIndex": 2
+      }
     },
     {
       "id": 2,
@@ -578,8 +577,7 @@
       "profileUrl": "https://www.hltv.org/player/18221/spinx",
       "profileId": 18221,
       "verified": true,
-      "stats": null,
-      "teamIndex": 0
+      "stats": null
     },
     {
       "id": 4,
@@ -593,8 +591,7 @@
       "profileUrl": "https://www.hltv.org/player/15631/kscerato",
       "profileId": 15631,
       "verified": true,
-      "stats": null,
-      "teamIndex": 1
+      "stats": null
     },
     {
       "id": 5,
@@ -608,8 +605,7 @@
       "profileUrl": "https://www.hltv.org/player/24144/molodoy",
       "profileId": 24144,
       "verified": true,
-      "stats": null,
-      "teamIndex": 1
+      "stats": null
     },
     {
       "id": 6,
@@ -623,8 +619,7 @@
       "profileUrl": "https://www.hltv.org/player/12553/yuurih",
       "profileId": 12553,
       "verified": true,
-      "stats": null,
-      "teamIndex": 1
+      "stats": null
     },
     {
       "id": 3,
@@ -638,8 +633,7 @@
       "profileUrl": "https://www.hltv.org/player/18072/torzsi",
       "profileId": 18072,
       "verified": true,
-      "stats": null,
-      "teamIndex": 0
+      "stats": null
     },
     {
       "id": 7,
@@ -653,8 +647,7 @@
       "profileUrl": "https://www.hltv.org/player/20312/xertion",
       "profileId": 20312,
       "verified": true,
-      "stats": null,
-      "teamIndex": 0
+      "stats": null
     },
     {
       "id": 12,
@@ -668,8 +661,7 @@
       "profileUrl": "https://www.hltv.org/player/13915/yekindar",
       "profileId": 13915,
       "verified": true,
-      "stats": null,
-      "teamIndex": 1
+      "stats": null
     },
     {
       "id": 9,
@@ -687,8 +679,7 @@
         "maps": 184,
         "rating3": 1.29,
         "roundSwing": 3.26
-      },
-      "teamIndex": 5
+      }
     },
     {
       "id": 8,
@@ -702,8 +693,7 @@
       "profileUrl": "https://www.hltv.org/player/16693/flamez",
       "profileId": 16693,
       "verified": true,
-      "stats": null,
-      "teamIndex": 2
+      "stats": null
     },
     {
       "id": 10,
@@ -717,8 +707,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 2
+      "stats": null
     },
     {
       "id": 271,
@@ -736,8 +725,7 @@
         "maps": 132,
         "rating3": 1.28,
         "roundSwing": 2.24
-      },
-      "teamIndex": 59
+      }
     },
     {
       "id": 18,
@@ -751,8 +739,7 @@
       "profileUrl": "https://www.hltv.org/player/2023/fallen",
       "profileId": 2023,
       "verified": true,
-      "stats": null,
-      "teamIndex": 1
+      "stats": null
     },
     {
       "id": 11,
@@ -766,8 +753,7 @@
       "profileUrl": "https://www.hltv.org/player/11816/ropz",
       "profileId": 11816,
       "verified": true,
-      "stats": null,
-      "teamIndex": 2
+      "stats": null
     },
     {
       "id": 16,
@@ -781,8 +767,7 @@
       "profileUrl": "https://www.hltv.org/player/16920/sh1ro",
       "profileId": 16920,
       "verified": true,
-      "stats": null,
-      "teamIndex": 3
+      "stats": null
     },
     {
       "id": 134,
@@ -800,8 +785,7 @@
         "maps": 132,
         "rating3": 1.26,
         "roundSwing": 1.88
-      },
-      "teamIndex": 59
+      }
     },
     {
       "id": 653,
@@ -815,8 +799,7 @@
       "profileUrl": "https://www.hltv.org/player/7322/apex",
       "profileId": 7322,
       "verified": true,
-      "stats": null,
-      "teamIndex": 2
+      "stats": null
     },
     {
       "id": 19,
@@ -830,8 +813,7 @@
       "profileUrl": "https://www.hltv.org/player/20423/zont1x",
       "profileId": 20423,
       "verified": true,
-      "stats": null,
-      "teamIndex": 3
+      "stats": null
     },
     {
       "id": 17,
@@ -845,8 +827,7 @@
       "profileUrl": "https://www.hltv.org/player/18462/mezii",
       "profileId": 18462,
       "verified": true,
-      "stats": null,
-      "teamIndex": 2
+      "stats": null
     },
     {
       "id": 50,
@@ -864,8 +845,7 @@
         "maps": 193,
         "rating3": 1.25,
         "roundSwing": 1.76
-      },
-      "teamIndex": 15
+      }
     },
     {
       "id": 26,
@@ -879,8 +859,7 @@
       "profileUrl": "https://www.hltv.org/player/22279/pr",
       "profileId": 22279,
       "verified": true,
-      "stats": null,
-      "teamIndex": 0
+      "stats": null
     },
     {
       "id": 27,
@@ -894,8 +873,7 @@
       "profileUrl": "https://www.hltv.org/player/19808/tn1r",
       "profileId": 19808,
       "verified": true,
-      "stats": null,
-      "teamIndex": 3
+      "stats": null
     },
     {
       "id": 31,
@@ -909,8 +887,7 @@
       "profileUrl": "https://www.hltv.org/player/24457/xelex",
       "profileId": 24457,
       "verified": true,
-      "stats": null,
-      "teamIndex": 0
+      "stats": null
     },
     {
       "id": 13,
@@ -924,8 +901,7 @@
       "profileUrl": "https://www.hltv.org/player/7938/xantares",
       "profileId": 7938,
       "verified": true,
-      "stats": null,
-      "teamIndex": 4
+      "stats": null
     },
     {
       "id": 85,
@@ -943,8 +919,7 @@
         "maps": 211,
         "rating3": 1.23,
         "roundSwing": 1.72
-      },
-      "teamIndex": 31
+      }
     },
     {
       "id": 239,
@@ -962,8 +937,7 @@
         "maps": 173,
         "rating3": 1.21,
         "roundSwing": 2
-      },
-      "teamIndex": 29
+      }
     },
     {
       "id": 14,
@@ -977,8 +951,7 @@
       "profileUrl": "https://www.hltv.org/player/18850/jimpphat",
       "profileId": 18850,
       "verified": true,
-      "stats": null,
-      "teamIndex": 4
+      "stats": null
     },
     {
       "id": 15,
@@ -992,8 +965,7 @@
       "profileUrl": "https://www.hltv.org/player/8574/woxic",
       "profileId": 8574,
       "verified": true,
-      "stats": null,
-      "teamIndex": 4
+      "stats": null
     },
     {
       "id": 21,
@@ -1007,8 +979,7 @@
       "profileUrl": "https://www.hltv.org/player/3741/niko",
       "profileId": 3741,
       "verified": true,
-      "stats": null,
-      "teamIndex": 5
+      "stats": null
     },
     {
       "id": 47,
@@ -1022,8 +993,7 @@
       "profileUrl": "https://www.hltv.org/player/19686/n1ssim",
       "profileId": 19686,
       "verified": true,
-      "stats": null,
-      "teamIndex": 13
+      "stats": null
     },
     {
       "id": 114,
@@ -1041,8 +1011,7 @@
         "maps": 116,
         "rating3": 1.21,
         "roundSwing": 1.59
-      },
-      "teamIndex": 46
+      }
     },
     {
       "id": 227,
@@ -1060,8 +1029,7 @@
         "maps": 199,
         "rating3": 1.22,
         "roundSwing": 1.9
-      },
-      "teamIndex": 46
+      }
     },
     {
       "id": 200,
@@ -1079,8 +1047,7 @@
         "maps": 243,
         "rating3": 1.2,
         "roundSwing": 1.49
-      },
-      "teamIndex": 49
+      }
     },
     {
       "id": 465,
@@ -1098,8 +1065,7 @@
         "maps": 129,
         "rating3": 1.19,
         "roundSwing": 1.53
-      },
-      "teamIndex": 88
+      }
     },
     {
       "id": 25,
@@ -1113,8 +1079,7 @@
       "profileUrl": "https://www.hltv.org/player/24177/kyousuke",
       "profileId": 24177,
       "verified": true,
-      "stats": null,
-      "teamIndex": 5
+      "stats": null
     },
     {
       "id": 20,
@@ -1132,8 +1097,7 @@
         "maps": 243,
         "rating3": 1.21,
         "roundSwing": 1.6
-      },
-      "teamIndex": 6
+      }
     },
     {
       "id": 37,
@@ -1147,8 +1111,7 @@
       "profileUrl": "https://www.hltv.org/player/20127/w0nderful",
       "profileId": 20127,
       "verified": true,
-      "stats": null,
-      "teamIndex": 7
+      "stats": null
     },
     {
       "id": 55,
@@ -1162,8 +1125,7 @@
       "profileUrl": "https://www.hltv.org/player/22674/cmtry",
       "profileId": 22674,
       "verified": true,
-      "stats": null,
-      "teamIndex": 8
+      "stats": null
     },
     {
       "id": 164,
@@ -1181,8 +1143,7 @@
         "maps": 260,
         "rating3": 1.19,
         "roundSwing": 2.18
-      },
-      "teamIndex": 28
+      }
     },
     {
       "id": 334,
@@ -1200,8 +1161,7 @@
         "maps": 188,
         "rating3": 1.2,
         "roundSwing": 2.22
-      },
-      "teamIndex": 69
+      }
     },
     {
       "id": 61,
@@ -1215,8 +1175,7 @@
       "profileUrl": "https://www.hltv.org/player/18317/magixx",
       "profileId": 18317,
       "verified": true,
-      "stats": null,
-      "teamIndex": 3
+      "stats": null
     },
     {
       "id": 22,
@@ -1230,8 +1189,7 @@
       "profileUrl": "https://www.hltv.org/player/21243/wicadia",
       "profileId": 21243,
       "verified": true,
-      "stats": null,
-      "teamIndex": 4
+      "stats": null
     },
     {
       "id": 23,
@@ -1245,8 +1203,7 @@
       "profileUrl": "https://www.hltv.org/player/18506/s1ren",
       "profileId": 18506,
       "verified": true,
-      "stats": null,
-      "teamIndex": 6
+      "stats": null
     },
     {
       "id": 24,
@@ -1260,8 +1217,7 @@
       "profileUrl": "https://www.hltv.org/player/15662/zorte",
       "profileId": 15662,
       "verified": true,
-      "stats": null,
-      "teamIndex": 6
+      "stats": null
     },
     {
       "id": 33,
@@ -1275,8 +1231,7 @@
       "profileUrl": "https://www.hltv.org/player/429/karrigan",
       "profileId": 429,
       "verified": true,
-      "stats": null,
-      "teamIndex": 5
+      "stats": null
     },
     {
       "id": 44,
@@ -1290,8 +1245,7 @@
       "profileUrl": "https://www.hltv.org/player/21809/910",
       "profileId": 21809,
       "verified": true,
-      "stats": null,
-      "teamIndex": 9
+      "stats": null
     },
     {
       "id": 79,
@@ -1305,8 +1259,7 @@
       "profileUrl": "https://www.hltv.org/player/17956/jabbi",
       "profileId": 17956,
       "verified": true,
-      "stats": null,
-      "teamIndex": 19
+      "stats": null
     },
     {
       "id": 57,
@@ -1320,8 +1273,7 @@
       "profileUrl": "https://www.hltv.org/player/18987/b1t",
       "profileId": 18987,
       "verified": true,
-      "stats": null,
-      "teamIndex": 7
+      "stats": null
     },
     {
       "id": 58,
@@ -1335,8 +1287,7 @@
       "profileUrl": "https://www.hltv.org/player/14759/im",
       "profileId": 14759,
       "verified": true,
-      "stats": null,
-      "teamIndex": 7
+      "stats": null
     },
     {
       "id": 35,
@@ -1350,8 +1301,7 @@
       "profileUrl": "https://www.hltv.org/player/19920/kair0n-",
       "profileId": 19920,
       "verified": true,
-      "stats": null,
-      "teamIndex": 10
+      "stats": null
     },
     {
       "id": 46,
@@ -1365,8 +1315,7 @@
       "profileUrl": "https://www.hltv.org/player/12018/teses",
       "profileId": 12018,
       "verified": true,
-      "stats": null,
-      "teamIndex": 5
+      "stats": null
     },
     {
       "id": 32,
@@ -1380,8 +1329,7 @@
       "profileUrl": "https://www.hltv.org/player/20357/d1ledez",
       "profileId": 20357,
       "verified": true,
-      "stats": null,
-      "teamIndex": 6
+      "stats": null
     },
     {
       "id": 67,
@@ -1395,8 +1343,7 @@
       "profileUrl": "https://www.hltv.org/player/9816/aleksib",
       "profileId": 9816,
       "verified": true,
-      "stats": null,
-      "teamIndex": 7
+      "stats": null
     },
     {
       "id": 29,
@@ -1410,8 +1357,7 @@
       "profileUrl": "https://www.hltv.org/player/20447/heavygod",
       "profileId": 20447,
       "verified": true,
-      "stats": null,
-      "teamIndex": 11
+      "stats": null
     },
     {
       "id": 107,
@@ -1425,8 +1371,7 @@
       "profileUrl": "https://www.hltv.org/player/14737/meyern",
       "profileId": 14737,
       "verified": true,
-      "stats": null,
-      "teamIndex": 18
+      "stats": null
     },
     {
       "id": 68,
@@ -1440,8 +1385,7 @@
       "profileUrl": "https://www.hltv.org/player/22673/makazze",
       "profileId": 22673,
       "verified": true,
-      "stats": null,
-      "teamIndex": 7
+      "stats": null
     },
     {
       "id": 34,
@@ -1455,8 +1399,7 @@
       "profileUrl": "https://www.hltv.org/player/22203/krabeni",
       "profileId": 22203,
       "verified": true,
-      "stats": null,
-      "teamIndex": 8
+      "stats": null
     },
     {
       "id": 38,
@@ -1470,8 +1413,7 @@
       "profileUrl": "https://www.hltv.org/player/20584/dem0n",
       "profileId": 20584,
       "verified": true,
-      "stats": null,
-      "teamIndex": 8
+      "stats": null
     },
     {
       "id": 39,
@@ -1485,8 +1427,7 @@
       "profileUrl": "https://www.hltv.org/player/23553/dziugss",
       "profileId": 23553,
       "verified": true,
-      "stats": null,
-      "teamIndex": 8
+      "stats": null
     },
     {
       "id": 40,
@@ -1500,8 +1441,7 @@
       "profileUrl": "https://www.hltv.org/player/19187/xfl0ud",
       "profileId": 19187,
       "verified": true,
-      "stats": null,
-      "teamIndex": 8
+      "stats": null
     },
     {
       "id": 43,
@@ -1515,8 +1455,7 @@
       "profileUrl": "https://www.hltv.org/player/23685/zweih",
       "profileId": 23685,
       "verified": true,
-      "stats": null,
-      "teamIndex": 12
+      "stats": null
     },
     {
       "id": 28,
@@ -1530,8 +1469,7 @@
       "profileUrl": "https://www.hltv.org/player/19869/try",
       "profileId": 19869,
       "verified": true,
-      "stats": null,
-      "teamIndex": 13
+      "stats": null
     },
     {
       "id": 30,
@@ -1545,8 +1483,7 @@
       "profileUrl": "https://www.hltv.org/player/10394/twistzz",
       "profileId": 10394,
       "verified": true,
-      "stats": null,
-      "teamIndex": 17
+      "stats": null
     },
     {
       "id": 151,
@@ -1560,8 +1497,7 @@
       "profileUrl": "https://www.hltv.org/player/19673/patsi",
       "profileId": 19673,
       "verified": true,
-      "stats": null,
-      "teamIndex": 76
+      "stats": null
     },
     {
       "id": 60,
@@ -1575,8 +1511,7 @@
       "profileUrl": "https://www.hltv.org/player/19677/kyxsan",
       "profileId": 19677,
       "verified": true,
-      "stats": null,
-      "teamIndex": 4
+      "stats": null
     },
     {
       "id": 82,
@@ -1590,8 +1525,7 @@
       "profileUrl": "https://www.hltv.org/player/20275/techno",
       "profileId": 20275,
       "verified": true,
-      "stats": null,
-      "teamIndex": 9
+      "stats": null
     },
     {
       "id": 92,
@@ -1605,8 +1539,7 @@
       "profileUrl": "https://www.hltv.org/player/15072/nin9",
       "profileId": 15072,
       "verified": true,
-      "stats": null,
-      "teamIndex": 9
+      "stats": null
     },
     {
       "id": 41,
@@ -1620,8 +1553,7 @@
       "profileUrl": "https://www.hltv.org/player/15698/dumau",
       "profileId": 15698,
       "verified": true,
-      "stats": null,
-      "teamIndex": 13
+      "stats": null
     },
     {
       "id": 36,
@@ -1635,8 +1567,7 @@
       "profileUrl": "https://www.hltv.org/player/16555/ax1le",
       "profileId": 16555,
       "verified": true,
-      "stats": null,
-      "teamIndex": 14
+      "stats": null
     },
     {
       "id": 500,
@@ -1650,8 +1581,7 @@
       "profileUrl": "https://www.hltv.org/player/19164/sunpayus",
       "profileId": 19164,
       "verified": true,
-      "stats": null,
-      "teamIndex": 8
+      "stats": null
     },
     {
       "id": 91,
@@ -1665,8 +1595,7 @@
       "profileUrl": "https://www.hltv.org/player/20194/blitz",
       "profileId": 20194,
       "verified": true,
-      "stats": null,
-      "teamIndex": 9
+      "stats": null
     },
     {
       "id": 62,
@@ -1680,8 +1609,7 @@
       "profileUrl": "https://www.hltv.org/player/20387/xant3r",
       "profileId": 20387,
       "verified": true,
-      "stats": null,
-      "teamIndex": 10
+      "stats": null
     },
     {
       "id": 56,
@@ -1695,8 +1623,7 @@
       "profileUrl": "https://www.hltv.org/player/3972/hunter",
       "profileId": 3972,
       "verified": true,
-      "stats": null,
-      "teamIndex": 11
+      "stats": null
     },
     {
       "id": 70,
@@ -1710,8 +1637,7 @@
       "profileUrl": "https://www.hltv.org/player/13776/jame",
       "profileId": 13776,
       "verified": true,
-      "stats": null,
-      "teamIndex": 12
+      "stats": null
     },
     {
       "id": 42,
@@ -1725,8 +1651,7 @@
       "profileUrl": "https://www.hltv.org/player/19045/latto",
       "profileId": 19045,
       "verified": true,
-      "stats": null,
-      "teamIndex": 13
+      "stats": null
     },
     {
       "id": 51,
@@ -1740,8 +1665,7 @@
       "profileUrl": "https://www.hltv.org/player/8738/elige",
       "profileId": 8738,
       "verified": true,
-      "stats": null,
-      "teamIndex": 16
+      "stats": null
     },
     {
       "id": 52,
@@ -1755,8 +1679,7 @@
       "profileUrl": "https://www.hltv.org/player/11617/malbsmd",
       "profileId": 11617,
       "verified": true,
-      "stats": null,
-      "teamIndex": 16
+      "stats": null
     },
     {
       "id": 54,
@@ -1770,8 +1693,7 @@
       "profileUrl": "https://www.hltv.org/player/7998/s1mple",
       "profileId": 7998,
       "verified": true,
-      "stats": null,
-      "teamIndex": 46
+      "stats": null
     },
     {
       "id": 73,
@@ -1785,8 +1707,7 @@
       "profileUrl": "https://www.hltv.org/player/11840/boombl4",
       "profileId": 11840,
       "verified": true,
-      "stats": null,
-      "teamIndex": 6
+      "stats": null
     },
     {
       "id": 75,
@@ -1800,8 +1721,7 @@
       "profileUrl": "https://www.hltv.org/player/23317/khan",
       "profileId": 23317,
       "verified": true,
-      "stats": null,
-      "teamIndex": 10
+      "stats": null
     },
     {
       "id": 76,
@@ -1815,8 +1735,7 @@
       "profileUrl": "https://www.hltv.org/player/22864/robo",
       "profileId": 22864,
       "verified": true,
-      "stats": null,
-      "teamIndex": 10
+      "stats": null
     },
     {
       "id": 63,
@@ -1830,8 +1749,7 @@
       "profileUrl": "https://www.hltv.org/player/21062/matys",
       "profileId": 21062,
       "verified": true,
-      "stats": null,
-      "teamIndex": 11
+      "stats": null
     },
     {
       "id": 64,
@@ -1845,8 +1763,7 @@
       "profileUrl": "https://www.hltv.org/player/9436/nertz",
       "profileId": 9436,
       "verified": true,
-      "stats": null,
-      "teamIndex": 11
+      "stats": null
     },
     {
       "id": 65,
@@ -1860,8 +1777,7 @@
       "profileUrl": "https://www.hltv.org/player/20425/r1nkle",
       "profileId": 20425,
       "verified": true,
-      "stats": null,
-      "teamIndex": 11
+      "stats": null
     },
     {
       "id": 81,
@@ -1875,8 +1791,7 @@
       "profileUrl": "https://www.hltv.org/player/12732/fl1t",
       "profileId": 12732,
       "verified": true,
-      "stats": null,
-      "teamIndex": 12
+      "stats": null
     },
     {
       "id": 72,
@@ -1890,8 +1805,7 @@
       "profileUrl": "https://www.hltv.org/player/8520/naf",
       "profileId": 8520,
       "verified": true,
-      "stats": null,
-      "teamIndex": 16
+      "stats": null
     },
     {
       "id": 118,
@@ -1905,8 +1819,7 @@
       "profileUrl": "https://www.hltv.org/player/23402/cobrazera",
       "profileId": 23402,
       "verified": true,
-      "stats": null,
-      "teamIndex": 9
+      "stats": null
     },
     {
       "id": 87,
@@ -1920,8 +1833,7 @@
       "profileUrl": "https://www.hltv.org/player/23319/syph0",
       "profileId": 23319,
       "verified": true,
-      "stats": null,
-      "teamIndex": 10
+      "stats": null
     },
     {
       "id": 89,
@@ -1935,8 +1847,7 @@
       "profileUrl": "https://www.hltv.org/player/8528/hobbit",
       "profileId": 8528,
       "verified": true,
-      "stats": null,
-      "teamIndex": 12
+      "stats": null
     },
     {
       "id": 90,
@@ -1950,8 +1861,7 @@
       "profileUrl": "https://www.hltv.org/player/22471/xielo",
       "profileId": 22471,
       "verified": true,
-      "stats": null,
-      "teamIndex": 12
+      "stats": null
     },
     {
       "id": 59,
@@ -1965,8 +1875,7 @@
       "profileUrl": "https://www.hltv.org/player/9960/frozen",
       "profileId": 9960,
       "verified": true,
-      "stats": null,
-      "teamIndex": 17
+      "stats": null
     },
     {
       "id": 49,
@@ -1980,8 +1889,7 @@
       "profileUrl": "https://www.hltv.org/player/10994/stavn",
       "profileId": 10994,
       "verified": true,
-      "stats": null,
-      "teamIndex": 21
+      "stats": null
     },
     {
       "id": 262,
@@ -1995,8 +1903,7 @@
       "profileUrl": "https://www.hltv.org/player/8601/zhoking",
       "profileId": 8601,
       "verified": true,
-      "stats": null,
-      "teamIndex": 29
+      "stats": null
     },
     {
       "id": 45,
@@ -2010,8 +1917,7 @@
       "profileUrl": "https://www.hltv.org/player/7592/device",
       "profileId": 7592,
       "verified": true,
-      "stats": null,
-      "teamIndex": 32
+      "stats": null
     },
     {
       "id": 74,
@@ -2025,8 +1931,7 @@
       "profileUrl": "https://www.hltv.org/player/12521/art",
       "profileId": 12521,
       "verified": true,
-      "stats": null,
-      "teamIndex": 13
+      "stats": null
     },
     {
       "id": 66,
@@ -2040,8 +1945,7 @@
       "profileUrl": "https://www.hltv.org/player/20101/fame",
       "profileId": 20101,
       "verified": true,
-      "stats": null,
-      "teamIndex": 14
+      "stats": null
     },
     {
       "id": 84,
@@ -2055,8 +1959,7 @@
       "profileUrl": "https://www.hltv.org/player/22570/tomaszin",
       "profileId": 22570,
       "verified": true,
-      "stats": null,
-      "teamIndex": 15
+      "stats": null
     },
     {
       "id": 48,
@@ -2070,8 +1973,7 @@
       "profileUrl": "https://www.hltv.org/player/20304/staehr",
       "profileId": 20304,
       "verified": true,
-      "stats": null,
-      "teamIndex": 19
+      "stats": null
     },
     {
       "id": 53,
@@ -2085,8 +1987,7 @@
       "profileUrl": "https://www.hltv.org/player/8183/rain",
       "profileId": 8183,
       "verified": true,
-      "stats": null,
-      "teamIndex": 32
+      "stats": null
     },
     {
       "id": 116,
@@ -2100,8 +2001,7 @@
       "profileUrl": "https://www.hltv.org/player/18835/saffee",
       "profileId": 18835,
       "verified": true,
-      "stats": null,
-      "teamIndex": 40
+      "stats": null
     },
     {
       "id": 86,
@@ -2115,8 +2015,7 @@
       "profileUrl": "https://www.hltv.org/player/21001/mzinho",
       "profileId": 21001,
       "verified": true,
-      "stats": null,
-      "teamIndex": 46
+      "stats": null
     },
     {
       "id": 277,
@@ -2130,8 +2029,7 @@
       "profileUrl": "https://www.hltv.org/player/21014/ag1l",
       "profileId": 21014,
       "verified": true,
-      "stats": null,
-      "teamIndex": 53
+      "stats": null
     },
     {
       "id": 293,
@@ -2145,8 +2043,7 @@
       "profileUrl": "https://www.hltv.org/player/22914/dex",
       "profileId": 22914,
       "verified": true,
-      "stats": null,
-      "teamIndex": 58
+      "stats": null
     },
     {
       "id": 78,
@@ -2160,8 +2057,7 @@
       "profileUrl": "https://www.hltv.org/player/19235/belchonokk",
       "profileId": 19235,
       "verified": true,
-      "stats": null,
-      "teamIndex": 14
+      "stats": null
     },
     {
       "id": 95,
@@ -2175,8 +2071,7 @@
       "profileUrl": "https://www.hltv.org/player/21288/venomzera",
       "profileId": 21288,
       "verified": true,
-      "stats": null,
-      "teamIndex": 15
+      "stats": null
     },
     {
       "id": 96,
@@ -2190,8 +2085,7 @@
       "profileUrl": "https://www.hltv.org/player/24203/jorko",
       "profileId": 24203,
       "verified": true,
-      "stats": null,
-      "teamIndex": 16
+      "stats": null
     },
     {
       "id": 113,
@@ -2205,8 +2099,7 @@
       "profileUrl": "https://www.hltv.org/player/9278/rez",
       "profileId": 9278,
       "verified": true,
-      "stats": null,
-      "teamIndex": 25
+      "stats": null
     },
     {
       "id": 115,
@@ -2220,8 +2113,7 @@
       "profileUrl": "https://www.hltv.org/player/7687/nitr0",
       "profileId": 7687,
       "verified": true,
-      "stats": null,
-      "teamIndex": 35
+      "stats": null
     },
     {
       "id": 133,
@@ -2235,8 +2127,7 @@
       "profileUrl": "https://www.hltv.org/player/13578/grim",
       "profileId": 13578,
       "verified": true,
-      "stats": null,
-      "teamIndex": 35
+      "stats": null
     },
     {
       "id": 168,
@@ -2250,8 +2141,7 @@
       "profileUrl": "https://www.hltv.org/player/3849/jw",
       "profileId": 3849,
       "verified": true,
-      "stats": null,
-      "teamIndex": 58
+      "stats": null
     },
     {
       "id": 268,
@@ -2265,8 +2155,7 @@
       "profileUrl": "https://www.hltv.org/player/11219/cerq",
       "profileId": 11219,
       "verified": true,
-      "stats": null,
-      "teamIndex": 82
+      "stats": null
     },
     {
       "id": 77,
@@ -2280,8 +2169,7 @@
       "profileUrl": "https://www.hltv.org/player/21348/artfr0st",
       "profileId": 21348,
       "verified": true,
-      "stats": null,
-      "teamIndex": 14
+      "stats": null
     },
     {
       "id": 94,
@@ -2295,8 +2183,7 @@
       "profileUrl": "https://www.hltv.org/player/19310/lnz",
       "profileId": 19310,
       "verified": true,
-      "stats": null,
-      "teamIndex": 15
+      "stats": null
     },
     {
       "id": 111,
@@ -2310,8 +2197,7 @@
       "profileUrl": "https://www.hltv.org/player/23643/esenthial",
       "profileId": 23643,
       "verified": true,
-      "stats": null,
-      "teamIndex": 20
+      "stats": null
     },
     {
       "id": 69,
@@ -2325,8 +2211,7 @@
       "profileUrl": "https://www.hltv.org/player/19899/krimbo",
       "profileId": 19899,
       "verified": true,
-      "stats": null,
-      "teamIndex": 21
+      "stats": null
     },
     {
       "id": 97,
@@ -2340,8 +2225,7 @@
       "profileUrl": "https://www.hltv.org/player/22361/jottaaa",
       "profileId": 22361,
       "verified": true,
-      "stats": null,
-      "teamIndex": 22
+      "stats": null
     },
     {
       "id": 71,
@@ -2355,8 +2239,7 @@
       "profileUrl": "https://www.hltv.org/player/13666/brollan",
       "profileId": 13666,
       "verified": true,
-      "stats": null,
-      "teamIndex": 24
+      "stats": null
     },
     {
       "id": 83,
@@ -2370,8 +2253,7 @@
       "profileUrl": "https://www.hltv.org/player/21239/martinezsa",
       "profileId": 21239,
       "verified": true,
-      "stats": null,
-      "teamIndex": 24
+      "stats": null
     },
     {
       "id": 132,
@@ -2385,8 +2267,7 @@
       "profileUrl": "https://www.hltv.org/player/20563/lux",
       "profileId": 20563,
       "verified": true,
-      "stats": null,
-      "teamIndex": 33
+      "stats": null
     },
     {
       "id": 187,
@@ -2400,8 +2281,7 @@
       "profileUrl": "https://www.hltv.org/player/7528/krimz",
       "profileId": 7528,
       "verified": true,
-      "stats": null,
-      "teamIndex": 58
+      "stats": null
     },
     {
       "id": 323,
@@ -2415,8 +2295,7 @@
       "profileUrl": "https://www.hltv.org/player/22474/polo",
       "profileId": 22474,
       "verified": true,
-      "stats": null,
-      "teamIndex": 71
+      "stats": null
     },
     {
       "id": 296,
@@ -2430,8 +2309,7 @@
       "profileUrl": "https://www.hltv.org/player/8735/autimatic",
       "profileId": 8735,
       "verified": true,
-      "stats": null,
-      "teamIndex": 82
+      "stats": null
     },
     {
       "id": 297,
@@ -2445,8 +2323,7 @@
       "profileUrl": "https://www.hltv.org/player/8797/stewie2k",
       "profileId": 8797,
       "verified": true,
-      "stats": null,
-      "teamIndex": 82
+      "stats": null
     },
     {
       "id": 333,
@@ -2460,8 +2337,7 @@
       "profileUrl": "https://www.hltv.org/player/23771/oz1k",
       "profileId": 23771,
       "verified": true,
-      "stats": null,
-      "teamIndex": 125
+      "stats": null
     },
     {
       "id": 100,
@@ -2475,8 +2351,7 @@
       "profileUrl": "https://www.hltv.org/player/16921/nafany",
       "profileId": 16921,
       "verified": true,
-      "stats": null,
-      "teamIndex": 14
+      "stats": null
     },
     {
       "id": 106,
@@ -2490,8 +2365,7 @@
       "profileUrl": "https://www.hltv.org/player/14736/dgt",
       "profileId": 14736,
       "verified": true,
-      "stats": null,
-      "teamIndex": 18
+      "stats": null
     },
     {
       "id": 124,
@@ -2505,8 +2379,7 @@
       "profileUrl": "https://www.hltv.org/player/22842/kensizor",
       "profileId": 22842,
       "verified": true,
-      "stats": null,
-      "teamIndex": 20
+      "stats": null
     },
     {
       "id": 80,
@@ -2520,8 +2393,7 @@
       "profileUrl": "https://www.hltv.org/player/23372/xkacpersky",
       "profileId": 23372,
       "verified": true,
-      "stats": null,
-      "teamIndex": 21
+      "stats": null
     },
     {
       "id": 88,
@@ -2535,8 +2407,7 @@
       "profileUrl": "https://www.hltv.org/player/20878/adamb",
       "profileId": 20878,
       "verified": true,
-      "stats": null,
-      "teamIndex": 21
+      "stats": null
     },
     {
       "id": 105,
@@ -2550,8 +2421,7 @@
       "profileUrl": "https://www.hltv.org/player/20123/regali",
       "profileId": 20123,
       "verified": true,
-      "stats": null,
-      "teamIndex": 22
+      "stats": null
     },
     {
       "id": 108,
@@ -2565,8 +2435,7 @@
       "profileUrl": "https://www.hltv.org/player/22921/lake",
       "profileId": 22921,
       "verified": true,
-      "stats": null,
-      "teamIndex": 23
+      "stats": null
     },
     {
       "id": 93,
@@ -2580,8 +2449,7 @@
       "profileUrl": "https://www.hltv.org/player/20119/nilo",
       "profileId": 20119,
       "verified": true,
-      "stats": null,
-      "teamIndex": 24
+      "stats": null
     },
     {
       "id": 160,
@@ -2595,8 +2463,7 @@
       "profileUrl": "https://www.hltv.org/player/23766/hypex",
       "profileId": 23766,
       "verified": true,
-      "stats": null,
-      "teamIndex": 25
+      "stats": null
     },
     {
       "id": 220,
@@ -2610,8 +2477,7 @@
       "profileUrl": "https://www.hltv.org/player/22075/sfade8",
       "profileId": 22075,
       "verified": true,
-      "stats": null,
-      "teamIndex": 28
+      "stats": null
     },
     {
       "id": 98,
@@ -2625,8 +2491,7 @@
       "profileUrl": "https://www.hltv.org/player/21385/mizu",
       "profileId": 21385,
       "verified": true,
-      "stats": null,
-      "teamIndex": 30
+      "stats": null
     },
     {
       "id": 112,
@@ -2640,8 +2505,7 @@
       "profileUrl": "https://www.hltv.org/player/14929/jdc",
       "profileId": 14929,
       "verified": true,
-      "stats": null,
-      "teamIndex": 31
+      "stats": null
     },
     {
       "id": 184,
@@ -2655,8 +2519,7 @@
       "profileUrl": "https://www.hltv.org/player/12840/hallzerk",
       "profileId": 12840,
       "verified": true,
-      "stats": null,
-      "teamIndex": 35
+      "stats": null
     },
     {
       "id": 185,
@@ -2670,8 +2533,7 @@
       "profileUrl": "https://www.hltv.org/player/8711/sonic",
       "profileId": 8711,
       "verified": true,
-      "stats": null,
-      "teamIndex": 35
+      "stats": null
     },
     {
       "id": 186,
@@ -2685,8 +2547,7 @@
       "profileUrl": "https://www.hltv.org/player/18141/biguzera",
       "profileId": 18141,
       "verified": true,
-      "stats": null,
-      "teamIndex": 40
+      "stats": null
     },
     {
       "id": 167,
@@ -2700,8 +2561,7 @@
       "profileUrl": "https://www.hltv.org/player/9032/magisk",
       "profileId": 9032,
       "verified": true,
-      "stats": null,
-      "teamIndex": 46
+      "stats": null
     },
     {
       "id": 355,
@@ -2715,8 +2575,7 @@
       "profileUrl": "https://www.hltv.org/player/23477/reyoz",
       "profileId": 23477,
       "verified": true,
-      "stats": null,
-      "teamIndex": 125
+      "stats": null
     },
     {
       "id": 345,
@@ -2730,8 +2589,7 @@
       "profileUrl": "https://www.hltv.org/player/19177/consti",
       "profileId": 19177,
       "verified": true,
-      "stats": null,
-      "teamIndex": 126
+      "stats": null
     },
     {
       "id": 346,
@@ -2745,8 +2603,7 @@
       "profileUrl": "https://www.hltv.org/player/14619/infinite",
       "profileId": 14619,
       "verified": true,
-      "stats": null,
-      "teamIndex": 126
+      "stats": null
     },
     {
       "id": 347,
@@ -2760,8 +2617,7 @@
       "profileUrl": "https://www.hltv.org/player/13230/motm",
       "profileId": 13230,
       "verified": true,
-      "stats": null,
-      "teamIndex": 126
+      "stats": null
     },
     {
       "id": 135,
@@ -2775,8 +2631,7 @@
       "profileUrl": "https://www.hltv.org/player/19694/nqz",
       "profileId": 19694,
       "verified": true,
-      "stats": null,
-      "teamIndex": 15
+      "stats": null
     },
     {
       "id": 137,
@@ -2790,8 +2645,7 @@
       "profileUrl": "https://www.hltv.org/player/11630/jt",
       "profileId": 11630,
       "verified": true,
-      "stats": null,
-      "teamIndex": 16
+      "stats": null
     },
     {
       "id": 119,
@@ -2805,8 +2659,7 @@
       "profileUrl": "https://www.hltv.org/player/22383/jcobbb",
       "profileId": 22383,
       "verified": true,
-      "stats": null,
-      "teamIndex": 17
+      "stats": null
     },
     {
       "id": 120,
@@ -2820,8 +2673,7 @@
       "profileUrl": "https://www.hltv.org/player/21972/neityu",
       "profileId": 21972,
       "verified": true,
-      "stats": null,
-      "teamIndex": 17
+      "stats": null
     },
     {
       "id": 141,
@@ -2835,8 +2687,7 @@
       "profileUrl": "https://www.hltv.org/player/22613/huasopeek",
       "profileId": 22613,
       "verified": true,
-      "stats": null,
-      "teamIndex": 18
+      "stats": null
     },
     {
       "id": 142,
@@ -2850,8 +2701,7 @@
       "profileUrl": "https://www.hltv.org/player/20394/luchov",
       "profileId": 20394,
       "verified": true,
-      "stats": null,
-      "teamIndex": 18
+      "stats": null
     },
     {
       "id": 101,
@@ -2865,8 +2715,7 @@
       "profileUrl": "https://www.hltv.org/player/16726/phzy",
       "profileId": 16726,
       "verified": true,
-      "stats": null,
-      "teamIndex": 19
+      "stats": null
     },
     {
       "id": 102,
@@ -2880,8 +2729,7 @@
       "profileUrl": "https://www.hltv.org/player/21217/ryu",
       "profileId": 21217,
       "verified": true,
-      "stats": null,
-      "teamIndex": 19
+      "stats": null
     },
     {
       "id": 501,
@@ -2895,8 +2743,7 @@
       "profileUrl": "https://www.hltv.org/player/22674/cmtry",
       "profileId": 22674,
       "verified": true,
-      "stats": null,
-      "teamIndex": 19
+      "stats": null
     },
     {
       "id": 147,
@@ -2910,8 +2757,7 @@
       "profileUrl": "https://www.hltv.org/player/21708/npl",
       "profileId": 21708,
       "verified": true,
-      "stats": null,
-      "teamIndex": 20
+      "stats": null
     },
     {
       "id": 103,
@@ -2925,8 +2771,7 @@
       "profileUrl": "https://www.hltv.org/player/14148/sjuush",
       "profileId": 14148,
       "verified": true,
-      "stats": null,
-      "teamIndex": 21
+      "stats": null
     },
     {
       "id": 104,
@@ -2940,8 +2785,7 @@
       "profileUrl": "https://www.hltv.org/player/21983/chr1zn",
       "profileId": 21983,
       "verified": true,
-      "stats": null,
-      "teamIndex": 24
+      "stats": null
     },
     {
       "id": 110,
@@ -2955,8 +2799,7 @@
       "profileUrl": "https://www.hltv.org/player/24283/cairne",
       "profileId": 24283,
       "verified": true,
-      "stats": null,
-      "teamIndex": 26
+      "stats": null
     },
     {
       "id": 123,
@@ -2970,8 +2813,7 @@
       "profileUrl": "https://www.hltv.org/player/23414/jackasmo",
       "profileId": 23414,
       "verified": true,
-      "stats": null,
-      "teamIndex": 26
+      "stats": null
     },
     {
       "id": 182,
@@ -2985,8 +2827,7 @@
       "profileUrl": "https://www.hltv.org/player/13138/maka",
       "profileId": 13138,
       "verified": true,
-      "stats": null,
-      "teamIndex": 27
+      "stats": null
     },
     {
       "id": 181,
@@ -3000,8 +2841,7 @@
       "profileUrl": "https://www.hltv.org/player/22076/aw",
       "profileId": 22076,
       "verified": true,
-      "stats": null,
-      "teamIndex": 28
+      "stats": null
     },
     {
       "id": 99,
@@ -3015,8 +2855,7 @@
       "profileUrl": "https://www.hltv.org/player/16612/n0rb3r7",
       "profileId": 16612,
       "verified": true,
-      "stats": null,
-      "teamIndex": 30
+      "stats": null
     },
     {
       "id": 109,
@@ -3030,8 +2869,7 @@
       "profileUrl": "https://www.hltv.org/player/22535/dwushka",
       "profileId": 22535,
       "verified": true,
-      "stats": null,
-      "teamIndex": 30
+      "stats": null
     },
     {
       "id": 152,
@@ -3045,8 +2883,7 @@
       "profileUrl": "https://www.hltv.org/player/5794/tabsen",
       "profileId": 5794,
       "verified": true,
-      "stats": null,
-      "teamIndex": 31
+      "stats": null
     },
     {
       "id": 180,
@@ -3060,8 +2897,7 @@
       "profileUrl": "https://www.hltv.org/player/22106/azuwu",
       "profileId": 22106,
       "verified": true,
-      "stats": null,
-      "teamIndex": 33
+      "stats": null
     },
     {
       "id": 125,
@@ -3075,8 +2911,7 @@
       "profileUrl": "https://www.hltv.org/player/22911/doc",
       "profileId": 22911,
       "verified": true,
-      "stats": null,
-      "teamIndex": 34
+      "stats": null
     },
     {
       "id": 202,
@@ -3090,8 +2925,7 @@
       "profileUrl": "https://www.hltv.org/player/20333/jeorge",
       "profileId": 20333,
       "verified": true,
-      "stats": null,
-      "teamIndex": 35
+      "stats": null
     },
     {
       "id": 128,
@@ -3105,8 +2939,7 @@
       "profileUrl": "https://www.hltv.org/player/24168/onic",
       "profileId": 24168,
       "verified": true,
-      "stats": null,
-      "teamIndex": 36
+      "stats": null
     },
     {
       "id": 129,
@@ -3120,8 +2953,7 @@
       "profileUrl": "https://www.hltv.org/player/23415/zerrofix",
       "profileId": 23415,
       "verified": true,
-      "stats": null,
-      "teamIndex": 36
+      "stats": null
     },
     {
       "id": 157,
@@ -3135,8 +2967,7 @@
       "profileUrl": "https://www.hltv.org/player/18163/bibu",
       "profileId": 18163,
       "verified": true,
-      "stats": null,
-      "teamIndex": 37
+      "stats": null
     },
     {
       "id": 159,
@@ -3150,8 +2981,7 @@
       "profileUrl": "https://www.hltv.org/player/17675/m1n1",
       "profileId": 17675,
       "verified": true,
-      "stats": null,
-      "teamIndex": 37
+      "stats": null
     },
     {
       "id": 154,
@@ -3165,8 +2995,7 @@
       "profileUrl": "https://www.hltv.org/player/23459/stressarn",
       "profileId": 23459,
       "verified": true,
-      "stats": null,
-      "teamIndex": 39
+      "stats": null
     },
     {
       "id": 166,
@@ -3180,8 +3009,7 @@
       "profileUrl": "https://www.hltv.org/player/19698/adams",
       "profileId": 19698,
       "verified": true,
-      "stats": null,
-      "teamIndex": 41
+      "stats": null
     },
     {
       "id": 361,
@@ -3195,8 +3023,7 @@
       "profileUrl": "https://www.hltv.org/player/9136/brehze",
       "profileId": 9136,
       "verified": true,
-      "stats": null,
-      "teamIndex": 82
+      "stats": null
     },
     {
       "id": 384,
@@ -3210,8 +3037,7 @@
       "profileUrl": "https://www.hltv.org/player/24835/n0rths",
       "profileId": 24835,
       "verified": true,
-      "stats": null,
-      "teamIndex": 93
+      "stats": null
     },
     {
       "id": 367,
@@ -3225,8 +3051,7 @@
       "profileUrl": "https://www.hltv.org/player/25577/oontoma",
       "profileId": 25577,
       "verified": true,
-      "stats": null,
-      "teamIndex": 97
+      "stats": null
     },
     {
       "id": 390,
@@ -3240,8 +3065,7 @@
       "profileUrl": "https://www.hltv.org/player/23684/relaxxie",
       "profileId": 23684,
       "verified": true,
-      "stats": null,
-      "teamIndex": 112
+      "stats": null
     },
     {
       "id": 370,
@@ -3255,8 +3079,7 @@
       "profileUrl": "https://www.hltv.org/player/22135/peeping",
       "profileId": 22135,
       "verified": true,
-      "stats": null,
-      "teamIndex": 126
+      "stats": null
     },
     {
       "id": 371,
@@ -3270,8 +3093,7 @@
       "profileUrl": "https://www.hltv.org/player/19709/shane",
       "profileId": 19709,
       "verified": true,
-      "stats": null,
-      "teamIndex": 126
+      "stats": null
     },
     {
       "id": 395,
@@ -3285,8 +3107,7 @@
       "profileUrl": "https://www.hltv.org/player/13281/el1an",
       "profileId": 13281,
       "verified": true,
-      "stats": null,
-      "teamIndex": 127
+      "stats": null
     },
     {
       "id": 117,
@@ -3300,8 +3121,7 @@
       "profileUrl": "https://www.hltv.org/player/16820/siuhy",
       "profileId": 16820,
       "verified": true,
-      "stats": null,
-      "teamIndex": 19
+      "stats": null
     },
     {
       "id": 173,
@@ -3315,8 +3135,7 @@
       "profileUrl": "https://www.hltv.org/player/20112/alex666",
       "profileId": 20112,
       "verified": true,
-      "stats": null,
-      "teamIndex": 20
+      "stats": null
     },
     {
       "id": 174,
@@ -3330,8 +3149,7 @@
       "profileUrl": "https://www.hltv.org/player/25619/s1zzi",
       "profileId": 25619,
       "verified": true,
-      "stats": null,
-      "teamIndex": 20
+      "stats": null
     },
     {
       "id": 138,
@@ -3345,8 +3163,7 @@
       "profileUrl": "https://www.hltv.org/player/21452/kvem",
       "profileId": 21452,
       "verified": true,
-      "stats": null,
-      "teamIndex": 22
+      "stats": null
     },
     {
       "id": 143,
@@ -3360,8 +3177,7 @@
       "profileUrl": "https://www.hltv.org/player/21665/jba",
       "profileId": 21665,
       "verified": true,
-      "stats": null,
-      "teamIndex": 23
+      "stats": null
     },
     {
       "id": 144,
@@ -3375,8 +3191,7 @@
       "profileUrl": "https://www.hltv.org/player/15370/slaxz",
       "profileId": 15370,
       "verified": true,
-      "stats": null,
-      "teamIndex": 23
+      "stats": null
     },
     {
       "id": 145,
@@ -3390,8 +3205,7 @@
       "profileUrl": "https://www.hltv.org/player/16599/swisher",
       "profileId": 16599,
       "verified": true,
-      "stats": null,
-      "teamIndex": 23
+      "stats": null
     },
     {
       "id": 212,
@@ -3405,8 +3219,7 @@
       "profileUrl": "https://www.hltv.org/player/20994/fl4mus",
       "profileId": 20994,
       "verified": true,
-      "stats": null,
-      "teamIndex": 25
+      "stats": null
     },
     {
       "id": 224,
@@ -3420,8 +3233,7 @@
       "profileUrl": "https://www.hltv.org/player/13497/lucky",
       "profileId": 13497,
       "verified": true,
-      "stats": null,
-      "teamIndex": 27
+      "stats": null
     },
     {
       "id": 287,
@@ -3435,8 +3247,7 @@
       "profileUrl": "https://www.hltv.org/player/20895/mercury",
       "profileId": 20895,
       "verified": true,
-      "stats": null,
-      "teamIndex": 29
+      "stats": null
     },
     {
       "id": 122,
@@ -3450,8 +3261,7 @@
       "profileUrl": "https://www.hltv.org/player/24806/frontales",
       "profileId": 24806,
       "verified": true,
-      "stats": null,
-      "teamIndex": 30
+      "stats": null
     },
     {
       "id": 175,
@@ -3465,8 +3275,7 @@
       "profileUrl": "https://www.hltv.org/player/14932/faven",
       "profileId": 14932,
       "verified": true,
-      "stats": null,
-      "teamIndex": 31
+      "stats": null
     },
     {
       "id": 126,
@@ -3480,8 +3289,7 @@
       "profileUrl": "https://www.hltv.org/player/21170/koala",
       "profileId": 21170,
       "verified": true,
-      "stats": null,
-      "teamIndex": 34
+      "stats": null
     },
     {
       "id": 127,
@@ -3495,8 +3303,7 @@
       "profileUrl": "https://www.hltv.org/player/21921/rdnzao",
       "profileId": 21921,
       "verified": true,
-      "stats": null,
-      "teamIndex": 34
+      "stats": null
     },
     {
       "id": 148,
@@ -3510,8 +3317,7 @@
       "profileUrl": "https://www.hltv.org/player/20558/gafolo",
       "profileId": 20558,
       "verified": true,
-      "stats": null,
-      "teamIndex": 34
+      "stats": null
     },
     {
       "id": 158,
@@ -3525,8 +3331,7 @@
       "profileUrl": "https://www.hltv.org/player/18790/cacanito",
       "profileId": 18790,
       "verified": true,
-      "stats": null,
-      "teamIndex": 37
+      "stats": null
     },
     {
       "id": 234,
@@ -3540,8 +3345,7 @@
       "profileUrl": "https://www.hltv.org/player/7443/twist",
       "profileId": 7443,
       "verified": true,
-      "stats": null,
-      "teamIndex": 38
+      "stats": null
     },
     {
       "id": 153,
@@ -3555,8 +3359,7 @@
       "profileUrl": "https://www.hltv.org/player/11199/beastik",
       "profileId": 11199,
       "verified": true,
-      "stats": null,
-      "teamIndex": 39
+      "stats": null
     },
     {
       "id": 235,
@@ -3570,8 +3373,7 @@
       "profileUrl": "https://www.hltv.org/player/20171/snow",
       "profileId": 20171,
       "verified": true,
-      "stats": null,
-      "teamIndex": 40
+      "stats": null
     },
     {
       "id": 161,
@@ -3585,8 +3387,7 @@
       "profileUrl": "https://www.hltv.org/player/20018/fr3nd",
       "profileId": 20018,
       "verified": true,
-      "stats": null,
-      "teamIndex": 42
+      "stats": null
     },
     {
       "id": 162,
@@ -3600,8 +3401,7 @@
       "profileUrl": "https://www.hltv.org/player/17378/reck",
       "profileId": 17378,
       "verified": true,
-      "stats": null,
-      "teamIndex": 42
+      "stats": null
     },
     {
       "id": 259,
@@ -3615,8 +3415,7 @@
       "profileUrl": "https://www.hltv.org/player/22922/emiliaqaq",
       "profileId": 22922,
       "verified": true,
-      "stats": null,
-      "teamIndex": 43
+      "stats": null
     },
     {
       "id": 130,
@@ -3630,8 +3429,7 @@
       "profileUrl": "https://www.hltv.org/player/22886/xeedo",
       "profileId": 22886,
       "verified": true,
-      "stats": null,
-      "teamIndex": 44
+      "stats": null
     },
     {
       "id": 183,
@@ -3645,8 +3443,7 @@
       "profileUrl": "https://www.hltv.org/player/22189/h4san4tor",
       "profileId": 22189,
       "verified": true,
-      "stats": null,
-      "teamIndex": 45
+      "stats": null
     },
     {
       "id": 131,
@@ -3660,8 +3457,7 @@
       "profileUrl": "https://www.hltv.org/player/22965/saadzin",
       "profileId": 22965,
       "verified": true,
-      "stats": null,
-      "teamIndex": 47
+      "stats": null
     },
     {
       "id": 156,
@@ -3675,8 +3471,7 @@
       "profileUrl": "https://www.hltv.org/player/12822/vini",
       "profileId": 12822,
       "verified": true,
-      "stats": null,
-      "teamIndex": 47
+      "stats": null
     },
     {
       "id": 165,
@@ -3690,8 +3485,7 @@
       "profileUrl": "https://www.hltv.org/player/21379/salazar",
       "profileId": 21379,
       "verified": true,
-      "stats": null,
-      "teamIndex": 49
+      "stats": null
     },
     {
       "id": 163,
@@ -3705,8 +3499,7 @@
       "profileUrl": "https://www.hltv.org/player/20709/r3salt",
       "profileId": 20709,
       "verified": true,
-      "stats": null,
-      "teamIndex": 50
+      "stats": null
     },
     {
       "id": 204,
@@ -3720,8 +3513,7 @@
       "profileUrl": "https://www.hltv.org/player/22759/jocab",
       "profileId": 22759,
       "verified": true,
-      "stats": null,
-      "teamIndex": 52
+      "stats": null
     },
     {
       "id": 205,
@@ -3735,8 +3527,7 @@
       "profileUrl": "https://www.hltv.org/player/21815/podi",
       "profileId": 21815,
       "verified": true,
-      "stats": null,
-      "teamIndex": 52
+      "stats": null
     },
     {
       "id": 203,
@@ -3750,8 +3541,7 @@
       "profileUrl": "https://www.hltv.org/player/19750/drop",
       "profileId": 19750,
       "verified": true,
-      "stats": null,
-      "teamIndex": 56
+      "stats": null
     },
     {
       "id": 358,
@@ -3765,8 +3555,7 @@
       "profileUrl": "https://www.hltv.org/player/24749/guty",
       "profileId": 24749,
       "verified": true,
-      "stats": null,
-      "teamIndex": 57
+      "stats": null
     },
     {
       "id": 237,
@@ -3780,8 +3569,7 @@
       "profileUrl": "https://www.hltv.org/player/19229/roux",
       "profileId": 19229,
       "verified": true,
-      "stats": null,
-      "teamIndex": 61
+      "stats": null
     },
     {
       "id": 240,
@@ -3795,8 +3583,7 @@
       "profileUrl": "https://www.hltv.org/player/19692/zevy",
       "profileId": 19692,
       "verified": true,
-      "stats": null,
-      "teamIndex": 65
+      "stats": null
     },
     {
       "id": 415,
@@ -3810,8 +3597,7 @@
       "profileUrl": "https://www.hltv.org/player/21716/wazz",
       "profileId": 21716,
       "verified": true,
-      "stats": null,
-      "teamIndex": 80
+      "stats": null
     },
     {
       "id": 417,
@@ -3825,8 +3611,7 @@
       "profileUrl": "https://www.hltv.org/player/24836/m4d4ra",
       "profileId": 24836,
       "verified": true,
-      "stats": null,
-      "teamIndex": 102
+      "stats": null
     },
     {
       "id": 402,
@@ -3840,8 +3625,7 @@
       "profileUrl": "https://www.hltv.org/player/23770/cronuss",
       "profileId": 23770,
       "verified": true,
-      "stats": null,
-      "teamIndex": 125
+      "stats": null
     },
     {
       "id": 418,
@@ -3855,8 +3639,7 @@
       "profileUrl": "https://www.hltv.org/player/24021/adai",
       "profileId": 24021,
       "verified": true,
-      "stats": null,
-      "teamIndex": 128
+      "stats": null
     },
     {
       "id": 419,
@@ -3870,8 +3653,7 @@
       "profileUrl": "https://www.hltv.org/player/25010/botpa1",
       "profileId": 25010,
       "verified": true,
-      "stats": null,
-      "teamIndex": 128
+      "stats": null
     },
     {
       "id": 420,
@@ -3885,8 +3667,7 @@
       "profileUrl": "https://www.hltv.org/player/22537/def1zer",
       "profileId": 22537,
       "verified": true,
-      "stats": null,
-      "teamIndex": 128
+      "stats": null
     },
     {
       "id": 422,
@@ -3900,8 +3681,7 @@
       "profileUrl": "https://www.hltv.org/player/23600/alkaren",
       "profileId": 23600,
       "verified": true,
-      "stats": null,
-      "teamIndex": 129
+      "stats": null
     },
     {
       "id": 136,
@@ -3915,8 +3695,7 @@
       "profileUrl": "https://www.hltv.org/player/22866/jboen",
       "profileId": 22866,
       "verified": true,
-      "stats": null,
-      "teamIndex": 17
+      "stats": null
     },
     {
       "id": 139,
@@ -3930,8 +3709,7 @@
       "profileUrl": "https://www.hltv.org/player/16811/mistem",
       "profileId": 16811,
       "verified": true,
-      "stats": null,
-      "teamIndex": 22
+      "stats": null
     },
     {
       "id": 213,
@@ -3945,8 +3723,7 @@
       "profileUrl": "https://www.hltv.org/player/17011/shalfey",
       "profileId": 17011,
       "verified": true,
-      "stats": null,
-      "teamIndex": 25
+      "stats": null
     },
     {
       "id": 214,
@@ -3960,8 +3737,7 @@
       "profileUrl": "https://www.hltv.org/player/20301/tauson",
       "profileId": 20301,
       "verified": true,
-      "stats": null,
-      "teamIndex": 25
+      "stats": null
     },
     {
       "id": 146,
@@ -3975,8 +3751,7 @@
       "profileUrl": "https://www.hltv.org/player/17803/fear",
       "profileId": 17803,
       "verified": true,
-      "stats": null,
-      "teamIndex": 26
+      "stats": null
     },
     {
       "id": 172,
@@ -3990,8 +3765,7 @@
       "profileUrl": "https://www.hltv.org/player/23046/jambo",
       "profileId": 23046,
       "verified": true,
-      "stats": null,
-      "teamIndex": 26
+      "stats": null
     },
     {
       "id": 223,
@@ -4005,8 +3779,7 @@
       "profileUrl": "https://www.hltv.org/player/21969/graviti",
       "profileId": 21969,
       "verified": true,
-      "stats": null,
-      "teamIndex": 27
+      "stats": null
     },
     {
       "id": 225,
@@ -4020,8 +3793,7 @@
       "profileUrl": "https://www.hltv.org/player/14176/misutaaa",
       "profileId": 14176,
       "verified": true,
-      "stats": null,
-      "teamIndex": 27
+      "stats": null
     },
     {
       "id": 219,
@@ -4035,8 +3807,7 @@
       "profileUrl": "https://www.hltv.org/player/19874/masval",
       "profileId": 19874,
       "verified": true,
-      "stats": null,
-      "teamIndex": 28
+      "stats": null
     },
     {
       "id": 502,
@@ -4050,8 +3821,7 @@
       "profileUrl": "https://www.hltv.org/player/20702/jee",
       "profileId": 20702,
       "verified": true,
-      "stats": null,
-      "teamIndex": 29
+      "stats": null
     },
     {
       "id": 193,
@@ -4065,8 +3835,7 @@
       "profileUrl": "https://www.hltv.org/player/22884/gr1ks",
       "profileId": 22884,
       "verified": true,
-      "stats": null,
-      "teamIndex": 31
+      "stats": null
     },
     {
       "id": 121,
@@ -4080,8 +3849,7 @@
       "profileUrl": "https://www.hltv.org/player/23397/poiii",
       "profileId": 23397,
       "verified": true,
-      "stats": null,
-      "teamIndex": 32
+      "stats": null
     },
     {
       "id": 218,
@@ -4095,8 +3863,7 @@
       "profileUrl": "https://www.hltv.org/player/19926/afro",
       "profileId": 19926,
       "verified": true,
-      "stats": null,
-      "teamIndex": 33
+      "stats": null
     },
     {
       "id": 190,
@@ -4110,8 +3877,7 @@
       "profileUrl": "https://www.hltv.org/player/16147/cptkurtka023",
       "profileId": 16147,
       "verified": true,
-      "stats": null,
-      "teamIndex": 36
+      "stats": null
     },
     {
       "id": 196,
@@ -4125,8 +3891,7 @@
       "profileUrl": "https://www.hltv.org/player/18120/sinnopsyy",
       "profileId": 18120,
       "verified": true,
-      "stats": null,
-      "teamIndex": 37
+      "stats": null
     },
     {
       "id": 255,
@@ -4140,8 +3905,7 @@
       "profileUrl": "https://www.hltv.org/player/22860/avid",
       "profileId": 22860,
       "verified": true,
-      "stats": null,
-      "teamIndex": 38
+      "stats": null
     },
     {
       "id": 256,
@@ -4155,8 +3919,7 @@
       "profileUrl": "https://www.hltv.org/player/21159/bobeksde",
       "profileId": 21159,
       "verified": true,
-      "stats": null,
-      "teamIndex": 38
+      "stats": null
     },
     {
       "id": 257,
@@ -4170,8 +3933,7 @@
       "profileUrl": "https://www.hltv.org/player/16487/eraa",
       "profileId": 16487,
       "verified": true,
-      "stats": null,
-      "teamIndex": 38
+      "stats": null
     },
     {
       "id": 176,
@@ -4185,8 +3947,7 @@
       "profileUrl": "https://www.hltv.org/player/12810/shock",
       "profileId": 12810,
       "verified": true,
-      "stats": null,
-      "teamIndex": 39
+      "stats": null
     },
     {
       "id": 179,
@@ -4200,8 +3961,7 @@
       "profileUrl": "https://www.hltv.org/player/18838/hext",
       "profileId": 18838,
       "verified": true,
-      "stats": null,
-      "teamIndex": 42
+      "stats": null
     },
     {
       "id": 155,
@@ -4215,8 +3975,7 @@
       "profileUrl": "https://www.hltv.org/player/23686/kashl1d",
       "profileId": 23686,
       "verified": true,
-      "stats": null,
-      "teamIndex": 44
+      "stats": null
     },
     {
       "id": 177,
@@ -4230,8 +3989,7 @@
       "profileUrl": "https://www.hltv.org/player/12004/clax",
       "profileId": 12004,
       "verified": true,
-      "stats": null,
-      "teamIndex": 44
+      "stats": null
     },
     {
       "id": 201,
@@ -4245,8 +4003,7 @@
       "profileUrl": "https://www.hltv.org/player/22325/sowalio",
       "profileId": 22325,
       "verified": true,
-      "stats": null,
-      "teamIndex": 45
+      "stats": null
     },
     {
       "id": 178,
@@ -4260,8 +4017,7 @@
       "profileUrl": "https://www.hltv.org/player/10566/chelo",
       "profileId": 10566,
       "verified": true,
-      "stats": null,
-      "teamIndex": 47
+      "stats": null
     },
     {
       "id": 324,
@@ -4275,8 +4031,7 @@
       "profileUrl": "https://www.hltv.org/player/24303/hoolig4n",
       "profileId": 24303,
       "verified": true,
-      "stats": null,
-      "teamIndex": 48
+      "stats": null
     },
     {
       "id": 325,
@@ -4290,8 +4045,7 @@
       "profileUrl": "https://www.hltv.org/player/15060/neuz",
       "profileId": 15060,
       "verified": true,
-      "stats": null,
-      "teamIndex": 48
+      "stats": null
     },
     {
       "id": 198,
@@ -4305,8 +4059,7 @@
       "profileUrl": "https://www.hltv.org/player/22930/tex1y",
       "profileId": 22930,
       "verified": true,
-      "stats": null,
-      "teamIndex": 50
+      "stats": null
     },
     {
       "id": 307,
@@ -4320,8 +4073,7 @@
       "profileUrl": "https://www.hltv.org/player/20872/nexius",
       "profileId": 20872,
       "verified": true,
-      "stats": null,
-      "teamIndex": 51
+      "stats": null
     },
     {
       "id": 308,
@@ -4335,8 +4087,7 @@
       "profileUrl": "https://www.hltv.org/player/17117/shield",
       "profileId": 17117,
       "verified": true,
-      "stats": null,
-      "teamIndex": 51
+      "stats": null
     },
     {
       "id": 231,
@@ -4350,8 +4101,7 @@
       "profileUrl": "https://www.hltv.org/player/18070/demho",
       "profileId": 18070,
       "verified": true,
-      "stats": null,
-      "teamIndex": 54
+      "stats": null
     },
     {
       "id": 386,
@@ -4365,8 +4115,7 @@
       "profileUrl": "https://www.hltv.org/player/21155/naz",
       "profileId": 21155,
       "verified": true,
-      "stats": null,
-      "teamIndex": 57
+      "stats": null
     },
     {
       "id": 387,
@@ -4380,8 +4129,7 @@
       "profileUrl": "https://www.hltv.org/player/18554/tom1jed",
       "profileId": 18554,
       "verified": true,
-      "stats": null,
-      "teamIndex": 57
+      "stats": null
     },
     {
       "id": 432,
@@ -4395,8 +4143,7 @@
       "profileUrl": "https://www.hltv.org/player/25777/rentu",
       "profileId": 25777,
       "verified": true,
-      "stats": null,
-      "teamIndex": 57
+      "stats": null
     },
     {
       "id": 236,
@@ -4410,8 +4157,7 @@
       "profileUrl": "https://www.hltv.org/player/21428/fury5k",
       "profileId": 21428,
       "verified": true,
-      "stats": null,
-      "teamIndex": 61
+      "stats": null
     },
     {
       "id": 265,
@@ -4425,8 +4171,7 @@
       "profileUrl": "https://www.hltv.org/player/23140/krazy",
       "profileId": 23140,
       "verified": true,
-      "stats": null,
-      "teamIndex": 63
+      "stats": null
     },
     {
       "id": 292,
@@ -4440,8 +4185,7 @@
       "profileUrl": "https://www.hltv.org/player/16102/nopeej",
       "profileId": 16102,
       "verified": true,
-      "stats": null,
-      "teamIndex": 63
+      "stats": null
     },
     {
       "id": 238,
@@ -4455,8 +4199,7 @@
       "profileUrl": "https://www.hltv.org/player/14218/plopski",
       "profileId": 14218,
       "verified": true,
-      "stats": null,
-      "teamIndex": 64
+      "stats": null
     },
     {
       "id": 261,
@@ -4470,8 +4213,7 @@
       "profileUrl": "https://www.hltv.org/player/24083/mail09",
       "profileId": 24083,
       "verified": true,
-      "stats": null,
-      "teamIndex": 64
+      "stats": null
     },
     {
       "id": 393,
@@ -4485,8 +4227,7 @@
       "profileUrl": "https://www.hltv.org/player/23551/tomate",
       "profileId": 23551,
       "verified": true,
-      "stats": null,
-      "teamIndex": 66
+      "stats": null
     },
     {
       "id": 263,
@@ -4500,8 +4241,7 @@
       "profileUrl": "https://www.hltv.org/player/19114/kylar",
       "profileId": 19114,
       "verified": true,
-      "stats": null,
-      "teamIndex": 67
+      "stats": null
     },
     {
       "id": 264,
@@ -4515,8 +4255,7 @@
       "profileUrl": "https://www.hltv.org/player/13602/nicoodoz",
       "profileId": 13602,
       "verified": true,
-      "stats": null,
-      "teamIndex": 67
+      "stats": null
     },
     {
       "id": 291,
@@ -4530,8 +4269,7 @@
       "profileUrl": "https://www.hltv.org/player/25104/kunai",
       "profileId": 25104,
       "verified": true,
-      "stats": null,
-      "teamIndex": 67
+      "stats": null
     },
     {
       "id": 469,
@@ -4545,8 +4283,7 @@
       "profileUrl": "https://www.hltv.org/player/17918/nosrac",
       "profileId": 17918,
       "verified": true,
-      "stats": null,
-      "teamIndex": 69
+      "stats": null
     },
     {
       "id": 331,
@@ -4560,8 +4297,7 @@
       "profileUrl": "https://www.hltv.org/player/23550/divine",
       "profileId": 23550,
       "verified": true,
-      "stats": null,
-      "teamIndex": 70
+      "stats": null
     },
     {
       "id": 332,
@@ -4575,8 +4311,7 @@
       "profileUrl": "https://www.hltv.org/player/21284/happ",
       "profileId": 21284,
       "verified": true,
-      "stats": null,
-      "teamIndex": 70
+      "stats": null
     },
     {
       "id": 294,
@@ -4590,8 +4325,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 71
+      "stats": null
     },
     {
       "id": 295,
@@ -4605,8 +4339,7 @@
       "profileUrl": "https://www.hltv.org/player/24734/tein",
       "profileId": 24734,
       "verified": true,
-      "stats": null,
-      "teamIndex": 71
+      "stats": null
     },
     {
       "id": 309,
@@ -4620,8 +4353,7 @@
       "profileUrl": "https://www.hltv.org/player/22680/polbandana",
       "profileId": 22680,
       "verified": true,
-      "stats": null,
-      "teamIndex": 71
+      "stats": null
     },
     {
       "id": 503,
@@ -4635,8 +4367,7 @@
       "profileUrl": "https://www.hltv.org/player/22964/stormzyn",
       "profileId": 22964,
       "verified": true,
-      "stats": null,
-      "teamIndex": 72
+      "stats": null
     },
     {
       "id": 266,
@@ -4650,8 +4381,7 @@
       "profileUrl": "https://www.hltv.org/player/20345/kwertzz",
       "profileId": 20345,
       "verified": true,
-      "stats": null,
-      "teamIndex": 73
+      "stats": null
     },
     {
       "id": 267,
@@ -4665,8 +4395,7 @@
       "profileUrl": "https://www.hltv.org/player/21165/m1key",
       "profileId": 21165,
       "verified": true,
-      "stats": null,
-      "teamIndex": 73
+      "stats": null
     },
     {
       "id": 391,
@@ -4680,8 +4409,7 @@
       "profileUrl": "https://www.hltv.org/player/22807/aragornn",
       "profileId": 22807,
       "verified": true,
-      "stats": null,
-      "teamIndex": 74
+      "stats": null
     },
     {
       "id": 421,
@@ -4695,8 +4423,7 @@
       "profileUrl": "https://www.hltv.org/player/16835/ponter",
       "profileId": 16835,
       "verified": true,
-      "stats": null,
-      "teamIndex": 75
+      "stats": null
     },
     {
       "id": 440,
@@ -4710,8 +4437,7 @@
       "profileUrl": "https://www.hltv.org/player/20690/zock",
       "profileId": 20690,
       "verified": true,
-      "stats": null,
-      "teamIndex": 75
+      "stats": null
     },
     {
       "id": 504,
@@ -4725,8 +4451,7 @@
       "profileUrl": "https://www.hltv.org/player/24292/f0r3ver",
       "profileId": 24292,
       "verified": true,
-      "stats": null,
-      "teamIndex": 76
+      "stats": null
     },
     {
       "id": 311,
@@ -4740,8 +4465,7 @@
       "profileUrl": "https://www.hltv.org/player/8212/scrunk",
       "profileId": 8212,
       "verified": true,
-      "stats": null,
-      "teamIndex": 77
+      "stats": null
     },
     {
       "id": 312,
@@ -4755,8 +4479,7 @@
       "profileUrl": "https://www.hltv.org/player/20358/volt",
       "profileId": 20358,
       "verified": true,
-      "stats": null,
-      "teamIndex": 77
+      "stats": null
     },
     {
       "id": 359,
@@ -4770,8 +4493,7 @@
       "profileUrl": "https://www.hltv.org/player/25712/tw1sterzaza",
       "profileId": 25712,
       "verified": true,
-      "stats": null,
-      "teamIndex": 83
+      "stats": null
     },
     {
       "id": 388,
@@ -4785,8 +4507,7 @@
       "profileUrl": "https://www.hltv.org/player/25710/pleynnn",
       "profileId": 25710,
       "verified": true,
-      "stats": null,
-      "teamIndex": 83
+      "stats": null
     },
     {
       "id": 389,
@@ -4800,8 +4521,7 @@
       "profileUrl": "https://www.hltv.org/player/24924/squezxc",
       "profileId": 24924,
       "verified": true,
-      "stats": null,
-      "teamIndex": 83
+      "stats": null
     },
     {
       "id": 505,
@@ -4815,8 +4535,7 @@
       "profileUrl": "https://www.hltv.org/player/21398/controlez",
       "profileId": 21398,
       "verified": true,
-      "stats": null,
-      "teamIndex": 85
+      "stats": null
     },
     {
       "id": 329,
@@ -4830,8 +4549,7 @@
       "profileUrl": "https://www.hltv.org/player/24319/gehji",
       "profileId": 24319,
       "verified": true,
-      "stats": null,
-      "teamIndex": 87
+      "stats": null
     },
     {
       "id": 506,
@@ -4845,8 +4563,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 89
+      "stats": null
     },
     {
       "id": 507,
@@ -4860,8 +4577,7 @@
       "profileUrl": "https://www.hltv.org/player/21648/svemyy",
       "profileId": 21648,
       "verified": true,
-      "stats": null,
-      "teamIndex": 90
+      "stats": null
     },
     {
       "id": 508,
@@ -4875,8 +4591,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 90
+      "stats": null
     },
     {
       "id": 509,
@@ -4890,8 +4605,7 @@
       "profileUrl": "https://www.hltv.org/player/22069/grizz",
       "profileId": 22069,
       "verified": true,
-      "stats": null,
-      "teamIndex": 91
+      "stats": null
     },
     {
       "id": 510,
@@ -4905,8 +4619,7 @@
       "profileUrl": "https://www.hltv.org/player/24245/3ippoch",
       "profileId": 24245,
       "verified": true,
-      "stats": null,
-      "teamIndex": 92
+      "stats": null
     },
     {
       "id": 423,
@@ -4920,8 +4633,7 @@
       "profileUrl": "https://www.hltv.org/player/24316/whisper",
       "profileId": 24316,
       "verified": true,
-      "stats": null,
-      "teamIndex": 95
+      "stats": null
     },
     {
       "id": 443,
@@ -4935,8 +4647,7 @@
       "profileUrl": "https://www.hltv.org/player/19882/norwi",
       "profileId": 19882,
       "verified": true,
-      "stats": null,
-      "teamIndex": 95
+      "stats": null
     },
     {
       "id": 310,
@@ -4950,8 +4661,7 @@
       "profileUrl": "https://www.hltv.org/player/21272/tak",
       "profileId": 21272,
       "verified": true,
-      "stats": null,
-      "teamIndex": 97
+      "stats": null
     },
     {
       "id": 511,
@@ -4965,8 +4675,7 @@
       "profileUrl": "https://www.hltv.org/player/23765/hfah",
       "profileId": 23765,
       "verified": true,
-      "stats": null,
-      "teamIndex": 97
+      "stats": null
     },
     {
       "id": 512,
@@ -4980,8 +4689,7 @@
       "profileUrl": "https://www.hltv.org/player/18119/cerber",
       "profileId": 18119,
       "verified": true,
-      "stats": null,
-      "teamIndex": 98
+      "stats": null
     },
     {
       "id": 513,
@@ -4995,8 +4703,7 @@
       "profileUrl": "https://www.hltv.org/player/21381/zanto",
       "profileId": 21381,
       "verified": true,
-      "stats": null,
-      "teamIndex": 100
+      "stats": null
     },
     {
       "id": 514,
@@ -5010,8 +4717,7 @@
       "profileUrl": "https://www.hltv.org/player/19617/amster",
       "profileId": 19617,
       "verified": true,
-      "stats": null,
-      "teamIndex": 106
+      "stats": null
     },
     {
       "id": 396,
@@ -5025,8 +4731,7 @@
       "profileUrl": "https://www.hltv.org/player/21211/adex",
       "profileId": 21211,
       "verified": true,
-      "stats": null,
-      "teamIndex": 107
+      "stats": null
     },
     {
       "id": 515,
@@ -5040,8 +4745,7 @@
       "profileUrl": "https://www.hltv.org/player/21963/alxc",
       "profileId": 21963,
       "verified": true,
-      "stats": null,
-      "teamIndex": 108
+      "stats": null
     },
     {
       "id": 449,
@@ -5055,8 +4759,7 @@
       "profileUrl": "https://www.hltv.org/player/20300/kraghen",
       "profileId": 20300,
       "verified": true,
-      "stats": null,
-      "teamIndex": 109
+      "stats": null
     },
     {
       "id": 360,
@@ -5070,8 +4773,7 @@
       "profileUrl": "https://www.hltv.org/player/23628/kusme",
       "profileId": 23628,
       "verified": true,
-      "stats": null,
-      "teamIndex": 112
+      "stats": null
     },
     {
       "id": 516,
@@ -5085,8 +4787,7 @@
       "profileUrl": "https://www.hltv.org/player/12781/k1to",
       "profileId": 12781,
       "verified": true,
-      "stats": null,
-      "teamIndex": 113
+      "stats": null
     },
     {
       "id": 517,
@@ -5100,8 +4801,7 @@
       "profileUrl": "https://www.hltv.org/player/23767/adrien",
       "profileId": 23767,
       "verified": true,
-      "stats": null,
-      "teamIndex": 113
+      "stats": null
     },
     {
       "id": 518,
@@ -5115,8 +4815,7 @@
       "profileUrl": "https://www.hltv.org/player/21431/sstinix",
       "profileId": 21431,
       "verified": true,
-      "stats": null,
-      "teamIndex": 116
+      "stats": null
     },
     {
       "id": 519,
@@ -5130,8 +4829,7 @@
       "profileUrl": "https://www.hltv.org/player/25322/temny-prince",
       "profileId": 25322,
       "verified": true,
-      "stats": null,
-      "teamIndex": 116
+      "stats": null
     },
     {
       "id": 520,
@@ -5145,8 +4843,7 @@
       "profileUrl": "https://www.hltv.org/player/22806/quality",
       "profileId": 22806,
       "verified": true,
-      "stats": null,
-      "teamIndex": 117
+      "stats": null
     },
     {
       "id": 521,
@@ -5160,8 +4857,7 @@
       "profileUrl": "https://www.hltv.org/player/25500/xeternalxx",
       "profileId": 25500,
       "verified": true,
-      "stats": null,
-      "teamIndex": 117
+      "stats": null
     },
     {
       "id": 522,
@@ -5175,8 +4871,7 @@
       "profileUrl": "https://www.hltv.org/player/23482/tuxa",
       "profileId": 23482,
       "verified": true,
-      "stats": null,
-      "teamIndex": 118
+      "stats": null
     },
     {
       "id": 523,
@@ -5190,8 +4885,7 @@
       "profileUrl": "https://www.hltv.org/player/21117/d1maje",
       "profileId": 21117,
       "verified": true,
-      "stats": null,
-      "teamIndex": 120
+      "stats": null
     },
     {
       "id": 524,
@@ -5205,8 +4899,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 122
+      "stats": null
     },
     {
       "id": 525,
@@ -5220,8 +4913,7 @@
       "profileUrl": "https://www.hltv.org/player/25608/ayano",
       "profileId": 25608,
       "verified": true,
-      "stats": null,
-      "teamIndex": 124
+      "stats": null
     },
     {
       "id": 438,
@@ -5235,8 +4927,7 @@
       "profileUrl": "https://www.hltv.org/player/25011/dan4o",
       "profileId": 25011,
       "verified": true,
-      "stats": null,
-      "teamIndex": 128
+      "stats": null
     },
     {
       "id": 441,
@@ -5250,8 +4941,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 129
+      "stats": null
     },
     {
       "id": 442,
@@ -5265,8 +4955,7 @@
       "profileUrl": "https://www.hltv.org/player/22929/nota",
       "profileId": 22929,
       "verified": true,
-      "stats": null,
-      "teamIndex": 129
+      "stats": null
     },
     {
       "id": 446,
@@ -5280,8 +4969,7 @@
       "profileUrl": "https://www.hltv.org/player/22927/executor",
       "profileId": 22927,
       "verified": true,
-      "stats": null,
-      "teamIndex": 130
+      "stats": null
     },
     {
       "id": 447,
@@ -5295,8 +4983,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 130
+      "stats": null
     },
     {
       "id": 188,
@@ -5310,8 +4997,7 @@
       "profileUrl": "https://www.hltv.org/player/20968/soulfly",
       "profileId": 20968,
       "verified": true,
-      "stats": null,
-      "teamIndex": 22
+      "stats": null
     },
     {
       "id": 169,
@@ -5325,8 +5011,7 @@
       "profileUrl": "https://www.hltv.org/player/21163/susp",
       "profileId": 21163,
       "verified": true,
-      "stats": null,
-      "teamIndex": 24
+      "stats": null
     },
     {
       "id": 248,
@@ -5340,8 +5025,7 @@
       "profileUrl": "https://www.hltv.org/player/20482/kursy",
       "profileId": 20482,
       "verified": true,
-      "stats": null,
-      "teamIndex": 27
+      "stats": null
     },
     {
       "id": 199,
@@ -5355,8 +5039,7 @@
       "profileUrl": "https://www.hltv.org/player/24173/tenzy",
       "profileId": 24173,
       "verified": true,
-      "stats": null,
-      "teamIndex": 28
+      "stats": null
     },
     {
       "id": 317,
@@ -5370,8 +5053,7 @@
       "profileUrl": "https://www.hltv.org/player/21621/moseyuh",
       "profileId": 21621,
       "verified": true,
-      "stats": null,
-      "teamIndex": 29
+      "stats": null
     },
     {
       "id": 171,
@@ -5385,8 +5067,7 @@
       "profileUrl": "https://www.hltv.org/player/18752/kade0",
       "profileId": 18752,
       "verified": true,
-      "stats": null,
-      "teamIndex": 30
+      "stats": null
     },
     {
       "id": 140,
@@ -5400,8 +5081,7 @@
       "profileUrl": "https://www.hltv.org/player/21816/gizmy",
       "profileId": 21816,
       "verified": true,
-      "stats": null,
-      "teamIndex": 32
+      "stats": null
     },
     {
       "id": 170,
@@ -5415,8 +5095,7 @@
       "profileUrl": "https://www.hltv.org/player/22695/sirah",
       "profileId": 22695,
       "verified": true,
-      "stats": null,
-      "teamIndex": 32
+      "stats": null
     },
     {
       "id": 245,
@@ -5430,8 +5109,7 @@
       "profileUrl": "https://www.hltv.org/player/17145/rainwaker",
       "profileId": 17145,
       "verified": true,
-      "stats": null,
-      "teamIndex": 33
+      "stats": null
     },
     {
       "id": 246,
@@ -5445,8 +5123,7 @@
       "profileUrl": "https://www.hltv.org/player/22047/yxngstxr",
       "profileId": 22047,
       "verified": true,
-      "stats": null,
-      "teamIndex": 33
+      "stats": null
     },
     {
       "id": 191,
@@ -5460,8 +5137,7 @@
       "profileUrl": "https://www.hltv.org/player/19592/headtr1ck",
       "profileId": 19592,
       "verified": true,
-      "stats": null,
-      "teamIndex": 36
+      "stats": null
     },
     {
       "id": 194,
@@ -5475,8 +5151,7 @@
       "profileUrl": "https://www.hltv.org/player/21113/modo",
       "profileId": 21113,
       "verified": true,
-      "stats": null,
-      "teamIndex": 39
+      "stats": null
     },
     {
       "id": 276,
@@ -5490,8 +5165,7 @@
       "profileUrl": "https://www.hltv.org/player/25087/rkzinho",
       "profileId": 25087,
       "verified": true,
-      "stats": null,
-      "teamIndex": 40
+      "stats": null
     },
     {
       "id": 226,
@@ -5505,8 +5179,7 @@
       "profileUrl": "https://www.hltv.org/player/25253/joey",
       "profileId": 25253,
       "verified": true,
-      "stats": null,
-      "teamIndex": 41
+      "stats": null
     },
     {
       "id": 249,
@@ -5520,8 +5193,7 @@
       "profileUrl": "https://www.hltv.org/player/20309/bnox",
       "profileId": 20309,
       "verified": true,
-      "stats": null,
-      "teamIndex": 41
+      "stats": null
     },
     {
       "id": 251,
@@ -5535,8 +5207,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 41
+      "stats": null
     },
     {
       "id": 197,
@@ -5550,8 +5221,7 @@
       "profileUrl": "https://www.hltv.org/player/8311/nemanha",
       "profileId": 8311,
       "verified": true,
-      "stats": null,
-      "teamIndex": 42
+      "stats": null
     },
     {
       "id": 281,
@@ -5565,8 +5235,7 @@
       "profileUrl": "https://www.hltv.org/player/20254/starry",
       "profileId": 20254,
       "verified": true,
-      "stats": null,
-      "teamIndex": 43
+      "stats": null
     },
     {
       "id": 282,
@@ -5580,8 +5249,7 @@
       "profileUrl": "https://www.hltv.org/player/18744/z4kr",
       "profileId": 18744,
       "verified": true,
-      "stats": null,
-      "teamIndex": 43
+      "stats": null
     },
     {
       "id": 302,
@@ -5595,8 +5263,7 @@
       "profileUrl": "https://www.hltv.org/player/23100/c4llm3su3",
       "profileId": 23100,
       "verified": true,
-      "stats": null,
-      "teamIndex": 43
+      "stats": null
     },
     {
       "id": 228,
@@ -5610,8 +5277,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 45
+      "stats": null
     },
     {
       "id": 252,
@@ -5625,8 +5291,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 45
+      "stats": null
     },
     {
       "id": 195,
@@ -5640,8 +5305,7 @@
       "profileUrl": "https://www.hltv.org/player/22564/noway",
       "profileId": 22564,
       "verified": true,
-      "stats": null,
-      "teamIndex": 47
+      "stats": null
     },
     {
       "id": 344,
@@ -5655,8 +5319,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 48
+      "stats": null
     },
     {
       "id": 217,
@@ -5670,8 +5333,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 50
+      "stats": null
     },
     {
       "id": 233,
@@ -5685,8 +5347,7 @@
       "profileUrl": "https://www.hltv.org/player/20625/banjo",
       "profileId": 20625,
       "verified": true,
-      "stats": null,
-      "teamIndex": 52
+      "stats": null
     },
     {
       "id": 258,
@@ -5700,8 +5361,7 @@
       "profileUrl": "https://www.hltv.org/player/8371/alex",
       "profileId": 8371,
       "verified": true,
-      "stats": null,
-      "teamIndex": 53
+      "stats": null
     },
     {
       "id": 232,
@@ -5715,8 +5375,7 @@
       "profileUrl": "https://www.hltv.org/player/18979/prism",
       "profileId": 18979,
       "verified": true,
-      "stats": null,
-      "teamIndex": 54
+      "stats": null
     },
     {
       "id": 254,
@@ -5730,8 +5389,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 54
+      "stats": null
     },
     {
       "id": 380,
@@ -5745,8 +5403,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 55
+      "stats": null
     },
     {
       "id": 230,
@@ -5760,8 +5417,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 56
+      "stats": null
     },
     {
       "id": 306,
@@ -5775,8 +5431,7 @@
       "profileUrl": "https://www.hltv.org/player/20879/maxster",
       "profileId": 20879,
       "verified": true,
-      "stats": null,
-      "teamIndex": 58
+      "stats": null
     },
     {
       "id": 229,
@@ -5790,8 +5445,7 @@
       "profileUrl": "https://www.hltv.org/player/18214/nettik",
       "profileId": 18214,
       "verified": true,
-      "stats": null,
-      "teamIndex": 59
+      "stats": null
     },
     {
       "id": 284,
@@ -5805,8 +5459,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 60
+      "stats": null
     },
     {
       "id": 285,
@@ -5820,8 +5473,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 60
+      "stats": null
     },
     {
       "id": 279,
@@ -5835,8 +5487,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 61
+      "stats": null
     },
     {
       "id": 280,
@@ -5850,8 +5501,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 61
+      "stats": null
     },
     {
       "id": 408,
@@ -5865,8 +5515,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 62
+      "stats": null
     },
     {
       "id": 409,
@@ -5880,8 +5529,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 62
+      "stats": null
     },
     {
       "id": 305,
@@ -5895,8 +5543,7 @@
       "profileUrl": "https://www.hltv.org/player/20462/story",
       "profileId": 20462,
       "verified": true,
-      "stats": null,
-      "teamIndex": 63
+      "stats": null
     },
     {
       "id": 260,
@@ -5910,8 +5557,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 64
+      "stats": null
     },
     {
       "id": 290,
@@ -5925,8 +5571,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 65
+      "stats": null
     },
     {
       "id": 392,
@@ -5940,8 +5585,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 66
+      "stats": null
     },
     {
       "id": 328,
@@ -5955,8 +5599,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 68
+      "stats": null
     },
     {
       "id": 354,
@@ -5970,8 +5613,7 @@
       "profileUrl": "https://www.hltv.org/player/16314/pancc",
       "profileId": 16314,
       "verified": true,
-      "stats": null,
-      "teamIndex": 70
+      "stats": null
     },
     {
       "id": 526,
@@ -5985,8 +5627,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 72
+      "stats": null
     },
     {
       "id": 527,
@@ -6000,8 +5641,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 72
+      "stats": null
     },
     {
       "id": 413,
@@ -6015,8 +5655,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 74
+      "stats": null
     },
     {
       "id": 414,
@@ -6030,8 +5669,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 74
+      "stats": null
     },
     {
       "id": 439,
@@ -6045,8 +5683,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 75
+      "stats": null
     },
     {
       "id": 149,
@@ -6060,8 +5697,7 @@
       "profileUrl": "https://www.hltv.org/player/23637/b1st",
       "profileId": 23637,
       "verified": true,
-      "stats": null,
-      "teamIndex": 76
+      "stats": null
     },
     {
       "id": 150,
@@ -6075,8 +5711,7 @@
       "profileUrl": "https://www.hltv.org/player/8789/mir",
       "profileId": 8789,
       "verified": true,
-      "stats": null,
-      "teamIndex": 76
+      "stats": null
     },
     {
       "id": 326,
@@ -6090,8 +5725,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 78
+      "stats": null
     },
     {
       "id": 327,
@@ -6105,8 +5739,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 78
+      "stats": null
     },
     {
       "id": 528,
@@ -6120,8 +5753,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 79
+      "stats": null
     },
     {
       "id": 529,
@@ -6135,8 +5767,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 79
+      "stats": null
     },
     {
       "id": 530,
@@ -6150,8 +5781,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 80
+      "stats": null
     },
     {
       "id": 382,
@@ -6165,8 +5795,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 81
+      "stats": null
     },
     {
       "id": 531,
@@ -6180,8 +5809,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 85
+      "stats": null
     },
     {
       "id": 532,
@@ -6195,8 +5823,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 85
+      "stats": null
     },
     {
       "id": 330,
@@ -6210,8 +5837,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 87
+      "stats": null
     },
     {
       "id": 353,
@@ -6225,8 +5851,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 87
+      "stats": null
     },
     {
       "id": 444,
@@ -6240,8 +5865,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 88
+      "stats": null
     },
     {
       "id": 445,
@@ -6255,8 +5879,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 88
+      "stats": null
     },
     {
       "id": 533,
@@ -6270,8 +5893,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 91
+      "stats": null
     },
     {
       "id": 534,
@@ -6285,8 +5907,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 92
+      "stats": null
     },
     {
       "id": 385,
@@ -6300,8 +5921,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 93
+      "stats": null
     },
     {
       "id": 356,
@@ -6315,8 +5935,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 94
+      "stats": null
     },
     {
       "id": 357,
@@ -6330,8 +5949,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 94
+      "stats": null
     },
     {
       "id": 535,
@@ -6345,8 +5963,7 @@
       "profileUrl": "https://www.hltv.org/player/8374/bodyy",
       "profileId": 8374,
       "verified": true,
-      "stats": null,
-      "teamIndex": 96
+      "stats": null
     },
     {
       "id": 536,
@@ -6360,8 +5977,7 @@
       "profileUrl": "https://www.hltv.org/player/19064/spooke",
       "profileId": 19064,
       "verified": true,
-      "stats": null,
-      "teamIndex": 96
+      "stats": null
     },
     {
       "id": 537,
@@ -6375,8 +5991,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 98
+      "stats": null
     },
     {
       "id": 538,
@@ -6390,8 +6005,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 98
+      "stats": null
     },
     {
       "id": 539,
@@ -6405,8 +6019,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 98
+      "stats": null
     },
     {
       "id": 540,
@@ -6420,8 +6033,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 99
+      "stats": null
     },
     {
       "id": 541,
@@ -6435,8 +6047,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 100
+      "stats": null
     },
     {
       "id": 542,
@@ -6450,8 +6061,7 @@
       "profileUrl": "https://www.hltv.org/player/20897/matios",
       "profileId": 20897,
       "verified": true,
-      "stats": null,
-      "teamIndex": 101
+      "stats": null
     },
     {
       "id": 394,
@@ -6465,8 +6075,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 102
+      "stats": null
     },
     {
       "id": 457,
@@ -6480,8 +6089,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 102
+      "stats": null
     },
     {
       "id": 543,
@@ -6495,8 +6103,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 103
+      "stats": null
     },
     {
       "id": 544,
@@ -6510,8 +6117,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 103
+      "stats": null
     },
     {
       "id": 448,
@@ -6525,8 +6131,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 104
+      "stats": null
     },
     {
       "id": 545,
@@ -6540,8 +6145,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 106
+      "stats": null
     },
     {
       "id": 467,
@@ -6555,8 +6159,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 109
+      "stats": null
     },
     {
       "id": 546,
@@ -6570,8 +6173,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 113
+      "stats": null
     },
     {
       "id": 547,
@@ -6585,8 +6187,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 114
+      "stats": null
     },
     {
       "id": 548,
@@ -6600,8 +6201,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 115
+      "stats": null
     },
     {
       "id": 549,
@@ -6615,8 +6215,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 117
+      "stats": null
     },
     {
       "id": 550,
@@ -6630,8 +6229,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 118
+      "stats": null
     },
     {
       "id": 551,
@@ -6645,8 +6243,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 120
+      "stats": null
     },
     {
       "id": 458,
@@ -6660,8 +6257,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 127
+      "stats": null
     },
     {
       "id": 459,
@@ -6675,8 +6271,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 127
+      "stats": null
     },
     {
       "id": 460,
@@ -6690,8 +6285,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 127
+      "stats": null
     },
     {
       "id": 466,
@@ -6705,8 +6299,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 130
+      "stats": null
     },
     {
       "id": 207,
@@ -6720,8 +6313,7 @@
       "profileUrl": "https://www.hltv.org/player/12092/max",
       "profileId": 12092,
       "verified": true,
-      "stats": null,
-      "teamIndex": 18
+      "stats": null
     },
     {
       "id": 208,
@@ -6735,8 +6327,7 @@
       "profileUrl": "https://www.hltv.org/player/20104/s1n",
       "profileId": 20104,
       "verified": true,
-      "stats": null,
-      "teamIndex": 23
+      "stats": null
     },
     {
       "id": 189,
@@ -6750,8 +6341,7 @@
       "profileUrl": "https://www.hltv.org/player/25228/mazay",
       "profileId": 25228,
       "verified": true,
-      "stats": null,
-      "teamIndex": 26
+      "stats": null
     },
     {
       "id": 318,
@@ -6765,8 +6355,7 @@
       "profileUrl": "https://www.hltv.org/player/24857/zero",
       "profileId": 24857,
       "verified": true,
-      "stats": null,
-      "teamIndex": 29
+      "stats": null
     },
     {
       "id": 243,
@@ -6780,8 +6369,7 @@
       "profileUrl": "https://www.hltv.org/player/22419/0samas",
       "profileId": 22419,
       "verified": true,
-      "stats": null,
-      "teamIndex": 37
+      "stats": null
     },
     {
       "id": 301,
@@ -6795,8 +6383,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 40
+      "stats": null
     },
     {
       "id": 250,
@@ -6810,8 +6397,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 41
+      "stats": null
     },
     {
       "id": 215,
@@ -6825,8 +6411,7 @@
       "profileUrl": "https://www.hltv.org/player/17353/cxzi",
       "profileId": 17353,
       "verified": true,
-      "stats": null,
-      "teamIndex": 42
+      "stats": null
     },
     {
       "id": 303,
@@ -6840,8 +6425,7 @@
       "profileUrl": "https://www.hltv.org/player/16551/westmelon",
       "profileId": 16551,
       "verified": true,
-      "stats": null,
-      "teamIndex": 43
+      "stats": null
     },
     {
       "id": 209,
@@ -6855,8 +6439,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 44
+      "stats": null
     },
     {
       "id": 210,
@@ -6870,8 +6453,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 44
+      "stats": null
     },
     {
       "id": 211,
@@ -6885,8 +6467,7 @@
       "profileUrl": "https://www.hltv.org/player/20183/decenty",
       "profileId": 20183,
       "verified": true,
-      "stats": null,
-      "teamIndex": 47
+      "stats": null
     },
     {
       "id": 368,
@@ -6900,8 +6481,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 48
+      "stats": null
     },
     {
       "id": 369,
@@ -6915,8 +6495,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 48
+      "stats": null
     },
     {
       "id": 221,
@@ -6930,8 +6509,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 49
+      "stats": null
     },
     {
       "id": 222,
@@ -6945,8 +6523,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 49
+      "stats": null
     },
     {
       "id": 247,
@@ -6960,8 +6537,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 49
+      "stats": null
     },
     {
       "id": 216,
@@ -6975,8 +6551,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 50
+      "stats": null
     },
     {
       "id": 339,
@@ -6990,8 +6565,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 51
+      "stats": null
     },
     {
       "id": 340,
@@ -7005,8 +6579,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 51
+      "stats": null
     },
     {
       "id": 341,
@@ -7020,8 +6593,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 51
+      "stats": null
     },
     {
       "id": 275,
@@ -7035,8 +6607,7 @@
       "profileUrl": "https://www.hltv.org/player/16486/ztr",
       "profileId": 16486,
       "verified": true,
-      "stats": null,
-      "teamIndex": 52
+      "stats": null
     },
     {
       "id": 206,
@@ -7050,8 +6621,7 @@
       "profileUrl": "https://www.hltv.org/player/9254/mopoz",
       "profileId": 9254,
       "verified": true,
-      "stats": null,
-      "teamIndex": 53
+      "stats": null
     },
     {
       "id": 278,
@@ -7065,8 +6635,7 @@
       "profileUrl": "https://www.hltv.org/player/19509/dav1g",
       "profileId": 19509,
       "verified": true,
-      "stats": null,
-      "teamIndex": 53
+      "stats": null
     },
     {
       "id": 335,
@@ -7080,8 +6649,7 @@
       "profileUrl": "https://www.hltv.org/player/18749/sausol",
       "profileId": 18749,
       "verified": true,
-      "stats": null,
-      "teamIndex": 53
+      "stats": null
     },
     {
       "id": 404,
@@ -7095,8 +6663,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 55
+      "stats": null
     },
     {
       "id": 273,
@@ -7110,8 +6677,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 56
+      "stats": null
     },
     {
       "id": 431,
@@ -7125,8 +6691,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 57
+      "stats": null
     },
     {
       "id": 321,
@@ -7140,8 +6705,7 @@
       "profileUrl": "https://www.hltv.org/player/21012/ro1f",
       "profileId": 21012,
       "verified": true,
-      "stats": null,
-      "teamIndex": 58
+      "stats": null
     },
     {
       "id": 253,
@@ -7155,8 +6719,7 @@
       "profileUrl": "https://www.hltv.org/player/11139/alistair",
       "profileId": 11139,
       "verified": true,
-      "stats": null,
-      "teamIndex": 59
+      "stats": null
     },
     {
       "id": 286,
@@ -7170,8 +6733,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 60
+      "stats": null
     },
     {
       "id": 304,
@@ -7185,8 +6747,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 60
+      "stats": null
     },
     {
       "id": 283,
@@ -7200,8 +6761,7 @@
       "profileUrl": "https://www.hltv.org/player/19044/f1ku",
       "profileId": 19044,
       "verified": true,
-      "stats": null,
-      "teamIndex": 64
+      "stats": null
     },
     {
       "id": 288,
@@ -7215,8 +6775,7 @@
       "profileUrl": "https://www.hltv.org/player/18865/dav1deus",
       "profileId": 18865,
       "verified": true,
-      "stats": null,
-      "teamIndex": 65
+      "stats": null
     },
     {
       "id": 289,
@@ -7230,8 +6789,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 65
+      "stats": null
     },
     {
       "id": 319,
@@ -7245,8 +6803,7 @@
       "profileUrl": "https://www.hltv.org/player/17504/kei",
       "profileId": 17504,
       "verified": true,
-      "stats": null,
-      "teamIndex": 67
+      "stats": null
     },
     {
       "id": 349,
@@ -7260,8 +6817,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 68
+      "stats": null
     },
     {
       "id": 405,
@@ -7275,8 +6831,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 69
+      "stats": null
     },
     {
       "id": 378,
@@ -7290,8 +6845,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 70
+      "stats": null
     },
     {
       "id": 342,
@@ -7305,8 +6859,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 71
+      "stats": null
     },
     {
       "id": 552,
@@ -7320,8 +6873,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 71
+      "stats": null
     },
     {
       "id": 435,
@@ -7335,8 +6887,7 @@
       "profileUrl": "https://www.hltv.org/player/20465/arrozdoce",
       "profileId": 20465,
       "verified": true,
-      "stats": null,
-      "teamIndex": 74
+      "stats": null
     },
     {
       "id": 436,
@@ -7350,8 +6901,7 @@
       "profileUrl": "https://www.hltv.org/player/21136/shr",
       "profileId": 21136,
       "verified": true,
-      "stats": null,
-      "teamIndex": 74
+      "stats": null
     },
     {
       "id": 463,
@@ -7365,8 +6915,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 75
+      "stats": null
     },
     {
       "id": 472,
@@ -7380,8 +6929,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 75
+      "stats": null
     },
     {
       "id": 350,
@@ -7395,8 +6943,7 @@
       "profileUrl": "https://www.hltv.org/player/20870/sl3nd",
       "profileId": 20870,
       "verified": true,
-      "stats": null,
-      "teamIndex": 77
+      "stats": null
     },
     {
       "id": 348,
@@ -7410,8 +6957,7 @@
       "profileUrl": "https://www.hltv.org/player/19733/demqq",
       "profileId": 19733,
       "verified": true,
-      "stats": null,
-      "teamIndex": 78
+      "stats": null
     },
     {
       "id": 553,
@@ -7425,8 +6971,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 79
+      "stats": null
     },
     {
       "id": 383,
@@ -7440,8 +6985,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 81
+      "stats": null
     },
     {
       "id": 407,
@@ -7455,8 +6999,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 81
+      "stats": null
     },
     {
       "id": 412,
@@ -7470,8 +7013,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 83
+      "stats": null
     },
     {
       "id": 554,
@@ -7485,8 +7027,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 84
+      "stats": null
     },
     {
       "id": 555,
@@ -7500,8 +7041,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 84
+      "stats": null
     },
     {
       "id": 556,
@@ -7515,8 +7055,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 84
+      "stats": null
     },
     {
       "id": 557,
@@ -7530,8 +7069,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 85
+      "stats": null
     },
     {
       "id": 558,
@@ -7545,8 +7083,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 86
+      "stats": null
     },
     {
       "id": 559,
@@ -7560,8 +7097,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 86
+      "stats": null
     },
     {
       "id": 560,
@@ -7575,8 +7111,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 86
+      "stats": null
     },
     {
       "id": 377,
@@ -7590,8 +7125,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 87
+      "stats": null
     },
     {
       "id": 561,
@@ -7605,8 +7139,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 89
+      "stats": null
     },
     {
       "id": 562,
@@ -7620,8 +7153,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 90
+      "stats": null
     },
     {
       "id": 563,
@@ -7635,8 +7167,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 92
+      "stats": null
     },
     {
       "id": 410,
@@ -7650,8 +7181,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 93
+      "stats": null
     },
     {
       "id": 379,
@@ -7665,8 +7195,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 94
+      "stats": null
     },
     {
       "id": 464,
@@ -7680,8 +7209,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 95
+      "stats": null
     },
     {
       "id": 564,
@@ -7695,8 +7223,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 96
+      "stats": null
     },
     {
       "id": 343,
@@ -7710,8 +7237,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 97
+      "stats": null
     },
     {
       "id": 565,
@@ -7725,8 +7251,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 99
+      "stats": null
     },
     {
       "id": 566,
@@ -7740,8 +7265,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 100
+      "stats": null
     },
     {
       "id": 567,
@@ -7755,8 +7279,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 100
+      "stats": null
     },
     {
       "id": 416,
@@ -7770,8 +7293,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 102
+      "stats": null
     },
     {
       "id": 568,
@@ -7785,8 +7307,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 103
+      "stats": null
     },
     {
       "id": 569,
@@ -7800,8 +7321,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 103
+      "stats": null
     },
     {
       "id": 476,
@@ -7815,8 +7335,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 104
+      "stats": null
     },
     {
       "id": 477,
@@ -7830,8 +7349,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 104
+      "stats": null
     },
     {
       "id": 351,
@@ -7845,8 +7363,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 105
+      "stats": null
     },
     {
       "id": 352,
@@ -7860,8 +7377,7 @@
       "profileUrl": "https://www.hltv.org/player/11217/spellan",
       "profileId": 11217,
       "verified": true,
-      "stats": null,
-      "teamIndex": 105
+      "stats": null
     },
     {
       "id": 376,
@@ -7875,8 +7391,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 105
+      "stats": null
     },
     {
       "id": 437,
@@ -7890,8 +7405,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 107
+      "stats": null
     },
     {
       "id": 461,
@@ -7905,8 +7419,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 107
+      "stats": null
     },
     {
       "id": 462,
@@ -7920,8 +7433,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 107
+      "stats": null
     },
     {
       "id": 570,
@@ -7935,8 +7447,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 108
+      "stats": null
     },
     {
       "id": 478,
@@ -7950,8 +7461,7 @@
       "profileUrl": "https://www.hltv.org/player/2898/raalz",
       "profileId": 2898,
       "verified": true,
-      "stats": null,
-      "teamIndex": 109
+      "stats": null
     },
     {
       "id": 479,
@@ -7965,8 +7475,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 110
+      "stats": null
     },
     {
       "id": 493,
@@ -7980,8 +7489,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 110
+      "stats": null
     },
     {
       "id": 571,
@@ -7995,8 +7503,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 111
+      "stats": null
     },
     {
       "id": 572,
@@ -8010,8 +7517,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 114
+      "stats": null
     },
     {
       "id": 573,
@@ -8025,8 +7531,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 115
+      "stats": null
     },
     {
       "id": 574,
@@ -8040,8 +7545,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 118
+      "stats": null
     },
     {
       "id": 575,
@@ -8055,8 +7559,7 @@
       "profileUrl": "https://www.hltv.org/player/19738/djoko",
       "profileId": 19738,
       "verified": true,
-      "stats": null,
-      "teamIndex": 119
+      "stats": null
     },
     {
       "id": 576,
@@ -8070,8 +7573,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 120
+      "stats": null
     },
     {
       "id": 577,
@@ -8085,8 +7587,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 121
+      "stats": null
     },
     {
       "id": 578,
@@ -8100,8 +7601,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 121
+      "stats": null
     },
     {
       "id": 579,
@@ -8115,8 +7615,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 123
+      "stats": null
     },
     {
       "id": 580,
@@ -8130,8 +7629,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 124
+      "stats": null
     },
     {
       "id": 471,
@@ -8145,8 +7643,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 128
+      "stats": null
     },
     {
       "id": 475,
@@ -8160,8 +7657,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 130
+      "stats": null
     },
     {
       "id": 242,
@@ -8175,8 +7671,7 @@
       "profileUrl": "https://www.hltv.org/player/24282/dawy",
       "profileId": 24282,
       "verified": true,
-      "stats": null,
-      "teamIndex": 36
+      "stats": null
     },
     {
       "id": 315,
@@ -8190,8 +7685,7 @@
       "profileUrl": "https://www.hltv.org/player/22760/upe",
       "profileId": 22760,
       "verified": true,
-      "stats": null,
-      "teamIndex": 38
+      "stats": null
     },
     {
       "id": 244,
@@ -8205,8 +7699,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 50
+      "stats": null
     },
     {
       "id": 300,
@@ -8220,8 +7713,7 @@
       "profileUrl": "https://www.hltv.org/player/24332/matheos",
       "profileId": 24332,
       "verified": true,
-      "stats": null,
-      "teamIndex": 52
+      "stats": null
     },
     {
       "id": 274,
@@ -8235,8 +7727,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 54
+      "stats": null
     },
     {
       "id": 299,
@@ -8250,8 +7741,7 @@
       "profileUrl": "https://www.hltv.org/player/21763/ultimate",
       "profileId": 21763,
       "verified": true,
-      "stats": null,
-      "teamIndex": 54
+      "stats": null
     },
     {
       "id": 427,
@@ -8265,8 +7755,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 55
+      "stats": null
     },
     {
       "id": 272,
@@ -8280,8 +7769,7 @@
       "profileUrl": "https://www.hltv.org/player/20607/buda",
       "profileId": 20607,
       "verified": true,
-      "stats": null,
-      "teamIndex": 56
+      "stats": null
     },
     {
       "id": 430,
@@ -8295,8 +7783,7 @@
       "profileUrl": "https://www.hltv.org/player/21692/kalash",
       "profileId": 21692,
       "verified": true,
-      "stats": null,
-      "teamIndex": 62
+      "stats": null
     },
     {
       "id": 451,
@@ -8310,8 +7797,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 62
+      "stats": null
     },
     {
       "id": 320,
@@ -8325,8 +7811,7 @@
       "profileUrl": "https://www.hltv.org/player/20464/ewjerkz",
       "profileId": 20464,
       "verified": true,
-      "stats": null,
-      "teamIndex": 63
+      "stats": null
     },
     {
       "id": 452,
@@ -8340,8 +7825,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 66
+      "stats": null
     },
     {
       "id": 453,
@@ -8355,8 +7839,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 66
+      "stats": null
     },
     {
       "id": 374,
@@ -8370,8 +7853,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 68
+      "stats": null
     },
     {
       "id": 375,
@@ -8385,8 +7867,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 68
+      "stats": null
     },
     {
       "id": 428,
@@ -8400,8 +7881,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 69
+      "stats": null
     },
     {
       "id": 401,
@@ -8415,8 +7895,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 70
+      "stats": null
     },
     {
       "id": 581,
@@ -8430,8 +7909,7 @@
       "profileUrl": "https://www.hltv.org/player/22371/levi",
       "profileId": 22371,
       "verified": true,
-      "stats": null,
-      "teamIndex": 72
+      "stats": null
     },
     {
       "id": 322,
@@ -8445,8 +7923,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 73
+      "stats": null
     },
     {
       "id": 338,
@@ -8460,8 +7937,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 73
+      "stats": null
     },
     {
       "id": 192,
@@ -8475,8 +7951,7 @@
       "profileUrl": "https://www.hltv.org/player/24952/to0ro",
       "profileId": 24952,
       "verified": true,
-      "stats": null,
-      "teamIndex": 76
+      "stats": null
     },
     {
       "id": 398,
@@ -8490,8 +7965,7 @@
       "profileUrl": "https://www.hltv.org/player/20170/kyuubii",
       "profileId": 20170,
       "verified": true,
-      "stats": null,
-      "teamIndex": 77
+      "stats": null
     },
     {
       "id": 372,
@@ -8505,8 +7979,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 78
+      "stats": null
     },
     {
       "id": 373,
@@ -8520,8 +7993,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 78
+      "stats": null
     },
     {
       "id": 582,
@@ -8535,8 +8007,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 79
+      "stats": null
     },
     {
       "id": 583,
@@ -8550,8 +8021,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 79
+      "stats": null
     },
     {
       "id": 454,
@@ -8565,8 +8035,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 80
+      "stats": null
     },
     {
       "id": 456,
@@ -8580,8 +8049,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 80
+      "stats": null
     },
     {
       "id": 495,
@@ -8595,8 +8063,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 80
+      "stats": null
     },
     {
       "id": 406,
@@ -8610,8 +8077,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 81
+      "stats": null
     },
     {
       "id": 429,
@@ -8625,8 +8091,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 81
+      "stats": null
     },
     {
       "id": 584,
@@ -8640,8 +8105,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 84
+      "stats": null
     },
     {
       "id": 585,
@@ -8655,8 +8119,7 @@
       "profileUrl": "https://www.hltv.org/player/26013/darkmeister",
       "profileId": 26013,
       "verified": true,
-      "stats": null,
-      "teamIndex": 85
+      "stats": null
     },
     {
       "id": 586,
@@ -8670,8 +8133,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 86
+      "stats": null
     },
     {
       "id": 587,
@@ -8685,8 +8147,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 86
+      "stats": null
     },
     {
       "id": 474,
@@ -8700,8 +8161,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 88
+      "stats": null
     },
     {
       "id": 588,
@@ -8715,8 +8175,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 89
+      "stats": null
     },
     {
       "id": 589,
@@ -8730,8 +8189,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 89
+      "stats": null
     },
     {
       "id": 590,
@@ -8745,8 +8203,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 90
+      "stats": null
     },
     {
       "id": 591,
@@ -8760,8 +8217,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 90
+      "stats": null
     },
     {
       "id": 592,
@@ -8775,8 +8231,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 91
+      "stats": null
     },
     {
       "id": 593,
@@ -8790,8 +8245,7 @@
       "profileUrl": "https://www.hltv.org/player/23642/flierax",
       "profileId": 23642,
       "verified": true,
-      "stats": null,
-      "teamIndex": 92
+      "stats": null
     },
     {
       "id": 403,
@@ -8805,8 +8259,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 94
+      "stats": null
     },
     {
       "id": 473,
@@ -8820,8 +8273,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 95
+      "stats": null
     },
     {
       "id": 487,
@@ -8835,8 +8287,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 95
+      "stats": null
     },
     {
       "id": 594,
@@ -8850,8 +8301,7 @@
       "profileUrl": "https://www.hltv.org/player/19739/ex3rcice",
       "profileId": 19739,
       "verified": true,
-      "stats": null,
-      "teamIndex": 96
+      "stats": null
     },
     {
       "id": 595,
@@ -8865,8 +8315,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 96
+      "stats": null
     },
     {
       "id": 366,
@@ -8880,8 +8329,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 97
+      "stats": null
     },
     {
       "id": 596,
@@ -8895,8 +8343,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 99
+      "stats": null
     },
     {
       "id": 597,
@@ -8910,8 +8357,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 99
+      "stats": null
     },
     {
       "id": 598,
@@ -8925,8 +8371,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 99
+      "stats": null
     },
     {
       "id": 599,
@@ -8940,8 +8385,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 100
+      "stats": null
     },
     {
       "id": 600,
@@ -8955,8 +8399,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 101
+      "stats": null
     },
     {
       "id": 490,
@@ -8970,8 +8413,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 104
+      "stats": null
     },
     {
       "id": 400,
@@ -8985,8 +8427,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 105
+      "stats": null
     },
     {
       "id": 601,
@@ -9000,8 +8441,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 106
+      "stats": null
     },
     {
       "id": 602,
@@ -9015,8 +8455,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 106
+      "stats": null
     },
     {
       "id": 603,
@@ -9030,8 +8469,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 108
+      "stats": null
     },
     {
       "id": 604,
@@ -9045,8 +8483,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 108
+      "stats": null
     },
     {
       "id": 605,
@@ -9060,8 +8497,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 108
+      "stats": null
     },
     {
       "id": 492,
@@ -9075,8 +8511,7 @@
       "profileUrl": "https://www.hltv.org/player/12708/rigon",
       "profileId": 12708,
       "verified": true,
-      "stats": null,
-      "teamIndex": 109
+      "stats": null
     },
     {
       "id": 606,
@@ -9090,8 +8525,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 109
+      "stats": null
     },
     {
       "id": 494,
@@ -9105,8 +8539,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 110
+      "stats": null
     },
     {
       "id": 498,
@@ -9120,8 +8553,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 110
+      "stats": null
     },
     {
       "id": 607,
@@ -9135,8 +8567,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 111
+      "stats": null
     },
     {
       "id": 608,
@@ -9150,8 +8581,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 111
+      "stats": null
     },
     {
       "id": 433,
@@ -9165,8 +8595,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 112
+      "stats": null
     },
     {
       "id": 483,
@@ -9180,8 +8609,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 112
+      "stats": null
     },
     {
       "id": 609,
@@ -9195,8 +8623,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 113
+      "stats": null
     },
     {
       "id": 610,
@@ -9210,8 +8637,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 113
+      "stats": null
     },
     {
       "id": 611,
@@ -9225,8 +8651,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 114
+      "stats": null
     },
     {
       "id": 612,
@@ -9240,8 +8665,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 114
+      "stats": null
     },
     {
       "id": 613,
@@ -9255,8 +8679,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 115
+      "stats": null
     },
     {
       "id": 614,
@@ -9270,8 +8693,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 115
+      "stats": null
     },
     {
       "id": 615,
@@ -9285,8 +8707,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 117
+      "stats": null
     },
     {
       "id": 616,
@@ -9300,8 +8721,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 117
+      "stats": null
     },
     {
       "id": 617,
@@ -9315,8 +8735,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 119
+      "stats": null
     },
     {
       "id": 618,
@@ -9330,8 +8749,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 119
+      "stats": null
     },
     {
       "id": 619,
@@ -9345,8 +8763,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 121
+      "stats": null
     },
     {
       "id": 620,
@@ -9360,8 +8777,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 121
+      "stats": null
     },
     {
       "id": 621,
@@ -9375,8 +8791,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 122
+      "stats": null
     },
     {
       "id": 622,
@@ -9390,8 +8805,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 122
+      "stats": null
     },
     {
       "id": 623,
@@ -9405,8 +8819,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 122
+      "stats": null
     },
     {
       "id": 624,
@@ -9420,8 +8833,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 124
+      "stats": null
     },
     {
       "id": 485,
@@ -9435,8 +8847,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 127
+      "stats": null
     },
     {
       "id": 241,
@@ -9450,8 +8861,7 @@
       "profileUrl": "https://www.hltv.org/player/21221/maxxkor",
       "profileId": 21221,
       "verified": true,
-      "stats": null,
-      "teamIndex": 34
+      "stats": null
     },
     {
       "id": 270,
@@ -9465,8 +8875,7 @@
       "profileUrl": "https://www.hltv.org/player/23295/kisserek",
       "profileId": 23295,
       "verified": true,
-      "stats": null,
-      "teamIndex": 39
+      "stats": null
     },
     {
       "id": 298,
@@ -9480,8 +8889,7 @@
       "profileUrl": "https://www.hltv.org/player/21266/1eer",
       "profileId": 21266,
       "verified": true,
-      "stats": null,
-      "teamIndex": 45
+      "stats": null
     },
     {
       "id": 314,
@@ -9495,8 +8903,7 @@
       "profileUrl": "https://www.hltv.org/player/20085/kauez",
       "profileId": 20085,
       "verified": true,
-      "stats": null,
-      "teamIndex": 56
+      "stats": null
     },
     {
       "id": 337,
@@ -9510,8 +8917,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 60
+      "stats": null
     },
     {
       "id": 316,
@@ -9525,8 +8931,7 @@
       "profileUrl": "https://www.hltv.org/player/25510/tikuak",
       "profileId": 25510,
       "verified": true,
-      "stats": null,
-      "teamIndex": 61
+      "stats": null
     },
     {
       "id": 381,
@@ -9540,8 +8945,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 69
+      "stats": null
     },
     {
       "id": 365,
@@ -9555,8 +8959,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 73
+      "stats": null
     },
     {
       "id": 470,
@@ -9570,8 +8973,7 @@
       "profileUrl": "https://www.hltv.org/player/17372/fang",
       "profileId": 17372,
       "verified": true,
-      "stats": null,
-      "teamIndex": 82
+      "stats": null
     },
     {
       "id": 625,
@@ -9585,8 +8987,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 84
+      "stats": null
     },
     {
       "id": 425,
@@ -9600,8 +9001,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 87
+      "stats": null
     },
     {
       "id": 488,
@@ -9615,8 +9015,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 88
+      "stats": null
     },
     {
       "id": 626,
@@ -9630,8 +9029,7 @@
       "profileUrl": "https://www.hltv.org/player/21620/nicx",
       "profileId": 21620,
       "verified": true,
-      "stats": null,
-      "teamIndex": 91
+      "stats": null
     },
     {
       "id": 627,
@@ -9645,8 +9043,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 92
+      "stats": null
     },
     {
       "id": 411,
@@ -9660,8 +9057,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 93
+      "stats": null
     },
     {
       "id": 481,
@@ -9675,8 +9071,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 93
+      "stats": null
     },
     {
       "id": 426,
@@ -9690,8 +9085,7 @@
       "profileUrl": "https://www.hltv.org/player/20813/vldn",
       "profileId": 20813,
       "verified": true,
-      "stats": null,
-      "teamIndex": 94
+      "stats": null
     },
     {
       "id": 397,
@@ -9705,8 +9099,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 97
+      "stats": null
     },
     {
       "id": 628,
@@ -9720,8 +9113,7 @@
       "profileUrl": "https://www.hltv.org/player/14390/wood7",
       "profileId": 14390,
       "verified": true,
-      "stats": null,
-      "teamIndex": 101
+      "stats": null
     },
     {
       "id": 629,
@@ -9735,8 +9127,7 @@
       "profileUrl": "https://www.hltv.org/player/17181/naitte",
       "profileId": 17181,
       "verified": true,
-      "stats": null,
-      "teamIndex": 101
+      "stats": null
     },
     {
       "id": 489,
@@ -9750,8 +9141,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 104
+      "stats": null
     },
     {
       "id": 399,
@@ -9765,8 +9155,7 @@
       "profileUrl": "https://www.hltv.org/player/11343/shipz",
       "profileId": 11343,
       "verified": true,
-      "stats": null,
-      "teamIndex": 105
+      "stats": null
     },
     {
       "id": 630,
@@ -9780,8 +9169,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 106
+      "stats": null
     },
     {
       "id": 486,
@@ -9795,8 +9183,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 107
+      "stats": null
     },
     {
       "id": 631,
@@ -9810,8 +9197,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 111
+      "stats": null
     },
     {
       "id": 632,
@@ -9825,8 +9211,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 114
+      "stats": null
     },
     {
       "id": 633,
@@ -9840,8 +9225,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 115
+      "stats": null
     },
     {
       "id": 634,
@@ -9855,8 +9239,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 116
+      "stats": null
     },
     {
       "id": 635,
@@ -9870,8 +9253,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 118
+      "stats": null
     },
     {
       "id": 636,
@@ -9885,8 +9267,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 118
+      "stats": null
     },
     {
       "id": 637,
@@ -9900,8 +9281,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 119
+      "stats": null
     },
     {
       "id": 638,
@@ -9915,8 +9295,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 123
+      "stats": null
     },
     {
       "id": 497,
@@ -9930,8 +9309,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 129
+      "stats": null
     },
     {
       "id": 468,
@@ -9945,8 +9323,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 55
+      "stats": null
     },
     {
       "id": 639,
@@ -9960,8 +9337,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 57
+      "stats": null
     },
     {
       "id": 313,
@@ -9975,8 +9351,7 @@
       "profileUrl": "https://www.hltv.org/player/11140/ins",
       "profileId": 11140,
       "verified": true,
-      "stats": null,
-      "teamIndex": 59
+      "stats": null
     },
     {
       "id": 364,
@@ -9990,8 +9365,7 @@
       "profileUrl": "https://www.hltv.org/player/630/mutiris",
       "profileId": 630,
       "verified": true,
-      "stats": null,
-      "teamIndex": 63
+      "stats": null
     },
     {
       "id": 336,
@@ -10005,8 +9379,7 @@
       "profileUrl": "https://www.hltv.org/player/8507/stanislaw",
       "profileId": 8507,
       "verified": true,
-      "stats": null,
-      "teamIndex": 64
+      "stats": null
     },
     {
       "id": 362,
@@ -10020,8 +9393,7 @@
       "profileUrl": "https://www.hltv.org/player/11154/exit",
       "profileId": 11154,
       "verified": true,
-      "stats": null,
-      "teamIndex": 65
+      "stats": null
     },
     {
       "id": 484,
@@ -10035,8 +9407,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 66
+      "stats": null
     },
     {
       "id": 363,
@@ -10050,8 +9421,7 @@
       "profileUrl": "https://www.hltv.org/player/11995/tmb",
       "profileId": 11995,
       "verified": true,
-      "stats": null,
-      "teamIndex": 67
+      "stats": null
     },
     {
       "id": 424,
@@ -10065,8 +9435,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 77
+      "stats": null
     },
     {
       "id": 455,
@@ -10080,8 +9449,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 80
+      "stats": null
     },
     {
       "id": 640,
@@ -10095,8 +9463,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 89
+      "stats": null
     },
     {
       "id": 641,
@@ -10110,8 +9477,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 98
+      "stats": null
     },
     {
       "id": 642,
@@ -10125,8 +9491,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 101
+      "stats": null
     },
     {
       "id": 643,
@@ -10140,8 +9505,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 111
+      "stats": null
     },
     {
       "id": 644,
@@ -10155,8 +9519,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 121
+      "stats": null
     },
     {
       "id": 645,
@@ -10170,8 +9533,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 124
+      "stats": null
     },
     {
       "id": 480,
@@ -10185,8 +9547,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 62
+      "stats": null
     },
     {
       "id": 450,
@@ -10200,8 +9561,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 68
+      "stats": null
     },
     {
       "id": 646,
@@ -10215,8 +9575,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 72
+      "stats": null
     },
     {
       "id": 269,
@@ -10230,8 +9589,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 76
+      "stats": null
     },
     {
       "id": 482,
@@ -10245,8 +9603,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 83
+      "stats": null
     },
     {
       "id": 647,
@@ -10260,8 +9617,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 91
+      "stats": null
     },
     {
       "id": 496,
@@ -10275,8 +9631,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 102
+      "stats": null
     },
     {
       "id": 648,
@@ -10290,8 +9645,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 103
+      "stats": null
     },
     {
       "id": 491,
@@ -10305,8 +9659,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 109
+      "stats": null
     },
     {
       "id": 499,
@@ -10320,8 +9673,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 110
+      "stats": null
     },
     {
       "id": 434,
@@ -10335,8 +9687,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 112
+      "stats": null
     },
     {
       "id": 649,
@@ -10350,8 +9701,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 116
+      "stats": null
     },
     {
       "id": 650,
@@ -10365,8 +9715,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 120
+      "stats": null
     },
     {
       "id": 651,
@@ -10380,8 +9729,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 122
+      "stats": null
     },
     {
       "id": 652,
@@ -10395,8 +9743,7 @@
       "profileUrl": "",
       "profileId": null,
       "verified": false,
-      "stats": null,
-      "teamIndex": 123
+      "stats": null
     }
   ]
 }

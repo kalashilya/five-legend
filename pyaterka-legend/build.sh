@@ -50,7 +50,14 @@ assert g.count('<!--CASEIMG-->') == 1
 # значки кейсов — снимки 3D-кейсов из сцены открытия (vendor/case-*.webp, прозрачный фон)
 ci = ','.join('"%s":"data:image/webp;base64,%s"' % (k, base64.b64encode(open('vendor/case-%s.webp' % k, 'rb').read()).decode()) for k in ('basic', 'pro', 'elite'))
 g = g.replace('<!--CASEIMG-->', '<script>window.CASE_IMG={' + ci + '};</script>', 1)
-g = g.replace('<!--RV3D-->', '<script>window.RV_SRC="' + base64.b64encode(out.encode('utf-8')).decode() + '";</script>', 1)
+# в игру — только флаги стран, которые есть у игроков (data.js): все 270 флагов весят ~1,9 МБ, нужных — ~0,4 МБ
+import json, re
+fi = flags.index('{'); fl = json.loads(flags[fi:flags.rindex('}') + 1])
+used = set(re.findall(r'"countryCode":"([A-Z]{2})"', open('data.js', encoding='utf-8').read()))
+assert used and len(used & set(fl)) == len(used), 'нет флага для: ' + ','.join(sorted(used - set(fl)))
+flags_g = flags[:fi] + json.dumps({k: v for k, v in fl.items() if k in used}, ensure_ascii=False, separators=(',', ':')) + ';\n'
+out_g = src.replace('/*THREE*/', three, 1).replace('/*FLAGS*/', flags_g, 1).replace('/*BG*/', '', 1)
+g = g.replace('<!--RV3D-->', '<script>window.RV_SRC="' + base64.b64encode(out_g.encode('utf-8')).decode() + '";</script>', 1)
 # Three.js для 3D-матча — прямо в игре (без интернета)
 assert g.count('<!--THREE3D-->') == 1 and '</script' not in three.lower() and '<!--' not in three
 g = g.replace('<!--THREE3D-->', '<script>' + three + '</script>', 1)

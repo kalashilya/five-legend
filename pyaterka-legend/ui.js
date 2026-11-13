@@ -269,9 +269,9 @@ function vMine() {
   const tools = QS ? `<section class="qs-bar"><div><b>Быстрая продажа</b><span class="sm mut">Нажимайте на карточки, чтобы выбрать. Последняя копия игрока из состава не продаётся.</span></div>
       <div class="rowb"><button class="btn s" data-act="qsDups" ${dups ? '' : 'disabled'}>Все дубликаты</button><button class="btn s" data-act="qsAll">Всё, кроме составов и особых</button><button class="btn s" data-act="qsNone" ${q.n ? '' : 'disabled'}>Сбросить</button></div></section>`
     : `<div class="rowb"><button class="btn" data-act="qsOn">Быстрая продажа</button>${dups ? `<button class="btn pri" data-act="qsDupsGo">Продать дубликаты · +${nf(dupCoins)}</button>` : ''}</div>`;
-  const grid = sorted.length ? `<div class="grid">${sorted.map(c => { const o = own(c.id), k = QS ? Math.min(QS[c.id] || 0, qsMax(c.id)) : 0, mx = qsMax(c.id);
+  const grid = sorted.length ? `<div class="grid">${sorted.slice(0, colN).map(c => { const o = own(c.id), k = QS ? Math.min(QS[c.id] || 0, qsMax(c.id)) : 0, mx = qsMax(c.id);
       return QS ? `<button class="qs-card ${k ? 'is-sel' : ''} ${mx ? '' : 'is-lock'}" data-act="qsTog" data-id="${c.id}" aria-pressed="${!!k}" aria-label="${esc(c.nick)}${k ? ': продать ' + k : ''}">${ownH(c.id)}${k ? `<span class="qs-badge">−${k} · +${nf(qsPrice(c.id, k))}</span>` : mx ? '' : '<span class="qs-badge is-lock">в составе</span>'}</button>`
-        : `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`; }).join('')}</div>` : '<p class="sm mut">Карточек пока нет — откройте кейс.</p>';
+        : `<button data-act="card" data-id="${c.id}" aria-label="${esc(c.nick)}">${ownH(c.id)}</button>`; }).join('')}</div>${sorted.length > colN ? '<button class="btn" data-act="more">Показать ещё</button>' : ''}` : '<p class="sm mut">Карточек пока нет — откройте кейс.</p>';   /* порциями по 45, как «Все карточки»: сотни карточек разом тормозили телефон */
   const sel = QS ? `<div class="qs-foot"><span><b>${q.n}</b> ${plural(q.n, 'карточка', 'карточки', 'карточек')} · <i class="coin"></i> +${nf(q.coins)}</span><button class="btn s" data-act="qsOff">Отмена</button><button class="btn pri" data-act="qsAsk" ${q.n ? '' : 'disabled'}>Продать</button></div>` : '';
   return `${head}${tools}<div class="frow">${selH('sort', [['mine', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки'], ['n', 'Больше копий']], 'Сортировка')}</div>${grid}${sel}`;
 }
@@ -527,7 +527,7 @@ function packBuild() {
    после открытия слой удаляется. Игра присылает лучшую карточку кейса и получает шаги: открыт, флаг, команда, раскрытие, готово.
    Если 3D недоступно или не запустилось за 8 с — обычное открытие (walkout / simpleTop). */
 let RV = null, RV_URL = '';
-const rvOk = () => { if (rvOk.v === undefined) { try { const c = document.createElement('canvas'); rvOk.v = !!(window.RV_SRC && window.Blob && window.TextDecoder && window.URL && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { rvOk.v = false; } } return rvOk.v && !rvOk.bad; };
+const rvOk = () => { if (rvOk.v === undefined) { try { const c = document.createElement('canvas'); const x = window.RV_SRC && window.Blob && window.TextDecoder && window.URL && (c.getContext('webgl2') || c.getContext('webgl')); rvOk.v = !!x; glFree(x); } catch (e) { rvOk.v = false; } } return rvOk.v && !rvOk.bad; };
 function rvUrl() {
   if (!RV_URL) { const b = atob(window.RV_SRC), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
     const html = new TextDecoder().decode(u).replace('<head>', '<head><script>window.__EMBED=1<\/script>'); RV_URL = URL.createObjectURL(new Blob([html], { type: 'text/html' })); }

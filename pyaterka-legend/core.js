@@ -373,7 +373,7 @@ class Match {
     const Ltk = L === a ? plan.tk : tkB0, Lsv = L === a ? plan.save : pB.save; if (Ltk === 'save' || Lsv) L.money = Math.min(MAX_MONEY, L.money + 1200);   /* сейв сохранил оружие */
     W.ws++; W.ls = 0; L.ls++; L.ws = 0;
     const read = pAtt.dir === 'S' || pDef.dir === 'S' ? null : faked ? 'fake' : (pAtt.dir === pDef.dir) === (att === a) ? 'bad' : 'good';
-    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: win ? tkWhy(plan.tk, tkB0) : tkWhy(tkB0, plan.tk) }, f);
+    this.last = Object.assign({ round: this.round, mine, theirs, plan, planB: pB, cutA: A.cut, cutB: B.cut, va, vb, pa, pb, p, win, sideA, buyA, buyB, pistol, decider: this.decider, openMine: (att === a) === openAtt, read, intel: ai.intel, slip: ai.slip, swap: false, tkA: plan.tk || null, tkB: tkB0, tkVa: tkA, tkVb: tkB, why: (() => { const wT = win ? plan.tk : tkB0, lT = win ? tkB0 : plan.tk, w = tkWhy(wT, lT), u = tkWhy(lT, wT); return w || (u ? u + ', но перестрелки решили иначе' : ''); })() }, f);
     this.hist.push({ round: this.round, win, side: sideA, dirA: plan.dir, dirB: pB.dir, tkA: plan.tk || null, tkB: tkB0, focus: plan.focus, mine: [...mine], theirs: [...theirs], end: f.end, p, buyA, buyB, read, openMine: this.last.openMine, clutch: f.clutch, ace: f.ace, mvp: f.mvp, score: a.score + ':' + b.score });
     if (a.score >= WIN_N || b.score >= WIN_N) { this.over = true; this.won = a.score > b.score; return this.last; }
     this.round++;

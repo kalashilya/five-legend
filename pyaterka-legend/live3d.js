@@ -87,8 +87,10 @@ const M3D = (() => {
     /* точки A/B и респауны */
     const siteT = s => ctex(256, 256, (g, w) => { g.fillStyle = '#c4252b'; g.fillRect(0, 0, w, w); g.strokeStyle = '#fff'; g.lineWidth = 12; g.strokeRect(10, 10, w - 20, w - 20); g.fillStyle = '#fff'; g.font = '700 190px Oswald, Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(s, w / 2, w / 2 + 10); });
     const sitePl = {};
-    for (const s of ['A', 'B']) { const p = RM.n[s], pl = new THREE.Mesh(new THREE.PlaneGeometry(9.5, 9.5), new THREE.MeshStandardMaterial({ map: siteT(s), roughness: .6, emissive: 0xff3030, emissiveIntensity: .08 })); pl.rotation.x = -Math.PI / 2; pl.position.set(X(p[0]), .2, Z(p[1])); pl.receiveShadow = true; scene.add(pl);
-      sitePl[s] = pl; }
+    /* знак точки лежит на земле в группе: группа каждый кадр поворачивается так, чтобы буква стояла ровно перед игроком */
+    const siteG = [];
+    for (const s of ['A', 'B']) { const p = RM.n[s], pl = new THREE.Mesh(new THREE.PlaneGeometry(9.5, 9.5), new THREE.MeshStandardMaterial({ map: siteT(s), roughness: .6, emissive: 0xff3030, emissiveIntensity: .08 })), g = new THREE.Group(); pl.rotation.x = -Math.PI / 2; pl.receiveShadow = true; g.add(pl); g.position.set(X(p[0]), .2, Z(p[1])); scene.add(g);
+      sitePl[s] = pl; siteG.push(g); }
     /* укрытия по карте: ящики, будка, фургон, машины */
     if (RM.props && RM.props.length) { const pm = new THREE.InstancedMesh(boxG, new THREE.MeshStandardMaterial({ color: 0x8b6a3f, roughness: .8 }), RM.props.length); RM.props.forEach(([x, y, w, d, h], i) => { o.position.set(X(x), .1, Z(y)); o.scale.set(w, h, d); o.rotation.set(0, 0, 0); o.updateMatrix(); pm.setMatrixAt(i, o.matrix); pm.setColorAt(i, col.setHex([0x8b6a3f, 0x6f7a80, 0x9a8a6a][i % 3])); }); pm.castShadow = pm.receiveShadow = true; if (pm.instanceColor) pm.instanceColor.needsUpdate = true; scene.add(pm); }
     for (const [k, c] of [['TS', 0xf2c14e], ['CTS', 0x4aa3ff]]) { const p = RM.n[k], z = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: .28, depthWrite: false })); z.rotation.x = -Math.PI / 2; z.position.set(X(p[0]), .22, Z(p[1])); scene.add(z); }
@@ -159,11 +161,34 @@ const M3D = (() => {
     const CAM = { x: 0, z: 0, d: 150, tx: 0, tz: 0, td: 92 };
     let S = null, UT = [], T = 0, vw = 0, vh = 0;
     function fit() { const w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight; if (w === vw && h === vh) return; vw = w; vh = h; R3.setSize(w, h, false); cam.aspect = w / h; cam.fov = w / h < .8 ? 54 : 38; cam.updateProjectionMatrix(); }
-    /* поворот карты: респаун атаки всегда снизу экрана на телефоне (на широком экране — справа) */
+    /* поворот карты: ваш респаун всегда снизу экрана на телефоне (на широком экране — справа): за T — спавн атаки, за CT — спавн защиты.
+       После смены сторон карта плавно разворачивается. Пальцами: щипок — ближе/дальше, вращение двумя пальцами, перетаскивание — сдвиг,
+       двойной тап (или кнопка «вид») — вернуть вид по вашей стороне. Колесо мыши — зум. */
     const TSd = (() => { const v = [RM.n.TS[0] - 50, RM.n.TS[1] - 50]; return Math.abs(v[0]) > Math.abs(v[1]) ? [Math.sign(v[0]), 0] : [0, Math.sign(v[1])]; })();
+    const U = { z: 1, r: 0, px: 0, pz: 0 }, uOn = () => Math.abs(U.z - 1) > .02 || Math.abs(U.r) > .02 || Math.hypot(U.px, U.pz) > .5;
+    const mySide = () => OV && OV.m && OV.m.sideA === 'D' ? 'D' : 'A';
+    const baseAng = () => { const port = cam.aspect < .8, b = port ? TSd : [-TSd[1], TSd[0]], f = mySide() === 'D' ? -1 : 1; return Math.atan2(b[1] * f, b[0] * f); };
+    CAM.a = null; CAM.dn = TSd;
+    const rbtn = document.createElement('button'); rbtn.type = 'button'; rbtn.className = 'm3-reset'; rbtn.setAttribute('aria-label', 'Вернуть вид по вашей стороне'); rbtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 17-7-4-7 4Z"/></svg><span>вид</span>';
+    (cv.parentNode || document.body).appendChild(rbtn);
+    const uReset = () => { U.z = 1; U.r = 0; U.px = 0; U.pz = 0; rbtn.classList.remove('on'); };
+    rbtn.addEventListener('click', e => { e.stopPropagation(); uReset(); });
+    const PT = new Map(); let g0 = null, lastTap = 0;
+    const gesture = () => { const a = [...PT.values()]; if (a.length < 2) return null; const [p, q] = a; return { d: Math.hypot(q.x - p.x, q.y - p.y), a: Math.atan2(q.y - p.y, q.x - p.x) }; };
+    const onDown = e => { try { cv.setPointerCapture(e.pointerId); } catch (x) { /* указатель уже отпущен */ } PT.set(e.pointerId, { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY }); g0 = gesture(); };
+    const onMove = e => { const p = PT.get(e.pointerId); if (!p) return; const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+      if (PT.size >= 2) { const g = gesture(); if (g && g0) { if (g.d > 10 && g0.d > 10) U.z = clamp(U.z * g0.d / g.d, .45, 2.2); let da = g.a - g0.a; da = Math.atan2(Math.sin(da), Math.cos(da)); U.r -= da; } g0 = g; }
+      else { const k = 2 * Math.tan(cam.fov * Math.PI / 360) * CAM.d / (vh || 1), dn = CAM.dn, rt = [dn[1], -dn[0]]; U.px = clamp(U.px - (rt[0] * dx + dn[0] * dy) * k, -70, 70); U.pz = clamp(U.pz - (rt[1] * dx + dn[1] * dy) * k, -70, 70); }
+      rbtn.classList.toggle('on', uOn()); };
+    const onUp = e => { const p = PT.get(e.pointerId); PT.delete(e.pointerId); g0 = gesture();
+      if (p && PT.size === 0 && Math.hypot(e.clientX - p.x0, e.clientY - p.y0) < 10) { const now = performance.now(); if (now - lastTap < 320) { uReset(); lastTap = 0; } else lastTap = now; } };
+    const onWheel = e => { e.preventDefault(); U.z = clamp(U.z * Math.exp(e.deltaY * .0012), .45, 2.2); rbtn.classList.toggle('on', uOn()); };
+    cv.addEventListener('pointerdown', onDown); cv.addEventListener('pointermove', onMove); cv.addEventListener('pointerup', onUp); cv.addEventListener('pointercancel', onUp); cv.addEventListener('wheel', onWheel, { passive: false });
     const NB = Object.keys(RM.n).map(k => [X(RM.n[k][0]), Z(RM.n[k][1]), GEO.nr[k] || 4]);
     function camFrame(dt, t, ph) {
-      const port = cam.aspect < .8, dn = port ? TSd : [-TSd[1], TSd[0]], rt = [dn[1], -dn[0]], tanH = Math.tan(cam.fov * Math.PI / 360);
+      const port = cam.aspect < .8, tA = baseAng() + U.r; if (CAM.a == null) CAM.a = tA; else { let da = tA - CAM.a; da = Math.atan2(Math.sin(da), Math.cos(da)); CAM.a += da * (1 - Math.exp(-(PT.size ? 30 : 2.2) * dt)); }
+      const dn = CAM.dn = [Math.cos(CAM.a), Math.sin(CAM.a)], rt = [dn[1], -dn[0]], tanH = Math.tan(cam.fov * Math.PI / 360);
+      for (const g of siteG) g.rotation.y = Math.atan2(dn[0], dn[1]);
       const box = P => { let h0 = 1e9, h1 = -1e9, v0 = 1e9, v1 = -1e9; for (const [x, z, r] of P) { const h = x * rt[0] + z * rt[1], v = x * dn[0] + z * dn[1]; h0 = Math.min(h0, h - r); h1 = Math.max(h1, h + r); v0 = Math.min(v0, v - r); v1 = Math.max(v1, v + r); } return [h0, h1, v0, v1]; };
       /* расстояние, при котором рамка влезает в видимую часть экрана (сверху табло, снизу составы или план) */
       const need = (eh, ev, fv) => Math.max(eh * (port ? .8 : .95) / (2 * tanH * cam.aspect), ev * Math.sin(.95) / (2 * tanH * fv)) * 1.04;
@@ -172,8 +197,8 @@ const M3D = (() => {
       if (!b) { b = box(NB); if (ph === 'buy') { fv = port ? .6 : .6; sh = .1; } }
       const hc = (b[0] + b[1]) / 2, vc = (b[2] + b[3]) / 2, ev = b[3] - b[2];
       CAM.td = Math.max(ph === 'round' ? 52 : 60, need(b[1] - b[0], ev, fv)); const vsh = ev * sh + CAM.td * .0;
-      CAM.tx = rt[0] * hc + dn[0] * (vc + vsh); CAM.tz = rt[1] * hc + dn[1] * (vc + vsh);
-      CAM.td = Math.min(CAM.td, 175);
+      CAM.tx = rt[0] * hc + dn[0] * (vc + vsh) + U.px; CAM.tz = rt[1] * hc + dn[1] * (vc + vsh) + U.pz;
+      CAM.td = clamp(Math.min(CAM.td, 175) * U.z, 26, 230);
       CAM.x = damp(CAM.x, CAM.tx, 1.6, dt); CAM.z = damp(CAM.z, CAM.tz, 1.6, dt); CAM.d = damp(CAM.d, CAM.td, 1.3, dt);
       const tilt = .95, sx = shake > 0 ? (Math.random() - .5) * shake : 0, sw = Math.sin(T * .12) * 1.5 + sx; shake = Math.max(0, shake - dt * 2);
       cam.position.set(CAM.x + rt[0] * sw + dn[0] * CAM.d * Math.cos(tilt), CAM.d * Math.sin(tilt), CAM.z + rt[1] * sw + dn[1] * CAM.d * Math.cos(tilt)); cam.lookAt(CAM.x, 0, CAM.z);
@@ -215,7 +240,7 @@ const M3D = (() => {
       R3.render(scene, cam);
     }
     function dispose() {
-      alive = false;
+      alive = false; cv.removeEventListener('pointerdown', onDown); cv.removeEventListener('pointermove', onMove); cv.removeEventListener('pointerup', onUp); cv.removeEventListener('pointercancel', onUp); cv.removeEventListener('wheel', onWheel); rbtn.remove();
       scene.traverse(x => { if (x.geometry) x.geometry.dispose(); const ms = Array.isArray(x.material) ? x.material : x.material ? [x.material] : []; for (const mt of ms) { if (mt.map) mt.map.dispose(); mt.dispose(); } });
       for (const t of TEX) t.dispose(); for (const x of bombMats) x.dispose(); planMat.T.dispose(); planMat.CT.dispose();
       R3.dispose(); try { R3.forceContextLoss(); } catch (e) { /* не поддерживается */ }

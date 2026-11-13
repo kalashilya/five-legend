@@ -1591,7 +1591,8 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 .lv-view{position:relative;width:100%;height:min(104vw,56vh);border-radius:12px;overflow:hidden;background:#3a3328;border:1px solid #8db1cd33;touch-action:manipulation}
 .lv-cam{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
 .lv-art,.lv-ov,.lv-avas{position:absolute;inset:0;width:100%;height:100%}.lv-art{display:block;user-select:none;-webkit-user-drag:none}
-.lv-ov .rd-route{stroke-width:1.4}.lv-view.sd-A .rd-route{stroke:#ffd35a}.lv-view.sd-D .rd-route{stroke:#59b2ff}
+.lv-ov .rd-route{stroke-width:1.4}.lv-view.flip svg text{transform-box:fill-box;transform-origin:center;transform:rotate(180deg)}.lv-view.flip .ava-in{transform:scale(var(--iz,1)) rotate(180deg)}
+.lv-view.sd-A .rd-route{stroke:#ffd35a}.lv-view.sd-D .rd-route{stroke:#59b2ff}
 .ava{position:absolute;left:0;top:0;width:0;height:0;will-change:transform;z-index:1}.ava.me{z-index:2}
 .ava-in{position:absolute;left:-14px;top:-14px;width:28px;display:flex;flex-direction:column;align-items:center;transform:scale(var(--iz,1));transform-origin:14px 14px}
 .ava-ph{position:relative;width:28px;height:28px;border-radius:50%;overflow:hidden;background:#11161c;border:2.5px solid var(--ac);box-shadow:0 2px 6px #000a,0 0 0 1px #0008}
@@ -1638,6 +1639,7 @@ button.lobby-hero__rank:hover,button.lobby-hero__rank:focus-visible{border-color
 /* 3D-матч: сцена на весь экран, табло, составы и кнопки поверх */
 .m3{position:fixed;inset:0;z-index:5;display:block;background:#05080c;overflow:hidden}
 .m3-gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.m3-reset{position:absolute;right:10px;top:50%;z-index:6;display:none;flex-direction:column;align-items:center;gap:2px;min-width:48px;min-height:48px;padding:6px;border-radius:12px;border:1px solid #f0a93a;background:#0b0f14d9;color:#f0a93a;font:700 10px var(--f-m);cursor:pointer}.m3-reset.on{display:flex}.m3-reset svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
 .m3-hud{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;padding:calc(8px + env(safe-area-inset-top,0px)) 8px calc(8px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .m3-hud>*{width:100%;max-width:640px;margin-left:auto;margin-right:auto}
 .m3-hud button,.m3-hud .pl{pointer-events:auto}.m3-sp{flex:1}

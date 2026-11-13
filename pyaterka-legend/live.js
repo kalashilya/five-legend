@@ -97,9 +97,11 @@ function lvCam(t, dt) {
   if (LV.ph === 'round' && LV.S) { const al = LV.S.dots.filter(d => d.dt == null || t < d.dt).map(d => rdPos(d, t)); if (al.length) { const xs = al.map(p => p[0]), ys = al.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
     tx = (x0 + x1) / 2; ty = (y0 + y1) / 2; tz = clamp(100 / (Math.max(26, x1 - x0, y1 - y0) + 20), 1, 2.1); } }
   const k = 1 - Math.exp(-dt / 1000 * 2.2), C = LV.cam; C.x += (tx - C.x) * k; C.y += (ty - C.y) * k; C.z += (tz - C.z) * k;
-  const z = Math.max(1, C.z), px = C.x * Sz / 100, py = C.y * Sz / 100;
+  /* за CT радар развёрнут на 180°: ваша база снизу; надписи на карте разворачиваются обратно (класс flip) */
+  const fl = OV && OV.m && OV.m.sideA === 'D'; v.classList.toggle('flip', fl);
+  const z = Math.max(1, C.z), px = (fl ? 100 - C.x : C.x) * Sz / 100, py = (fl ? 100 - C.y : C.y) * Sz / 100;
   const ox = clamp(W / 2 - px * z, W - Sz * z, 0), oy = clamp(H / 2 - py * z, H - Sz * z, 0);
-  c.style.transform = `translate3d(${ox.toFixed(1)}px,${oy.toFixed(1)}px,0) scale(${z.toFixed(4)})`; c.style.setProperty('--iz', (1 / z).toFixed(3));
+  c.style.transform = `translate3d(${ox.toFixed(1)}px,${oy.toFixed(1)}px,0) scale(${z.toFixed(4)})` + (fl ? ` translate(${Sz}px,${Sz}px) rotate(180deg)` : ''); c.style.setProperty('--iz', (1 / z).toFixed(3));
 }
 function rdIdle() {
   const m = OV.m, fake = { sideA: m.sideA, plan: { dir: 'S', tempo: 'norm' }, planB: { dir: 'S', tempo: 'norm' }, kills: [], end: 'elim', round: m.round };
@@ -259,7 +261,7 @@ function callDraw() {
   p.className = 'lv-prep on qp call';
   p.innerHTML = `<div class="pp-h"><div><small class="eyebrow">${c.atk ? 'Атака' : 'Защита'} · решение капитана</small><b>${esc(c.q)}</b></div><div class="qp-ring" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" id="qpg" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span id="qpt"></span></div></div>
     <div class="call-o">${c.opts.map((o, i) => `<button class="call-b ${i ? 'alt' : ''}" data-act="mc" data-v="${i}"><b>${esc(o.t)}</b><small>${esc(o.s)}${o.slow ? ' · теряем время' : ''}</small></button>`).join('')}</div>
-    <p class="sm mut call-n">Разведка не всегда точна. Нет ответа — ${esc(c.opts[c.def].t.toLowerCase())}.</p>`;
+    <p class="sm mut call-n">${['scout', 'steps', 'awpMid'].includes(c.kind) ? 'Разведка не всегда точна. ' : 'Вы не знаете, что задумал соперник. '}Нет ответа — ${esc(c.opts[c.def].t.toLowerCase())}.</p>`;
   qpTick();
 }
 /* who: 'op' — решение принимал соперник по сети (только у ведущего онлайн-матча) */

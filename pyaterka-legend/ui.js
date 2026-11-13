@@ -100,7 +100,7 @@ const rankH = i => `<svg class="rank" viewBox="0 0 44 30" aria-hidden="true"><pa
 const segH = (act, cur, opts) => `<div class="seg">${opts.map(([v, n, dot]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${n}${dot ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>`;
 function hudH() {
   const lg = leagueOf(G.tro);
-  return `<div class="who">${rankH(lg)}<div style="min-width:0"><b>${LEAGUES[lg][0]} · ${G.tro}</b><span class="sm mut">уровень ${G.lvl}</span><span class="xp" aria-label="Опыт ${G.xp} из ${100 * G.lvl}"><i style="width:${G.xp / G.lvl}%"></i></span></div></div><div class="pill"><i class="coin"></i>${nf(G.coins)}</div>`;
+  return `<button class="who" data-act="tab" data-v="prof" aria-label="Открыть профиль"><span class="hud-ava">${avaH(myAva(), 'sm', LCOL[lg])}</span><div style="min-width:0"><b>${esc(AU ? AU.nick : 'Гость')}</b><span class="sm mut">${LEAGUES[lg][0]} · ${G.tro} · ур. ${G.lvl}</span><span class="xp" aria-label="Опыт ${G.xp} из ${100 * G.lvl}"><i style="width:${G.xp / G.lvl}%"></i></span></div></button><div class="pill"><i class="coin"></i>${nf(G.coins)}</div>`;
 }
 
 /* ---------- Главная ---------- */
@@ -123,53 +123,27 @@ function vHome() {
   const lineup = G.squad.map((id, i) => id == null
     ? `<button class="lobby-slot" data-act="slot" data-v="${i}" aria-label="Выбрать игрока на роль ${RNAME[i]}"><span class="lobby-slot__plus">+</span><b>${RNAME[i]}</b><small>ВЫБРАТЬ</small></button>`
     : `<button class="lobby-card" data-act="card" data-id="${id}" aria-label="Открыть карточку ${esc(CARDS[id].nick)}"><span class="lobby-card__role">${RNAME[i]}</span>${ownH(id, 'xs')}<span class="lobby-card__open">ОТКРЫТЬ ↗</span></button>`).join('');
-  const quickCase = packCount() ? `ДОСТУПНО ${packCount()} КЕЙС.` : 'КЕЙСЫ И НАГРАДЫ';
+  const quickCase = packCount() ? `в запасе: ${packCount()}` : 'к кейсам';
   const tut = st < 3 ? `<section class="lobby-tutorial"><div><span class="lobby-kicker">ПЕРВЫЙ ВЫХОД НА АРЕНУ</span><b>${st === 0 ? 'Открой стартовые кейсы' : st === 1 ? 'Собери свою пятёрку' : 'Сыграй первый матч'}</b><small>Шаг ${st + 1} из 3 · обучение</small></div>${st === 0 ? '<button class="btn pri s" data-act="tab" data-v="packs">ОТКРЫТЬ КЕЙСЫ ↗</button>' : st === 1 ? '<button class="btn pri s" data-act="auto">СОБРАТЬ СОСТАВ ↗</button>' : '<button class="btn pri s" data-act="fight">СЫГРАТЬ ПЕРВЫЙ МАТЧ ↗</button>'}</section>` : '';
   return `${G.note ? `<div class="note bad">${esc(G.note)} <button class="btn s" data-act="noteOk">Понятно</button></div>` : ''}${tut}
   ${AU ? '' : `<section class="home-acc"><div><b>Сохрани прогресс в аккаунте</b><span>Ник и пароль — и карточки не потеряются, можно играть с любого телефона.</span></div><button class="btn pri s" data-act="authOpen">Войти</button></section>`}
   ${instH()}
-  <section class="lobby-hero">
-    <div class="lobby-hero__art" aria-hidden="true">
-      <div class="lobby-hero__roof"></div><div class="lobby-hero__beam lobby-hero__beam--a"></div><div class="lobby-hero__beam lobby-hero__beam--b"></div>
-      <div class="lobby-hero__crowd"></div><div class="lobby-hero__screen"><span>FIVE</span><b>LEGENDS</b><i>PRO LEAGUE</i></div>
-      <div class="lobby-hero__floor"></div><div class="lobby-hero__glow"></div><div class="lobby-hero__particles"></div>
-    </div>
-    <div class="lobby-hero__content">
-      <div class="lobby-hero__eyebrow"><span><i></i> LIVE ARENA</span><b>SEASON ${String(G.season.m % 12 + 1).padStart(2, '0')}</b></div>
-      <div class="lobby-hero__headline"><span>СТАНЬ</span><strong>ЛЕГЕНДОЙ</strong><em>СЦЕНЫ</em></div>
-      <p class="lobby-hero__sub">Твоя команда. Твоя стратегия. Твой путь к вершине.</p>
-      <button class="lobby-hero__rank" data-act="leagues" aria-label="Лиги: где вы сейчас и что дальше"><span class="lobby-hero__rankicon">${rankH(lg)}</span><span><small>ТЕКУЩАЯ ЛИГА</small><b>${LEAGUES[lg][0]}</b></span><span class="lobby-hero__cups"><strong>${G.tro}</strong><small>КУБКОВ</small></span><span class="lobby-hero__more" aria-hidden="true">›</span></button>
-    </div>
-    <div class="lobby-hero__ribbon"><span>CS2 MANAGER</span><i></i><span>5 PLAYERS · 1 LEGEND</span><i></i><span>COMPETITIVE</span></div>
-  </section>
-  <section class="lobby-command">
-    <div class="lobby-sectionhead"><div><span class="lobby-kicker">YOUR LINEUP</span><h2>БОЕВАЯ ПЯТЁРКА</h2></div><button data-act="goSquad">УПРАВЛЯТЬ СОСТАВОМ <b>↗</b></button></div>
+  <button class="hm-league" data-act="leagues" aria-label="Лиги: где вы сейчас и что дальше"><span class="hm-league__ic">${rankH(lg)}</span><span class="hm-league__t"><small>Сезон ${String(G.season.m % 12 + 1).padStart(2, '0')} · лига</small><b>${LEAGUES[lg][0]}</b></span><span class="hm-league__r"><b>${G.tro}</b><small>${nx ? nx[1] - G.tro + ' до «' + nx[0] + '»' : 'высшая лига'}</small></span><i class="hm-league__bar"><b style="width:${prog}%"></b></i></button>
+  ${low ? `<p class="warn">Опасная зона: до понижения ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}
+  <section class="hm-sec lobby-command">
+    <div class="hm-head"><h2>Боевая пятёрка${info ? ' · ' + info.rating.toFixed(1) : ''}</h2><button class="hm-link" data-act="goSquad">Изменить</button></div>
     <div class="lobby-lineup">${lineup}</div>
-    <div class="lobby-teamstats">
-      <div><small>ОБЩИЙ РЕЙТИНГ</small><b>${info ? info.rating.toFixed(1) : '—'}</b></div>
-      <div><small>ХИМИЯ</small><b>${info ? info.chem + '<i>/13</i>' : '—'}</b></div>
-      <div><small>СИЛА СОСТАВА</small><b>${info ? (info.atk + info.def).toFixed(1) : '—'}</b></div>
-      <button class="lobby-play" data-act="fight" ${info ? '' : 'disabled'}><span>В БОЙ</span><b>↗</b><small>${info ? 'НАЧАТЬ РЕЙТИНГОВЫЙ МАТЧ' : 'ЗАПОЛНИ ПЯТЬ ПОЗИЦИЙ'}</small></button>
-    </div>
+    <div class="hm-stats"><span>Химия <b>${info ? info.chem + '/13' : '—'}</b></span><span>Сила <b>${info ? (info.atk + info.def).toFixed(1) : '—'}</b></span><span>Коллекция <b>${collectionPct}%</b></span></div>
+    <button class="hm-go" data-act="fight" ${info ? '' : 'disabled'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>${info ? 'В бой' : 'Заполни пять позиций'}</button>
   </section>
-  <section class="lobby-shortcuts">
-    <button class="lobby-shortcut lobby-shortcut--packs" data-act="tab" data-v="packs"><span class="lobby-shortcut__art"><i></i><b>5</b><em>DROP</em></span><span><small>SUPPLY DROP</small><strong>КЕЙСЫ</strong><em>${quickCase}</em></span><b class="lobby-shortcut__arrow">↗</b></button>
-    <button class="lobby-shortcut lobby-shortcut--collection" data-act="tab" data-v="col"><span class="lobby-shortcut__art"><i></i><b>✦</b><em>PRO</em></span><span><small>PLAYER ARCHIVE</small><strong>КОЛЛЕКЦИЯ</strong><em>${collectionHave} ИЗ ${collectionTotal} ИГРОКОВ</em></span><b class="lobby-shortcut__arrow">↗</b></button>
+  <section class="hm-sec"><h2>Режимы</h2>
+    <button class="hm-row" data-act="fight" ${info ? '' : 'disabled'}><span class="hm-ic g"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5M15 5h4v4M5 5l5 5M14 14l5 5M15 19h4v-4"/></svg></span><span class="hm-tx"><b>Против бота</b><small>Рейтинговый матч · лига «${LEAGUES[lg][0]}»</small></span><span class="hm-ar">›</span></button>
+    <button class="hm-row" data-act="tab" data-v="play"><span class="hm-ic b"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span><span class="hm-tx"><b>Онлайн 1 на 1</b><small>Случайный соперник или друг</small></span><span class="hm-ar">›</span></button>
   </section>
-  <section class="lobby-progress">
-    <div class="lobby-progress__top"><div><span class="lobby-kicker">COLLECT THEM ALL</span><h3>ПРОГРЕСС КОЛЛЕКЦИИ</h3></div><strong>${collectionPct}<small>%</small></strong></div>
-    <div class="lobby-progress__bar"><i style="width:${collectionPct}%"></i><b></b></div>
-    <div class="lobby-progress__foot"><span>${collectionHave} / ${collectionTotal} КАРТОЧЕК</span><span>УРОВЕНЬ ${G.lvl} · XP ${xpPct}%</span></div>
+  <section class="hm-sec"><h2>Сегодня</h2>
+    <button class="hm-row" data-act="${dailyReady(G, now()) ? 'daily' : 'tab'}" data-v="packs"><span class="hm-ic o"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 12h18M10 12v3h4v-3M7 8V5h10v3"/></svg></span><span class="hm-tx"><b>Бесплатный кейс</b><small>${dailyReady(G, now()) ? 'Готов к открытию' : 'Следующий после 00:00 МСК'}</small></span><span class="hm-ar ${dailyReady(G, now()) ? 'on' : ''}">${dailyReady(G, now()) ? 'Забрать' : quickCase.toLowerCase().replace(/^./, x => x.toUpperCase())}</span></button>
   </section>
   <section class="lobby-lower">
-    <div class="lobby-season is-link" data-act="leagues" role="button" tabindex="0" aria-label="Путь выше: открыть лиги">
-      <div class="lobby-season__head"><span class="lobby-kicker">RANKED ROAD</span><b>ПУТЬ ВЫШЕ</b></div>
-      <div class="lobby-season__league">${rankH(lg)}<span><small>ТВОЙ ДИВИЗИОН</small><strong>${LEAGUES[lg][0]}</strong></span></div>
-      <div class="lobby-season__bar"><i style="width:${prog}%"></i></div>
-      <div class="lobby-season__foot"><span>${G.tro} КУБКОВ</span><span>${nx ? nx[1] - G.tro + ' ДО ' + nx[0].toUpperCase() : 'МАКСИМАЛЬНЫЙ РАНГ'}</span></div>
-      ${low ? `<p class="warn">Опасная зона: до понижения ${G.tro - LEAGUES[lg][1] + 1} кубков.</p>` : ''}
-      <span class="lg-link">Все лиги и награды ›</span>
-    </div>
     <div class="lobby-daily">
       <div class="lobby-daily__head"><span class="lobby-kicker">DAILY REWARD</span><b>СЕРИЯ ВХОДОВ</b></div>
       <strong>${ss.cur}<small> / 28 ДНЕЙ</small></strong>
@@ -178,11 +152,7 @@ function vHome() {
       <button class="lobby-daily__more" data-act="streak">Все награды серии ›</button>
     </div>
   </section>
-  ${st === 3 ? `<section class="lobby-missions"><div class="lobby-sectionhead"><div><span class="lobby-kicker">DAILY OBJECTIVES</span><h2>ЗАДАНИЯ</h2></div></div>${tasksH()}</section>` : ''}
-  <section class="lobby-free">
-    <div class="lobby-free__art">${pkH('basic')}</div><div class="lobby-free__copy"><span class="lobby-kicker">COMPLIMENTARY DROP</span><h3>БЕСПЛАТНЫЙ КЕЙС</h3><p>${dailyReady(G, now()) ? 'Твоя ежедневная награда уже ждёт.' : 'Следующая награда после 00:00 МСК.'}</p></div>
-    ${dailyReady(G, now()) ? '<button class="btn pri s" data-act="daily">ЗАБРАТЬ ↗</button>' : '<button class="btn s" data-act="tab" data-v="packs">К КЕЙСАМ ↗</button>'}
-  </section>`;
+  ${st === 3 ? `<section class="lobby-missions">${tasksH()}</section>` : ''}`;
 }
 function lbH() {
   const t = lbTable(G, lbScope, now()), row = x => `<div class="lb ${x.me ? 'me' : ''}"><b>${x.place}</b><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.name)}</span><b>${x.tro}</b></div>`;
@@ -306,17 +276,21 @@ function vMine() {
   return `${head}${tools}<div class="frow">${selH('sort', [['mine', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки'], ['n', 'Больше копий']], 'Сортировка')}</div>${grid}${sel}`;
 }
 function vCol() {
-  const body = sub === 'trade' ? vTrade() : sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : sub === 'mine' ? vMine() : vCards();
-  return `<div class="collection-tabs">${segH('sub', sub, [['cards', 'Все карточки'], ['mine', 'Моя коллекция'], ['squads', 'Составы'], ['tu', 'Контракты'], ['trade', 'Трейд', TR.inc.length > 0]])}</div>${body}`;
+  const body = sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : sub === 'mine' ? vMine() : vCards();
+  return `<div class="collection-tabs">${segH('sub', sub, [['cards', 'Все карточки'], ['mine', 'Моя коллекция'], ['squads', 'Составы'], ['tu', 'Контракты']])}</div>${body}`;
 }
 
-/* ---------- Профиль ---------- */
+/* ---------- Друзья: список и обмен (трейд) ---------- */
+let frSub = 'list';
+function vFr() {
+  const fin = AU ? FR.rows.filter(r => r.st === 'pending' && r.b === AU.uid).length : 0;
+  return `<div class="fr-tabs">${segH('frsub', frSub, [['list', 'Список' + (fin ? ' · ' + fin : ''), fin > 0], ['trade', 'Обмен' + (TR.inc.length ? ' · ' + TR.inc.length : ''), TR.inc.length > 0]])}</div>${frSub === 'trade' ? vTrade() : frSecH()}`;
+}
 /* ---------- Профиль ---------- */
 function vProf() {
   const lg = leagueOf(G.tro), fr = G.frame, h = G.season.hist, n = G.w + G.l, xpPct = Math.max(0,Math.min(100,Math.round(G.xp / Math.max(1,100 * G.lvl) * 100)));
   const winPct = n ? Math.round(G.w / n * 100) : 0;
   return `${pfHeroH()}
-  ${frSecH()}
   ${accH()}
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
@@ -480,8 +454,8 @@ function buildScene() {
   $('#dust').innerHTML = d;
 }
 function sceneTo(t) {
-  const i = Math.max(0, Object.keys(TABS).indexOf(t));
-  $('#scene').dataset.s = { home: 'home', play: 'squad', col: 'col', packs: 'packs', prof: 'home' }[t]; $('#pan-near').style.transform = `translate3d(${-i * 18.75}%,0,0)`; $('#pan-far').style.transform = `translate3d(${-i * 12.5}%,0,0)`;
+  const i = Math.max(0, NAV.indexOf(t));
+  $('#scene').dataset.s = { home: 'home', play: 'squad', col: 'col', packs: 'packs', fr: 'fr', prof: 'home' }[t]; $('#pan-near').style.transform = `translate3d(${-i * 18.75}%,0,0)`; $('#pan-far').style.transform = `translate3d(${-i * 12.5}%,0,0)`;
 }
 
 /* ---------- Частицы и вспышка ---------- */
@@ -714,23 +688,22 @@ function endBuild() {
   $('#over').scrollTop = 0; sfx(m.won ? 'win' : 'lose');
 }
 
+const NAV = ['home', 'col', 'play', 'packs', 'fr'];
 const TABS = {
   home: ['Главная', vHome, '<path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/>'],
-  play: ['Матчи', vPlay, '<path d="M3 10 12 4l9 6v10H3z"/><path d="M6 11h12M6 14h12M8 17h8"/><path d="M12 4v16" stroke-dasharray="1.5 2"/>'],
   col: ['Коллекция', vCol, '<g stroke-width="1.55"><path d="M4 5.5h11.5v15H4z"/><path d="M8 3.5h12v15"/><path d="M7 10h5.5M7 13h5.5"/><circle cx="9.7" cy="8" r="1.1"/></g>'],
+  play: ['Играть', vPlay, '<path d="M8.5 5.5l10 6.5-10 6.5z" fill="currentColor" stroke-width="1.4"/>'],
   packs: ['Кейсы', vPacks, '<g stroke-width="1.55"><path d="M3 8.5l2-4h14l2 4v11H3z"/><path d="M3 8.5h18M8 4.5l1 4M16 4.5l-1 4M9 13h6v6H9z"/><path d="M11 13v-2h2v2"/></g>'],
+  fr: ['Друзья', vFr, '<g stroke-width="1.6"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.8-3.6 3.2-5.6 6.2-5.6s5.4 2 6.2 5.6M15.6 4.8a3.4 3.4 0 0 1 0 6.4M17.6 14.6c1.8.6 3 2.4 3.6 5.4"/></g>'],
   prof: ['Профиль', vProf, '<g stroke-width="1.55"><path d="M12 2.5l8 3v5.7c0 5.2-3.4 8.5-8 10.3-4.6-1.8-8-5.1-8-10.3V5.5z"/><circle cx="12" cy="9" r="2.3"/><path d="M7.8 16.2c.8-2.1 2.2-3.1 4.2-3.1s3.4 1 4.2 3.1"/></g>']
 };
 
 function tabMastH() {
-  const meta = {
-    play: ['COMPETITIVE ARENA / 5V5','МАТЧИ','Собери боевой состав, выбери тактику и выходи на арену.','01'],
-    col: ['PLAYER ARCHIVE / COLLECTION','КОЛЛЕКЦИЯ','Полный архив игроков, редкостей, ролей и улучшений.','02'],
-    packs: ['ARMORY / SUPPLY DROP','КЕЙСЫ','Открой контейнеры и пополни состав новыми игроками.','03'],
-    prof: ['OPERATOR DOSSIER / CAREER','ПРОФИЛЬ','Твой ранг, результаты, сезонная история и достижения.','04']
-  }[tab];
-  if (!meta) return '';
-  return '<section class="section-mast mast-'+tab+'"><div class="section-mast__icon"><svg viewBox="0 0 24 24" aria-hidden="true">'+TABS[tab][2]+'</svg></div><div class="section-mast__copy"><p class="section-mast__eyebrow">'+meta[0]+'</p><h1>'+meta[1]+'</h1><p class="section-mast__desc">'+meta[2]+'</p></div><span class="section-mast__serial">FL / '+meta[3]+'</span></section>';
+  const t = { play: 'Матчи', col: 'Коллекция', packs: 'Кейсы', fr: 'Друзья', prof: 'Профиль' }[tab];
+  if (!t) return '';
+  const back = tab === 'prof' ? '<button class="pg-back" data-act="tab" data-v="home" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' : '';
+  const side = tab === 'col' ? `<span class="pg-side"><b>${Object.keys(G.cards).length}</b> из ${ALL.length}</span>` : tab === 'packs' ? `<span class="pg-side">${packCount() ? 'ваших: <b>' + packCount() + '</b>' : ''}</span>` : '';
+  return `<section class="section-mast pg-head mast-${tab}">${back}<h1>${t}</h1>${side}</section>`;
 }
 
 function render() {
@@ -739,12 +712,13 @@ function render() {
   $('#hud .wrap').innerHTML = hudH();
   const app = $('#app'); app.dataset.tab = tab; app.innerHTML = TABS[tab][1](); if (tab !== 'home') app.insertAdjacentHTML('afterbegin', tabMastH());
   if (tab !== lastTab) {
-    const ks = Object.keys(TABS), i = ks.indexOf(tab), j = ks.indexOf(lastTab);
+    const ks = NAV.concat('prof'), i = ks.indexOf(tab), j = ks.indexOf(lastTab);
     app.style.setProperty('--dir', j < 0 || i >= j ? 1 : -1); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
     sceneTo(tab); lastTab = tab;
   } else app.classList.remove('enter');
-  const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()), col: TR.inc.length > 0 };
-  $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${dots[k] ? '<span class="dot"></span>' : ''}</button>`).join('');
+  const frIn = AU ? FR.rows.filter(r => r.st === 'pending' && r.b === AU.uid).length : 0;
+  const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()), fr: TR.inc.length + frIn };
+  $('#tabs .wrap').innerHTML = NAV.map(k => `<button data-act="tab" data-v="${k}" class="${k === 'play' ? 'tb-play' : ''}" ${tab === k ? 'aria-current="page"' : ''}>${k === 'play' ? `<span class="tb-ball"><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg></span>` : `<svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>`}${TABS[k][0]}${dots[k] ? (typeof dots[k] === 'number' ? `<span class="dot n">${dots[k]}</span>` : '<span class="dot"></span>') : ''}</button>`).join('');
   if (!sheet && !OV && tab === 'home' && !AU && authAskDue()) { authAsked = true; sheet = { t: 'auth', mode: 'up', pop: 1 }; }
   if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
@@ -764,8 +738,9 @@ function autoSquad() {
 }
 const taskByKey = v => { const [k, i] = v.split(':'); return ({ d: G.tasks.d, w: G.tasks.w, s: [G.tasks.s], m: G.season.goals })[k][+i]; };
 const ACT = {
-  tab(v) { tab = v; colN = 45; askSell = null; window.scrollTo(0, 0); sfx('tap'); },
-  sub(v) { sub = v; colN = 45; QS = null; if (v === 'trade') { TRD.msg = ''; trLoad(true); frLoad(); } }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
+  tab(v) { tab = v; colN = 45; askSell = null; window.scrollTo(0, 0); sfx('tap'); if (v === 'fr') { frLoad(); if (frSub === 'trade') trLoad(true); } },
+  sub(v) { sub = v; colN = 45; QS = null; },
+  frsub(v) { frSub = v; if (v === 'trade') { TRD.msg = ''; trLoad(true); } frLoad(); }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
   snd(v) { snd = v; try { localStorage.setItem(SKEY, v); } catch (e) { /* не сохранится */ } sfx('win'); },
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },

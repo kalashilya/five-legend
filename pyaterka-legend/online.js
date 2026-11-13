@@ -119,7 +119,7 @@ function invGo(uid, nick) {
 function invDrop(say) { const I = NET.inv; if (!I) return; NET.inv = null; if (I.out) { netPost(I.uid, 'inv-x', { mid: I.mid }); netSt('idle'); } else if (say !== false) netPost(I.uid, 'inv-no', { mid: I.mid }); }
 /* список друзей обновляется сам: раз в 10 с при открытом окне, раз в минуту на вкладке «Матчи» (уведомление о заявке могло потеряться) */
 let frT = 0;
-setInterval(() => { if (!AU || OV || document.hidden) return; frT++; if ((tab === 'prof' && !sheet) || (sheet && sheet.t === 'frP') || (tab === 'play' && !sheet && frT % 6 === 0)) frLoad(); }, 10000);
+setInterval(() => { if (!AU || OV || document.hidden) return; frT++; if ((tab === 'fr' && !sheet) || (sheet && sheet.t === 'frP') || (tab === 'play' && !sheet && frT % 6 === 0)) frLoad(); }, 10000);
 /* таймеры окон поиска и приглашения; закрыли окно — отменяем */
 setInterval(() => {
   if (NET.mm && !NET.mm.lock) { if (!sheet || sheet.t !== 'netMm') mmStop(); else { mmTick(); const e = $('#mm-t'), s = Math.floor((Date.now() - NET.mm.t0) / 1000); if (e) e.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); } }
@@ -385,7 +385,7 @@ function netBoxH() {
   return `<section class="pn net-box"><div class="net-h"><div><small>ONLINE · 1 VS 1</small><b>ОНЛАЙН-МАТЧ</b></div><span>на интерес — без кубков и монет</span></div>
     ${!AU ? `<p class="sm">Сыграйте с друзьями или со случайным игроком в реальном времени. Нужен аккаунт.</p><button class="btn pri" data-act="authOpen">Войти или создать аккаунт</button>`
     : `<p class="sm">Живой соперник, ${NET_BUY / 1000} с на план раунда и ${NET_CALL / 1000} с на решение капитана — без пауз и перемотки.${on ? ` Сейчас в игре: <b>${on}</b>.` : ''}</p>
-      <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья в профиле${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
+      <div class="net-btns"><button class="btn pri" data-act="netMm" ${ready ? '' : 'disabled'}>Найти соперника</button><button class="btn" data-act="frOpen">Друзья${fon ? ` · ${fon} в игре` : ''}${inc ? ` <i class="fr-dot">${inc}</i>` : ''}</button></div>
       ${ready ? '' : '<p class="sm mut">Сначала соберите пятёрку.</p>'}
       <p class="net-diag ${RT.lob && RT.open && !RT.err ? 'ok' : RT.err ? 'err' : ''}">${RT.lob && RT.open && !RT.err ? 'Онлайн подключён · видно игроков: ' + Object.keys(onlineMap()).length : RT.err ? 'Онлайн не подключился — ' + esc(RT.err) : RT.st === 'conn' || RT.st === 'open' ? 'Подключаемся к онлайну…' : 'Онлайн не подключён' + ''}</p>`}</section>`;
 }

@@ -125,6 +125,13 @@ ok('взлом C4: верный код даёт награду один раз, 
   } finally { delete E.C4_CODES[h]; }
   assert(Object.values(E.C4_CODES).every(c => c.r && (c.r.coins || c.r.pack || c.r.pick != null)));
 });
+ok('«Что нового»: старый игрок видит окно один раз, новичок — нет, отметка сохраняется', () => {
+  assert(E.NEWS.length >= 1 && E.NEWS.every((n, i) => Number.isInteger(n.v) && (i === 0 || n.v < E.NEWS[i - 1].v) && n.items.length));
+  const old = E.migrate({ v: 2, coins: 1, tut: 3, cards: {}, squads: [[], [], []], season: { m: -1 }, tasks: { day: 0, week: 0 } }, NOW);
+  assert.strictEqual(old.news, 0); assert(E.newsDue(old)); assert.strictEqual(E.newsFor(old).length, E.NEWS.length);
+  old.news = E.NEWS_V; const back = E.migrate(JSON.parse(JSON.stringify(old)), NOW); assert.strictEqual(back.news, E.NEWS_V); assert(!E.newsDue(back));
+  const fresh = E.newProfile(NOW); fresh.tut = 3; assert(!E.newsDue(fresh));
+});
 ok('повреждённые данные не принимаются, неизвестные карточки не ломают игру', () => {
   assert.strictEqual(E.migrate(null, NOW), null); assert.strictEqual(E.migrate({ v: 2 }, NOW), null); assert.strictEqual(E.migrate({ v: 9, cards: {}, squad: [] }, NOW), null);
   const g = E.migrate({ v: 2, coins: 'x', cards: { 5: { n: 1, lv: 9 }, 987654: { n: 2, lv: 1 } }, squads: [[5, 987654, null, null, null]] }, NOW);

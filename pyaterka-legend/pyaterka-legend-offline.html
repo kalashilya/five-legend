@@ -2044,6 +2044,7 @@ html,body{background:#0d0f1c}
 .fr-tabs .seg button{font:600 14px/1.1 var(--f-b)!important;letter-spacing:0!important;text-transform:none!important;min-height:40px}
 /* общий воздух: меньше «рамочного» шума у панелей */
 #app .pn,#app .plain.pn{border-radius:16px}
+.nw-pop{display:flex;flex-direction:column;gap:6px;overflow-y:auto;overscroll-behavior:contain}.nw-pop h2{margin:2px 0 0}.nw-h{margin:16px 0 0;font:600 15px/1.2 var(--f-d);letter-spacing:.04em;color:var(--fg)}.nw-d{margin:0 0 4px;font:500 11px var(--f-m);color:var(--mut)}.nw-l{list-style:none;margin:6px 0 10px;padding:0;display:flex;flex-direction:column;gap:10px}.nw-l li{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:#ffffff0d;border:1px solid #ffffff14}.nw-l b{font:700 14px/1.2 var(--f-d);letter-spacing:.04em;text-transform:uppercase;color:#f2c14e}.nw-l span{font-size:13px;line-height:1.4;color:#d6dce3}.nw-pop .btn.pri{margin-top:4px}.nw-btn{margin:0 0 10px}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="sil" viewBox="0 0 100 100">
@@ -2658,6 +2659,7 @@ function normalize(G, now) {
   G.packs = Object.assign({ basic: 0, pro: 0, elite: 0 }, G.packs && typeof G.packs === 'object' ? G.packs : {});
   for (const k of ['basic', 'pro', 'elite']) G.packs[k] = Number.isFinite(G.packs[k]) ? Math.max(0, Math.floor(G.packs[k])) : 0;
   { const c = G.c4 && typeof G.c4 === 'object' && !Array.isArray(G.c4) ? G.c4 : {}; G.c4 = { next: Number.isFinite(c.next) ? Math.max(0, c.next) : 0, used: Array.isArray(c.used) ? [...new Set(c.used.filter(x => typeof x === 'string' && x.length < 40))] : [] }; }
+  G.news = Number.isInteger(G.news) && G.news >= 0 ? G.news : 0;
   G.orphans = G.orphans && typeof G.orphans === 'object' && !Array.isArray(G.orphans) ? G.orphans : {};
   for (const id in G.cards) { const o = G.cards[id]; if (!CARDS[id] || !o || !Number.isFinite(+o.n) || !(+o.n >= 1)) { if (o) G.orphans[id] = o; delete G.cards[id]; } else { o.n = Math.floor(o.n); o.lv = clamp(o.lv | 0, 1, 5); } }
   if (!Array.isArray(G.squads)) { const s = (G.squad || []).slice(0, 5); G.squads = [s, s.slice(), s.slice()]; }
@@ -2682,7 +2684,7 @@ function normalize(G, now) {
   if (now != null) refresh(G, now);
   return G;
 }
-function newProfile(now) { const G = newGame(); G.tut = 0; return normalize(G, now); }
+function newProfile(now) { const G = newGame(); G.tut = 0; G.news = NEWS_V; return normalize(G, now); }   /* новичку «Что нового» не показываем — у него обучение */
 
 /* ---------- Составы и капитан ---------- */
 const captSlot = G => { const id = G.capts[G.sqi]; return id == null ? -1 : G.squad.indexOf(id); };
@@ -2738,6 +2740,24 @@ function giveReward(G, r) {
   if (r.pick != null) { const pool = POOL[r.pick], ids = []; for (let i = 0; i < 3; i++) ids.push(pick(pool).id); G.picks.push(ids); }
 }
 const rewardText = r => [r.coins ? r.coins + ' монет' : '', r.pack ? Object.keys(r.pack).map(k => 'кейс «' + PACKS[k].n + '»' + (r.pack[k] > 1 ? ' ×' + r.pack[k] : '')).join(', ') : '', r.pick != null ? 'карточка на выбор («' + RAR[r.pick] + '»)' : ''].filter(Boolean).join(' + ');
+/* ---------- «Что нового»: окно при первом входе после обновления ----------
+   При каждом выпуске добавляйте запись В НАЧАЛО списка с номером v на 1 больше. Игрок видит все записи новее своей
+   отметки G.news (едет в облако вместе с сохранением); новые профили сразу получают последнюю отметку. */
+const NEWS = [
+  { v: 1, d: '13.11.2026', t: 'Большое обновление матча', items: [
+    ['Тактики', '19 тактик вместо трёх: 10 в атаке, 9 в защите. Листайте карточки — на каждой видно, кого она бьёт и кому проигрывает.'],
+    ['Решения капитана', '13 разных ситуаций посреди раунда: потеряли энтри, упала бомба, снайпер на миде, эко соперника, тишина, тайм-аут. Верный ответ даёт перевес.'],
+    ['Причина раунда', 'После раунда видно тактики обеих сторон и почему раунд пошёл так.'],
+    ['Умный соперник', 'Бот запоминает ваши привычки: два раза подряд одно и то же — на третий он вас ждёт.'],
+    ['Камера со своей стороны', 'Ваш спавн всегда снизу. Карту можно крутить двумя пальцами, приближать щипком и двигать; двойной тап — вернуть вид.'],
+    ['Новое меню', 'Кнопка «Играть» по центру, вкладка «Друзья» со списком и обменом, профиль — по нажатию на аватар.'],
+    ['Взлом C4', 'На странице кейсов попробуйте взломать бомбу: угадайте 6-значный код и заберите награду. Одна попытка раз в 4 часа.'],
+    ['Рейтинги по HLTV', 'Топ-20 игроков HLTV — 92, 90 и 88. На карточках подписи наград: «MVP · Бухарест», «EVP · Пекин». «Игрок недели» убран — такие карточки стали обычными.']
+  ] }
+];
+const NEWS_V = NEWS[0].v;
+const newsDue = G => G.tut >= 3 && (G.news | 0) < NEWS_V;
+const newsFor = G => NEWS.filter(n => n.v > (G.news | 0));
 /* ---------- Взлом бомбы C4 (страница кейсов) ----------
    Игрок набирает на бомбе 6 цифр. Попытка — раз в 4 часа (и удачная, и нет). Каждый код даёт награду один раз на профиль.
    В игре хранятся не коды, а их отпечатки: открыв файл игры, код не прочитать. Новый код: node tools/code-hash.js 123456.
@@ -2867,7 +2887,7 @@ const lbPlace = (G, month, now) => lbBots(month, now).filter(b => b.tro > G.tro)
 
 if (typeof module !== 'undefined') module.exports = { CARDS, ALL, POOL, MVPP, PACKS, W_ID, M_ID, openPack, newGame, addCard, squadOf, squadInfo, effOf, Match, MAPS, BUY, acVal, applyResult, AC, DECK, STYLES, leagueOf, LEAGUES, canUp, doUp, sellVal, upCost, UP_N, AB_BASE, AB_IND, IND, indOf, indPow, abPow, DIRS, TEMPOS, AI_ERR, WIN_N,
   TK, TK_T, TK_CT, tkOk, tkBonus, tkWhy, TK_HIT,
-  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, C4_CODES, C4_WAIT, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
+  migrate, normalize, newProfile, c4Try, c4Hash, c4Left, C4_CODES, C4_WAIT, NEWS, NEWS_V, newsDue, newsFor, captSlot, bestCapt, setSlot, priceOf, sellOne, sellNeedsConfirm, inSquads, tuInfo, tuRun, giveReward, choosePick, genTasks, refresh, taskAdd, claimTask, claimInbox, roundEvent, matchEvent, taskDone, allTasks, dailyReady, lbTable, lbPlace, mskDay, mskWeek, mskMonth, feasible, rewardText, STREAK_REWARDS, updateStreak, claimStreak };
 /* ---------- Радар карты: схема проходов, расстановки, маршруты и постановка раунда ----------
    Mirage и Dust II — подробные схемы по реальным картам CS2: те же зоны и проходы (callouts), ширина проходов,
    респауны на 5 мест, расстановки защиты, маршруты атаки, гранаты, места после закладки.
@@ -3588,7 +3608,7 @@ function vProf() {
   <section class="profile-record"><div class="profile-section-title"><small>CAREER STATISTICS</small><h3>КАРЬЕРА</h3></div><div class="profile-record__grid"><div><strong>${G.w}</strong><small>ПОБЕД</small></div><div><strong>${G.l}</strong><small>ПОРАЖЕНИЙ</small></div><div><strong>${n}</strong><small>МАТЧЕЙ</small></div><div><strong>${G.coins.toLocaleString('ru-RU')}</strong><small>МОНЕТ</small></div></div></section>
   <section class="profile-history"><div class="profile-section-title"><small>SEASON ARCHIVE</small><h3>ИСТОРИЯ СЕЗОНОВ</h3></div>${h.length ? '<div class="list">' + h.map(x => `<div class="prow" style="--rc:${LCOL[x.lg]}"><span>${rankH(x.lg)}</span><span><b>${monthName(x.m)}</b><span class="sm mut" style="display:block">лига «${LEAGUES[x.lg][0]}», ${x.tro} кубков</span></span><span class="num">#${x.place}</span></div>`).join('') + '</div>' : '<p class="sm mut">Завершённых сезонов пока нет. Текущий сезон: «' + monthName(G.season.m) + '».</p>'}</section>
   <section class="profile-settings"><div class="profile-section-title"><small>PREFERENCES</small><h3>НАСТРОЙКИ</h3></div><div class="profile-settings__row"><b>Звуковое сопровождение</b>${segH('snd', snd, [['off', 'Выкл.'], ['min', 'Минимум'], ['full', 'Полный']])}</div><p class="sm mut">Минимум — сигналы кейсов и итогов раунда. Полный добавляет щелчки, сканер и выстрелы.</p></section>
-  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
+  <section class="profile-about"><div class="profile-section-title"><small>SYSTEM INFORMATION</small><h3>ОБ ИГРЕ</h3></div><button class="btn s nw-btn" data-act="news">Что нового · обновление от ${esc(NEWS[0].d)}</button><p class="sm mut">Составы команд взяты из рейтинга Valve от 2 ноября 2026. Показатели карточек пока рассчитаны игрой, это не статистика HLTV. Прогресс хранится на этом устройстве, а после входа в аккаунт — ещё и на сервере.</p>
   ${askNew ? '<p class="sm">Коллекция и прогресс будут удалены, копия сохранения останется в памяти браузера. Начать заново?</p><div class="rowb"><button class="btn dan s" data-act="newYes">Да, начать заново</button><button class="btn s" data-act="newNo">Отмена</button></div>' : '<button class="btn s" data-act="newAsk">Начать заново</button>'}</section>`;
 }
 
@@ -3653,6 +3673,14 @@ function stGrid(ss) {
   return `<div class="st-grid">${STREAK_REWARDS.map((r, i) => { const d = i + 1, done = d <= ss.done, today = ss.p && d === ss.p.day;
     return `<span class="st-day ${done ? 'is-done' : ''} ${today ? 'is-today' : ''} ${r.pack ? 'is-pack' : ''} ${r.pack && r.pack.elite ? 'is-elite' : ''}"><small>${d}</small>${stArt(r)}<b>${stShort(r)}</b></span>`; }).join('')}</div>`;
 }
+/* «Что нового»: после обновления — записи новее отметки игрока; из профиля — вся история (sheet.all) */
+function newsH() {
+  const L = sheet.all ? NEWS : (sheet.list || NEWS.slice(0, 1));
+  return `<div class="in st-pop nw-pop"><button class="lg-x st-x0" data-act="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <small class="eyebrow">${sheet.all ? 'История обновлений' : 'Что нового'}</small><h2>${esc(L[0].t)}</h2>
+    ${L.map((n, i) => `${i ? `<h3 class="nw-h">${esc(n.t)}</h3>` : ''}<p class="nw-d">Обновление от ${esc(n.d)}</p><ul class="nw-l">${n.items.map(([h, d]) => `<li><b>${esc(h)}</b><span>${esc(d)}</span></li>`).join('')}</ul>`).join('')}
+    <button class="btn pri" data-act="close">Понятно, играть</button></div>`;
+}
 function streakH() {
   const ss = stState(), got = sheet.got, day = got ? G.streak.day : ss.cur, r = got || (ss.p ? STREAK_REWARDS[ss.p.day - 1] : G.streak.reward);
   const nextPack = STREAK_REWARDS.findIndex((x, i) => i + 1 > day && x.pack), np = nextPack >= 0 ? STREAK_REWARDS[nextPack] : null;
@@ -3684,6 +3712,7 @@ function vSheet() {
       <div class="qs-list">${l.slice(0, 40).map(id => `<span>${esc(CARDS[id].nick)} <b>×${Math.min(QS[id], qsMax(id))}</b></span>`).join('')}${l.length > 40 ? `<span>и ещё ${l.length - 40}</span>` : ''}</div>
       <div class="rowb"><button class="btn" data-act="close">Отмена</button><button class="btn pri" data-act="qsSell">Продать за ${nf(q.coins)}</button></div></div></div>`; }
   if (sheet.t === 'qsDone') return `<div class="in"><div class="wrap col"><h2>Продано</h2><p>Продано карточек: <b>${sheet.n}</b>. Получено <b><i class="coin"></i> ${nf(sheet.coins)}</b>.</p><div class="rowb"><button class="btn pri" data-act="close">Отлично</button></div></div></div>`;
+  if (sheet.t === 'news') return newsH();
   if (sheet.t === 'streak') return streakH();
   if (sheet.t === 'leagues') return leaguesH();
   if (sheet.t === 'lvl') return lvlH();
@@ -4012,6 +4041,7 @@ function render() {
   const frIn = AU ? FR.rows.filter(r => r.st === 'pending' && r.b === AU.uid).length : 0;
   const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()), fr: TR.inc.length + frIn };
   $('#tabs .wrap').innerHTML = NAV.map(k => `<button data-act="tab" data-v="${k}" class="${k === 'play' ? 'tb-play' : ''}" ${tab === k ? 'aria-current="page"' : ''}>${k === 'play' ? `<span class="tb-ball"><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg></span>` : `<svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>`}${TABS[k][0]}${dots[k] ? (typeof dots[k] === 'number' ? `<span class="dot n">${dots[k]}</span>` : '<span class="dot"></span>') : ''}</button>`).join('');
+  if (!sheet && !OV && tab === 'home' && newsDue(G)) { sheet = { t: 'news', list: newsFor(G) }; G.news = NEWS_V; save(); }
   if (!sheet && !OV && tab === 'home' && !AU && authAskDue()) { authAsked = true; sheet = { t: 'auth', mode: 'up', pop: 1 }; }
   if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
   const sh = $('#sheet'); sh.innerHTML = vSheet(); sh.hidden = !sheet;
@@ -4039,6 +4069,7 @@ const ACT = {
   close() { sheet = null; imgMsg = ''; askSell = null; },
   leagues() { sheet = { t: 'leagues', go: 1 }; },
   lvlInfo() { sheet = { t: 'lvl' }; },
+  news() { sheet = { t: 'news', all: 1 }; },
   streak() { sheet = { t: 'streak' }; },
   streakClaim() { const r = claimStreak(G, now()); if (!r) return; sfx('stop', r.pack ? (r.pack.elite ? 4 : r.pack.pro ? 3 : 1) : 0); if (sheet && sheet.t === 'streak') sheet.got = r; else sheet = { t: 'streak', got: r }; },
   card(v, d) { sheet = { t: 'card', id: +d.id }; imgMsg = ''; askSell = null; },

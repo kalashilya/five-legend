@@ -611,10 +611,11 @@ const inSquads = (G, id) => G.squads.some(s => s.includes(+id));
 
 /* ---------- Продажа: цена зависит от редкости, рейтинга и уровня (формула предложена, не утверждена) ---------- */
 function priceOf(c, lv) {
-  const pool = POOL[c.rar], mn = Math.min(...pool.map(x => x.ovr)), mx = Math.max(...pool.map(x => x.ovr));
+  const pool = POOL[c.rar], mm = priceOf.mm[c.rar] || (priceOf.mm[c.rar] = [Math.min(...pool.map(x => x.ovr)), Math.max(...pool.map(x => x.ovr))]), mn = mm[0], mx = mm[1];   /* границы редкости считаем один раз */
   const rel = mx > mn ? clamp(((c.sp ? c.o : c.ovr) - mn) / (mx - mn), 0, 1) : .5;
   return Math.round(sellVal(c) * (.9 + .2 * rel) * (1 + .25 * ((lv || 1) - 1)));
 }
+priceOf.mm = [];
 const sellNeedsConfirm = (G, id) => { const o = G.cards[id]; return !!o && o.n === 1 && (inSquads(G, id) || !!CARDS[id].sp); };
 function sellOne(G, id) {
   const o = G.cards[id]; if (!o) return 0;

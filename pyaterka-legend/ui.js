@@ -306,8 +306,8 @@ function vMine() {
   return `${head}${tools}<div class="frow">${selH('sort', [['mine', 'Сначала сильные'], ['low', 'Сначала слабые'], ['lv', 'По уровню прокачки'], ['n', 'Больше копий']], 'Сортировка')}</div>${grid}${sel}`;
 }
 function vCol() {
-  const body = sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : sub === 'mine' ? vMine() : vCards();
-  return `<div class="collection-tabs">${segH('sub', sub, [['cards', 'Все карточки'], ['mine', 'Моя коллекция'], ['squads', 'Составы'], ['tu', 'Контракты']])}</div>${body}`;
+  const body = sub === 'trade' ? vTrade() : sub === 'squads' ? vSquads() : sub === 'tu' ? vTu() : sub === 'mine' ? vMine() : vCards();
+  return `<div class="collection-tabs">${segH('sub', sub, [['cards', 'Все карточки'], ['mine', 'Моя коллекция'], ['squads', 'Составы'], ['tu', 'Контракты'], ['trade', 'Трейд', TR.inc.length > 0]])}</div>${body}`;
 }
 
 /* ---------- Профиль ---------- */
@@ -743,7 +743,7 @@ function render() {
     app.style.setProperty('--dir', j < 0 || i >= j ? 1 : -1); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
     sceneTo(tab); lastTab = tab;
   } else app.classList.remove('enter');
-  const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()) };
+  const dots = { home: todo(), packs: packCount() > 0 || dailyReady(G, now()), col: TR.inc.length > 0 };
   $('#tabs .wrap').innerHTML = Object.keys(TABS).map(k => `<button data-act="tab" data-v="${k}" ${tab === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${TABS[k][2]}</svg>${TABS[k][0]}${dots[k] ? '<span class="dot"></span>' : ''}</button>`).join('');
   if (!sheet && !OV && tab === 'home' && !AU && authAskDue()) { authAsked = true; sheet = { t: 'auth', mode: 'up', pop: 1 }; }
   if (!sheet && !OV && tab === 'home' && !G.picks.length && G.streak.pend && G.streak.shown !== mskDay(now())) { G.streak.shown = mskDay(now()); sheet = { t: 'streak' }; save(); }
@@ -765,7 +765,7 @@ function autoSquad() {
 const taskByKey = v => { const [k, i] = v.split(':'); return ({ d: G.tasks.d, w: G.tasks.w, s: [G.tasks.s], m: G.season.goals })[k][+i]; };
 const ACT = {
   tab(v) { tab = v; colN = 45; askSell = null; window.scrollTo(0, 0); sfx('tap'); },
-  sub(v) { sub = v; colN = 45; QS = null; }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
+  sub(v) { sub = v; colN = 45; QS = null; if (v === 'trade') { TRD.msg = ''; trLoad(true); frLoad(); } }, ttab(v) { taskTab = v; }, lb(v) { lbScope = v; }, fown(v) { F.own = v; colN = 45; },
   snd(v) { snd = v; try { localStorage.setItem(SKEY, v); } catch (e) { /* не сохранится */ } sfx('win'); },
   noteOk() { delete G.note; },
   close() { sheet = null; imgMsg = ''; askSell = null; },

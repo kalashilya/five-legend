@@ -74,4 +74,5 @@ localStorage: `pyaterka-legend-v1` (прогресс; с 12.11.2026 в нём п
 
 ## Публикация
 - Ветки: `dev` — разработка (ссылка `dev--five-legend-cs.netlify.app` после включения branch deploys), `main` — то, что видят игроки.
-- Сайт: https://five-legend-cs.netlify.app (Netlify, публичный). Каждое обновление ветки `main` на GitHub публикуется само примерно за минуту (`netlify.toml`). На iPhone: «Поделиться» → «На экран „Домой“» — запуск на весь экран.
+- Сайт (с 12.11.2026): https://kalashilya.github.io/five-legend/ — GitHub Pages, публикуется при каждом обновлении `main` (`.github/workflows/pages.yml`), ≈1 минута. Репозиторий открытый.
+- Старый сайт https://five-legend-cs.netlify.app остался со версией до взлома C4: на Netlify закончились бесплатные кредиты на выпуски.
